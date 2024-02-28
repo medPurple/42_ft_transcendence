@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Click</title>
+</head>
+<body>
+    <button id="getbutton">get token</button>
+    <script>
+        document.getElementById("getbutton").addEventListener("click", function() {
+            fetch("/api/token/generation/", {
+                method: "POST",
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+				var token = data.token;
+				console.log("token = ", token)
+				localStorage.setItem('api_token', token);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error occurred while sending request!");
+            });
+        });
+    </script>
+	<button id="sendbutton">send token</button>
+    <script>
+        document.getElementById("sendbutton").addEventListener("click", function() {
+			var token = localStorage.getItem('api_token');
+			if (!token) {
+				alert("API token not available!");
+				return;
+			}
+			fetch("/api/token/authentication/", {
+                method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": "Bearer " + token
+				}
+            })
+            .then(response => {
+                console.log("Response:", response);
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error occurred while sending request!");
+            });
+        });
+    </script>
+</body>
+</html>
