@@ -21,8 +21,9 @@ services:
     - microservices
     build: backend/user
     image: user
+    env_file: ../.credentials/envs/.userenv
     expose :
-    - "5433"
+    - "8080"
     restart: on-failure
 
   game:
@@ -31,8 +32,9 @@ services:
     - microservices
     build: backend/game
     image: game
+    env_file: ../.credentials/envs/.gameenv
     expose :
-    - "5432"
+    - "8080"
     restart: on-failure
 
   chat:
@@ -41,6 +43,18 @@ services:
     - microservices
     build: backend/chat
     image: chat
+    env_file: ../.credentials/envs/.chatenv
     expose :
-    - "5434"
+    - "8080"
+    restart: on-failure
+
+  djangoTemplate:
+    container_name: djangotemplate
+    networks: 
+    - microservices
+    build: backend/djangotemplate
+    image: djangotemplate
+    env_file: ../.credentials/envs/.djangotemplateenv
+    expose :
+    - "8080"
     restart: on-failure
