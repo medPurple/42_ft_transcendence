@@ -1,0 +1,66 @@
+h1 {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 2em;
+	text-align: center;
+	color: #fdfdfd;
+}
+
+h2 {
+	font-family: 'Courier New', Courier;
+	font-size: 1em;
+	text-align: center;
+	color: #797878;
+}
+
+h3 {
+	font-family: 'Avenir';
+	font-size: 0.75em;
+	text-align: center;
+	color: #f3f3f3;
+	text-align: center;
+}
+
+html, body {
+	font-family: 'Avenir';
+	background-color: #b6b6b6;
+	margin: 20px;
+	padding: 20px;
+	text-align: center;
+	cursor: url('../img/LOGO_cursor.png');
+}
+
+a,
+button {
+	display: inline-block;
+	font-family: 'Courier New', Courier;
+	font-size: 1em;
+	padding: 7px 30px;
+	background-color: #fdfdfd;
+	color: #000000;
+	text-decoration: none;
+	border-radius: 7px;
+	transition: background-color 0.3s;
+	cursor: pointer;
+	border: none;
+}
+
+a:hover,
+button:hover {
+	background-color: #8b8b86;
+	color: #ffffff;
+}
+
+section {
+	margin-bottom: 39px;
+	padding: 30px;
+	border: 2px solid #797878;
+	border-radius: 10px;
+	
+}
+
+footer {
+	font-family: 'Courier New', Courier, monospace;
+	margin: 20px;
+	padding: 20px;
+	color: #fdfdfd;
+}
