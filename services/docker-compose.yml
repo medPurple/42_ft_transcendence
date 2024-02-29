@@ -4,9 +4,19 @@ networks:
   microservices:
     driver: bridge
 
+volumes:
+  nginx:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '../site/'
+
 services:
   nginx:
     container_name: nginx
+    volumes:
+      - nginx:/usr/share/nginx/html
     networks: 
     - microservices
     build: nginx
@@ -14,47 +24,13 @@ services:
     ports: 
       - "8080:80"
     restart: on-failure
-
-  user:
-    container_name: user
-    networks: 
-    - microservices
-    build: backend/user
-    image: user
-    env_file: ../.credentials/envs/.userenv
-    expose :
-    - "8080"
-    restart: on-failure
-
-  game:
-    container_name: game
-    networks: 
-    - microservices
-    build: backend/game
-    image: game
-    env_file: ../.credentials/envs/.gameenv
-    expose :
-    - "8080"
-    restart: on-failure
-
-  chat:
-    container_name: chat
-    networks: 
-    - microservices
-    build: backend/chat
-    image: chat
-    env_file: ../.credentials/envs/.chatenv
-    expose :
-    - "8080"
-    restart: on-failure
-
+  
   djangoTemplate:
     container_name: djangotemplate
     networks: 
     - microservices
     build: backend/djangotemplate
     image: djangotemplate
-    env_file: ../.credentials/envs/.djangotemplateenv
     expose :
     - "8080"
     restart: on-failure
