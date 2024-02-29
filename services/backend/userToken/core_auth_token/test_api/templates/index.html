@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +27,7 @@
         });
     </script>
 	<button id="sendbutton">send token</button>
+    <script src="{% static 'auth.js' %}"></script>
     <script>
         document.getElementById("sendbutton").addEventListener("click", function() {
 			var token = localStorage.getItem('api_token');
@@ -33,24 +35,13 @@
 				alert("API token not available!");
 				return;
 			}
-			fetch("/api/token/authentication/", {
-                method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					"Authorization": "Bearer " + token
-				}
-            })
-            .then(response => {
-                console.log("Response:", response);
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                alert(data.message);
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Error occurred while sending request!");
+            authenticate(token)
+            .then(authenticated => {
+                if (authenticated) {
+                    console.log("Authentification réussie");
+                } else {
+                    console.log("Échec de l'authentification");
+                }
             });
         });
     </script>
