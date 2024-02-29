@@ -18,8 +18,9 @@ from django.contrib import admin
 from django.urls import path, reverse_lazy
 from django.conf.urls.static import static
 from django.conf import settings
-import authentication.views
 from django.views.generic import RedirectView
+import authentication.views
+import profil.views
 
 
 urlpatterns = [
@@ -29,6 +30,8 @@ urlpatterns = [
     path('signup/', authentication.views.signup, name='signup'),
     path('login/', authentication.views.user_login, name='login'),
     path('logout/', authentication.views.user_logout, name='logout'),
-]
+    path('profile/', profil.views.user_profile, name='user_profile'),
+    path('delete_account/', profil.views.delete_account, name='delete_account'),
+    path('edit_profile/', profil.views.edit_profile, name='edit_profile'),
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

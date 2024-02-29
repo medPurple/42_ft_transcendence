@@ -2,12 +2,15 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from profil.models import UserProfile
 
 def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            profile = UserProfile(user=user)
+            profile.save()
             return redirect('login')
     else:
         form = CustomUserCreationForm()
@@ -21,8 +24,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')
-        
+            return redirect('home') 
     message = 'Invalid username or password. Please try again.'
     return render(request, 
         'authentication/login.html',
