@@ -25,7 +25,6 @@ import profil.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', RedirectView.as_view(url=reverse_lazy('home')), name='index'),
     path('home/', authentication.views.home, name='home'),
     path('signup/', authentication.views.signup, name='signup'),
     path('login/', authentication.views.user_login, name='login'),
