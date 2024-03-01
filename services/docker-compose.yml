@@ -44,3 +44,13 @@ services:
     expose :
     - "5434"
     restart: on-failure
+
+  token:
+    container_name: token
+    networks: 
+      - microservices
+    build: backend/token
+    image: token
+    expose :
+      - "5435"
+    restart: on-failure

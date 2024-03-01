@@ -6,8 +6,8 @@ import json
 
 @csrf_exempt
 def token_authentication(request):
+	print("here")
 	if request.method == 'GET':
-		print(request.headers)
 		token = request.headers.get('Authorization')
 		if token:
 			print (token)
