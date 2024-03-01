@@ -1,9 +1,11 @@
-# forms.py
-
 from django import forms
-from .models import UserProfile
+from authentication.models import CustomUser
 
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['profile_picture']
+class CustomProfileForm(forms.ModelForm):
+	class Meta:
+		model = CustomUser
+		fields = ['username',
+		'email',
+		'first_name',
+		 'last_name',
+		 'profile_picture']
