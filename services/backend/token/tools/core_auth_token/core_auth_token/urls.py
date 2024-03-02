@@ -21,6 +21,6 @@ import token_authentication.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/token/generate/', token_generation.views.token_generation),
-	path('api/token/authenticate/', token_authentication.views.token_authentication),
+    path('api/token_generate/', token_generation.views.token_generation),
+	path('api/token_authenticate/', token_authentication.views.token_authentication),
 ]
