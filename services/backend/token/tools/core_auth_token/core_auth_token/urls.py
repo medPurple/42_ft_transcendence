@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 import token_generation.views
 import token_authentication.views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/token_generate/', token_generation.views.token_generation),
-	path('api/token_authenticate/', token_authentication.views.token_authentication),
+    path('api/token_generate/', token_generation.views.TokenGenerationAPIView.as_view()),
+	path('api/token_authenticate/', token_authentication.views.TokenAuthenticationAPIView.as_view()),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

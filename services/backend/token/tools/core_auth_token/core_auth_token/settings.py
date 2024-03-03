@@ -42,9 +42,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',               # Django rest framework
+    'rest_framework_swagger',       # Swagger 
+    'drf_spectacular',
 	'token_authentication',
 	'token_generation',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # Autres configurations de Django REST Framework...
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
