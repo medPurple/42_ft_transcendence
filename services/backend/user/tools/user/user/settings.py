@@ -30,8 +30,13 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'userservice',
-
 ]
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost',
+                        'http://127.0.0.1:8080',
+                        'http://userservice']
+
+
 
 # Application definition
 
@@ -129,11 +134,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_URL = '/images/'
+MEDIA_URL = 'images/'
 
 STATICFILES_DIRS = [
      BASE_DIR.joinpath('static'),
-    os.path.join(BASE_DIR, 'static')
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')

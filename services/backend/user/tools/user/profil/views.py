@@ -39,6 +39,6 @@ def delete_account(request):
 
 			logout(request)
 			return redirect('home')  # redirect to the home page
-	return render(request, 'home.html')
+	return render(request, 'profil/delete_account.html')
 
 # Create your views here.
