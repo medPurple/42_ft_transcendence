@@ -22,7 +22,7 @@ services:
     build: backend/user
     image: user
     expose :
-    - "8080"
+    - "5435"
     restart: on-failure
 
   token:
@@ -32,5 +32,5 @@ services:
     build: backend/token
     image: token
     expose :
-      - "5435"
+      - "5436"
     restart: on-failure
