@@ -3,20 +3,19 @@
 {% block title %}User Profile{% endblock %}
 
 {% block content %}
-    <h1>User Profile</h1>
-        <div class="contour">
-             <div class="user-info">
-            <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
-            <p><strong>Username:</strong> {{ user_profile.username }}</p>
-            <p><strong>Email:</strong> {{ user_profile.email }}</p>
-            <p><strong>First Name:</strong> {{ user_profile.first_name }}</p>
-            <p><strong>Last Name:</strong> {{ user_profile.last_name }}</p>
-            <p><strong>Token:</strong> {{ user_profile.token }}</p>
-            <p><a href="{% url 'edit_profile' %}"  class="button" >Edit Profile</a></p>
-            </div>
-        </div>
+	<h1>User Profile</h1>
+		<div class="contour">
+			 <div class="user-info">
+			<img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+			<p><strong>Username:</strong> {{ user_profile.username }}</p>
+			<p><strong>Email:</strong> {{ user_profile.email }}</p>
+			<p><strong>First Name:</strong> {{ user_profile.first_name }}</p>
+			<p><strong>Last Name:</strong> {{ user_profile.last_name }}</p>
+			<p><a href="{% url 'edit_profile' %}"  class="button" >Edit Profile</a></p>
+			</div>
+		</div>
 
-    <a href="{% url 'delete_account' %}"  class="button">Supprimer mon compte</a>
+	<a href="{% url 'delete_account' %}"  class="button">Supprimer mon compte</a>
 {% endblock %}
 
 

@@ -51,8 +51,8 @@ html, body {
 	text-align: center;
 	color: #fdfdfd;
 	text-decoration: none;
-    color: inherit;
-    cursor: pointer;
+	color: inherit;
+	cursor: pointer;
 }
 
 .title:hover {

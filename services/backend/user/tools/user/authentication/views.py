@@ -13,24 +13,20 @@ import os
 def home(request):
 	return render(request, 'home.html')
 
-
-
 def signup(request):
 	if request.method == 'POST':
 		form = CustomUserCreationForm(request.POST, request.FILES)
 		if form.is_valid():
 			user = form.save(commit=False)
-			user.token = user_token(request, user.id)
-			if user.token is not None:
-				user.save()
-				login(request, user)
-				return redirect('home')
-			else:
-				messages.error(request, 'Unable to retrieve a valid token. Please try again later.')
+			# token = user_token(request, user.id)
+			# request.session['token'] = token
+			# print(request.session['token'])
+			user.save()
+			login(request, user)
+			return redirect('home')
 	else:
 		form = CustomUserCreationForm()
 	return render(request, 'authentication/signup.html', {'form': form})
-
 
 def user_login(request):
 	message = ''
@@ -39,6 +35,7 @@ def user_login(request):
 		password = request.POST['password']
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
+			#request.session['token'] = user_token(request, user.id)
 			login(request, user)
 			return redirect('home')
 		else:
@@ -46,7 +43,6 @@ def user_login(request):
 	return render(request,
 		'authentication/login.html',
 		context = {'message': message})
-
 
 def user_token(request, user_id):
 	token_service_url = 'http://token:8080/api/token_generate/'
@@ -60,9 +56,9 @@ def user_token(request, user_id):
 		print(f"Erreur lors de la connexion au service de génération de jetons : {e}")
 		return None
 
-
 @login_required
 def user_logout(request):
+	#token expiration ?
 	logout(request)
 	return redirect('home')
 

@@ -9,7 +9,7 @@ class	CustomUser(AbstractUser):
 	email = models.CharField(max_length=200, null=True)
 	first_name = models.CharField(max_length=200, null=True)
 	last_name = models.CharField(max_length=200, null=True)
-	token = models.CharField(max_length=200, null=True, blank=True)
+	# token = models.CharField(max_length=200, null=True, blank=True)
 
 	def save(self, *args, **kwargs):
 		# Vérifier si l'utilisateur n'a pas déjà une image de profil

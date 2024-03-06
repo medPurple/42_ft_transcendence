@@ -7,5 +7,5 @@ class CustomProfileForm(forms.ModelForm):
 		fields = ['username',
 		'email',
 		'first_name',
-		 'last_name',
-		 'profile_picture']
+		'last_name',
+		'profile_picture']
