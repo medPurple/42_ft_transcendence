@@ -7,7 +7,8 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = ('profile_picture',
             'username',
-            'email',
-            'first_name',
-            'last_name')
+            # 'email',
+            # 'first_name',
+            # 'last_name')
+        )
 

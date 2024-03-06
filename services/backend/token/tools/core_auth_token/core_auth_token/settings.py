@@ -29,8 +29,9 @@ SECRET_KEY = 'django-insecure-g&h13xfzprwyiq_@+am%1xda(x7d7k)66h)%sg#j!go*g)cl54
 DEBUG = True
 
 ALLOWED_HOSTS = [
-	'tokenservice', 
-	'localhost'
+	'tokenservice',
+	'localhost',
+    'token'
 ]
 
 # Application definition
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',               # Django rest framework
-    'rest_framework_swagger',       # Swagger 
+    'rest_framework_swagger',       # Swagger
     'drf_spectacular',
 	'token_authentication',
 	'token_generation',

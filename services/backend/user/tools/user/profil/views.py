@@ -11,7 +11,7 @@ def user_profile(request):
 	try:
 		user_profile = CustomUser.objects.get(username=user)
 	except CustomUser.DoesNotExist:
-		return redirect('home')  # redirect to the home page
+		return redirect('home') 
 	return render(request, 'profil/user_profile.html',
 		{'user_profile': user})
 
@@ -28,17 +28,13 @@ def edit_profile(request):
 def delete_account(request):
 	if request.method == 'POST':
 		user = request.user
-
-		# delete the user's profile  & verify anonymous
 		if not isinstance(user, AnonymousUser):
 			try:
 				user.delete()
 			except CustomUser.DoesNotExist:
 				pass  # profile does not exist
-
-
 			logout(request)
-			return redirect('home')  # redirect to the home page
+			return redirect('home')
 	return render(request, 'profil/delete_account.html')
 
-# Create your views here.
+

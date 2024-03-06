@@ -12,7 +12,7 @@ import os
     responses={200: 'token', 405: 'Unauthorized'},
 )
 class TokenGenerationAPIView(APIView):
-    def get(self, request):
+    def post(self, request):
         user_id = request.data.get('user_id')
         token = self.generate_token(user_id)
         if token:
@@ -28,4 +28,3 @@ class TokenGenerationAPIView(APIView):
 
 
 
- 

@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Transcendence</title>
 	<link rel="stylesheet" href="{% static 'style.css' %}" />
+	<link rel="stylesheet" href="{% static 'user_profil.css' %}" />
 </head>
 
 <body>
 
 	<header>
-		<h1>Transcendence</h1>
+		<h1>
+            <a href="{% url 'home' %}"  class="title">Transcendence </a>
+        </h1>
 	</header>
 
 	<div>
@@ -25,8 +28,8 @@
     <p>
         Vous êtes connecté en tant que {{ request.user }} </p>
     <p>
-        <a href="{% url 'logout' %}">Se déconnecter</a>
-        <a href="{% url 'user_profile' %}">Voir mon profil</a>
+        <a href="{% url 'logout' %}" class="button">Se déconnecter</a>
+        <a href="{% url 'user_profile' %}" class="button">Voir mon profil</a>
     </p>
     {% endif %}
     <footer>
