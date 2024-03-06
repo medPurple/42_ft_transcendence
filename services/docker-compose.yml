@@ -22,15 +22,15 @@ services:
     build: backend/user
     image: user
     expose :
-    - "5435"
+    - "8080"
     restart: on-failure
 
   token:
     container_name: token
-    networks: 
+    networks:
       - microservices
     build: backend/token
     image: token
     expose :
-      - "5436"
+      - "8080"
     restart: on-failure

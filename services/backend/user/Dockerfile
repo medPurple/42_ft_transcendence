@@ -27,4 +27,4 @@ COPY  /tools/user/ /app/
 EXPOSE 8080
 
 ### Launch server/application
-CMD python3 manage.py runserver 0.0.0.0:5435
+CMD python3 manage.py runserver 0.0.0.0:80

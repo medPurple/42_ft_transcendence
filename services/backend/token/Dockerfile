@@ -21,10 +21,10 @@ RUN pip install --break-system-packages -r requirements.txt
 
 ### Copy django app files in container
 WORKDIR /app
-COPY  /tools/core_auth_token/ /app/ 
+COPY  /tools/core_auth_token/ /app/
 
 ### Expose on port 8080
 EXPOSE 8080
 
 ### Launch server/application
-CMD python3 manage.py runserver 0.0.0.0:5436 
+CMD python3 manage.py runserver 0.0.0.0:80
