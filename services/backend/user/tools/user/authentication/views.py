@@ -3,7 +3,7 @@ from .forms import CustomUserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import requests
-from django.contrib import messages 
+from django.contrib import messages
 from django.http import HttpResponse
 
 def signup(request):
