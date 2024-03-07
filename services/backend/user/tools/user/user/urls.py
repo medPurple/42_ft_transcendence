@@ -15,7 +15,7 @@ Including another URLconf
 	2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, reverse_lazy
+from django.urls import path, reverse_lazy, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.generic import RedirectView
@@ -32,5 +32,6 @@ urlpatterns = [
 	path('profile/', profil.views.user_profile, name='user_profile'),
 	path('delete_account/', profil.views.delete_account, name='delete_account'),
 	path('edit_profile/', profil.views.edit_profile, name='edit_profile'),
+	path('api-auth/', include('rest_framework.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

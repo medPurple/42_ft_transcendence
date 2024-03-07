@@ -11,7 +11,7 @@ def user_profile(request):
 	try:
 		user_profile = CustomUser.objects.get(username=user)
 	except CustomUser.DoesNotExist:
-		return redirect('home') 
+		return redirect('home')
 	return render(request, 'profil/user_profile.html',
 		{'user_profile': user})
 
