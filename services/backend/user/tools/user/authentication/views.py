@@ -33,6 +33,8 @@ def user_login(request):
 		password = request.POST['password']
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
+			user.token = user_token(request, user.id)
+			user.save()
 			login(request, user)
 			return redirect('home')
 		else:
@@ -55,7 +57,8 @@ def user_token(request, user_id):
 
 @login_required
 def user_logout(request):
-	#token expiration ?
+	user = request.user
+	user.token = ''
+	user.save()
 	logout(request)
 	return redirect('home')
-
