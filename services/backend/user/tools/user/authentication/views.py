@@ -18,9 +18,7 @@ def signup(request):
 		form = CustomUserCreationForm(request.POST, request.FILES)
 		if form.is_valid():
 			user = form.save(commit=False)
-			# token = user_token(request, user.id)
-			# request.session['token'] = token
-			# print(request.session['token'])
+			user.token = user_token(request, user.id)
 			user.save()
 			login(request, user)
 			return redirect('home')
@@ -35,7 +33,6 @@ def user_login(request):
 		password = request.POST['password']
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
-			#request.session['token'] = user_token(request, user.id)
 			login(request, user)
 			return redirect('home')
 		else:
