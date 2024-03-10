@@ -21,9 +21,16 @@ from django.conf import settings
 from django.views.generic import RedirectView
 import authentication.views
 import profil.views
+import profil.views_api_user
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'profiles', profil.views_api_user.CustomUserViewSet, basename='profiles')
 
 
 urlpatterns = [
+	path('api/', include(router.urls)),
+	# path('api/profiles/<str:username>/', views_api_user.CustomUserViewSet.as_view({'get': 'retrieve'})),	overload the retrieve method to return the user's profile
 	path('admin/', admin.site.urls),
 	path('home/', authentication.views.home, name='home'),
 	path('signup/', authentication.views.signup, name='signup'),

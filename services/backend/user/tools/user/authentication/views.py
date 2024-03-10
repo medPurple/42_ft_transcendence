@@ -48,7 +48,6 @@ def user_token(request, user_id):
 	try:
 		token_response = requests.post(token_service_url, json={'user_id' : user_id})
 		token_response.raise_for_status()
-
 		user_token = token_response.json().get('token')
 		return user_token
 	except requests.exceptions.RequestException as e:
