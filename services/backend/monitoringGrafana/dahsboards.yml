@@ -1,0 +1,16 @@
+# Spécifie la version de l'API utilisée dans ce fichier de configuration
+apiVersion: 1
+
+# Définit les fournisseurs de données pour Grafana
+providers:
+  # Début du premier fournisseur de données
+  - name: 'Monitoring'  # Nom du fournisseur de données
+    orgId: 1           # ID de l'organisation associée à ce fournisseur
+    folder: ''         # Dossier dans lequel les données seront stockées (aucun dans ce cas)
+    type: file         # Type de fournisseur de données (fichier dans ce cas)
+    disableDeletion: false  # Indique si la suppression des données est désactivée (false dans ce cas)
+    updateIntervalSeconds: 10  # Fréquence de numérisation des tableaux de bord modifiés (toutes les 10 secondes)
+    options:           # Options supplémentaires pour ce fournisseur de données
+      path: /var/lib/grafana/dashboards  # Chemin où les tableaux de bord seront stockés sur le système de fichiers
+
+# Fin du premier fournisseur de données

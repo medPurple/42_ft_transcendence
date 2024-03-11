@@ -1,0 +1,11 @@
+# Spécifie la version de l'API utilisée dans ce fichier de configuration
+apiVersion: 1
+
+# Définit les sources de données pour Grafana
+datasources:
+  # Début de la première source de données
+  - name: Prometheus  # Nom de la source de données
+    type: prometheus  # Type de la source de données (Prometheus dans ce cas)
+    access: proxy     # Méthode d'accès à la source de données (proxy dans ce cas)
+    url: http://localhost:9090  # URL de la source de données (http://localhost:9090 dans ce cas)
+  # Fin de la première source de données

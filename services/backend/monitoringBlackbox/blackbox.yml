@@ -1,0 +1,15 @@
+# Blackbox surveille les services reseau auquel les containers sont associes
+# On apelle ce mecanisme de verification un probe ou prober
+
+modules:
+  http_2xx:
+    # fonction de sondage / dans notre cas une sonde http peut envoyer des requetes
+    # pour s'assurer du bon fonctionnement des requetes http
+    prober: http
+
+    timeout: 5s
+    
+    # contient les specificites du prober http
+    http:
+      valid_status_codes: [] # default to 2xx
+method: GET
