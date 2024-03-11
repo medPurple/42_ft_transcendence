@@ -52,7 +52,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.11.1
     container_name: prometheus
-    # deploy: # facultatif d'apres chat gpt
+    # deploy: # facultatif d'apres chat gpt si on utilise pas docker
     #   replicas: 1
     volumes:
       # Permet de stocker les donnees de prometheus sur le system host
@@ -64,6 +64,8 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=365d'
+    # En utilisant network_mode: "host", le conteneur Docker utilise directement le réseau
+    # de l'hôte sur lequel il s'exécute, sans isolation réseau.
     network_mode: "host"
 
   grafana:
@@ -71,11 +73,12 @@ services:
     container_name: grafana
     environment:
       - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
-    deploy:
-      replicas: 1
+    # deploy:       # specifie une fonction de deploiement
+    #   replicas: 1 # nombre de replique du service
     depends_on:
       - prometheus
     volumes:
+      # - source:destination / pour eviter d'utiliser un dockerfile
       - grafana-data:/var/lib/grafana
       - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
@@ -86,8 +89,8 @@ services:
   blackbox:
     image: prom/blackbox-exporter:v0.14.0
     container_name: blackbox_exporter
-    deploy:
-      replicas: 1
+    # deploy:
+    #   replicas: 1
     volumes:
     - ./blackbox:/config
     network_mode: "host"
@@ -95,8 +98,8 @@ services:
   node_exporter:
     image: prom/node-exporter:v0.18.1
     container_name: node_exporter
-    deploy:
-      replicas: 1
+    # deploy:
+    #   replicas: 1
     network_mode: "host"
 
 volumes:
