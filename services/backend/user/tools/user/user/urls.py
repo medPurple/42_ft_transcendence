@@ -23,6 +23,7 @@ import authentication.views
 import profil.views
 import profil.views_api_user
 from rest_framework import routers
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 router = routers.DefaultRouter()
 router.register(r'profiles', profil.views_api_user.CustomUserViewSet, basename='profiles')
@@ -30,6 +31,8 @@ router.register(r'profiles', profil.views_api_user.CustomUserViewSet, basename='
 
 urlpatterns = [
 	path('api/', include(router.urls)),
+	path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+	path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
 	# path('api/profiles/<str:username>/', views_api_user.CustomUserViewSet.as_view({'get': 'retrieve'})),	overload the retrieve method to return the user's profile
 	path('admin/', admin.site.urls),
 	path('home/', authentication.views.home, name='home'),

@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'authentication',
     'profil',
     'rest_framework',
+    'rest_framework_swagger',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +151,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/home/'
 
+
+# Configuration for Django REST Framework (DRF) to use DRF Spectacular for API documentation.
+# Sets the default schema class to 'drf_spectacular.openapi.AutoSchema'.
+# This class is responsible for generating the API schema for DRF Spectacular.
+# For more information, refer to the DRF Spectacular documentation: https://drf-spectacular.readthedocs.io/
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}

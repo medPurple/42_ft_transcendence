@@ -5,14 +5,20 @@ from rest_framework.response import Response
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    
-    # overload the retrieve method to return the user's profile
-    # def get_object(self):
-    # return get_object_or_404(CustomUser, username=self.kwargs['pk'])
-    
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+	"""
+	CustomUserViewSet description
+	"""
+	queryset = CustomUser.objects.all()
+	serializer_class = CustomUserSerializer
+
+	# overload the retrieve method to return the user's profile
+	# def get_object(self):
+	# return get_object_or_404(CustomUser, username=self.kwargs['pk'])
+
+	def retrieve(self, request, *args, **kwargs):
+		"""
+		Retrieve method description
+		"""
+		instance = self.get_object()
+		serializer = self.get_serializer(instance)
+		return Response(serializer.data)
