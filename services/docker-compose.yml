@@ -52,13 +52,16 @@ services:
   prometheus:
     image: prom/prometheus:v2.11.1
     container_name: prometheus
+    build:
+      context: ./backend/monitoringPrometheus/
+      dockerfile: Dockerfile
     # deploy: # facultatif d'apres chat gpt si on utilise pas docker
     #   replicas: 1
     volumes:
       # Permet de stocker les donnees de prometheus sur le system host
       # - source:destination / pour eviter d'utiliser un dockerfile
       - prometheus-data:/prometheus
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      # - ./backend/monitoring/Prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       # - ./alertmanager/alert.rules/alerts.rules.yml:/alertmanager/alert.rules/alerts.rules.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -69,22 +72,26 @@ services:
     network_mode: "host"
 
   grafana:
-    image: grafana/grafana:6.2.5
+    image: grafana/grafana:10.4.0
     container_name: grafana
+    # build:
+    #   context: ./backend/monitoringGrafana/
+    #   dockerfile: Dockerfile
     environment:
       - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
-    # deploy:       # specifie une fonction de deploiement
-    #   replicas: 1 # nombre de replique du service
+    deploy:
+      replicas: 1
     depends_on:
       - prometheus
+    ports:
+      - "8042:8042"
     volumes:
-      # - source:destination / pour eviter d'utiliser un dockerfile
-      - grafana-data:/var/lib/grafana
-      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
-      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
-    network_mode: "host"
+      - grafana-data:/var/lib/grafana/dashboards
+      # - ./backend/monitoringGrafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:rw
+      # - ./backend/monitoringGrafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      # - ./backend/monitoringGrafana/grafana.ini:/etc/grafana/grafana.ini
+      # - ./backend/monitoringGrafana/dashboards:/var/lib/grafana/dashboards
+    #network_mode: "host"
 
   blackbox:
     image: prom/blackbox-exporter:v0.14.0
@@ -96,6 +103,7 @@ services:
     network_mode: "host"
 
   node_exporter:
+  # (node exporter est un collecteur de metriques system)
     image: prom/node-exporter:v0.18.1
     container_name: node_exporter
     # deploy:
@@ -105,3 +113,8 @@ services:
 volumes:
   prometheus-data:
   grafana-data:
+  # driver: local
+  # driver_opts:
+  #   type: 'none'
+  #   o: 'bind'
+  #   device: '/home/pcheron/Documents/github/ft_transcendence/services/backend/monitoringGrafana/'
