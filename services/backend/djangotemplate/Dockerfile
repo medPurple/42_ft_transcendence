@@ -21,10 +21,15 @@ RUN pip install --break-system-packages -r requirements.txt
 
 ### Copy django app files in container
 WORKDIR /app
-COPY  /tools/django_project/ /app/ 
+COPY  /tools/django_project/ /app/
+COPY /conf/start.sh .
+RUN chmod 777 start.sh
+
 
 ### Expose on port 8080
 EXPOSE 8080
+EXPOSE 5432
 
 ### Launch server/application
-CMD python3 manage.py runserver 0.0.0.0:8080 
+#CMD python3 manage.py runserver 0.0.0.0:8080
+ENTRYPOINT [ "sh", "start.sh" ]
