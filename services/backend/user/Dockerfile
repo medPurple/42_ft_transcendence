@@ -10,6 +10,9 @@ ENV TEMPLATE_DB_USER=dbking
 ENV TEMPLATE_DB_PASSWORD=kingp4bl0
 ENV TEMPLATE_DB_BASENAME=testbase
 
+COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
+RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
+
 ### Database basic initialisation
 COPY /conf/init_db.sh .
 RUN chmod 777 init_db.sh
@@ -22,9 +25,14 @@ RUN pip install --break-system-packages -r requirements.txt
 ### Copy django app files in container
 WORKDIR /app
 COPY  /tools/user/ /app/
+COPY /conf/start.sh .
+RUN chmod 777 start.sh
+
 
 ### Expose on port 8080
 EXPOSE 8080
+EXPOSE 5432
 
 ### Launch server/application
-CMD python3 manage.py runserver 0.0.0.0:8080
+#CMD python3 manage.py runserver 0.0.0.0:8080
+ENTRYPOINT [ "sh", "start.sh" ]
