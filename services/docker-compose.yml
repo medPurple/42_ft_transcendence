@@ -7,40 +7,30 @@ networks:
 services:
   nginx:
     container_name: nginx
-    networks: 
+    networks:
     - microservices
     build: nginx
     image: nginx
-    ports: 
+    ports:
       - "8080:80"
     restart: on-failure
 
   user:
     container_name: user
-    networks: 
+    networks:
     - microservices
     build: backend/user
     image: user
     expose :
-    - "5433"
+    - "8080"
     restart: on-failure
 
-  game:
-    container_name: game
-    networks: 
-    - microservices
-    build: backend/game
-    image: game
+  token:
+    container_name: token
+    networks:
+      - microservices
+    build: backend/token
+    image: token
     expose :
-    - "5432"
-    restart: on-failure
-
-  chat:
-    container_name: chat
-    networks: 
-    - microservices
-    build: backend/chat
-    image: chat
-    expose :
-    - "5434"
+      - "8080"
     restart: on-failure
