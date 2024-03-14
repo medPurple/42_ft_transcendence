@@ -34,8 +34,9 @@ services:
   
   djangoTemplate:
     container_name: djangotemplate
-    volumes:
-      - djangotemplate:/home/
+    user: root
+    #volumes:
+      #- djangotemplate:/var/lib/postgresql/
     networks: 
     - microservices
     build: backend/djangotemplate
