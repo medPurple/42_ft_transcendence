@@ -28,7 +28,7 @@ services:
     - microservices
     build: nginx
     image: nginx
-    ports: 
+    ports:
       - "8080:80"
     restart: on-failure
   
@@ -43,4 +43,24 @@ services:
     image: djangotemplate
     expose :
     - "8080"
+    restart: on-failure
+    
+  user:
+    container_name: user
+    networks:
+    - microservices
+    build: backend/user
+    image: user
+    expose :
+    - "8080"
+    restart: on-failure
+
+  token:
+    container_name: token
+    networks:
+      - microservices
+    build: backend/token
+    image: token
+    expose :
+      - "8080"
     restart: on-failure
