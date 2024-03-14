@@ -33,4 +33,4 @@ EXPOSE 8080
 EXPOSE 5432
 
 ### Launch game application
-ENTRYPOINT [ "" ]
+ENTRYPOINT [ "start.sh" ]
