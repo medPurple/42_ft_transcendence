@@ -34,3 +34,13 @@ services:
     expose :
       - "8080"
     restart: on-failure
+
+  vault:
+    container_name: vault
+    networks:
+      - microservices
+    build: vault
+    image: vault
+    expose:
+      - "8200:8200"
+    restart: on-failure
