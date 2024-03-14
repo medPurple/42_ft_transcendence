@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.friend-requests,
+.users,
+.friends {
+    width: 30%; /* Ajustez la largeur selon vos besoins */
+    margin-left: 20px; /* Marge entre les différentes sections */
+}
+
+.friend-requests {
+    order: 3; /* Change l'ordre d'affichage à droite */
+}
+
+.users {
+    order: 2; /* Change l'ordre d'affichage au milieu */
+}
+
+.friends {
+    order: 1; /* Change l'ordre d'affichage à gauche */
+}

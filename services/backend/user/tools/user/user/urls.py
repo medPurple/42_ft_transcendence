@@ -34,7 +34,6 @@ urlpatterns = [
 	path('api/', include(router.urls)),
 	path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
 	path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
-	# path('api/profiles/<str:username>/', views_api_user.CustomUserViewSet.as_view({'get': 'retrieve'})),	overload the retrieve method to return the user's profile
 	path('admin/', admin.site.urls),
 	path('home/', authentication.views.home, name='home'),
 	path('signup/', authentication.views.signup, name='signup'),

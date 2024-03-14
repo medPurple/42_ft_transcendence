@@ -1,32 +1,30 @@
 
-
 {% extends 'base.html' %}
 {% block content %}
+<div class="container">
+    <div class="friend-requests">
+        <h2>Friend Requests</h2>
+        {% for friend_request in friend_requests %}
+            <p>{{ friend_request.from_user.username }} sent you a friend request <a href="/accept_friend_request/{{ friend_request.id }}/">{{ friend_request.from_user.username }}</a></p>
+        {% endfor %}
+    </div>
 
-<ul class="'all_users">
-    {% for user in users %}
-        {% if not user.is_superuser %}
-            {% if user not in request.user.friends.all and user != request.user %}
-                <h1> {{ user }} <a href="/send_friend_request/{{user.id}}/">send friend request</a></h1>
+    <div class="users">
+        <h2>All Users</h2>
+        {% for user in users %}
+            {% if not user.is_superuser %}
+                {% if user not in request.user.friends.all and user != request.user %}
+                    <p> {{ user }} <a href="/send_friend_request/{{user.id}}/">send friend request</a></p>
+                {% endif %}
             {% endif %}
-        {% endif %}
-    {% endfor %}
-</ul>
+        {% endfor %}
+    </div>
 
-<h2>Friend Requests</h2>
-<ul>
-    {% for friend_request in friend_requests %}
-        <li>{{ friend_request.from_user.username }} sent you a friend request <a href="/accept_friend_request/{{ friend_request.id }}/">{{ friend_request.id }}</a></li>
-    {% endfor %}
-</ul>
-
-<ul class="all_users">
-    {% for friend in request.user.friends.all %}
-        <li>{{ friend.username }}</li>
-    {% endfor %}
-</ul>
-
+    <div class="friends">
+        <h2>Friends</h2>
+        {% for friend in request.user.friends.all %}
+            <p>{{ friend.username }}</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}
-
-
-
