@@ -12,6 +12,13 @@ volumes:
       o: 'bind'
       device: '../site/'
 
+  djangotemplate:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './volumes/djangotemplatebase/'
+
 services:
   nginx:
     container_name: nginx
@@ -27,6 +34,8 @@ services:
   
   djangoTemplate:
     container_name: djangotemplate
+    volumes:
+      - djangotemplate:/home/
     networks: 
     - microservices
     build: backend/djangotemplate
