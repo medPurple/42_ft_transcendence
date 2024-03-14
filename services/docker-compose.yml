@@ -79,18 +79,19 @@ services:
     #   dockerfile: Dockerfile
     environment:
       - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    user: root
     deploy:
       replicas: 1
     depends_on:
       - prometheus
     ports:
-      - "8042:8042"
+      - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana/dashboards
-      # - ./backend/monitoringGrafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:rw
-      # - ./backend/monitoringGrafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
-      # - ./backend/monitoringGrafana/grafana.ini:/etc/grafana/grafana.ini
-      # - ./backend/monitoringGrafana/dashboards:/var/lib/grafana/dashboards
+      - ./backend/monitoringGrafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:rw
+      - ./backend/monitoringGrafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./backend/monitoringGrafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./backend/monitoringGrafana/dashboards:/var/lib/grafana/dashboards
     #network_mode: "host"
 
   blackbox:

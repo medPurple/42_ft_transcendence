@@ -8,7 +8,7 @@ datasources:
     type: prometheus  # Type de la source de données (Prometheus dans ce cas)
     access: proxy     # Méthode d'accès à la source de données (proxy dans ce cas)
     isDefault: true
-    access: proxy
+    # access: proxy
     editable: true
     url: http://localhost:9090  # URL de la source de données (http://localhost:9090 dans ce cas)
   # Fin de la première source de données
