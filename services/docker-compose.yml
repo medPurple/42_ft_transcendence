@@ -10,7 +10,7 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: '../site/'
+      device: './frontend/'
 
   djangotemplate:
     driver: local
@@ -18,6 +18,13 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './volumes/djangotemplatebase/'
+
+  user:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './volumes/userbase/'
 
 services:
   nginx:
@@ -47,6 +54,8 @@ services:
     
   user:
     container_name: user
+    #volumes:
+#- user:/var/lib/postgresql/
     networks:
     - microservices
     build: backend/user
