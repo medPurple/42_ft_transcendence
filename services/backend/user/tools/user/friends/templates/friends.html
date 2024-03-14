@@ -1,0 +1,32 @@
+
+
+{% extends 'base.html' %}
+{% block content %}
+
+<ul class="'all_users">
+    {% for user in users %}
+        {% if not user.is_superuser %}
+            {% if user not in request.user.friends.all and user != request.user %}
+                <h1> {{ user }} <a href="/send_friend_request/{{user.id}}/">send friend request</a></h1>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</ul>
+
+<h2>Friend Requests</h2>
+<ul>
+    {% for friend_request in friend_requests %}
+        <li>{{ friend_request.from_user.username }} sent you a friend request <a href="/accept_friend_request/{{ friend_request.id }}/">{{ friend_request.id }}</a></li>
+    {% endfor %}
+</ul>
+
+<ul class="all_users">
+    {% for friend in request.user.friends.all %}
+        <li>{{ friend.username }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}
+
+
+

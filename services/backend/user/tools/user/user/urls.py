@@ -22,6 +22,7 @@ from django.views.generic import RedirectView
 import authentication.views
 import profil.views
 import profil.views_api_user
+import friends.views
 from rest_framework import routers
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
@@ -42,6 +43,8 @@ urlpatterns = [
 	path('profile/', profil.views.user_profile, name='user_profile'),
 	path('delete_account/', profil.views.delete_account, name='delete_account'),
 	path('edit_profile/', profil.views.edit_profile, name='edit_profile'),
-	path('api-auth/', include('rest_framework.urls')),
+	path('friends/', friends.views.all_users, name="friends"),
+	path('send_friend_request/<int:userID>/', friends.views.send_friend_request, name='send_friend_request'),
+	path('accept_friend_request/<int:requestID>/', friends.views.accept_friend_request, name='accept_friend_request'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

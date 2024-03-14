@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Les balises meta, le titre et les liens vers les fichiers CSS -->
+</head>
+
+<body>
+    <header>
+        <!-- Header de votre page -->
+    </header>
+
+    <div>
+        <div id="Index">
+            <h2>Envoyer une demande d'ami</h2>
+
+            {% if user.is_authenticated %}
+                <p>Vous êtes connecté en tant que {{ request.user }}</p>
+                <form method="post" action="{% url 'send_friend_request' userID=userID %}">
+                    {% csrf_token %}
+                    <input type="submit" value="Envoyer une demande d'ami" class="button">
+                </form>
+            {% else %}
+                <p>Veuillez vous connecter pour envoyer une demande d'ami.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <!-- Footer de votre page -->
+    </footer>
+</body>
+</html>
+
+
+{% endblock content %}

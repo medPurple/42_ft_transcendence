@@ -19,6 +19,7 @@ def signup(request):
 		if form.is_valid():
 			user = form.save(commit=False)
 			user.token = user_token(request, user.id)
+			user.is_online = True
 			user.save()
 			login(request, user)
 			return redirect('home')
@@ -58,6 +59,7 @@ def user_token(request, user_id):
 def user_logout(request):
 	user = request.user
 	user.token = ''
+	user.is_online = False
 	user.save()
 	logout(request)
 	return redirect('home')
