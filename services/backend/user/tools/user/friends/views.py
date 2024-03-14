@@ -4,7 +4,6 @@ from authentication.models import CustomUser
 from friends.models import Friend_Request
 from django.http import HttpResponse
 
-
 @login_required
 def	send_friend_request(request, userID):
 	from_user = request.user
@@ -34,7 +33,6 @@ def all_users(request):
 	friend_requests = Friend_Request.objects.filter(to_user=request.user)
 	return render(request, 'friends.html', {'users': users, 'friend_requests' : friend_requests})
 
-
 # @login_required
 # def send_friend_request_page(request, userID):
 #     return render(request, 'send_friend_request.html', {'userID': userID})
@@ -44,5 +42,3 @@ def all_users(request):
 #     friend_request = Friend_Request.objects.get(id=requestID)
 #     return render(request, 'accept_friend_request.html', {'friend_request': friend_request})
 
-
-# Create your views here.
