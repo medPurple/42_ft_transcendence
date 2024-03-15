@@ -6,9 +6,9 @@ RUN apt install python3 python3-pip -y
 RUN apt install postgresql -y
 
 ### Env variables assignation (to fix)
-ENV TEMPLATE_DB_USER=dbking
-ENV TEMPLATE_DB_PASSWORD=kingp4bl0
-ENV TEMPLATE_DB_BASENAME=testbase
+ENV GAME_DB_USER=dbking
+ENV GAME_DB_PASSWORD=kingp4bl0
+ENV GAME_DB_BASENAME=testbase
 
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
 RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
@@ -24,7 +24,7 @@ RUN pip install --break-system-packages -r requirements.txt
 
 ### Copy django app files in container
 WORKDIR /app
-COPY  /tools/user/ /app/
+COPY  /tools/game3D/ /app/
 COPY /conf/start.sh .
 RUN chmod 777 start.sh
 
@@ -33,4 +33,4 @@ EXPOSE 8080
 EXPOSE 5432
 
 ### Launch game application
-ENTRYPOINT [ "start.sh" ]
+#ENTRYPOINT [ "sh", "start.sh" ]

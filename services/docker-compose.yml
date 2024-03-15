@@ -34,3 +34,13 @@ services:
     expose :
       - "8080"
     restart: on-failure
+
+  # game3d:
+  #   container_name: game3d
+  #   networks:
+  #     - microservices
+  #   build: backend/game3d
+  #   image: game3d
+  #   expose :
+  #     - "8080"
+  #   restart: on-failure
