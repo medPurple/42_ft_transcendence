@@ -16,7 +16,7 @@ down:
 	@ docker compose -f ./services/docker-compose.yml down
 
 re:	down
-		@ docker compose -f ./services/docker-compose.yml up -d --build
+	@ docker compose -f ./services/docker-compose.yml up -d --build
 
 clean:
 	@ docker stop $$(docker ps -qa);\
