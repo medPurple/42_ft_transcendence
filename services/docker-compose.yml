@@ -12,19 +12,19 @@ volumes:
       o: 'bind'
       device: './frontend/'
 
-  djangotemplate:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './volumes/djangotemplatebase/'
-
+  # djangotemplate:
+  #   driver: local
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: './volumes/djangotemplatebase/'
+  #
   user:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: './volumes/userbase/'
+      device: './services/volumes/userbase/'
 
 services:
   nginx:
@@ -39,23 +39,24 @@ services:
       - "8080:80"
     restart: on-failure
   
-  djangoTemplate:
-    container_name: djangotemplate
-    user: root
-    #volumes:
-      #- djangotemplate:/var/lib/postgresql/
-    networks: 
-    - microservices
-    build: backend/djangotemplate
-    image: djangotemplate
-    expose :
-    - "8080"
-    restart: on-failure
-    
+  # djangoTemplate:
+  #   container_name: djangotemplate
+  #   user: root
+  #   volumes:
+  #     - djangotemplate:/var/lib/postgresql/
+  #   networks: 
+  #   - microservices
+  #   build: backend/djangotemplate
+  #   image: djangotemplate
+  #   expose :
+  #   - "8080"
+  #   restart: on-failure
+  
   user:
     container_name: user
-    #volumes:
-#- user:/var/lib/postgresql/
+    user: root
+    volumes:
+      - user:/var/lib/postgresql/
     networks:
     - microservices
     build: backend/user
