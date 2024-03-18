@@ -30,11 +30,16 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'userservice',
+    'paul-f4Ar7s2',
+    'paul-f4Ar6s1',
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
                         'http://127.0.0.1:8080',
-                        'http://userservice:8080']
+                        'http://userservice:8080',
+                        'http://paul-f4Ar7s2:8080',
+                        'http://paul-f4Ar6s1:8080',
+                        ]
 
 
 
