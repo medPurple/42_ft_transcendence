@@ -1,25 +1,37 @@
 FROM debian:latest
 
+### Necessary dependencies for Django
 RUN apt update -y
-RUN apt install -y python3 
-RUN apt install -y pip 
-RUN apt install -y postgresql 
+RUN apt install python3 python3-pip -y
+RUN apt install postgresql -y
 
-# Test to establish communication (delete later)
-RUN apt install -y nginx
+### Env variables assignation (to fix)
+ENV TEMPLATE_DB_USER=dbking
+ENV TEMPLATE_DB_PASSWORD=kingp4bl0
+ENV TEMPLATE_DB_BASENAME=testbase
 
-# #Database Initialisation (Work in Progress)
-#
-# COPY /tools/init_db.sh .
-# RUN chmod 777 init_db.sh
-# Run init_db.sh 
+COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
+RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
 
+### Database basic initialisation
+COPY /conf/init_db.sh .
+RUN chmod 777 init_db.sh
+RUN ./init_db.sh
+
+### Django and other python packages installation
+COPY /conf/requirements.txt .
+RUN pip install --break-system-packages -r requirements.txt
+
+### Copy django app files in container
+WORKDIR /app
+COPY  /tools/game/ /app/
+COPY /conf/start.sh .
+RUN chmod 777 start.sh
+
+### Expose on port 8080
+EXPOSE 8080
 EXPOSE 5432
 
-# Test to establish communication (delete later)
-COPY /conf/nginx.conf /etc/nginx/conf.d/default.conf
-COPY /tools/index.html /usr/share/nginx/html
-COPY /tools/style.css /usr/share/nginx/html
-RUN rm /etc/nginx/sites-enabled/default
-
-CMD [ "nginx", "-g", "daemon off;" ]
+### Launch server/application
+#CMD python3 manage.py runserver 0.0.0.0:8080
+ENTRYPOINT [ "sh", "start.sh" ]

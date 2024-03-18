@@ -64,3 +64,11 @@ footer {
 	padding: 20px;
 	color: #fdfdfd;
 }
+
+/* game */
+
+.grid-cell {
+	height: 100px;
+	background-color: #2a2a2a;
+	border: 1px solid #ccc;
+  }
