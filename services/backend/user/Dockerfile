@@ -34,5 +34,4 @@ EXPOSE 8080
 EXPOSE 5432
 
 ### Launch server/application
-#CMD python3 manage.py runserver 0.0.0.0:8080
 ENTRYPOINT [ "sh", "start.sh" ]
