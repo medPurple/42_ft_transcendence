@@ -1,5 +1,5 @@
 """
-URL configuration for game3D project.
+URL configuration for game3d project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -20,5 +20,5 @@ from pong import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-	path('pong/', views.pong),
+	path('game/', views.pong),
 ]

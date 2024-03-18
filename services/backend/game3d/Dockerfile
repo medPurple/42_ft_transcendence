@@ -24,7 +24,7 @@ RUN pip install --break-system-packages -r requirements.txt
 
 ### Copy django app files in container
 WORKDIR /app
-COPY  /tools/game3D/ /app/
+COPY  /tools/game3d/ /app/
 COPY /conf/start.sh .
 RUN chmod 777 start.sh
 
@@ -33,4 +33,4 @@ EXPOSE 8080
 EXPOSE 5432
 
 ### Launch game application
-#ENTRYPOINT [ "sh", "start.sh" ]
+ENTRYPOINT [ "sh", "start.sh" ]

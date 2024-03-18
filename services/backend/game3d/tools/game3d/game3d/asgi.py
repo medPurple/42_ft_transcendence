@@ -1,5 +1,5 @@
 """
-ASGI config for game3D project.
+ASGI config for game3d project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game3D.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game3d.settings')
 
 application = get_asgi_application()
