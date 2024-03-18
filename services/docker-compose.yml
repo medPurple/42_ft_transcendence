@@ -4,6 +4,21 @@ networks:
   microservices:
     driver: bridge
 
+volumes:
+  nginx:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './frontend/'
+
+  game3d:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './volumes/game3d/'
+
 services:
   nginx:
     container_name: nginx

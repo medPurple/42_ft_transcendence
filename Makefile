@@ -16,7 +16,7 @@
 NAME = ft_transcendence
 
 SRCS_PATH = ./services/
-# VOLUMES_PATH = /home/$(USER)/data
+VOLUMES_PATH = $(SRCS_PATH)volumes
 
 NG_NAME = nginx
 G2_NAME = game2d
@@ -32,8 +32,7 @@ CH_IMG = $(shell docker images | grep chat | wc -l)
 TK_IMG = $(shell docker images | grep token | wc -l)
 US_IMG = $(shell docker images | grep user | wc -l)
 
-# MDB_VOL = $(shell docker volume ls | grep mariadb | wc -l)
-# WP_VOL = $(shell docker volume ls | grep wordpress | wc -l)
+G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 
 #######	COLORS #######
 
@@ -45,7 +44,7 @@ CEND = \033[0m
 
 #######	RULES #######
 
-all : up #volumes?
+all : up volumes
 	@ echo "\n$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
 	@ echo "\n$(GREEN)★ Welcome to $(NAME) ★$(CEND)"
 
@@ -56,20 +55,18 @@ all : up #volumes?
 	@ echo "\n$(WHITE)	user set $(CEND)"
 
 	@ echo "\n$(GREEN)★ Everything is running smoothly at http://localhost:8080/ ★$(CEND)"
-	@ echo "$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
+	@ echo "\n$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
 
-# volumes :
-# 	@ echo "\n$(YELLOW)★ Creating Docker Volumes ★$(CEND)"
-# 	@ if [ ! -d "PATH_TO_VOLUMES_HERE" ]; \
-# 	then \
-# 		mkdir -p $(VOLUMES_PATH)/$(MDB_NAME); \
-# 		chmod 777 $(VOLUMES_PATH)/$(MDB_NAME); \
-# 		mkdir -p $(VOLUMES_PATH)/$(WP_NAME); \
-# 		chmod 777 $(VOLUMES_PATH)/$(WP_NAME); \
-# 	else \
-# 		echo "	Volumes already created"; \
-# 	fi;
-# 	@ echo "$(GREEN)★ Volumes OK ★$(CEND)\n"
+volumes :
+	@ echo "\n$(YELLOW)★ Creating Docker Volumes ★$(CEND)"
+	@ if [ ! -d $(VOLUMES_PATH) ]; \
+	then \
+		mkdir -p $(VOLUMES_PATH)/$(G3_NAME); \
+		chmod 777 $(VOLUMES_PATH)/$(G3_NAME); \
+	else \
+		echo "	$(G3_NAME) already created"; \
+	fi;
+	@ echo "$(GREEN)★ Volumes OK ★$(CEND)\n"
 
 up :
 	@ echo "\n$(YELLOW)★ Launching Docker ★$(CEND)"
@@ -83,37 +80,37 @@ down :
 	docker compose -f $(SRCS_PATH)docker-compose.yml down
 	@ echo "$(GREEN)★ Docker stopped ★$(CEND)\n"
 
-re_ng: down #volumes
+re_ng: down volumes
 	@ if [ $(NG_IMG) = "1" ]; then docker rmi $(NG_NAME); fi;
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 
-re_g2: down #volumes
+re_g2: down volumes
 	@ if [ $(G2_IMG) = "1" ]; then docker rmi $(G2_NAME); fi;
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 
-re_g3: down #volumes
+re_g3: down volumes
 	@ if [ $(G3_IMG) = "1" ]; then docker rmi $(G3_NAME); fi;
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 
-re_ch: down #volumes
+re_ch: down volumes
 	@ if [ $(CH_IMG) = "1" ]; then docker rmi $(CH_NAME); fi;
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 
-re_tk: down #volumes
+re_tk: down volumes
 	@ if [ $(TK_IMG) = "1" ]; then docker rmi $(TK_NAME); fi;
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 
-re_us: down #volumes
+re_us: down volumes
 	@ if [ $(US_IMG) = "1" ]; then docker rmi $(US_NAME); fi;
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 
 clean : down
-	@ echo "\n$(YELLOW)★ Cleaning Images ★$(CEND)"
+	@ echo "\n$(YELLOW)★ Cleaning Images - Volumes ★$(CEND)"
 
 	@ if [ $(NG_IMG) = "1" ]; then docker rmi $(NG_NAME); \
 	else echo "	NGINX Image already deleted"; fi;
-# @ if [ $(G2_IMG) = "1" ]; then docker rmi $(G2_NAME); \
-# else echo "	GAME2D Image already deleted"; fi;
+	@ if [ $(G2_IMG) = "1" ]; then docker rmi $(G2_NAME); \
+	else echo "	GAME2D Image already deleted"; fi;
 	@ if [ $(G3_IMG) = "1" ]; then docker rmi $(G3_NAME); \
 	else echo "	GAME3D Image already deleted"; fi;
 	@ if [ $(CH_IMG) = "1" ]; then docker rmi $(CH_NAME); \
@@ -123,17 +120,16 @@ clean : down
 	@ if [ $(US_IMG) = "1" ]; then docker rmi $(US_NAME); \
 	else echo "	USER Image already deleted"; fi;
 
-# @ if [ $(MDB_VOL) = "1" ]; then docker volume rm $(MDB_NAME); \
-# else echo "	MDB Volume already deleted"; fi;
-# @ if [ $(WP_VOL) = "1" ]; then docker volume rm $(WP_NAME); \
-# else echo "	WP Volume already deleted"; fi;
+	@ if [ $(G3_VOL) = "1" ]; then docker volume rm $(G3_NAME); \
+	else echo "	game3d Volume already deleted"; fi;
 
-	@ echo "$(GREEN)★ Images cleaned ★$(CEND)\n"
+	docker system prune -af
+	docker volume prune -f
+
+	@ echo "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 
 fclean : clean
-# rm -rf $(VOLUMES_PATH)
-	docker system prune -af
-#	docker volume prune -f
+	rm -rf $(VOLUMES_PATH)
 	
 re : fclean all
 
