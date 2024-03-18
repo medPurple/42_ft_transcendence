@@ -24,7 +24,7 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: './services/volumes/userbase/'
+      device: './volumes/userbase/'
 
 services:
   nginx:
