@@ -25,7 +25,16 @@ SECRET_KEY = 'django-insecure-$y=*hu^8eq@-trye)+os2a)eocb3fx_+b89j%l-!9^s30-_j@a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+	'gameservice',
+]
+
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
+                        'http://127.0.0.1:8080',
+                        'http://gameservice:8080']
 
 
 # Application definition
@@ -38,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'pong',
+	'rest_framework',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +136,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/pong/'

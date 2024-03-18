@@ -3,6 +3,7 @@ FROM debian:latest
 ### Necessary dependencies for Django
 RUN apt update -y
 RUN apt install python3 python3-pip -y
+RUN apt install -y libpq-dev
 RUN apt install postgresql -y
 
 # Clean lists to reduce size of container
@@ -34,7 +35,6 @@ RUN chmod 777 start.sh
 
 ### Expose port
 EXPOSE 8080
-EXPOSE 5433
 
 ### Launch game application
 ENTRYPOINT [ "sh", "start.sh" ]
