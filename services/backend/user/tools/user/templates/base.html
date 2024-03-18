@@ -27,11 +27,10 @@
 
 	{% if user.is_authenticated %}
 	<p>
-		Vous êtes connecté en tant que {{ request.user }} </p>
+		You are logged in as {{ request.user }} </p>
 	<p>
-		<a href="{% url 'logout' %}" class="button">Se déconnecter</a>
-		<a href="{% url 'user_profile' %}" class="button">Voir mon profil</a>
-		<a href="{% url 'friends' %}" class="button">Voir mes amis</a>
+		<a href="{% url 'logout' %}" class="button">Disconnect</a>
+		<a href="{% url 'user_profile' %}" class="button">See my profile</a>
 	</p>
 	{% endif %}
 	<footer>
