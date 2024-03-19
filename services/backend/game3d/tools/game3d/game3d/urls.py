@@ -20,5 +20,5 @@ from pong import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-	path('pong/', views.pong),
+	path('pong/', views.pong, name='pong'),
 ]
