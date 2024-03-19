@@ -6,10 +6,10 @@
     <h1>Friend Profile</h1>
         <div class="user-info">
             <img src="{{ friend.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
-			<p><strong>Online:</strong> {{user_profile.is_online }}</p>
+			<p><strong>Online:</strong> {{friend.is_online }}</p>
             <p><strong>Username:</strong> {{ friend.username }}</p>
-            <p><strong>First Name:</strong> {{ user_profile.first_name }}</p>
-			<p><strong>Last Name:</strong> {{ user_profile.last_name }}</p>
+            <p><strong>First Name:</strong> {{ friend.first_name }}</p>
+			<p><strong>Last Name:</strong> {{ friend.last_name }}</p>
         </div>
     <a href="{% url 'friends' %}" class="button">Back to Friends</a>
 {% endblock %}

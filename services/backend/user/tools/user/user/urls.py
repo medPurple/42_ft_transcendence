@@ -46,6 +46,8 @@ urlpatterns = [
 	path('send_friend_request/<int:userID>/', friends.views.send_friend_request, name='send_friend_request'),
 	path('accept_friend_request/<int:requestID>/', friends.views.accept_friend_request, name='accept_friend_request'),
 	path('reject_friend_request/<int:requestID>/', friends.views.reject_friend_request, name='reject_friend_request'),
-	path('profile/<int:user_id>/', friends.views.friend_profile, name='friend_profile'),
+	path('profile/<int:userID>/', friends.views.friend_profile, name='friend_profile'),
+	path('delete_friend/<int:userID>/', friends.views.delete_friend, name='delete_friend'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

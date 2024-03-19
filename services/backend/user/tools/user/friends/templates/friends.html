@@ -5,10 +5,10 @@
     <div class="friend-requests">
         <h2>Friend Requests</h2>
         {% for friend_request in friend_requests %}
-            <p>{{ friend_request.from_user.username }} sent you a friend request 
+            <p>{{ friend_request.from_user.username }} sent you a friend request
                 <a href="/accept_friend_request/{{ friend_request.id }}/">Accept</a>
                 <a href="/reject_friend_request/{{ friend_request.id }}/">Reject</a>
-                <a href="{% url 'friend_profile' user_id=friend_request.from_user.id %}">View Profile</a>
+                <a href="{% url 'friend_profile' userID=friend_request.from_user.id %}">View Profile</a>
 
             </p>
         {% endfor %}
@@ -28,7 +28,7 @@
     <div class="friends">
         <h2>Friends</h2>
         {% for friend in request.user.friends.all %}
-            <p>{{ friend.username }}</p>
+            <p>{{ friend.username }} <a href="{% url 'delete_friend' userID=friend.id %}">delete</a></p>
         {% endfor %}
     </div>
 </div>
