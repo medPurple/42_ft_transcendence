@@ -4,6 +4,9 @@ networks:
   microservices:
     driver: bridge
 
+volumes:
+  secret_volume:
+
 services:
   nginx:
     container_name: nginx
@@ -36,11 +39,16 @@ services:
     restart: on-failure
 
   vault:
-    container_name: vault
-    networks:
-      - microservices
-    build: vault
-    image: vault
-    expose:
-      - "8200:8200"
-    restart: on-failure
+    image: hashicorp/vault
+    container_name: vault_prod
+    environment:
+        VAULT_ADDR: http://127.0.0.1:8200
+    ports:
+        - "8200:8200"
+    volumes:
+        - secret_volume:/vault/file:rw
+        - ./vault:/vault/config:rw
+    cap_add:
+        - IPC_LOCK
+    entrypoint: vault server -config=/vault/config/vault.json
+
