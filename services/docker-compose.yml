@@ -2,8 +2,7 @@ version: '3'
 
 networks:
   microservices:
-    driver: bridge
-
+    external: true
 volumes:
   secret_volume:
 
@@ -37,18 +36,4 @@ services:
     expose :
       - "8080"
     restart: on-failure
-
-  vault:
-    image: hashicorp/vault
-    container_name: vault_prod
-    environment:
-        VAULT_ADDR: http://127.0.0.1:8200
-    ports:
-        - "8200:8200"
-    volumes:
-        - secret_volume:/vault/file:rw
-        - ./vault:/vault/config:rw
-    cap_add:
-        - IPC_LOCK
-    entrypoint: vault server -config=/vault/config/vault.json
 
