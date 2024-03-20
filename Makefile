@@ -7,23 +7,19 @@ all: create_network build_image
 
 create_network:
 	@ if [ -z "$$(docker network ls | grep $(network_name))" ]; then \
-		echo "Création du réseau $(network_name)..."; \
 		docker network create -d bridge $(network_name); \
-	else \
-		echo "Le réseau $(network_name) existe déjà."; \
 	fi
 
 build_image:
 	@ if [ -z "$$(docker images | grep -w $(image_name))" ]; then \
-		echo "Construction de l'image $(image_name)..."; \
 		docker build -t $(image_name) ./services/vault/; \
-	else \
-		echo "L'image $(image_name) existe déjà."; \
 	fi
 
 down:
 	@ docker compose -f ./services/docker-compose.yml down
 	@ docker stop vault
+	@ docker rm vault
+
 
 re: down all
 
