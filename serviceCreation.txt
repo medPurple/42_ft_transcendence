@@ -57,7 +57,7 @@ MICROSERVICE CREATION FAQ
     adopter la meme marche a suivre et supprimer des directives dans le Dockerfile, tout est 
     commente en consequence.
 
-    Nginx est egalement configure pour servir les fichiers de front a partir de /services/frontend qui a 
+    Nginx est egalement configure pour servir les fichiers de front a partir de /services/nginx/frontend qui a 
     ete cree par Ana hier.
 
 Ciao Belli e belle
