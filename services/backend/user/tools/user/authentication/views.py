@@ -9,7 +9,8 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.contrib.auth.forms import AuthenticationForm
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser
 from profil.serializers import CustomUserSerializer
 import requests
@@ -37,7 +38,6 @@ def signup(request):
 			return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
 	else:
 		return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
-
 
 @api_view(['POST'])
 def user_login(request):
@@ -80,26 +80,11 @@ def user_logout(request):
 	else:
 		return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
 
-	token_service_url = 'http://token:8080/api/token_generate/'
-	try:
-		token_response = requests.post(token_service_url, json={'user_id' : user_id})
-		token_response.raise_for_status()
-		user_token = token_response.json().get('token')
-		return user_token
-	except requests.exceptions.RequestException as e:
-		print(f"Erreur lors de la connexion au service de génération de jetons : {e}")
-		return None
-
-@api_view(['POST'])
-@login_required
-def user_logout(request):
-	if request.method == 'POST':
-		user = request.user
-		user.token = ''
-		user.is_online = False
-		user.save()
-		logout(request)
-		return Response(status=200)
-	else:
-		return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_details(request):
+    user = request.user
+    user_data = {
+        'username': user.username,
+    }
+    return Response(user_data)

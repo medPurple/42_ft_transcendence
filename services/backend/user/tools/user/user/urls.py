@@ -36,6 +36,7 @@ urlpatterns = [
 	path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
 	path('api/home/', authentication.views.home, name='home'),
 	path('api/signup/', authentication.views.signup, name='signup'),
+	path('api/username/', authentication.views.get_user_details, name='username'),
 	path('api/login/', authentication.views.user_login, name='login'),
 	path('api/logout/', authentication.views.user_logout, name='logout'),
 	path('admin/', admin.site.urls),

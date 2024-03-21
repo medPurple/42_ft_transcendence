@@ -2,7 +2,7 @@ document.addEventListener('authReady', function()  {
 	const registerLink = document.getElementById('register-link');
 	const userServiceAuthentication = document.getElementById('user-service-authentication');
 	const signupFormElement = document.getElementById('user-service-register');
-	const homeContent = document.getElementById('home-content'); // Ajout de l'élément du contenu de la page d'accueil
+	const homeContent = document.getElementById('home-content'); //
 
 	registerLink.addEventListener('click', function(event) {
 		event.preventDefault();
@@ -39,10 +39,13 @@ document.addEventListener('authReady', function()  {
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
-					// Afficher le contenu de la page d'accueil
+					// const userRegisterEvent = new Event('userRegister');
+					// document.dispatchEvent(userRegisterEvent);
+					// // Afficher le contenu de la page d'accueil
 					homeContent.innerHTML = `
 						<h1>Welcome to our website</h1>
 						<p>This is the content of our home page.</p>
+						<p> You are logged in as </p>
 						`;
 					userServiceAuthentication.style.display = 'none';
 					signupFormElement.style.display = 'none';
