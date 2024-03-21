@@ -5,16 +5,9 @@ networks:
     driver: bridge
 
 volumes:
-  nginx:
-  user:
   # djangotemplate:
-
+  user:
   game3d:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './volumes/game3d/'
 
 services:
   nginx:
@@ -65,6 +58,9 @@ services:
 
   game3d:
     container_name: game3d
+    user: root
+    volumes: 
+    - game3d:/var/lib/postgresql
     networks:
       - microservices
     build: backend/game3d
