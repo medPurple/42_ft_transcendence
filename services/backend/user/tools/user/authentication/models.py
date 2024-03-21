@@ -22,5 +22,3 @@ def set_default_pp(sender, instance, **kwargs):
 		with open(default_image_path, 'rb') as f:
 			default_image = File(f)
 			instance.profile_picture.save('default.jpg', default_image, save=False)
-
-

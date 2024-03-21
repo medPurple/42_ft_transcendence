@@ -29,8 +29,8 @@ volumes:
 services:
   nginx:
     container_name: nginx
-    volumes:
-      - nginx:/usr/share/nginx/html
+    # volumes:
+    #   - nginx:/usr/share/nginx/html
     networks:
     - microservices
     build: nginx
