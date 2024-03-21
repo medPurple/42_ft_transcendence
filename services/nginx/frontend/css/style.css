@@ -9,7 +9,7 @@ h2 {
 	font-family: 'Courier New', Courier;
 	font-size: 1em;
 	text-align: center;
-	color: #797878;
+	color: #8b2d2d;
 }
 
 h3 {
@@ -45,14 +45,14 @@ button {
 
 a:hover,
 button:hover {
-	background-color: #8b8b86;
+	background-color: #ca9999;
 	color: #ffffff;
 }
 
 section {
 	margin-bottom: 39px;
 	padding: 30px;
-	border: 2px solid #797878;
+	border: 2px solid #8b2d2d;
 	border-radius: 10px;
 	
 }

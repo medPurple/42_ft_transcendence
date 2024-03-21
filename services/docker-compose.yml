@@ -5,9 +5,9 @@ networks:
     driver: bridge
 
 volumes:
-  nginx:
-  user:
   # djangotemplate:
+  user:
+  game3d:
 
 services:
   nginx:
@@ -52,6 +52,19 @@ services:
       - microservices
     build: backend/token
     image: token
+    expose :
+      - "8080"
+    restart: on-failure
+
+  game3d:
+    container_name: game3d
+    user: root
+    volumes: 
+    - game3d:/var/lib/postgresql
+    networks:
+      - microservices
+    build: backend/game3d
+    image: game3d
     expose :
       - "8080"
     restart: on-failure
