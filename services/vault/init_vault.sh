@@ -18,6 +18,15 @@ if [ ! -f /vault/file/vault_init.txt ]; then
     
     vault operator unseal "$UNSEAL_KEY"
     vault login "$ROOT_TOKEN"
+
+    echo "[VAULT] Token creation"
+    vault token create -display-name=user > /vault/file/user_token.txt
+    vault token create -display-name=token > /vault/file/token_token.txt
+    
+    echo "[VAULT] Secret creation"
+    vault secrets enable -version=1 kv
+    sh /vault/secret_creation.sh
+
     sleep infinity
 else
     echo "[VAULT] Starting server"

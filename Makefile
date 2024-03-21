@@ -1,19 +1,12 @@
 network_name = microservices
 image_name = vault
 
-all: create_network build_image
-	@ docker run --name vault --network microservices -p 8200:8200 -v secret_volume:/vault/file --cap-add IPC_LOCK -e VAULT_ADDR=http://127.0.0.1:8200 -d vault
+all: run_script
 	@ docker compose -f ./services/docker-compose.yml up -d --build
 
-create_network:
-	@ if [ -z "$$(docker network ls | grep $(network_name))" ]; then \
-		docker network create -d bridge $(network_name); \
-	fi
-
-build_image:
-	@ if [ -z "$$(docker images | grep -w $(image_name))" ]; then \
-		docker build -t $(image_name) ./services/vault/; \
-	fi
+run_script:
+	@ chmod +x make_script.sh
+	@ ./make_script.sh
 
 down:
 	@ docker compose -f ./services/docker-compose.yml down

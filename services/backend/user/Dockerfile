@@ -4,6 +4,8 @@ FROM debian:latest
 RUN apt update -y
 RUN apt install python3 python3-pip -y
 RUN apt install postgresql -y
+RUN apt install curl -y
+RUN apt-get install jq -y
 
 ### Env variables assignation (to fix)
 ENV TEMPLATE_DB_USER=dbking
