@@ -6,8 +6,8 @@ networks:
 
 volumes:
   nginx:
-  # djangotemplate:
   user:
+  # djangotemplate:
 
   game3d:
     driver: local
@@ -43,6 +43,8 @@ services:
   user:
     container_name: user
     user: root
+    volumes: 
+    - user:/var/lib/postgresql
     networks:
     - microservices
     build: backend/user
