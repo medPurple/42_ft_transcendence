@@ -8,11 +8,6 @@ volumes:
   nginx:
   # djangotemplate:
   user:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './volumes/userbase'
 
 services:
   nginx:
@@ -41,8 +36,6 @@ services:
   user:
     container_name: user
     user: root
-    volumes:
-    - user:/home/
     networks:
     - microservices
     build: backend/user
