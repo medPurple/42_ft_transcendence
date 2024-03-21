@@ -13,6 +13,8 @@ ENV TEMPLATE_DB_PASSWORD=kingp4bl0
 ENV TEMPLATE_DB_BASENAME=testbase
 
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
+COPY /conf/.key /tmp/.key
+
 RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
 
 ### Database basic initialisation
