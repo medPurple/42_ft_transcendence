@@ -1,0 +1,63 @@
+MICROSERVICE CREATION FAQ
+
+- Si vous voulez creer un microservice incluant une app Django
+  et une base de donnees postgresql vous pouvez proceder de la maniere suivante :
+
+  1 - Creer un dossier /services/backend/<nom_microservice>
+
+  2 - Copier le contenu de /services/backend/djangotemplate dans le dossier 
+      mentionne supra
+
+  3 - Remplacer le contenu de /<nom_microservice>/tools/ par le dossier contenant
+      les fichiers de votre app Django. Ou effacer le contenu de /tools/ et initialiser
+      votre projet/app Django a l'interieur de ce dossier
+
+  3 - Ajuster le Dockerfile en fonction des dependences requises
+
+  4 - Ajuster le /conf/requirements.txt en fonction des dependences requises
+
+  5 - Dans le fichier docker-composer.yml :
+    
+    Copier les parties commentees dans volumes et services puis remplacer
+    toutes les occurences de djangotemplate par le nom de votre microservice
+
+  6 - Dans /services/nginx/conf/nginx.conf : Copier les parties commentees et 
+      remplacer les occurences de djangotemplate par le nom du microservice pour
+      fournir les uri du microservice a nginx
+
+  7 - Nos bases de donnees peuvent maintenant etre persistentes. Il vous suffit
+      de creer un dossier /backend/volumes/<'nom_microservice'base> pour en profiter.
+      
+      Deux contraintes a ca : 
+
+        - le dossier est bind entre notre filesystem local et celui du container,
+          le dossier concerne dans le container ne beneficie de permissions que pour
+          l'utilisateur root. Si vous etes a 42 vous ne pourrez donc pas effacer votre
+          dossier /backend/volumes/<'nom_microservice'base> a moins d'avoir clone le 
+          repo dans le /goinfre ou le /sgoinfre. Si jamais ca vous arrive j'ai quand 
+          meme trouve une roublardise qui consiste a modifier le dossier de destination
+          du volume dans le container pour /home/, a la place de /var/lib/postgresql,
+          puis de vous connecter en mode interactif au container. Vous pouvez ensuite 
+          effacer l integralite du contenu du dossier (fichiers caches inclus) et quitter
+          le container. Le dossier dans votre filesystem local sera maintenant vide et vous
+          pourrez l'effacer. (Je vous montrerai si c est pas clair)
+
+        - J'ai volontairement ignore les dossiers volumes dans le .gitignore. Vous ne
+          pourrez donc pas push vos base de donnees. Cependant j ai mis une regle Dans
+          le makefile qui va creer ces dossiers si ils n existent pas. En cas de creation 
+          d'un nouveau microservice il faudra dupliquer la commande bash dans le Makefile et 
+          l'adapter au nom du microservice.
+
+
+    Actuellement seuls les services user, djangotemplate et nginx sont correctement configures
+    dans le main. Si ca ne fonctionne pas avec un autre de vos microservices il suffit de rajouter
+    les modifications dans les fichiers Dockerfile, docker-compose.yml, init_db.sh, start.sh et pg_hba.conf 
+
+    Si vous voulez creer des microservices sans django voir meme sans base de donnees vous pouvez
+    adopter la meme marche a suivre et supprimer des directives dans le Dockerfile, tout est 
+    commente en consequence.
+
+    Nginx est egalement configure pour servir les fichiers de front a partir de /services/nginx/frontend qui a 
+    ete cree par Ana hier.
+
+Ciao Belli e belle

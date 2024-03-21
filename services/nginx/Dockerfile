@@ -1,5 +1,5 @@
 FROM nginx:latest
 
 COPY /conf/nginx.conf /etc/nginx/conf.d/default.conf
-COPY /tools/index.html /usr/share/nginx/html
-COPY /tools/style.css /usr/share/nginx/html
+
+COPY ./frontend/ /usr/share/nginx/html/

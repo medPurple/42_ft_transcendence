@@ -6,11 +6,13 @@ networks:
 
 volumes:
   nginx:
+  # djangotemplate:
+  user:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: './frontend/'
+      device: './volumes/userbase'
 
   game3d:
     driver: local
@@ -22,16 +24,32 @@ volumes:
 services:
   nginx:
     container_name: nginx
-    networks:
+    networks: 
     - microservices
     build: nginx
     image: nginx
     ports:
       - "8080:80"
     restart: on-failure
-
+  
+  # djangoTemplate:
+  #   container_name: djangotemplate
+  #   user: root
+  #   volumes:
+  #     - djangotemplate:/var/lib/postgresql/
+  #   networks: 
+  #   - microservices
+  #   build: backend/djangotemplate
+  #   image: djangotemplate
+  #   expose :
+  #   - "8080"
+  #   restart: on-failure
+  
   user:
     container_name: user
+    user: root
+    volumes:
+    - user:/home/
     networks:
     - microservices
     build: backend/user
