@@ -49,7 +49,7 @@ def user_login(request):
 			user.is_online = True
 			user.save()
 			login(request, user)
-			return Response(status=200)  # Utilisez le code de statut 200 pour indiquer que la connexion a réussi
+			return Response({'success': True},status=200)  # Utilisez le code de statut 200 pour indiquer que la connexion a réussi
 		else:
 			return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
 	else:
@@ -68,10 +68,16 @@ def user_token(request, user_id):
 		return None
 
 @api_view(['POST'])
-@login_required
+@permission_classes([IsAuthenticated])
 def user_logout(request):
 	if request.method == 'POST':
 		user = request.user
+		token_service_url = 'http://token:8080/api/token_authenticate/'
+		try:
+			token_response = requests.post(token_service_url, json={'token' : user.token})
+			token_response.raise_for_status()
+		except requests.exceptions.RequestException as e:
+			print(f"Erreur lors de la connexion au service de génération de jetons : {e}")
 		user.token = ''
 		user.is_online = False
 		user.save()

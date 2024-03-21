@@ -1,26 +1,21 @@
 document.addEventListener('authReady', function()  {
-	const registerLink = document.getElementById('register-link');
+	const loginLink = document.getElementById('login-link');
 	const userServiceAuthentication = document.getElementById('user-service-authentication');
-	const signupFormElement = document.getElementById('user-service-register');
+	const loginFormElement = document.getElementById('user-service-login');
 
-	registerLink.addEventListener('click', function(event) {
+	loginLink.addEventListener('click', function(event) {
 		event.preventDefault();
-		signupFormElement.innerHTML = `
-		<form id="signup-form" method="post" action="">
-		<input type="file" name="profile_picture" accept="images/*" />
+		loginFormElement.innerHTML = `
+		<form id="login-form" method="post" action="">
 		<input type="text" name="username" placeholder="Username">
-		<input type="text" name="first_name" placeholder="Firstname">
-		<input type="text" name="last_name" placeholder="Lastname">
-		<input type="email" name="email" placeholder="Email">
-		<input type="password" name="password1" placeholder="Password">
-		<input type="password" name="password2" placeholder="Confirm Password">
+		<input type="password" name="password" placeholder="Password">
 		<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-		<button type="submit" class="button">Register</button>
+		<button type="submit" class="button">Log in</button>
 		</form>`;
 		userServiceAuthentication.style.display = 'none'; // Masquer le lien "User Authentication"
-		signupFormElement.style.display = 'block'; // Afficher le formulaire d'inscription
+		loginFormElement.style.display = 'block'; // Afficher le formulaire d'inscription
 
-		const signupForm = document.getElementById('signup-form');
+		const signupForm = document.getElementById('login-form');
 		signupForm.addEventListener('submit', function(event) {
 			event.preventDefault();
 
@@ -28,7 +23,7 @@ document.addEventListener('authReady', function()  {
 			const formData = new FormData(signupForm);
 
 			// Envoyer une requête AJAX pour soumettre le formulaire
-			fetch('/api/signup/', {
+			fetch('/api/login/', {
 				method: 'POST',
 				body: formData,
 				headers: {
@@ -40,7 +35,6 @@ document.addEventListener('authReady', function()  {
 				if (data.success) {
 					const userRegisterEvent = new Event('userRegister');
 					document.dispatchEvent(userRegisterEvent);
-
 				} else {
 					// Afficher les erreurs de validation ou tout autre message d'erreur
 					alert('Registration failed. Please check the form and try again.');
