@@ -1,18 +1,18 @@
-from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import HttpResponse
-from django.core.files import File
-from django.conf import settings
-from django.core.files.base import ContentFile
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.files import File
+from django.core.files.base import ContentFile
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser
 from profil.serializers import CustomUserSerializer
+from .forms import CustomUserCreationForm
+from .models import CustomUser
 import requests
 import os
 

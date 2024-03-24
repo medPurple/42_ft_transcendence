@@ -1,4 +1,3 @@
-let accessToken = '';
 
 document.addEventListener('userRegister', function()  {
 
@@ -10,9 +9,6 @@ document.addEventListener('userRegister', function()  {
 
 	fetch('/api/username/', {
 		method: 'GET',
-		headers: {
-			'Authorization': `Bearer ${accessToken}`
-		}
 	})
 	.then(response => response.json())
 	.then(data => {

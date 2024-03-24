@@ -39,7 +39,7 @@ urlpatterns = [
 	path('api/username/', authentication.views.get_user_details, name='username'),
 	path('api/login/', authentication.views.user_login, name='login'),
 	path('api/logout/', authentication.views.user_logout, name='logout'),
-	path('admin/', admin.site.urls),
+	# path('admin/', admin.site.urls),
 	# path('home/', authentication.views.home, name='home'),
 	path('profile/', profil.views.user_profile, name='user_profile'),
 	path('delete_account/', profil.views.delete_account, name='delete_account'),
