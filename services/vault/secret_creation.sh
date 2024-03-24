@@ -29,7 +29,7 @@ else
 fi
 
 #------------------------------------------------#
-#-----------------------------------------------#
+#------------------------------------------------#
 echo "[VAULT SECRET] Token container secret"
 ENV_FILE="/vault/token/.env"
 SECRET_PATH="jwt_key"
@@ -42,5 +42,6 @@ if [ -f "$ENV_FILE" ]; then
 else
     echo "$ENV_FILE unknow file."
 fi
-
 #------------------------------------------------#
+
+

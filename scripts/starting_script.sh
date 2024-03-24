@@ -21,6 +21,9 @@ build_image() {
 key_distrib() {
     docker exec -i vault sh -c "cat /vault/file/user_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/user/conf/.key
     docker exec -i vault sh -c "cat /vault/file/token_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/token/conf/.key
+    docker exec -i vault sh -c "cat /vault/file/game_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/game/conf/.key
+    docker exec -i vault sh -c "cat /vault/file/chat_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/chat/conf/.key
+
 }
 
 # Lance le conteneur Vault
@@ -31,12 +34,15 @@ start_vault_container() {
 
 # Supprime les clés
 key_remove() {
-    rm services/backend/user/conf/.key
-    rm services/backend/token/conf/.key
+    files_to_delete=(
+        "services/backend/chat/conf/.key"
+        "services/backend/game/conf/.key"
+        "services/backend/token/conf/.key"
+        "services/backend/user/conf/.key"
+    )
+    for file in "${files_to_delete[@]}"; do
+    if [ -f "$file" ]; then
+        rm "$file"
+    fi
+done
 }
-
-# Exécute les différentes étapes
-create_network
-build_image
-start_vault_container
-key_distrib

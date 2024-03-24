@@ -3,16 +3,23 @@ image_name = vault
 
 all: run_script
 	@ docker compose -f ./services/docker-compose.yml up -d --build
+	@ source ./scripts/starting_script.sh && key_remove
 
 run_script:
-	@ chmod +x make_script.sh
-	@ ./make_script.sh
+	@ chmod +x ./scripts/starting_script.sh
+	@ source ./scripts/starting_script.sh && create_network
+	@ source ./scripts/starting_script.sh && build_image
+	@ source ./scripts/starting_script.sh && start_vault_container
+	@ source ./scripts/starting_script.sh && key_distrib
 
 down:
 	@ docker compose -f ./services/docker-compose.yml down
 	@ docker stop vault
 	@ docker rm vault
 
+microservices:
+	@ chmod +x ./scripts/create_microservice.sh
+	@ ./scripts/create_microservice.sh
 
 re: down all
 
@@ -23,4 +30,4 @@ clean:
 	 docker volume rm $$(docker volume ls -q);\
 	 docker network rm $$(docker network ls -q);
  
-.PHONY: all re down clean create_network build_image
+.PHONY: all re down clean run_script
