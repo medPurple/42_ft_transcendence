@@ -83,7 +83,6 @@ creating_secret(){
 	secret_init_file
 	secret_creation_file
 	secret_starting_script
-	echo ok
 }
 
 # Fonction pour créer les fichiers
@@ -93,105 +92,19 @@ creating_file(){
 	if [[ $database_needed == "y" || $database_needed == "Y" ]]; then
 		touch services/backend/"$microservice_name"/conf/init_db.sh
 		touch services/backend/"$microservice_name"/conf/pg_hba.conf
+		cat  scripts/template_db/template_docker_db.txt > services/backend/"$microservice_name"/Dockerfile
+		cat  scripts/template_db/template_init_db.txt > services/backend/"$microservice_name"/conf/init_db.sh
+		sed -i 's/SECRET_PATH="[^"]*"/SECRET_PATH="'"$secret_category"'"/' services/backend/"$microservice_name"/conf/init_db.sh
+		cat  scripts/template_db/template_start_db.txt > services/backend/"$microservice_name"/conf/start.sh
+		cat  scripts/template_db/template_pg_hba.txt > services/backend/"$microservice_name"/conf/pg_hba.conf
+	else
+		if [[ $secret_needed == "y" || $secret_needed == "Y" ]]; then
+			cat  scripts/template_nodb/template_docker_secret.txt > services/backend/"$microservice_name"/Dockerfile
+		else
+			cat  scripts/template_nodb/template_docker_nosecret.txt > services/backend/"$microservice_name"/conf/start.sh
+		fi
+		cat  scripts/template_nodb/template_start.txt > services/backend/"$microservice_name"/conf/start.sh
 	fi
-	echo 'FROM debian:latest
-
-### Necessary dependencies for Django
-RUN apt update -y
-RUN apt install python3 python3-pip -y
-RUN apt install postgresql -y
-RUN apt install curl -y
-RUN apt-get install jq -y
-
-
-COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
-COPY /conf/.key /tmp/.key
-
-RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
-
-### Database basic initialisation
-COPY /conf/init_db.sh /tmp/init_db.sh
-RUN chmod 777 /tmp/init_db.sh
-# RUN ./init_db.sh
-
-### Django and other python packages installation
-COPY /conf/requirements.txt .
-RUN pip install --break-system-packages -r requirements.txt
-
-### Copy django app files in container
-WORKDIR /app
-COPY  /tools/user/ /app/
-COPY /conf/start.sh .
-RUN chmod 777 start.sh
-
-
-### Expose on port 8080
-EXPOSE 8080
-EXPOSE 5432
-
-### Launch server/application
-ENTRYPOINT [ "sh", "start.sh" ]' > services/backend/"$microservice_name"/Dockerfile
-
-	echo '#!/bin/bash
-
-VAULT_ADDR="http://vault:8200"
-SECRET_PATH="'$secret_category'"
-VAULT_TOKEN=$(cat /tmp/.key)
-
-response=$(curl -s --header "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/kv/$SECRET_PATH")
-
-DB_USER=$(echo "$response" | jq -r ".data.db_username")
-DB_BASENAME=$(echo "$response" | jq -r ".data.db_name")
-DB_PASSWORD=$(echo "$response" | jq -r ".data.db_password")
-
-su postgres <<EOF
-service postgresql start
-sleep 5
-
-psql -c "CREATE USER ${DB_USER} WITH PASSWORD '\''${DB_PASSWORD}'\'';"
-psql -c "CREATE DATABASE ${DB_BASENAME} OWNER ${DB_USER};"
-psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_BASENAME} TO ${DB_USER};"
-psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${DB_USER};"
-EOF' > services/backend/"$microservice_name"/conf/init_db.sh
-
-
-
-	echo '#!/bin/bash
-
-sh /tmp/init_db.sh
-service postgresql start
-
-sleep 5
-
-python3 manage.py makemigrations authentication
-
-
-sleep 5
-
-python3 manage.py migrate
-
-sleep 5
-python3 manage.py runserver 0.0.0.0:8080' > services/backend/"$microservice_name"/conf/start.sh
-
-	echo '
-# Database administrative login by Unix domain socket
-local   all             postgres                                peer
-
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
-
-# "local" is for Unix domain socket connections only
-local   all             all                                     password
-# IPv4 local connections:
-host    all             all             127.0.0.1/32            md5
-# IPv6 local connections:
-host    all             all             ::1/128                 scram-sha-256
-# Allow replication connections from localhost, by a user with the
-# replication privilege.
-local   replication     all                                     peer
-host    replication     all             127.0.0.1/32            scram-sha-256
-host    replication     all             ::1/128                 scram-sha-256
-' > services/backend/"$microservice_name"/conf/pg_hba.conf
-	echo ok
 }
 
 # MAIN SCRIPT
@@ -207,7 +120,6 @@ if [[ $secret_needed == "y" || $secret_needed == "Y" ]]; then
 	read -p "How many secret do you need : " secret_number;
 	creating_secret
 fi
-
 if [[ $is_backend == "y" || $is_backend == "Y" ]]; then
 	creating_file
 fi

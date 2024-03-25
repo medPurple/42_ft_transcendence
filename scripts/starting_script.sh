@@ -19,10 +19,9 @@ build_image() {
 
 # Distribue les clés
 key_distrib() {
-    docker exec -i vault sh -c "cat /vault/file/user_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/user/conf/.key
-    docker exec -i vault sh -c "cat /vault/file/token_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/token/conf/.key
-    docker exec -i vault sh -c "cat /vault/file/game_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/game/conf/.key
-    docker exec -i vault sh -c "cat /vault/file/chat_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/chat/conf/.key
+	docker exec -i vault sh -c "cat /vault/file/bob_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/bob/conf/.key
+
+	docker exec -i vault sh -c "cat /vault/file/test_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/test/conf/.key
 
 }
 
@@ -35,10 +34,10 @@ start_vault_container() {
 # Supprime les clés
 key_remove() {
     files_to_delete=(
-        "services/backend/chat/conf/.key"
-        "services/backend/game/conf/.key"
-        "services/backend/token/conf/.key"
-        "services/backend/user/conf/.key"
+		"services/backend/bob/conf/.key"
+
+		"services/backend/test/conf/.key"
+
     )
     for file in "${files_to_delete[@]}"; do
     if [ -f "$file" ]; then
