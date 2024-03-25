@@ -93,6 +93,7 @@ creating_file(){
 		touch services/backend/"$microservice_name"/conf/init_db.sh
 		touch services/backend/"$microservice_name"/conf/pg_hba.conf
 		cat  scripts/template_db/template_docker_db.txt > services/backend/"$microservice_name"/Dockerfile
+		sed -i "s/COPY  \/tools\/microname\//COPY  \/tools\/$microservice_name\//" services/backend/"$microservice_name"/Dockerfile
 		cat  scripts/template_db/template_init_db.txt > services/backend/"$microservice_name"/conf/init_db.sh
 		sed -i 's/SECRET_PATH="[^"]*"/SECRET_PATH="'"$secret_category"'"/' services/backend/"$microservice_name"/conf/init_db.sh
 		cat  scripts/template_db/template_start_db.txt > services/backend/"$microservice_name"/conf/start.sh

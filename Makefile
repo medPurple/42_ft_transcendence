@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 network_name = microservices
 image_name = vault
 

@@ -1,0 +1,21 @@
+.user-info {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 1em;
+	color: black ;
+	margin-bottom: 10px;
+}
+
+.user-info label {
+	font-weight: bold;
+	display: inline-block;
+	width: 150px;
+	margin-right: 10px;
+}
+
+.user-info .profile-pic {
+	border-radius: 50%;
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+}
+
