@@ -3,6 +3,12 @@ FROM debian:latest
 ### Necessary dependencies for Django
 RUN apt update -y
 RUN apt install python3 python3-pip -y
+RUN apt install curl -y
+RUN apt-get install jq -y
+
+
+COPY /conf/.key /tmp/.key
+
 
 ### Django and other python packages installation
 COPY /conf/requirements.txt .
@@ -19,5 +25,4 @@ RUN chmod 777 start.sh
 EXPOSE 8080
 
 ### Launch server/application
-#CMD python3 manage.py runserver 0.0.0.0:8080
 ENTRYPOINT [ "sh", "start.sh" ]

@@ -1,37 +1,30 @@
+SHELL := /bin/bash
 
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: ancolmen <ancolmen@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/02/21 14:38:30 by ancolmen          #+#    #+#              #
-#    Updated: 2024/02/21 17:55:29 by ancolmen         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
 
 #######	VARIABLES #######
 
 NAME = ft_transcendence
 
 SRCS_PATH = ./services/
-#VOLUMES_PATH = $(SRCS_PATH)volumes
 
 NG_NAME = nginx
 G3_NAME = game3d
 CH_NAME = chat
 TK_NAME = token
 US_NAME = user
+VA_NAME = vault
 
 NG_IMG = $(shell docker images | grep nginx | wc -l)
 G3_IMG = $(shell docker images | grep game3d | wc -l)
 CH_IMG = $(shell docker images | grep chat | wc -l)
 TK_IMG = $(shell docker images | grep token | wc -l)
 US_IMG = $(shell docker images | grep user | wc -l)
+VA_IMG = $(shell docker images | grep vault | wc -l)
 
 US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
+VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
+
 
 #######	COLORS #######
 
@@ -43,60 +36,64 @@ CEND = \033[0m
 
 #######	RULES #######
 
-all : up volumes
-	@ echo "\n$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
-	@ echo "\n$(GREEN)★ Welcome to $(NAME) ★$(CEND)"
 
-	@ echo "\n$(WHITE)	nginx set $(CEND)"
-	@ echo "\n$(WHITE)	game3d set $(CEND)"
-	@ echo "\n$(WHITE)	token set $(CEND)"
-	@ echo "\n$(WHITE)	user set $(CEND)"
-
-	@ echo "\n$(GREEN)★ Everything is running smoothly at http://localhost:8080/ ★$(CEND)"
-	@ echo "\n$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
-
-# volumes :
-# 	@ echo "\n$(YELLOW)★ Creating Docker Volumes ★$(CEND)"
-# 	@ if [ ! -d $(VOLUMES_PATH) ]; \
-# 	then \
-# 		mkdir -p $(VOLUMES_PATH)/$(G3_NAME); \
-# 		chmod 777 $(VOLUMES_PATH)/$(G3_NAME); \
-# 	else \
-# 		echo "	$(G3_NAME) already created"; \
-# 	fi;
-# 	@ echo "$(GREEN)★ Volumes OK ★$(CEND)\n"
-
-up :
+all:
 	@ echo "\n$(YELLOW)★ Launching Docker ★$(CEND)"
 	@ docker --version
 	@ echo "$(WHITE) A self-sufficient runtime for containers$(CEND)"
-	docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ run_script
+	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
 	@ echo "$(GREEN)★ Images Ready ★$(CEND)\n"
 
-down :
+run_script:
+	@ chmod +x ./scripts/starting_script.sh
+	@ source ./scripts/starting_script.sh && create_network
+	@ source ./scripts/starting_script.sh && build_image
+	@ source ./scripts/starting_script.sh && start_vault_container
+	@ source ./scripts/starting_script.sh && key_distrib
+
+down:
 	@ echo "\n$(YELLOW)★ Stopping Docker ★$(CEND)"
-	docker compose -f $(SRCS_PATH)docker-compose.yml down
-	@ echo "$(GREEN)★ Docker stopped ★$(CEND)\n"
+	@docker compose -f $(SRCS_PATH)docker-compose.yml down
+	@ docker stop vault
+	@ docker rm vault
 
-re_ng: down #volumes
+microservices:
+	@ chmod +x ./scripts/create_microservice.sh
+	@ ./scripts/create_microservice.sh
+
+re: down all
+
+re_ng: down
 	@ if [ $(NG_IMG) = "1" ]; then docker rmi $(NG_NAME); fi;
+	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
 
-re_g3: down #volumes
+re_g3: down
 	@ if [ $(G3_IMG) = "1" ]; then docker rmi $(G3_NAME); fi;
+	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
 
-re_ch: down #volumes
+re_ch: down
 	@ if [ $(CH_IMG) = "1" ]; then docker rmi $(CH_NAME); fi;
+	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
 
-re_tk: down #volumes
+re_tk: down
 	@ if [ $(TK_IMG) = "1" ]; then docker rmi $(TK_NAME); fi;
+	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
 
-re_us: down #volumes
+re_us: down
 	@ if [ $(US_IMG) = "1" ]; then docker rmi $(US_NAME); fi;
+	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
 
 clean : down
 	@ echo "\n$(YELLOW)★ Cleaning Images - Volumes ★$(CEND)"
@@ -111,9 +108,12 @@ clean : down
 	else echo "	TOKEN Image already deleted"; fi;
 	@ if [ $(US_IMG) = "1" ]; then docker rmi $(US_NAME); \
 	else echo "	USER Image already deleted"; fi;
-
+	@ if [ $(VA_IMG) = "1" ]; then docker rmi $(VA_NAME); \
+	else echo "	USER Image already deleted"; fi;
 	@ if [ $(G3_VOL) = "1" ]; then docker volume rm services_$(G3_NAME); \
 	else echo "	game3d Volume already deleted"; fi;
+	@ if [ $(VA_VOL) = "1" ]; then docker volume rm services_$(VA_NAME); \
+	else echo "	Vault Volume already deleted"; fi;
 	@ if [ $(US_VOL) = "1" ]; then docker volume rm services_$(US_NAME); \
 	else echo "	user Volume already deleted"; fi;
 
@@ -122,8 +122,7 @@ clean : down
 fclean : clean
 	docker system prune -af
 	docker volume prune -f
-# rm -rf $(VOLUMES_PATH)
-	
+
 re : fclean all
 
 .PHONY: all volumes up down clean fclean re re_ng re_g3 re_ch re_tk re_us

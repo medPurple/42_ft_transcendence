@@ -3,25 +3,21 @@ FROM debian:latest
 ### Necessary dependencies for Django
 RUN apt update -y
 RUN apt install python3 python3-pip -y
-RUN apt install -y libpq-dev
 RUN apt install postgresql -y
+RUN apt install curl -y
+RUN apt install -y libpq-dev
+RUN apt-get install jq -y
 
-# Clean lists to reduce size of container
 RUN rm -rf /var/lib/apt/lists/*
-
-### Env variables assignation (to fix)
-ENV GAME_DB_USER=dbking
-ENV GAME_DB_PASSWORD=kingp4bl0
-ENV GAME_DB_BASENAME=testbase
-
-# Copy our configuration
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
+COPY /conf/.key /tmp/.key
+
 RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
 
 ### Database basic initialisation
-COPY /conf/init_db.sh .
-RUN chmod 777 init_db.sh
-RUN ./init_db.sh
+COPY /conf/init_db.sh /tmp/init_db.sh
+RUN chmod 777 /tmp/init_db.sh
+# RUN ./init_db.sh
 
 ### Django and other python packages installation
 COPY /conf/requirements.txt .
@@ -33,8 +29,10 @@ COPY  /tools/game3d/ /app/
 COPY /conf/start.sh .
 RUN chmod 777 start.sh
 
-### Expose port
-EXPOSE 8080
 
-### Launch game application
+### Expose on port 8080
+EXPOSE 8080
+EXPOSE 5432
+
+### Launch server/application
 ENTRYPOINT [ "sh", "start.sh" ]
