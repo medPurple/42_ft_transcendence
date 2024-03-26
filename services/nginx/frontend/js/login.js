@@ -23,7 +23,7 @@ document.addEventListener('authReady', function()  {
 			const formData = new FormData(signupForm);
 
 			// Envoyer une requête AJAX pour soumettre le formulaire
-			fetch('/api/login/', {
+			fetch('/api/profiles/user_login/', {
 				method: 'POST',
 				body: formData,
 				headers: {

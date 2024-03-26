@@ -4,8 +4,8 @@ service postgresql start
 
 sleep 2
 
-python3 manage.py makemigrations authentication
 python3 manage.py makemigrations friends
+python3 manage.py makemigrations profiles
 
 
 python3 manage.py migrate

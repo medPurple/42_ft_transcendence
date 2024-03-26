@@ -5,21 +5,21 @@ document.addEventListener('userLogout', function()  {
 	const logoutButton = document.getElementById('logout-button');
 	const userServiceLink = document.getElementById('user-service-link');
 	const homeContent = document.getElementById('home-content'); // Ajout de l'élément du contenu de la page d'accueil
-	
-	
+
+
 	// Ajoutez un gestionnaire d'événements pour le clic sur le bouton de déconnexion
 	logoutButton.addEventListener('click', function(event) {
-		
+
 		event.preventDefault();
-		
-	// The getCookie function you provided is used to retrieve the CSRF token from the "csrftoken" cookie. 
+
+	// The getCookie function you provided is used to retrieve the CSRF token from the "csrftoken" cookie.
 	// This CSRF token is necessary to protect POST requests against Cross-Site Request Forgery (CSRF) attacks.
 		function getCookie(name) {
 			let cookieValue = null;
 			if (document.cookie && document.cookie !== '') {
 				const cookies = document.cookie.split(';');
 				for (let i = 0; i < cookies.length; i++) {
-					let cookie = cookies[i].trim(); 
+					let cookie = cookies[i].trim();
 					if (cookie.substring(0, name.length + 1) === (name + '=')) {
 						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
 						break;
@@ -29,7 +29,7 @@ document.addEventListener('userLogout', function()  {
 			return cookieValue;
 		}
 		let csrfToken = getCookie('csrftoken');
-		
+
 		const loginForm = document.getElementById('login-form');
 		const signupForm = document.getElementById('signup-form');
 		let formData;
@@ -40,12 +40,12 @@ document.addEventListener('userLogout', function()  {
 		} else {
 			return console.error('No login form found');
 		}
-		
+
 	// Ajoutez le jeton CSRF à l'objet FormData
 	formData.append('csrfmiddlewaretoken', csrfToken);
-	
+
 	// Envoyez la demande de déconnexion à l'API Django
-	fetch('/api/logout/', {
+	fetch('/api/profiles/user_logout/', {
 		method: 'POST',
 		body: formData,
 		credentials: 'same-origin',

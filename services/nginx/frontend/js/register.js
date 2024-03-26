@@ -7,15 +7,15 @@ document.addEventListener('authReady', function()  {
 		event.preventDefault();
 		signupFormElement.innerHTML = `
 		<form id="signup-form" method="post" action="">
-		<input type="file" name="profile_picture" accept="images/*" />
-		<input type="text" name="username" placeholder="Username">
-		<input type="text" name="first_name" placeholder="Firstname">
-		<input type="text" name="last_name" placeholder="Lastname">
-		<input type="email" name="email" placeholder="Email">
-		<input type="password" name="password1" placeholder="Password">
-		<input type="password" name="password2" placeholder="Confirm Password">
-		<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-		<button type="submit" class="button">Register</button>
+			<input type="file" name="profile_picture" accept="images/*" />
+			<input type="text" name="username" placeholder="Username">
+			<input type="text" name="first_name" placeholder="Firstname">
+			<input type="text" name="last_name" placeholder="Lastname">
+			<input type="email" name="email" placeholder="Email">
+			<input type="password" name="password1" placeholder="Password">
+			<input type="password" name="password2" placeholder="Confirm Password">
+			<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+			<button type="submit" class="button">Register</button>
 		</form>`;
 		userServiceAuthentication.style.display = 'none'; // Masquer le lien "User Authentication"
 		signupFormElement.style.display = 'block'; // Afficher le formulaire d'inscription
@@ -28,7 +28,7 @@ document.addEventListener('authReady', function()  {
 			const formData = new FormData(signupForm);
 
 			// Envoyer une requête AJAX pour soumettre le formulaire
-			fetch('/api/signup/', {
+			fetch('/api/profiles/signup/', {
 				method: 'POST',
 				body: formData,
 				headers: {

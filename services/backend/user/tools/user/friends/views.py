@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from authentication.models import CustomUser
+from profiles.models import CustomUser
 from friends.models import Friend_Request
 from django.http import HttpResponse
 

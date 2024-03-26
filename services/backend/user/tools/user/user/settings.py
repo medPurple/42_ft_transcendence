@@ -50,8 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'drf_spectacular',
-    'authentication',
-    'profil',
+    'profiles',
     'friends',
 ]
 
@@ -104,7 +103,7 @@ DATABASES = {
 
 #Authentication user
 
-AUTH_USER_MODEL = 'authentication.CustomUser'
+AUTH_USER_MODEL = 'profiles.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

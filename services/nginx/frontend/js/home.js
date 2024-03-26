@@ -6,9 +6,18 @@ document.addEventListener('userRegister', function()  {
 	const userServiceAuthentication = document.getElementById('user-service-authentication');
 	const loginFormElement = document.getElementById('user-service-login');
 
-
-	fetch('/api/username/', {
+	let userId;
+	fetch ('api/profiles/get_userId', {
 		method: 'GET',
+	})
+	.then(response => response.json())
+	.then(data => {
+		console.log(data);
+		userId = data.id;
+
+		return fetch(`/api/profiles/${userId}`, {
+			method : 'GET',
+		});
 	})
 	.then(response => response.json())
 	.then(data => {
