@@ -37,16 +37,15 @@ CEND = \033[0m
 #######	RULES #######
 
 
-all:
-	@ echo "\n$(YELLOW)★ Launching Docker ★$(CEND)"
-	@ docker --version
-	@ echo "$(WHITE) A self-sufficient runtime for containers$(CEND)"
-	@ run_script
+all: run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
-	@ echo "$(GREEN)★ Images Ready ★$(CEND)\n"
+	@ echo -e "$(GREEN)★ Images Ready ★$(CEND)\n"
 
 run_script:
+	@ echo -e "\n$(YELLOW)★ Launching Docker ★$(CEND)"
+	@ docker --version
+	@ echo -e "$(WHITE) A self-sufficient runtime for containers$(CEND)"
 	@ chmod +x ./scripts/starting_script.sh
 	@ source ./scripts/starting_script.sh && create_network
 	@ source ./scripts/starting_script.sh && build_image
@@ -54,8 +53,8 @@ run_script:
 	@ source ./scripts/starting_script.sh && key_distrib
 
 down:
-	@ echo "\n$(YELLOW)★ Stopping Docker ★$(CEND)"
-	@docker compose -f $(SRCS_PATH)docker-compose.yml down
+	@ echo -e "\n$(YELLOW)★ Stopping Docker ★$(CEND)"
+	@ docker compose -f $(SRCS_PATH)docker-compose.yml down
 	@ docker stop vault
 	@ docker rm vault
 
@@ -65,33 +64,28 @@ microservices:
 
 re: down all
 
-re_ng: down
+re_ng: down run_script
 	@ if [ $(NG_IMG) = "1" ]; then docker rmi $(NG_NAME); fi;
-	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
-re_g3: down
+re_g3: down	run_script
 	@ if [ $(G3_IMG) = "1" ]; then docker rmi $(G3_NAME); fi;
-	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
-re_ch: down
+re_ch: down	run_script
 	@ if [ $(CH_IMG) = "1" ]; then docker rmi $(CH_NAME); fi;
-	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
-re_tk: down
+re_tk: down	run_script
 	@ if [ $(TK_IMG) = "1" ]; then docker rmi $(TK_NAME); fi;
-	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
-re_us: down
+re_us: down	run_script
 	@ if [ $(US_IMG) = "1" ]; then docker rmi $(US_NAME); fi;
-	@ run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
@@ -112,12 +106,12 @@ clean : down
 	else echo "	USER Image already deleted"; fi;
 	@ if [ $(G3_VOL) = "1" ]; then docker volume rm services_$(G3_NAME); \
 	else echo "	game3d Volume already deleted"; fi;
-	@ if [ $(VA_VOL) = "1" ]; then docker volume rm services_$(VA_NAME); \
-	else echo "	Vault Volume already deleted"; fi;
 	@ if [ $(US_VOL) = "1" ]; then docker volume rm services_$(US_NAME); \
 	else echo "	user Volume already deleted"; fi;
+	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL); \
+	else echo "	Vault Volume already deleted"; fi;
 
-	@ echo "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
+	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 
 fclean : clean
 	docker system prune -af

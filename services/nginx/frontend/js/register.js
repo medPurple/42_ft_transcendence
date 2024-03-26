@@ -2,6 +2,7 @@ document.addEventListener('authReady', function()  {
 	const registerLink = document.getElementById('register-link');
 	const userServiceAuthentication = document.getElementById('user-service-authentication');
 	const signupFormElement = document.getElementById('user-service-register');
+	const pongFormElement = document.getElementById('game');
 
 	registerLink.addEventListener('click', function(event) {
 		event.preventDefault();
@@ -18,6 +19,7 @@ document.addEventListener('authReady', function()  {
 			<button type="submit" class="button">Register</button>
 		</form>`;
 		userServiceAuthentication.style.display = 'none'; // Masquer le lien "User Authentication"
+		pongFormElement.style.display = 'none';
 		signupFormElement.style.display = 'block'; // Afficher le formulaire d'inscription
 
 		const signupForm = document.getElementById('signup-form');

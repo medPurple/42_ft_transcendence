@@ -21,9 +21,9 @@ import token_generation.views
 import token_authentication.views
 
 urlpatterns = [
-    path('api/token_generate/', token_generation.views.TokenGenerationAPIView.as_view()),
-	path('api/token_authenticate/', token_authentication.views.TokenAuthenticationAPIView.as_view()),
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('api/token/generate/', token_generation.views.TokenGenerationAPIView.as_view()),
+	path('api/token/authenticate/', token_authentication.views.TokenAuthenticationAPIView.as_view()),
+    path('api/token/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/token/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/token/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

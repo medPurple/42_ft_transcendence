@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
 	const userServiceLink = document.getElementById('user-service-link');
 	const userServiceAuthentication = document.getElementById('user-service-authentication'); // Sélectionnez l'élément avec l'ID 'user-service'
+	const pongFormElement = document.getElementById('game');
+
 
 	userServiceLink.addEventListener('click', function(event) {
 		event.preventDefault();
@@ -10,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					`;
 		userServiceAuthentication.style.display = 'block';
 		userServiceLink.style.display = 'none';
+		pongFormElement.style.display = 'none';
 
 		  // Déclencher un événement personnalisé une fois que les éléments sont prêts
 		  const authReadyEvent = new Event('authReady');

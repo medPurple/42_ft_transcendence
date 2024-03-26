@@ -17,7 +17,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 	queryset = CustomUser.objects.all()
 
 	def user_token(self, request, user_id):
-		token_service_url = 'http://token:8080/api/token_generate/'
+		token_service_url = 'http://token:8080/api/token/generate/'
 		try:
 			token_response = requests.post(token_service_url, json={'user_id' : user_id})
 			token_response.raise_for_status()
@@ -70,7 +70,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 	def user_logout(self, request):
 		if request.method == 'POST':
 			user = request.user
-			token_service_url = 'http://token:8080/api/token_authenticate/'
+			token_service_url = 'http://token:8080/api/token/authenticate/'
 			try:
 				token_response = requests.post(token_service_url, json={'token' : user.token})
 				token_response.raise_for_status()

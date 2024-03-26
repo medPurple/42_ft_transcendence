@@ -18,7 +18,7 @@ su postgres <<EOF
 psql -lqt | cut -d \| -f 1 | grep -qw '${DB_BASENAME}'
 EOF
 
-if [ "$?" == "0" ]; then
+if [ "$?" -eq "0" ]; then
 
 	echo "Database already exists."
 

@@ -1,43 +1,5 @@
 version: '3'
 
-networks:
-  microservices:
-    driver: bridge
-
-volumes:
-  nginx:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './frontend/'
-
-  # djangotemplate:
-  #   driver: local
-  #   driver_opts:
-  #     type: 'none'
-  #     o: 'bind'
-  #     device: './volumes/djangotemplatebase/'
-  #
-  user:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './services/volumes/userbase/'
-
-services:
-  nginx:
-    container_name: nginx
-    volumes:
-      - nginx:/usr/share/nginx/html
-    networks:
-    - microservices
-    build: nginx
-    image: nginx
-    ports:
-      - "8080:80"
-    restart: on-failure
 
   # djangoTemplate:
   #   container_name: djangotemplate
@@ -51,8 +13,6 @@ services:
   #   expose :
   #   - "8080"
   #   restart: on-failure
-
-version: '3'
 
 networks:
   microservices:
