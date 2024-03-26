@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from user.vault import VaultClient
 import os
+
+# Create a Vault link
+vault = VaultClient()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -90,6 +94,7 @@ WSGI_APPLICATION = 'user.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+db_info = vault.secret('user_db')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

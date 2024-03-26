@@ -1,4 +1,4 @@
--#!/bin/bash
+#!/bin/bash
 
 sh /tmp/init_db.sh
 service postgresql start

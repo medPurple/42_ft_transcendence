@@ -28,8 +28,12 @@ key_distrib() {
 
 # Lance le conteneur Vault
 start_vault_container() {
-	docker run --name vault --network microservices -p 8200:8200 -v secret_volume:/vault/file --cap-add IPC_LOCK -e VAULT_ADDR=http://127.0.0.1:8200 -d vault
-	sleep 5
+    if [[ -z "$(docker ps -aqf name=$container_name)" ]]; then
+		docker run --name vault --network microservices -p 8200:8200 -v secret_volume:/vault/file --cap-add IPC_LOCK -e VAULT_ADDR=http://127.0.0.1:8200 -d vault
+        sleep 5
+    else
+        echo "Container $container_name already exists."
+    fi
 }
 
 # Supprime les clés
