@@ -1,8 +1,26 @@
+  # djangoTemplate:
+  #   container_name: djangotemplate
+  #   user: root
+  #   volumes:
+  #     - djangotemplate:/var/lib/postgresql/
+  #   networks: 
+  #   - microservices
+  #   build: backend/djangotemplate
+  #   image: djangotemplate
+  #   expose :
+  #   - "8080"
+  #   restart: on-failure
+  
 version: '3'
 
 networks:
   microservices:
-    driver: bridge
+    external: true
+volumes:
+  secret_volume:
+  user:
+  game3d:
+
 
 volumes:
   nginx:
@@ -74,3 +92,17 @@ services:
     expose :
       - "8080"
     restart: on-failure
+
+  game3d:
+    container_name: game3d
+    user: root
+    volumes: 
+    - game3d:/var/lib/postgresql
+    networks:
+      - microservices
+    build: backend/game3d
+    image: game3d
+    expose :
+      - "8080"
+    restart: on-failure
+

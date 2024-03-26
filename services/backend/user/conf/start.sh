@@ -1,5 +1,6 @@
 #!/bin/bash
 
+sh /tmp/init_db.sh
 service postgresql start
 
 sleep 2
