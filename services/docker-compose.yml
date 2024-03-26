@@ -1,43 +1,44 @@
 version: '3'
 
-networks:
-  microservices:
-    driver: bridge
 
-volumes:
-  # djangotemplate:
-  user:
-  game3d:
-
-services:
-  nginx:
-    container_name: nginx
-    networks: 
-    - microservices
-    build: nginx
-    image: nginx
-    ports:
-      - "8080:80"
-    restart: on-failure
-  
   # djangoTemplate:
   #   container_name: djangotemplate
   #   user: root
   #   volumes:
   #     - djangotemplate:/var/lib/postgresql/
-  #   networks: 
+  #   networks:
   #   - microservices
   #   build: backend/djangotemplate
   #   image: djangotemplate
   #   expose :
   #   - "8080"
   #   restart: on-failure
-  
+
+networks:
+  microservices:
+    external: true
+volumes:
+  secret_volume:
+  user:
+  game3d:
+
+
+services:
+  nginx:
+    container_name: nginx
+    networks:
+    - microservices
+    build: nginx
+    image: nginx
+    ports:
+      - "8080:80"
+    restart: on-failure
+
   user:
     container_name: user
     user: root
-    volumes: 
-    - user:/var/lib/postgresql
+    volumes:
+      - user:/var/lib/postgresql/
     networks:
     - microservices
     build: backend/user
@@ -59,7 +60,7 @@ services:
   game3d:
     container_name: game3d
     user: root
-    volumes: 
+    volumes:
     - game3d:/var/lib/postgresql
     networks:
       - microservices
