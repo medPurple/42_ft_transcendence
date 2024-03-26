@@ -13,17 +13,6 @@ run_script:
 	@ source ./scripts/starting_script.sh && start_vault_container
 	@ source ./scripts/starting_script.sh && key_distrib
 
-create_volumes_repo :
-
-						@if [ ! -d ./services/volumes ]; \
-						then \
-							mkdir ./services/volumes; \
-						fi ; \
-						if [ ! -d ./services/volumes/userbase  ]; \
-						then \
-							mkdir ./services/volumes/userbase ; \
-						fi ; \
-
 down:
 	@ docker compose -f ./services/docker-compose.yml down
 	@ docker stop vault

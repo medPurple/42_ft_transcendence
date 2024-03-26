@@ -99,9 +99,9 @@ db_info = vault.secret('user_db')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'testbase',
-        'USER': 'dbking',
-        'PASSWORD': 'kingp4bl0',
+        'NAME': db_info['db_name'],
+        'USER': db_info['db_username'],
+        'PASSWORD': db_info['db_password'],
 
     }
 }
