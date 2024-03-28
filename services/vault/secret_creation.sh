@@ -59,3 +59,18 @@ else
 	echo "$ENV_FILE unknow file."
 fi
 #------------------------------------------------#
+
+#------------------------------------------------#
+echo "[VAULT SECRET] matchmaking container secret"
+ENV_FILE="/vault/matchmaking/.env"
+SECRET_PATH="mm_db"
+
+if [ -f "$ENV_FILE" ]; then
+	set -a
+	. "$ENV_FILE"
+	set +a
+    vault kv put kv/mm_db username_db=mmdb password_db=nnpassdb0 basename_db=dbmm 
+else
+	echo "$ENV_FILE unknow file."
+fi
+#------------------------------------------------#
