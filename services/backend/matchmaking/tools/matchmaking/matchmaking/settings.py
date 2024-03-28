@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'drf_spectacular',
-    'pong_mm',
+    'pong_mm'
 
 ]
 
