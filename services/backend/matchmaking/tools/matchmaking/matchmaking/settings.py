@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from matchmaking.vault import VaultClient
 
+
+vault = VaultClient()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,8 +28,12 @@ SECRET_KEY = 'django-insecure-_*&q1l1wc^kf+5lhz4p3==j=$l4&px*)1465s*@jpx0lv7(w&6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost']
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
+                        'http://127.0.0.1:8080']
 
 # Application definition
 
@@ -37,6 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_swagger',
+    'drf_spectacular',
+    'pong_mm',
+
 ]
 
 MIDDLEWARE = [
@@ -73,10 +85,14 @@ WSGI_APPLICATION = 'matchmaking.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+db_info = vault.secret('mm_db')
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': db_info['basename_db'],
+        'USER': db_info['username_db'],
+        'PASSWORD': db_info['password_db'],
+
     }
 }
 
@@ -121,3 +137,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}

@@ -25,7 +25,7 @@ if [ "$?" -eq "0" ]; then
 else
 
 	su postgres <<EOF
-
+  echo ${DB_USER} ${DB_PASSWORD} ${DB_BASENAME}
   psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';"
   psql -c "CREATE DATABASE ${DB_BASENAME} OWNER POSTGRES;"
   psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_BASENAME} TO ${DB_USER};"
