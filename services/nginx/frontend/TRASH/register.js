@@ -4,8 +4,6 @@ document.addEventListener('authReady', function()  {
 	const signupFormElement = document.getElementById('user-service-register');
 	// const pongFormElement = document.getElementById('game');
 
-	sessionStorage.setItem('currentPageState', 'register');
-
 	registerLink.addEventListener('click', function(event) {
 		event.preventDefault();
 		signupFormElement.innerHTML = `
