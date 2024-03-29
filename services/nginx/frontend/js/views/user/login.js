@@ -1,4 +1,4 @@
-import "../components/loginForm.js";
+import "../../components/user/loginForm.js";
 
 export default () => `
     <h1>Log in</h1>

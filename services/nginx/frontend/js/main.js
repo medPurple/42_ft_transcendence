@@ -4,10 +4,10 @@
 import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
-import userService from "./views/userService.js";
 import gameService from "./views/gameService.js";
-import register from "./views/register.js";
-import login from "./views/login.js";
+import userService from "./views/user/userService.js";
+import register from "./views/user/register.js";
+import login from "./views/user/login.js";
 
 
 
