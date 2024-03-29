@@ -10,6 +10,8 @@ import register from "./views/register.js";
 import login from "./views/login.js";
 
 
+
+
 // Define the routes
 const routes = {
     '/': {
@@ -45,8 +47,10 @@ const routes = {
 // Define the router function that will render the view based on the route path name and update the browser history state
 function router() {
     let view = routes[location.pathname];
+    // define the header title
+    const pageTitle = "Transcendence";
     if (view) {
-        document.title = view.title;
+        document.title = pageTitle + " | " + view.title;
         app.innerHTML = view.render();
     } else {
         history.replaceState("", "", "/");
