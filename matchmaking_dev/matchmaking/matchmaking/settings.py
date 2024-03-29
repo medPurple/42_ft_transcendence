@@ -11,10 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from matchmaking.vault import VaultClient
 
-
-vault = VaultClient()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,17 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_*&q1l1wc^kf+5lhz4p3==j=$l4&px*)1465s*@jpx0lv7(w&6'
+SECRET_KEY = 'django-insecure-237r&f34ek)&chb58c5j=vb2p38a=b9_o%t*$c#dam^^#p-7f^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost']
+ALLOWED_HOSTS = []
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
-                        'http://127.0.0.1:8080']
 
 # Application definition
 
@@ -47,8 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'drf_spectacular',
-    'classic'
-
+    'classic',
 ]
 
 MIDDLEWARE = [
@@ -85,14 +77,10 @@ WSGI_APPLICATION = 'matchmaking.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-db_info = vault.secret('mm_db')
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': db_info['basename_db'],
-        'USER': db_info['username_db'],
-        'PASSWORD': db_info['password_db'],
-
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
