@@ -1,59 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!-- HEAD ZONE: links to other files / images / scripts / libraries / description / logos / general site settings  -->
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Transcendence</title>
+	<title>Title of the site at the onglet</title>
+	<!-- Here we include links to CSS -->
 	<link rel="stylesheet" href="./css/style.css" />
-	<!-- <link rel="favicon" href="./images/favicon.jpg" /> -->
-	<!-- Include Bootstrap CSS from CDN -->
+	<!-- Here we include links to Images (logos or other) -->
+	<link rel="favicon" href="./images/myfav.png" />
+	<!-- Include / download Libraries (Bootstrap, ThreeJs, WebGL, etc) -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Include Scripts, with DEFER key word -->
+	<script type="module" src="./js/main.js" defer></script> 
 </head>
+
+<!-- BODY ZONE: (all blank page) -->
 <body>
-	<!-- En-tête -->
-	<header>
-		<h1>Transcendence</h1>\
-		<!-- Line : Logo + menus + Inscription + Settings -->
+	<!-- HEADER ZONE (index-menus-logos-etc a construire) -->
+	<header class="mymarvelousheaderband">
+		<h1>Transcendence</h1>
+		<!-- more things to do here! -->
 	</header>
 
-	<!-- Contenu principal -->
-
-	<!-- <div id ="Index">
-
-		<h2>
-			<a href="templates/pong.html" title="Game3D"><span class="h2">Game3D Service</span></a>
-		</h2>
-	</div> -->
-	<div id="app-content">
-		<div id="user">
-			<a href="#" id="user-service-link" title="Contact User Service"><span class="h2">User Service</span></a>
-			<div id="api-data">
-				<ul id="user-list"></ul>
-			</div>
-			<div id="user-service-authentication" style="display: none;"></div>
-			<div id="user-service-register" style="display: none;"></div>
-			<div id="user-service-login" style="display: none;"></div>
-			<div id="home-content" style="display: none;"> </div>
-			<div id="user-service-logout" style="display: none;"></div>
-		</div>
-		<div id="game">
-			<a href="templates/pong.html" title="Game3D"><span class="h2">Game3D Service</span></a>
-		</div>
+	<!-- NAVIGATION ZONE (all menus, links, etc) -->
+	<div id="navbar">
+		<!-- data-link is used to prevent the page from reloading -->
+		<a href="/" data-link>Home</a>
+		<a href="/about" data-link> About Us</a>
+		<a href="/contact" data-link>Contact Us</a>
 	</div>
 
-	<!-- Pied de page -->
-	<footer>
-		<p>© 2024 La pat patrouille</p>
-		<!-- Links to github + format -->
-	</footer>
+	<!-- MAIN ZONE (all 'central body' here, balises<machin> and classes serve as identifier to CSS, id is a JS identifier) -->
+	<main id="app" class="mycontainer">
+		<div id="JSidentifier" class="myawesomelinks">
 
-	<!-- Include Bootstrap JS from CDN -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-	<!-- Include your custom JavaScript -->
-	<script src="js/home.js" ></script>
-	<script src="js/authentication.js"></script>
-	<script src="js/register.js" ></script>
-	<script src="js/login.js" ></script>
-	<script src="js/logout.js" ></script>
+		</div>
+	<!-- more things to do here! -->
+	</main>
+
+		<!-- FOOTER ZONE (links, contacts, logos, small text!)-->
+		<footer class="myfooter">
+			<p>© 2024 La pat patrouille</p>
+			<!-- more things to do here! -->
+		</footer>
 </body>
 </html>
+
+
+
+
