@@ -5,7 +5,7 @@ service postgresql start
 
 sleep 5
 
-python3 manage.py makemigrations pong_mm
+python3 manage.py makemigrations classic
 
 sleep 5
 
