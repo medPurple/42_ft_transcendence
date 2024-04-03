@@ -1,11 +1,12 @@
 
+
 document.addEventListener('userRegister', function()  {
 
 	const homeContent = document.getElementById('home-content'); // Ajout de l'élément du contenu de la page d'accueil
 	const signupFormElement = document.getElementById('user-service-register');
 	const userServiceAuthentication = document.getElementById('user-service-authentication');
 	const loginFormElement = document.getElementById('user-service-login');
-	const pongFormElement = document.getElementById('game');
+	// const pongFormElement = document.getElementById('game');
 
 	let userId;
 	fetch ('api/profiles/get_userId', {
@@ -32,7 +33,7 @@ document.addEventListener('userRegister', function()  {
 		userServiceAuthentication.style.display = 'none';
 		signupFormElement.style.display = 'none';
 		loginFormElement.style.display = 'none';
-		pongFormElement.style.display = 'none';
+		// pongFormElement.style.display = 'none';
 		homeContent.style.display = 'block';
 		const userLogout = new Event('userLogout');
 		document.dispatchEvent(userLogout);
