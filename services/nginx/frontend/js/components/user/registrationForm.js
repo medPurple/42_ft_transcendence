@@ -25,7 +25,7 @@ export default class RegistrationForm extends HTMLElement{
 			const formData = new FormData(signupForm);
 
             // Send an AJAX request to submit the form
-			fetch('/api/profiles/signup/', {
+			fetch('/api/profiles/register/', {
 				method: 'POST',
 				body: formData,
 				headers: {

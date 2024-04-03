@@ -8,9 +8,7 @@ import gameService from "./views/gameService.js";
 import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
-
-
-
+import logout from "./views/user/logout.js";
 
 // Define the routes
 const routes = {
@@ -42,6 +40,10 @@ const routes = {
         title: "Log In",
         render: login
     },
+    '/logout': {
+        title: "Log Out",
+        render: logout
+    }
 };
 
 // Define the router function that will render the view based on the route path name and update the browser history state

@@ -34,7 +34,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 	# 	return Response(serializer.data)
 
 	@action(detail=False, methods=['post'])
-	def signup(self, request):
+	def register(self, request):
 		if request.method == 'POST':
 			form = CustomUserCreationForm(request.POST, request.FILES)
 			if form.is_valid():
@@ -92,6 +92,14 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 			'id': user.id,
 		}
 		return Response(user_data)
+
+	@action(detail=False, methods=['get'])
+	def isLoggedUser(self, request):
+		user = request.user
+		if user.is_authenticated:
+			return Response({'isLogged': True})
+		else:
+			return Response({'isLogged': False})
 
 	# @action(detail=False, methods=['post'])
 	# def edit_profile(self, request):
