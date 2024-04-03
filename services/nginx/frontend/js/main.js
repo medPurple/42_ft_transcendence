@@ -9,6 +9,7 @@ import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
 import logout from "./views/user/logout.js";
+import play from "./views/play.js";
 
 // Define the routes
 const routes = {
@@ -43,6 +44,10 @@ const routes = {
     '/logout': {
         title: "Log Out",
         render: logout
+    },
+    '/play' : {
+        title: "Play",
+        render: play
     }
 };
 
