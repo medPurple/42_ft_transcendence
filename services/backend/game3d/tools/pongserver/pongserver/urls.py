@@ -1,5 +1,5 @@
 """
-URL configuration for game3d project.
+URL configuration for pongserver project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,11 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from pong import views
-from django.conf.urls.static import static
-from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-	path('pong/', views.pong, name='pong'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
