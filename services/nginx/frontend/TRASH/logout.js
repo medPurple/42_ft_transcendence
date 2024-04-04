@@ -5,7 +5,7 @@ document.addEventListener('userLogout', function()  {
 	const logoutButton = document.getElementById('logout-button');
 	const userServiceLink = document.getElementById('user-service-link');
 	const homeContent = document.getElementById('home-content'); // Ajout de l'élément du contenu de la page d'accueil
-	const pongFormElement = document.getElementById('game');
+	// const pongFormElement = document.getElementById('game');
 
 
 	// Ajoutez un gestionnaire d'événements pour le clic sur le bouton de déconnexion
@@ -59,7 +59,7 @@ document.addEventListener('userLogout', function()  {
 				// Redirigez l'utilisateur vers la page de connexion ou effectuez toute autre action nécessaire après la déconnexion
 				userServiceLink.style.display = 'block'; // Redirection vers la page de connexion
 				homeContent.style.display = 'none'
-				pongFormElement.style.display = 'block';
+				// pongFormElement.style.display = 'block';
 			} else {
 				// Gérez les erreurs de déconnexion
 				console.error('Logout failed:', response.statusText);

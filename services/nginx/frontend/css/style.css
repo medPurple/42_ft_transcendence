@@ -49,6 +49,11 @@ button:hover {
 	color: #ffffff;
 }
 
+#pong-renderer{
+  display: flex;
+  justify-content: center;
+}
+
 section {
 	margin-bottom: 39px;
 	padding: 30px;

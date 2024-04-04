@@ -1,23 +1,28 @@
 document.addEventListener('authReady', function()  {
-	const loginLink = document.getElementById('login-link');
+	const registerLink = document.getElementById('register-link');
 	const userServiceAuthentication = document.getElementById('user-service-authentication');
-	const loginFormElement = document.getElementById('user-service-login');
-	const pongFormElement = document.getElementById('game');
+	const signupFormElement = document.getElementById('user-service-register');
+	// const pongFormElement = document.getElementById('game');
 
-	loginLink.addEventListener('click', function(event) {
+	registerLink.addEventListener('click', function(event) {
 		event.preventDefault();
-		loginFormElement.innerHTML = `
-		<form id="login-form" method="post" action="">
-		<input type="text" name="username" placeholder="Username">
-		<input type="password" name="password" placeholder="Password">
-		<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-		<button type="submit" class="button">Log in</button>
+		signupFormElement.innerHTML = `
+		<form id="signup-form" method="post" action="">
+			<input type="file" name="profile_picture" accept="images/*" />
+			<input type="text" name="username" placeholder="Username">
+			<input type="text" name="first_name" placeholder="Firstname">
+			<input type="text" name="last_name" placeholder="Lastname">
+			<input type="email" name="email" placeholder="Email">
+			<input type="password" name="password1" placeholder="Password">
+			<input type="password" name="password2" placeholder="Confirm Password">
+			<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+			<button type="submit" class="button">Register</button>
 		</form>`;
 		userServiceAuthentication.style.display = 'none'; // Masquer le lien "User Authentication"
-		pongFormElement.style.display = 'none';
-		loginFormElement.style.display = 'block'; // Afficher le formulaire d'inscription
+		// pongFormElement.style.display = 'none';
+		signupFormElement.style.display = 'block'; // Afficher le formulaire d'inscription
 
-		const signupForm = document.getElementById('login-form');
+		const signupForm = document.getElementById('signup-form');
 		signupForm.addEventListener('submit', function(event) {
 			event.preventDefault();
 
@@ -25,7 +30,7 @@ document.addEventListener('authReady', function()  {
 			const formData = new FormData(signupForm);
 
 			// Envoyer une requête AJAX pour soumettre le formulaire
-			fetch('/api/profiles/user_login/', {
+			fetch('/api/profiles/signup/', {
 				method: 'POST',
 				body: formData,
 				headers: {
@@ -37,6 +42,7 @@ document.addEventListener('authReady', function()  {
 				if (data.success) {
 					const userRegisterEvent = new Event('userRegister');
 					document.dispatchEvent(userRegisterEvent);
+
 				} else {
 					// Afficher les erreurs de validation ou tout autre message d'erreur
 					alert('Registration failed. Please check the form and try again.');
