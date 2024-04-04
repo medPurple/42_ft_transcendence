@@ -9,7 +9,7 @@ export default class LoginForm extends HTMLElement{
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="button">Log in</button>
         </form>
-        `;    
+        `;
 	}
 
 	connectedCallback() {
@@ -31,6 +31,7 @@ export default class LoginForm extends HTMLElement{
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
+					 console.log(data);
                      // Redirect to the home page
 					 window.location.href = '/'; // Change the URL to your home page URL
 

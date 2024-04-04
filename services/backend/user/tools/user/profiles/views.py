@@ -39,11 +39,12 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 			form = CustomUserCreationForm(request.POST, request.FILES)
 			if form.is_valid():
 				user = form.save(commit=False)
-				user.token = self.user_token(request, user.id)
+				token = self.user_token(request, user.id)
 				user.is_online = True
 				user.save()
 				login(request, user)
-				return Response({'success': True}, status=201)  # Utilisez le code de statut 201 pour indiquer que la ressource a été créée avec succès
+				return Response({'success': True, 'token' : token},
+					status=201)  # Utilisez le code de statut 201 pour indiquer que la ressource a été créée avec succès
 			else:
 				return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
 		else:
@@ -55,11 +56,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 			form = AuthenticationForm(request, request.POST)
 			if form.is_valid():
 				user = form.get_user()
-				user.token = self.user_token(request, user.id)
+				token = self.user_token(request, user.id)
 				user.is_online = True
 				user.save()
 				login(request, user)
-				return Response({'success': True},status=200)  # Utilisez le code de statut 200 pour indiquer que la connexion a réussi
+				return Response({'success': True, 'token' : token}, status=200)  # Utilisez le code de statut 200 pour indiquer que la connexion a réussi
 			else:
 				return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
 		else:
@@ -76,7 +77,6 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 				token_response.raise_for_status()
 			except requests.exceptions.RequestException as e:
 				print(f"Erreur lors de la connexion au service de génération de jetons : {e}")
-			user.token = ''
 			user.is_online = False
 			user.save()
 			logout(request)
@@ -84,22 +84,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 		else:
 			return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
 
-	@action(detail=False, methods=['get'])
-	@permission_classes([IsAuthenticated])
-	def get_userId(self, request):
-		user = request.user
-		user_data = {
-			'id': user.id,
-		}
-		return Response(user_data)
 
-	@action(detail=False, methods=['get'])
-	def isLoggedUser(self, request):
-		user = request.user
-		if user.is_authenticated:
-			return Response({'isLogged': True})
-		else:
-			return Response({'isLogged': False})
 
 	# @action(detail=False, methods=['post'])
 	# def edit_profile(self, request):

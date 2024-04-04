@@ -13,7 +13,6 @@ class	CustomUser(AbstractUser):
 	last_name = models.CharField(max_length=200, null=True)
 	is_online = models.BooleanField(default=False)
 	friends = models.ManyToManyField("CustomUser", blank=True)
-	token = models.CharField(max_length=200, null=True, blank=True)
 
 @receiver(pre_save, sender=CustomUser)
 def set_default_pp(sender, instance, **kwargs):
