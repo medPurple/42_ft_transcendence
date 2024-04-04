@@ -1,6 +1,5 @@
 version: '3'
 
-
   # djangoTemplate:
   #   container_name: djangotemplate
   #   user: root
@@ -17,11 +16,11 @@ version: '3'
 networks:
   microservices:
     external: true
+
 volumes:
   secret_volume:
   user:
   game3d:
-
 
 services:
   nginx:
