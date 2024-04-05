@@ -20,7 +20,8 @@ class TokenAuthenticationAPIView(APIView):
             token = token.replace('Bearer ', '')
             is_valid, decoded = self.token_verification(token)
             if is_valid:
-                return Response({'message': 'Token authenticated successfully'})
+                return Response({'message': 'Token authenticated successfully',
+                                    'user_id': decoded.get('user_id')})
             else:
                 return Response(decoded, status=status.HTTP_401_UNAUTHORIZED)
         else:
