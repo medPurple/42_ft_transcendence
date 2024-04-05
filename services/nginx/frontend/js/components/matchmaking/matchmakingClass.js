@@ -1,12 +1,59 @@
+import Icookies from "../cookie/cookie.js"
+
 class Matchmaking {
 
-
+    getID(){
+        fetch('/api/token/authenticate/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': Icookies.getCookie('csrftoken'), // Get the CSRF token from the form data
+                'Authorization': 'Bearer ' + Icookies.getCookie('token')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                 console.log("user id is : " + data.get);
+                 return 
+            } else {
+                // Display validation errors or any other error message
+                alert('No such user');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Handle API errors
+        });
+    }
     
     pongMatchmaking() {
-        // Implémentez la logique de matchmaking pour le pong ici
+        id = getID();
+        fetch('/api/queue/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': Icookies.getCookie('csrftoken'), // Get the CSRF token from the form data
+                'Authorization': 'Bearer ' + Icookies.getCookie('token')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                 console.log("user id is : " + data.get);
+                 return 
+            } else {
+                // Display validation errors or any other error message
+                alert('No such user');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Handle API errors
+        });
+
     }
 
     tournamentMatchmaking() {
+        
         // Implémentez la logique de matchmaking pour le tournoi ici
     }
 
