@@ -3,4 +3,15 @@
 
 from django.db import models
 
-# Create your models here.
+class	UserSettings:
+	def __init__(self, user):
+		self.userID = user
+		self.settings = {}
+	
+	@classmethod
+	# def getSettings(self):
+	# 	return self.settings
+
+	# def getUserID(self):
+	# 	return self.userID
+
