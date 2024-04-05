@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from pongapp.views import GameSettingsAPI
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+	path('admin/', admin.site.urls),
+	path('/api/pong/', GameSettingsAPI.as_view(), name='game_settings_api'),
+	# path('/api/meta/', GameSettingsAPI.as_view(), name='game_settings_api'), APP pokemon?
 ]
