@@ -1,5 +1,5 @@
 """
-ASGI config for pongserver project.
+ASGI config for game3d project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -12,7 +12,7 @@ import os
 from channels.routing import ProtocolTypeRouter
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pongserver.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game3d.settings')
 
 application = ProtocolTypeRouter(
         {
