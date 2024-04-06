@@ -8,21 +8,20 @@ import gameService from "./views/gameService.js";
 import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
-import logout from "./views/user/logout.js";
 import play from "./views/play.js";
 
 // Define the routes
 const routes = {
     '/': {
-        title: "Home", 
+        title: "Home",
         render: home
     },
     '/about': {
-        title: "About", 
+        title: "About",
         render: about
     },
     '/contact': {
-        title: "Contact", 
+        title: "Contact",
         render: contact
     },
     '/userService': {
@@ -40,10 +39,6 @@ const routes = {
     '/login': {
         title: "Log In",
         render: login
-    },
-    '/logout': {
-        title: "Log Out",
-        render: logout
     },
     '/play' : {
         title: "Play",

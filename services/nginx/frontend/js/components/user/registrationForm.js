@@ -37,8 +37,8 @@ export default class RegistrationForm extends HTMLElement{
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
-					Icookies.setCookie("token", data.token, 90)
-                     // Redirect to the home page
+					Icookies.setCookie("token", data.token, 90);
+					// Redirect to the home page
 					 window.location.href = '/'; // Change the URL to your home page URL
 
 				} else {

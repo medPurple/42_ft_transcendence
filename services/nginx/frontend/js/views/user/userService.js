@@ -1,11 +1,12 @@
 import Icookies from "../../components/cookie/cookie.js"
+import "../../components/user/logoutForm.js";
 
 export default function userService() {
     if (Icookies.getCookie("token")) {
         return `
         <h1>User Service</h1>
         <p>Welcome, Bobo !</p>
-        <a href="/logout" data-link>Log out</a> <!-- New link -->
+        <logout-form></logout-form>
         `;
     } else {
         return `
