@@ -3,18 +3,19 @@ import Icookies from "../cookie/cookie.js"
 class Matchmaking {
 
 	getID(){
-		fetch('/api/token/authenticate/', {
-			method: 'POST',
+		console.log("token : " + Icookies.getCookie('token'));
+		return fetch('/api/token/', {
+			method: 'GET',
 			headers: {
 				'X-CSRFToken': Icookies.getCookie('csrftoken'), // Get the CSRF token from the form data
-				'Authorization': 'Bearer ' + Icookies.getCookie('token')
+				'Authorization': Icookies.getCookie('token')
 			}
 		})
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
 				console.log("user id is : " + data.get);
-				return 
+				return data.get;
 			} else {
 				// Display validation errors or any other error message
 				alert('No such user');
@@ -26,24 +27,25 @@ class Matchmaking {
 		});
 	}
 	
-	pongMatchmaking() {
-		id = getID();
+	async pongMatchmaking() {
+		let id = await this.getID();
+		console.log("id is : " + id);
 		fetch('/api/queue/', {
 			method: 'POST',
 			headers: {
 				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': 'Bearer ' + Icookies.getCookie('token')
+				'Authorization': Icookies.getCookie('token'),
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				"userID": id,
-				"game": "pong_multiplayer"
-			})
+						"userID": id,
+						"game": "pong_multiplayer"
+					})
 		})
 		.then(response => response.json())
 		.then(data => {
-			if (data.success) {
+			if (data.position) {
 				console.log("Added to queue for pong multiplayer");
-				return 
 			} else {
 				alert('No such user');
 			}
@@ -94,3 +96,5 @@ class MatchmakingButtons {
 
 const matchmaking = new Matchmaking();
 const matchmakingButtons = new MatchmakingButtons(matchmaking);
+
+export { matchmakingButtons };

@@ -1,6 +1,5 @@
 
-import "../components/matchmaking/matchmakingClass.js";
+import { matchmakingButtons } from "../components/matchmaking/matchmakingClass.js";
 
-export default () => `
+export default () => 
         matchmakingButtons.insertButtons();
-    `;

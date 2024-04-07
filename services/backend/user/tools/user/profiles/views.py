@@ -17,7 +17,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 	queryset = CustomUser.objects.all()
 
 	def user_token(self, request, user_id):
-		token_service_url = 'http://token:8080/api/token/generate/'
+		token_service_url = 'http://token:8080/api/token/'
 		try:
 			token_response = requests.post(token_service_url, json={'user_id' : user_id})
 			token_response.raise_for_status()
@@ -72,10 +72,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 		if request.method == 'POST':
 			user = request.user
 			token = request.headers.get('Authorization')
-			print (token)
-			token_service_url = 'http://token:8080/api/token/authenticate/'
+			token_service_url = 'http://token:8080/api/token/'
 			try:
-				token_response = requests.post(token_service_url, json={'Authorization' : token})
+				token_response = requests.get(token_service_url, json={'Authorization' : token})
 				token_response.raise_for_status()
 			except requests.exceptions.RequestException as e:
 				print(f"Erreur lors de la connexion au service de génération de jetons : {e}")

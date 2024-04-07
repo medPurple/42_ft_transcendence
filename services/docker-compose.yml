@@ -48,11 +48,11 @@ services:
     restart: on-failure
 
   token:
-    container_name: token
+    container_name: jwtoken
     networks:
       - microservices
-    build: backend/token
-    image: token
+    build: backend/JWToken
+    image: jwtoken
     expose :
       - "8080"
     restart: on-failure
