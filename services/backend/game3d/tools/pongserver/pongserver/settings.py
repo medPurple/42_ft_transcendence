@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-nxmg6l(!@sc6x3zv2%+$c7d0!(4$#_5ke=awyfs+gd4=s)cr1r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'gameservice',
+]
 
 
 # Application definition
