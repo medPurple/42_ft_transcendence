@@ -50,16 +50,19 @@ class TokenAPI(APIView):
     def post(self, request):
         data = request.data
         token = TokenAPI.generate_token(data)
+        logger.info(token)
         return Response({'token': token}, status=status.HTTP_201_CREATED)
 
     def get(self, request):
-        logger.info(request.headers)
-        logger.info(request.data)
-
         token = request.headers.get('Authorization')
+        logger.info("TOKEN : ")
+        logger.debug(token)
         if not token:
             return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
         data = TokenAPI.decrypt_token(token)
+        logger.info("DATA : ")
+        logger.debug(data)
         if not data:
             return Response({'error': 'Invalid token'}, status=status.HTTP_404_NOT_FOUND)
+        logger.info("ALL OK")
         return Response(data, status=status.HTTP_200_OK)

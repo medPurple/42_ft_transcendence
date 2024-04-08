@@ -2,34 +2,43 @@ import Icookies from "../cookie/cookie.js"
 
 class Matchmaking {
 
-	getID(){
-		console.log("token : " + Icookies.getCookie('token'));
-		return fetch('/api/token/', {
-			method: 'GET',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'), // Get the CSRF token from the form data
-				'Authorization': Icookies.getCookie('token')
+	async getID() {
+		let jwtToken = Icookies.getCookie('token');
+		let csrfToken = Icookies.getCookie('csrftoken');
+	
+		console.log("TOKEN BEFORE : " + jwtToken);
+	
+		try {
+			const response = await fetch('/api/token/', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': csrfToken,
+					'Authorization': jwtToken
+				}
+			});
+	
+			if (!response.ok) {
+				throw new Error('identification failed');
 			}
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.success) {
-				console.log("user id is : " + data.get);
-				return data.get;
-			} else {
-				// Display validation errors or any other error message
-				alert('No such user');
-			}
-		})
-		.catch(error => {
+	
+			const data = await response.json();
+			console.log(data.user_id);
+			return data.user_id;
+		} catch (error) {
 			console.error('Error:', error);
 			// Handle API errors
-		});
+		}
 	}
 	
 	async pongMatchmaking() {
-		let id = await this.getID();
-		console.log("id is : " + id);
+		try {
+			let id = await this.getID();
+			console.log("id is : " + id);
+		} catch (error) {
+			console.error('Error:', error);
+			// Handle errors
+		}
 		fetch('/api/queue/', {
 			method: 'POST',
 			headers: {
