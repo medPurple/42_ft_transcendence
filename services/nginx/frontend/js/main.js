@@ -9,6 +9,7 @@ import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
 import play from "./views/play.js";
+import p404 from "./views/p404.js";
 
 // Define the routes
 const routes = {
@@ -43,19 +44,24 @@ const routes = {
     '/play' : {
         title: "Play",
         render: play
+    },
+    '/404' : {
+        title: "404",
+        render: p404
     }
 };
 
 // Define the router function that will render the view based on the route path name and update the browser history state
 function router() {
     let view = routes[location.pathname];
+    console.log("view" + view);
     // define the header title
     const pageTitle = "Transcendence";
     if (view) {
         document.title = pageTitle + " | " + view.title;
         app.innerHTML = view.render();
     } else {
-        history.replaceState("", "", "/");
+        history.replaceState("", "", "/404");
         router()
     }
 };
