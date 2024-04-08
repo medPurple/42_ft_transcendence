@@ -1,5 +1,5 @@
 """
-URL configuration for core_auth_token project.
+URL configuration for JWToken project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,14 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-import token_generation.views
-import token_authentication.views
+from tokenAPI.views import TokenAPI 
 
 urlpatterns = [
-    path('api/token/generate/', token_generation.views.TokenGenerationAPIView.as_view()),
-	path('api/token/authenticate/', token_authentication.views.TokenAuthenticationAPIView.as_view()),
-    path('api/token/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/token/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/token/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('api/token/', TokenAPI.as_view(), name='token'),
+
 ]

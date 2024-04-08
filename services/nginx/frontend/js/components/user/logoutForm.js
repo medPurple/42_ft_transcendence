@@ -20,31 +20,28 @@ export default class LogoutForm extends HTMLElement {
 			// Get the CSRF token from the cookie
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
-			console.log(jwtToken);
-			console.log(csrfToken);
-
-
-
+	
 			// Send the logout request to the Django API
 			fetch('/api/profiles/user_logout/', {
 				method: 'POST',
 				//credentials: 'same-origin',
 				headers: {
-					'Authorization': `Bearer ${jwtToken}`,
+					'Authorization': jwtToken,
 					'Content-Type': 'application/json',
 					'X-CSRFToken': csrfToken
 				}
 			})
 			.then(response => {
 				if (response.ok) {
-					Icookies.clearAllCookies();
-					// Redirect to the home page
-					window.location.href = '/'; // Change the URL to your home page URL
-
+					return response.json();
 				} else {
-				// Display validation errors or any other error message
-					alert('Registration failed. Please check the form and try again.');
+					throw new Error('Logout failed');
 				}
+			})
+			.then(data => {
+				// console.log(data.user_id);
+				Icookies.clearAllCookies();
+				window.location.href = '/'; // Change the URL to your home page URL
 			})
 			.catch(error => {
 				console.error('Error:', error);

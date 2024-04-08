@@ -10,7 +10,7 @@ SRCS_PATH = ./services/
 NG_NAME = nginx
 G3_NAME = game3d
 CH_NAME = chat
-TK_NAME = token
+TK_NAME = jwtoken
 US_NAME = user
 VA_NAME = vault
 MA_NAME = matchmaking
@@ -18,7 +18,7 @@ MA_NAME = matchmaking
 NG_IMG = $(shell docker images | grep nginx | wc -l)
 G3_IMG = $(shell docker images | grep game3d | wc -l)
 CH_IMG = $(shell docker images | grep chat | wc -l)
-TK_IMG = $(shell docker images | grep token | wc -l)
+TK_IMG = $(shell docker images | grep jwtoken | wc -l)
 US_IMG = $(shell docker images | grep user | wc -l)
 VA_IMG = $(shell docker images | grep vault | wc -l)
 

@@ -34,9 +34,6 @@ export default class LoginForm extends HTMLElement{
 			.then(data => {
 				if (data.success) {
 					Icookies.setCookie("token", data.token, 90);
-					// console.log(data);
-					console.log(data.token);
-					console.log(Icookies.getCookie('token'));
                      // Redirect to the home page
 					 window.location.href = '/'; // Change the URL to your home page URL
 

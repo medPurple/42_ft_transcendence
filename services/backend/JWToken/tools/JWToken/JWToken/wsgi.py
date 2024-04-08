@@ -1,5 +1,5 @@
 """
-WSGI config for core_auth_token project.
+WSGI config for JWToken project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core_auth_token.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'JWToken.settings')
 
 application = get_wsgi_application()

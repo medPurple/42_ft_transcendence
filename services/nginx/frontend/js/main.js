@@ -53,6 +53,7 @@ const routes = {
 
 // Define the router function that will render the view based on the route path name and update the browser history state
 function router() {
+    // try catch page 404 ? 
     let view = routes[location.pathname];
     console.log("view" + view);
     // define the header title
