@@ -32,13 +32,8 @@ class Matchmaking {
 	}
 	
 	async pongMatchmaking() {
-		try {
-			let id = await this.getID();
-			console.log("id is : " + id);
-		} catch (error) {
-			console.error('Error:', error);
-			// Handle errors
-		}
+		let id = await this.getID();
+		console.log("id is : " + id);
 		fetch('/api/queue/', {
 			method: 'POST',
 			headers: {
