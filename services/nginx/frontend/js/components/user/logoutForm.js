@@ -30,7 +30,7 @@ export default class LogoutForm extends HTMLElement {
 				method: 'POST',
 				//credentials: 'same-origin',
 				headers: {
-					'Authorization': `Bearer ${jwtToken}`,
+					'Authorization': jwtToken,
 					'Content-Type': 'application/json',
 					'X-CSRFToken': csrfToken
 				}
