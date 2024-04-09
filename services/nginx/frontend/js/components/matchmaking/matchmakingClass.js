@@ -50,6 +50,7 @@ class Matchmaking {
 		.then(data => {
 			if (data.position) {
 				console.log("Added to queue for pong multiplayer");
+				return;
 			} else {
 				alert('No such user');
 			}
@@ -70,35 +71,64 @@ class Matchmaking {
 }
 
 // Pour utiliser cette classe, vous pouvez créer une nouvelle instance et appeler les méthodes appropriées
-class MatchmakingButtons {
+export class MatchmakingButtons {
+	
+
 	constructor(matchmaking) {
 		this.matchmaking = matchmaking;
+		this.buttonsCreation();
+		
 	}
 
-	insertButtons() {
-		const matchmakingbutton = document.createElement('div');
-
+	multipongButton(){
 		const multipongbutton = document.createElement('button');
 		multipongbutton.innerText = 'Pong Matchmaking';
-		multipongbutton.addEventListener('click', () => this.matchmaking.pongMatchmaking());
+		multipongbutton.classList.add('queue-button');
+		multipongbutton.addEventListener('click', () => {
+			this.removeButtons();
+			this.matchmaking.pongMatchmaking()
 
-		const tournapongbutton = document.createElement('button');
-		tournapongbutton.innerText = 'Tournament Matchmaking';
-		tournapongbutton.addEventListener('click', () => this.matchmaking.tournamentMatchmaking());
+		});
+		return multipongbutton;
+	}
 
+	multipkmButton(){
 		const multipkmbuttoon = document.createElement('button');
 		multipkmbuttoon.innerText = 'PKM Matchmaking';
-		multipkmbuttoon.addEventListener('click', () => this.matchmaking.pkmMatchmaking());
+		multipkmbuttoon.classList.add('queue-button');
+		multipkmbuttoon.addEventListener('click', () => {
+			this.removeButtons();
+			this.matchmaking.pkmMatchmaking()
 
-		matchmakingbutton.appendChild(multipongbutton);
-		matchmakingbutton.appendChild(tournapongbutton);
-		matchmakingbutton.appendChild(multipkmbuttoon);
+		});		return multipkmbuttoon;
+	}
 
+	tournapongButton(){
+		const tournapongbutton = document.createElement('button');
+		tournapongbutton.innerText = 'Tournament Matchmaking';
+		tournapongbutton.classList.add('queue-button');
+		tournapongbutton.addEventListener('click', () => {
+			this.removeButtons();
+			this.matchmaking.tournamentMatchmaking()
+
+		});		return tournapongbutton;
+	}
+
+	buttonsCreation() {
+		const matchmakingbutton = document.createElement('div');
+		matchmakingbutton.appendChild(this.multipongButton());
+		matchmakingbutton.appendChild(this.tournapongButton());
+		matchmakingbutton.appendChild(this.multipkmButton());
 		document.body.appendChild(matchmakingbutton);
 	}
+
+	removeButtons() {
+        const buttonsContainer = document.body.querySelector('.matchmaking-buttons');
+        if (buttonsContainer) {
+            buttonsContainer.remove();
+        }
+    }
 }
 
 const matchmaking = new Matchmaking();
-const matchmakingButtons = new MatchmakingButtons(matchmaking);
-
-export { matchmakingButtons };
+export { matchmaking };

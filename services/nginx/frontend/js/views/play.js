@@ -1,5 +1,5 @@
 
-import { matchmakingButtons } from "../components/matchmaking/matchmakingClass.js";
+import {MatchmakingButtons,matchmaking} from "../components/matchmaking/matchmakingClass.js";
 
 export default () => 
-        matchmakingButtons.insertButtons();
+        new MatchmakingButtons(matchmaking);
