@@ -64,7 +64,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 				user.save()
 				login(request, user)
 				return Response({'success': True, 'token' : token},
-					status=201)  # Utilisez le code de statut 200 pour indiquer que la connexion a réussi
+					status=201)
 			else:
 				return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
 		else:
@@ -76,16 +76,11 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 			user = request.user
 			token = request.headers.get('Authorization')
 			token_service_url = 'http://JWToken:8080/api/token/'
-			try:
-				token_response = requests.get(token_service_url, json={'Authorization' : token})
-				token_response.raise_for_status()
-				data = token_response.json()
-			except requests.exceptions.RequestException as e:
-				print(f"Erreur lors de la connexion au service de génération de jetons : {e}")
+			token_response = requests.get(token_service_url, headers={'Authorization' : token})
+			data = token_response.json()
 			user.is_online = False
 			user.save()
 			logout(request)
-			# logger.debug(data)
 			return Response(data, status=200)
 		else:
 			return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405

@@ -5,9 +5,9 @@ class Matchmaking {
 	async getID() {
 		let jwtToken = Icookies.getCookie('token');
 		let csrfToken = Icookies.getCookie('csrftoken');
-	
+
 		console.log("TOKEN BEFORE : " + jwtToken);
-	
+
 		try {
 			const response = await fetch('/api/token/', {
 				method: 'GET',
@@ -17,11 +17,11 @@ class Matchmaking {
 					'Authorization': jwtToken
 				}
 			});
-	
+
 			if (!response.ok) {
 				throw new Error('identification failed');
 			}
-	
+
 			const data = await response.json();
 			console.log(data.user_id);
 			return data.user_id;
@@ -30,7 +30,7 @@ class Matchmaking {
 			// Handle API errors
 		}
 	}
-	
+
 	async pongMatchmaking() {
 		let id = await this.getID();
 		console.log("id is : " + id);
@@ -60,7 +60,7 @@ class Matchmaking {
 	}
 
 	tournamentMatchmaking() {
-		
+
 		// Implémentez la logique de matchmaking pour le tournoi ici
 	}
 
@@ -74,26 +74,26 @@ class MatchmakingButtons {
 	constructor(matchmaking) {
 		this.matchmaking = matchmaking;
 	}
-	
+
 	insertButtons() {
 		const matchmakingbutton = document.createElement('div');
-		
+
 		const multipongbutton = document.createElement('button');
 		multipongbutton.innerText = 'Pong Matchmaking';
 		multipongbutton.addEventListener('click', () => this.matchmaking.pongMatchmaking());
-		
+
 		const tournapongbutton = document.createElement('button');
 		tournapongbutton.innerText = 'Tournament Matchmaking';
 		tournapongbutton.addEventListener('click', () => this.matchmaking.tournamentMatchmaking());
-		
+
 		const multipkmbuttoon = document.createElement('button');
 		multipkmbuttoon.innerText = 'PKM Matchmaking';
 		multipkmbuttoon.addEventListener('click', () => this.matchmaking.pkmMatchmaking());
-		
+
 		matchmakingbutton.appendChild(multipongbutton);
 		matchmakingbutton.appendChild(tournapongbutton);
 		matchmakingbutton.appendChild(multipkmbuttoon);
-		
+
 		document.body.appendChild(matchmakingbutton);
 	}
 }

@@ -20,7 +20,7 @@ export default class LogoutForm extends HTMLElement {
 			// Get the CSRF token from the cookie
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
-	
+
 			// Send the logout request to the Django API
 			fetch('/api/profiles/user_logout/', {
 				method: 'POST',
@@ -39,7 +39,7 @@ export default class LogoutForm extends HTMLElement {
 				}
 			})
 			.then(data => {
-				// console.log(data.user_id);
+				console.log(data);
 				Icookies.clearAllCookies();
 				window.location.href = '/'; // Change the URL to your home page URL
 			})
