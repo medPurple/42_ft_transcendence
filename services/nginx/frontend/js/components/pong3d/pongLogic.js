@@ -338,6 +338,21 @@ function draw() {
 }
 
 function setup() {
+
+  const gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
+
+  gameSocket.onopen = function(e) {
+    console.log('Connected');
+  };
+
+  gameSocket.onerror = function(e) {
+    console.log('Error');
+  };
+
+  gameSocket.onclose = function(e) {
+    console.log('Closed');
+  };
+
   createScene();
   draw();
 }
