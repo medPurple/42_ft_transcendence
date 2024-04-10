@@ -329,7 +329,7 @@ function setup() {
     console.log('Error');
   };
 
-  gameSocket.onclose = function(e) {
+  gameSocket.onclose = function(e) {:
     console.log('Closed');
   };
 
@@ -345,6 +345,7 @@ function setup() {
 function handleServerMessage(message) {
 
   console.log("Message du websocket: ", message);
+
   //if (message == )
 }
 
