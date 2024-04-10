@@ -4,60 +4,53 @@ export default class LogoutForm extends HTMLElement {
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
+	}
+
+	render() {
 		const button = document.createElement('button');
-        button.setAttribute('id', 'logout-button');
-        button.setAttribute('class', 'button');
-        button.textContent = 'Logout';
-        // Attacher le bouton à l'ombre de l'élément
-        this.shadowRoot.appendChild(button);
-    }
+		button.setAttribute('id', 'logout-button');
+		button.setAttribute('class', 'button');
+		button.textContent = 'Logout';
+		this.shadowRoot.innerHTML = '';
+		this.shadowRoot.appendChild(button);
+	}
 
 	connectedCallback() {
-		const logoutButton = this.shadowRoot.getElementById('logout-button');
-		logoutButton.addEventListener('click', function(event) {
-			event.preventDefault();
+		this.render(); // Render the component
+		this.shadowRoot.getElementById('logout-button').addEventListener('click', this.handleLogout.bind(this));
+	}
 
-			// Get the CSRF token from the cookie
-			let jwtToken = Icookies.getCookie('token');
-			let csrfToken = Icookies.getCookie('csrftoken');
+	async handleLogout(event) { // Rendre la méthode async
+		event.preventDefault();
+		let jwtToken = Icookies.getCookie('token');
+		let csrfToken = Icookies.getCookie('csrftoken');
+		console.log(jwtToken);
+		console.log("CSRF");
+		console.log(csrfToken);
 
-			// Send the logout request to the Django API
-			fetch('/api/profiles/user_logout/', {
+		try {
+			const response = await fetch('/api/profiles/logout_user/', {
 				method: 'POST',
-				//credentials: 'same-origin',
 				headers: {
 					'Authorization': jwtToken,
 					'Content-Type': 'application/json',
 					'X-CSRFToken': csrfToken
 				}
-			})
-			.then(response => {
-				if (response.ok) {
-					return response.json();
-				} else {
-					throw new Error('Logout failed');
-				}
-			})
-			.then(data => {
+			});
+			if (response.ok) {
+				const data = await response.json();
 				console.log(data);
 				Icookies.clearAllCookies();
 				window.location.href = '/'; // Change the URL to your home page URL
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				// Handle API errors
-			});
-		});
+			} else {
+				throw new Error('Logout failed');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			// Handle API errors
+		}
 	}
 }
 
 customElements.define('logout-form', LogoutForm);
-
-
-
-
-
-
-
-
 
