@@ -74,6 +74,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 	def user_logout(self, request):
 		if request.method == 'POST':
 			user = request.user
+			logger.debug(request.user)
 			token = request.headers.get('Authorization')
 			token_service_url = 'http://JWToken:8080/api/token/'
 			token_response = requests.get(token_service_url, headers={'Authorization' : token})

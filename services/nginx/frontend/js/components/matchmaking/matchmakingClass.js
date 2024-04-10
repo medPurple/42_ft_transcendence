@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import {WaitingScreen} from "./WaitingScreen.js"
 
 class Matchmaking {
 
@@ -60,13 +61,62 @@ class Matchmaking {
 		});
 	}
 
-	tournamentMatchmaking() {
-
-		// Implémentez la logique de matchmaking pour le tournoi ici
+	async tournamentMatchmaking() {
+		let id = await this.getID();
+		console.log("id is : " + id);
+		fetch('/api/queue/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+				'Authorization': Icookies.getCookie('token'),
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+						"userID": id,
+						"game": "pong_tournament"
+					})
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.position) {
+				console.log("Added to queue for pong tournament");
+				return;
+			} else {
+				alert('No such user');
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		});
 	}
 
-	pkmMatchmaking() {
-		// Implémentez la logique de matchmaking pour le pkm ici
+	async pkmMatchmaking() {
+		let id = await this.getID();
+		console.log("id is : " + id);
+		fetch('/api/queue/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+				'Authorization': Icookies.getCookie('token'),
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+						"userID": id,
+						"game": "pkm_multiplayer"
+					})
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.position) {
+				console.log("Added to queue for pokemon multiplayer");
+				return;
+			} else {
+				alert('No such user');
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		});
 	}
 }
 
@@ -86,7 +136,8 @@ export class MatchmakingButtons {
 		multipongbutton.classList.add('queue-button');
 		multipongbutton.addEventListener('click', () => {
 			this.removeButtons();
-			this.matchmaking.pongMatchmaking()
+			new WaitingScreen("pong_multiplayer");
+			//this.matchmaking.pongMatchmaking()
 
 		});
 		return multipongbutton;
@@ -98,7 +149,7 @@ export class MatchmakingButtons {
 		multipkmbuttoon.classList.add('queue-button');
 		multipkmbuttoon.addEventListener('click', () => {
 			this.removeButtons();
-			this.matchmaking.pkmMatchmaking()
+			//this.matchmaking.pkmMatchmaking()
 
 		});		return multipkmbuttoon;
 	}
@@ -109,13 +160,14 @@ export class MatchmakingButtons {
 		tournapongbutton.classList.add('queue-button');
 		tournapongbutton.addEventListener('click', () => {
 			this.removeButtons();
-			this.matchmaking.tournamentMatchmaking()
+			//this.matchmaking.tournamentMatchmaking()
 
 		});		return tournapongbutton;
 	}
 
 	buttonsCreation() {
 		const matchmakingbutton = document.createElement('div');
+		matchmakingbutton.classList.add('matchmaking-buttons')
 		matchmakingbutton.appendChild(this.multipongButton());
 		matchmakingbutton.appendChild(this.tournapongButton());
 		matchmakingbutton.appendChild(this.multipkmButton());
