@@ -4,30 +4,10 @@ var moveLeft = false;
 
 var moveRight = false;
 
+var gameSocket;
+
 window.addEventListener('keydown', onKeyDown, false);
 window.addEventListener('keyup', onKeyUp, false);
-
-function onKeyDown(event) {
-  switch (event.keyCode) {
-    case 65:
-      moveLeft = true;
-      break;
-    case 68:
-      moveRight = true;
-      break;
-  }
-}
-
-function onKeyUp(event) {
-  switch (event.keyCode) {
-    case 65:
-      moveLeft = false;
-      break;
-    case 68:
-      moveRight = false;
-      break;
-  }
-}
 
 var camera, scene, renderer, pointLight, spotLight;
 
@@ -116,7 +96,7 @@ function createScene() {
   var plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth * 0.95, planeHeight, planeQuality, planeQuality), planeMaterial);
   plane.receiveShadow = true;
 
-  //Paddle Setup
+  //Paddle Setupjs
 
   var paddle1Material = new THREE.MeshLambertMaterial({ color: 0x1B32C0 });
 
@@ -330,7 +310,7 @@ function draw() {
   renderer.render(scene, camera);
   requestAnimationFrame(draw);
 
-  ballPhysics();
+  //ballPhysics();
   paddlePhysics();
   paddleMovement();
   opponentPaddleMovement();
@@ -339,7 +319,7 @@ function draw() {
 
 function setup() {
 
-  const gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
+  gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
 
   gameSocket.onopen = function(e) {
     console.log('Connected');
@@ -353,8 +333,45 @@ function setup() {
     console.log('Closed');
   };
 
+  gameSocket.onmessage = function(event) {
+    //console.log("Message du websocket: ", event.data);
+    handleServerMessage(event.data);
+  }
+
   createScene();
   draw();
+}
+
+function handleServerMessage(message) {
+
+  console.log("Message du websocket: ", message);
+  //if (message == )
+}
+
+function onKeyDown(event) {
+  switch (event.keyCode) {
+    case 65:
+      moveLeft = true;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "left" }))
+      break;
+    case 68:
+      moveRight = true;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "right" }))
+      break;
+  }
+}
+
+function onKeyUp(event) {
+  switch (event.keyCode) {
+    case 65:
+      moveLeft = false;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
+      break;
+    case 68:
+      moveRight = false;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
+      break;
+  }
 }
 
 export { setup };
