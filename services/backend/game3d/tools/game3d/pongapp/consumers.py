@@ -46,7 +46,18 @@ class PongConsumer(AsyncWebsocketConsumer):
         paddleMov = text_data_json["paddleMov"]
 
         if (self.player_id == 1):
-            await self.send(text_data=json.dumps({"paddleMov1": paddleMov}))
+            #await self.send(text_data=json.dumps({"paddleMov1": paddleMov}))
+            await self.channel_layer.group_send("test", {"type": "paddle.message", "paddleMov1": paddleMov})
         else:
+            await self.channel_layer.group_send("test", {"type": "paddle.message", "paddleMov2": paddleMov})
+            #await self.send(text_data=json.dumps({"paddleMov2": paddleMov}))
+
+    async def paddle_message(self, event):
+        if(self.player_id == 1 and "paddleMov2" in event):
+            paddleMov = event["paddleMov2"];
             await self.send(text_data=json.dumps({"paddleMov2": paddleMov}))
+        elif(self.player_id == 2 and "paddleMov1" in event):
+            paddleMov = event["paddleMov1"];
+            await self.send(text_data=json.dumps({"paddleMov1": paddleMov}))
+
 

@@ -4,7 +4,13 @@ var moveLeft = false;
 
 var moveRight = false;
 
+var advMoveLeft = false;
+
+var advMoveRight = false;
+
 var gameSocket;
+
+var player_id = 0;
 
 window.addEventListener('keydown', onKeyDown, false);
 window.addEventListener('keyup', onKeyUp, false);
@@ -230,22 +236,54 @@ function paddlePhysics() {
   }
 }
 
+// function opponentPaddleMovement() {
+//
+//   paddle2DirY = (ball.position.y - paddle2.position.y);
+//   if (Math.abs(paddle2DirY) <= paddleSpeed) {
+//     paddle2.position.y += paddle2DirY;
+//   }
+//   else {
+//     if (paddle2DirY > paddleSpeed) {
+//       paddle2.position.y += paddleSpeed;
+//     }
+//     else if (paddle2DirY < -paddleSpeed) {
+//       paddle2.position.y -= paddleSpeed;
+//     }
+//   }
+//   paddle2.scale.y += (1 - paddle2.scale.y) * 0.2;
+// }
+//
+
 function opponentPaddleMovement() {
 
-  paddle2DirY = (ball.position.y - paddle2.position.y);
-  if (Math.abs(paddle2DirY) <= paddleSpeed) {
-    paddle2.position.y += paddle2DirY;
+  if (advMoveRight == true) {
+    if (paddle2.position.y < fieldHeight * 0.45) {
+      paddle2DirY = paddleSpeed * 0.5;
+    }
+    else {
+      paddle2DirY = 0;
+      //paddle2.scale.z += (10 - paddle2.scale.z) * 0.2;
+    }
+  }
+  else if (advMoveLeft == true) {
+    if (paddle2.position.y > -fieldHeight * 0.45) {
+      paddle2DirY = -paddleSpeed * 0.5;
+    }
+    else {
+      paddle2DirY = 0;
+      //paddle2.scale.z += (10 - paddle2.scale.z) * 0.2;
+    }
   }
   else {
-    if (paddle2DirY > paddleSpeed) {
-      paddle2.position.y += paddleSpeed;
-    }
-    else if (paddle2DirY < -paddleSpeed) {
-      paddle2.position.y -= paddleSpeed;
-    }
+    paddle2DirY = 0;
   }
+
   paddle2.scale.y += (1 - paddle2.scale.y) * 0.2;
+  paddle2.scale.z += (1 - paddle2.scale.z) * 0.2;
+  paddle2.position.y += paddle2DirY;
 }
+
+
 
 function resetBall(ballStartDirection) {
 
@@ -329,7 +367,7 @@ function setup() {
     console.log('Error');
   };
 
-  gameSocket.onclose = function(e) {:
+  gameSocket.onclose = function(e) {
     console.log('Closed');
   };
 
@@ -344,10 +382,44 @@ function setup() {
 
 function handleServerMessage(message) {
 
-  console.log("Message du websocket: ", message);
+  var map = new Map(Object.entries(JSON.parse(message)));
+  //console.log("Message du websocket: ", map);
 
-  //if (message == )
+  for (let [key, value] of map.entries()) {
+    if (key == "player") {
+      player_id = value;
+    }
+    else if (key == "paddleMov2" || key == "paddleMov1")
+      handleAdvMove(key, value)
+  }
 }
+
+function handleAdvMove(key, value) {
+
+  if ((key == "paddleMov2" && player_id == 1) || (key == "paddleMov1" && player_id == 2)) {
+    if (value == "right") {
+      advMoveRight = true;
+      advMoveLeft = false;
+    }
+    else if (value == "left") {
+      advMoveLeft = true;
+      advMoveRight = false;
+    }
+    else {
+      advMoveLeft = false;
+      advMoveRight = false;
+    }
+  }
+}
+// if (obj.hasOwnProperty('player'))
+//   //console.log("Player message detected")
+//
+// else if (obj.hasOwnProperty('paddleMov2')) // Rajouter la condition d identite
+//   console.log("PaddleMov2 message detected")
+// else if (obj.hasOwnProperty('paddleMov1')) // Rajouter la condition d identite
+//   console.log("PaddleMov1 message detected")
+// //if (message == )
+
 
 function onKeyDown(event) {
   switch (event.keyCode) {

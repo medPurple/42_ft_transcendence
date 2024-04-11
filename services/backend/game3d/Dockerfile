@@ -28,11 +28,11 @@ RUN pip install --break-system-packages -r requirements.txt
 
 ### Copy django app files in container
 WORKDIR /app
-COPY  /tools/game3d/ /app/
+#COPY  /tools/game3d/ /app/
 
 ### Copy start script
-COPY /conf/start.sh .
-RUN chmod 777 start.sh
+COPY /conf/start.sh /home/
+RUN chmod 777 /home/start.sh
 
 ### Launch redis-server
 
@@ -44,4 +44,4 @@ EXPOSE 5432
 EXPOSE 6379
 
 ### Launch server/application
-ENTRYPOINT [ "sh", "start.sh" ]
+ENTRYPOINT [ "sh", "/home/start.sh" ]
