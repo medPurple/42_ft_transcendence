@@ -7,9 +7,9 @@ export default async function userService() {
 	let welcomeMessage = '';
 	let content = '';
 
-	if (Icookies.getCookie("token")) {
+	if (Icookies.getCookie('token')) {
 		try {
-			const username = await userInfoInstance.getUsername(); // Appel synchrone
+			const username = await userInfoInstance.getUsername();
 			welcomeMessage = `Welcome, ${username} !`;
 			content = `
 				<h1>User Service</h1>

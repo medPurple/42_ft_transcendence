@@ -3,8 +3,10 @@ from django.contrib.auth.models import AbstractUser
 from django.core.files import File
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
+import uuid
 
 class	CustomUser(AbstractUser):
+	user_id = models.AutoField(primary_key=True)
 	profile_picture = models.ImageField(blank=True, upload_to='images')
 	username = models.CharField(max_length=200, unique=True)
 	password = models.CharField(max_length=200)

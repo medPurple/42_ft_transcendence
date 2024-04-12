@@ -5,85 +5,109 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions, status
 import requests
 import logging
 
-from rest_framework import viewsets
+from rest_framework.views import APIView
 from .forms import CustomUserCreationForm
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserRegisterSerializer, CustomUserSerializer
 
 logger = logging.getLogger(__name__)
 
-class CustomUserViewSet(viewsets.ModelViewSet):
-	serializer_class = CustomUserSerializer
-	queryset = CustomUser.objects.all()
 
-	def create(self, request):
-		return Response({'error': 'Method not allowed'}, status=405)
 
-	def user_token(self, request, user_id):
-		token_service_url = 'http://JWToken:8080/api/token/'
-		try:
-			token_response = requests.post(token_service_url, json={'user_id' : user_id})
-			token_response.raise_for_status()
-			user_token = token_response.json().get('token')
-			return user_token
-		except requests.exceptions.RequestException as e:
-			print(f"Error token : {e}")
-			return None
+# 	@action(detail=False, methods=['post'])
+# 	def register(self, request):
+# 		if request.method == 'POST':
+# 			form = CustomUserCreationForm(request.POST, request.FILES)
+# 			if form.is_valid():
+# 				user = form.save(commit=False)
+# 				user.is_online = True
+# 				user.save()
+# 				token = self.user_token(request, user.id)
+# 				login(request, user)
+# 				return Response({'success': True, 'token' : token},
+# 					status=201)  # Utilisez le code de statut 201 pour indiquer que la ressource a été créée avec succès
+# 			else:
+# 				return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
+# 		else:
+# 			return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
+def user_token(request, user_id):
+	token_service_url = 'http://JWToken:8080/api/token/'
+	try:
+		token_response = requests.post(token_service_url, json={'user_id' : user_id})
+		token_response.raise_for_status()
+		user_token = token_response.json().get('token')
+		return user_token
+	except requests.exceptions.RequestException as e:
+		print(f"Error token : {e}")
+		return None
 
-	@action(detail=False, methods=['post'])
-	def register(self, request):
-		if request.method == 'POST':
-			form = CustomUserCreationForm(request.POST, request.FILES)
-			if form.is_valid():
-				user = form.save(commit=False)
-				user.is_online = True
-				user.save()
-				token = self.user_token(request, user.id)
-				login(request, user)
-				return Response({'success': True, 'token' : token},
-					status=201)  # Utilisez le code de statut 201 pour indiquer que la ressource a été créée avec succès
-			else:
-				return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
-		else:
-			return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
 
-	@action(detail=False, methods=['post'])
-	def login(self, request):
-		if request.method == 'POST':
-			form = AuthenticationForm(request, request.POST)
-			if form.is_valid():
-				user = form.get_user()
-				token = self.user_token(request, user.id)
-				user.is_online = True
-				user.save()
-				login(request, user)
-				return Response({'success': True, 'token' : token},
-					status=201)
-			else:
-				return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
-		else:
-			return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
-
-	@action(detail=False, methods=['post'])
-	def logout_user(self, request):
-		if request.method == 'POST':
-			user = request.user
-			token = request.headers.get('Authorization')
-			logger.debug(token)
-			token_service_url = 'http://JWToken:8080/api/token/'
-			token_response = requests.get(token_service_url, headers={'Authorization' : token})
-			data = token_response.json()
-			user.is_online = False
+class CustomUserRegister(APIView):
+	permission_classes = (permissions.AllowAny,)
+	def post(self, request):
+		form = CustomUserCreationForm(request.POST, request.FILES)
+		if form.is_valid():
+			user = form.save(commit=False)
+			user.is_online = True
 			user.save()
-			logout(request)
-			return Response(data, status=200)
+			token = user_token(request, user.user_id)
+			login(request, user)
+			return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 		else:
-			return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
+			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
+		
+class CustomUserLogin(APIView):
+	permission_classes = (permissions.AllowAny,)
+	def post(self, request):
+		form = AuthenticationForm(request, request.POST)
+		if form.is_valid():
+			user = form.get_user()
+			token = user_token(request, user.user_id)
+			user.is_online = True
+			user.save()
+			login(request, user)
+			return Response({'success': True, 'token' : token},
+				status=201)
+		else:
+			return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
+
+class CustomUserLogout(APIView):
+	permission_classes = (permissions.AllowAny,)
+	def post(self, request):
+		# Récupérer l'utilisateur actuel
+		user = request.user
+		
+		# Mettre à jour le statut en ligne de l'utilisateur à False
+		user.is_online = False
+		user.save()
+		
+		# Communiquer avec le service de token (exemple)
+		token = request.headers.get('Authorization')
+		token_service_url = 'http://JWToken:8080/api/token/'
+		token_response = requests.get(token_service_url, headers={'Authorization': token})
+		
+		# Déconnecter l'utilisateur
+		logout(request)
+		
+		# Répondre avec un message de déconnexion réussie
+		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
+
+
+class CustomUserView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def get(self, request):
+		serializer = CustomUserSerializer(request.user)
+		return Response({'user': serializer.data, 'success': True}, status=status.HTTP_200_OK)
+
+
+
+
+#
 
 
 	# @action(detail=False, methods=['post'])

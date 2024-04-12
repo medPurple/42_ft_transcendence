@@ -27,9 +27,10 @@ const routes = {
 	},
 	'/userService': {
 		title: "User Service",
-		async render () {
-			return await userService();
-		}
+		render: userService
+		// async render () {
+		// 	return await userService();
+		// }
 	},
 	'/gameService': {
 		title: "Game Service",
@@ -60,11 +61,22 @@ async function router() {
 	const pageTitle = "Transcendence";
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
-		// Vérifier si la fonction de rendu de la vue est asynchrone
-		const renderedContent = typeof view.render === 'function' && view.render.constructor.name === 'AsyncFunction'
-			? await view.render() // Attendre la résolution de la promesse retournée par la fonction de rendu
-			: view.render(); // Si ce n'est pas une fonction asynchrone, appeler directement la fonction de rendu
-		app.innerHTML = renderedContent;
+		let result = await view.render();
+		// console.log(view.render());
+		//Clear the app content
+		app.innerHTML = '';
+		if (typeof result === 'string') {
+			// If it's a string, user innerHTML
+			app.innerHTML = result;
+		} else if (result instanceof Node) { 
+            // If it's a Node, use appendChild
+            app.appendChild(result);
+        } else {
+            // If it's neither, create a text node and append it
+            let textNode = document.createTextNode(String(result));
+            app.appendChild(textNode);
+        }
+
 	} else {
 		history.replaceState("", "", "/404");
 		router();
