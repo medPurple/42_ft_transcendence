@@ -20,7 +20,8 @@ h3 {
 	text-align: center;
 }
 
-html, body {
+html,
+body {
 	font-family: 'Avenir';
 	background-color: #b6b6b6;
 	margin: 20px;
@@ -54,7 +55,7 @@ section {
 	padding: 30px;
 	border: 2px solid #8b2d2d;
 	border-radius: 10px;
-	
+
 }
 
 footer {
@@ -62,4 +63,53 @@ footer {
 	margin: 20px;
 	padding: 20px;
 	color: #fdfdfd;
+}
+
+/* CSS FOR THE MATCHMAKING PAGE */
+
+.matchmakingdiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.matchmakingdiv .title-div .matchmaking-title {
+	margin-top: 50px;
+}
+
+.matchmakingdiv .radio-buttons {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+.matchmakingdiv .radio-buttons .queue-checkbox {
+	appearance: none;
+	background-color: #fafafa;
+	border: 2px solid #cacece;
+	border-radius: 50%;
+	display: inline-block;
+	position: relative;
+	height: 100px;
+	width: 100px;
+	margin: 20px;
+	transition: border .5s;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 70%;
+}
+
+.matchmakingdiv .radio-buttons .queue-checkbox:checked {
+	border: 2px solid #3090C7;
+}
+
+.matchmakingdiv .radio-buttons .queue-label {
+	display: block;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.matchmakingdiv .button-div .queue-button {
+	margin-top: 50px;
 }

@@ -10,9 +10,9 @@ export class WaitingScreen{
         const queueText = document.createElement('p');
         let queueName = "";
         if (game_name == 'pong_multiplayer'){
-            queueName = "PONG - Versus";}
+            queueName = "Pong - Versus";}
         if (game_name == 'pong_tournament'){
-            queueName = "PONG - Tournament";}
+            queueName = "Pong - Tournament";}
         if (game_name == 'pkm_multiplayer'){
             queueName = "Pokemon - Versus";}
         queueText.textContent = `You are now in queue for ${queueName}`;
@@ -23,6 +23,7 @@ export class WaitingScreen{
         const waitingscreen = document.createElement('div');
 		waitingscreen.classList.add('matchmaking-screen')
         this.addWaitingText(game_name, waitingscreen);
+        document.body.appendChild(waitingscreen);
     }
 
 }

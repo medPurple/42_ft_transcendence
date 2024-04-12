@@ -54,11 +54,16 @@ const routes = {
 // Define the router function that will render the view based on the route path name and update the browser history state
 function router() {
     let view = routes[location.pathname];
-    // define the header title
     const pageTitle = "Transcendence";
     if (view) {
         document.title = pageTitle + " | " + view.title;
-        app.innerHTML = view.render();
+        let result = view.render();
+        app.innerHTML = '';
+        if (typeof result === 'string') {
+            app.innerHTML = result;
+        } else {
+            app.appendChild(result);
+        }
     } else {
         history.replaceState("", "", "/404");
         router()
