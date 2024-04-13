@@ -1,12 +1,9 @@
 export default () => `
-
-<body>
-    <div class="container">
-        <h1>Erreur 404 - Page non trouvée</h1>
-        <p>Désolé, la page que vous recherchez est introuvable.</p>
-        <p><a href="/">Retour à la page d'accueil</a></p>
-    </div>
-</body>
-
-
+	<body>
+		<div class="container">
+			<h1>Error 404 - Page Not Found</h1>
+			<p>Sorry, the page you are looking for could not be found.</p>
+			<p><a href="/">Return to the homepage</a></p>
+		</div>
+	</body>
 	`;

@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.core.files import File
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
-import uuid
 
 class	CustomUser(AbstractUser):
 	user_id = models.AutoField(primary_key=True)
@@ -22,4 +21,4 @@ def set_default_pp(sender, instance, **kwargs):
 		default_image_path = '/app/static/images/default.jpg'
 		with open(default_image_path, 'rb') as f:
 			default_image = File(f)
-			instance.profile_picture.save('default.jpg', default_image, save=False)
+			var = instance.profile_picture.save('default.jpg', default_image, save=False)

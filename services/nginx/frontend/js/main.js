@@ -8,6 +8,7 @@ import gameService from "./views/gameService.js";
 import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
+import profile from "./views/user/profile.js";
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
 
@@ -28,9 +29,6 @@ const routes = {
 	'/userService': {
 		title: "User Service",
 		render: userService
-		// async render () {
-		// 	return await userService();
-		// }
 	},
 	'/gameService': {
 		title: "Game Service",
@@ -43,6 +41,10 @@ const routes = {
 	'/login': {
 		title: "Log In",
 		render: login
+	},
+	'/profile': {
+		title: "Profile",
+		render: profile
 	},
 	'/play' : {
 		title: "Play",

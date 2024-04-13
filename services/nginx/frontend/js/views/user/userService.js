@@ -1,19 +1,19 @@
 import Icookies from "../../components/cookie/cookie.js"
-import userInfo from "../../components/user/userInfo.js"
+import Iuser from "../../components/user/userInfo.js"
 import "../../components/user/logoutForm.js";
 
 export default async function userService() {
-	const userInfoInstance = new userInfo();
 	let welcomeMessage = '';
 	let content = '';
 
 	if (Icookies.getCookie('token')) {
 		try {
-			const username = await userInfoInstance.getUsername();
+			const username = await Iuser.getUsername();
 			welcomeMessage = `Welcome, ${username} !`;
 			content = `
 				<h1>User Service</h1>
 				<p>${welcomeMessage}</p>
+				<a href="/profile" data-link>See my profile</a><br>
 				<logout-form></logout-form>
 				`;
 			} catch (error) {

@@ -12,28 +12,11 @@ import logging
 from rest_framework.views import APIView
 from .forms import CustomUserCreationForm
 from .models import CustomUser
-from .serializers import CustomUserRegisterSerializer, CustomUserSerializer
+from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer, CustomUserSerializer
 
 logger = logging.getLogger(__name__)
 
 
-
-# 	@action(detail=False, methods=['post'])
-# 	def register(self, request):
-# 		if request.method == 'POST':
-# 			form = CustomUserCreationForm(request.POST, request.FILES)
-# 			if form.is_valid():
-# 				user = form.save(commit=False)
-# 				user.is_online = True
-# 				user.save()
-# 				token = self.user_token(request, user.id)
-# 				login(request, user)
-# 				return Response({'success': True, 'token' : token},
-# 					status=201)  # Utilisez le code de statut 201 pour indiquer que la ressource a été créée avec succès
-# 			else:
-# 				return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
-# 		else:
-# 			return Response({'error': 'Method not allowed'}, status=405)  # Si la méthode de requête n'est pas POST, renvoyez une erreur de méthode non autorisée avec le code de statut 405
 def user_token(request, user_id):
 	token_service_url = 'http://JWToken:8080/api/token/'
 	try:
@@ -98,13 +81,17 @@ class CustomUserLogout(APIView):
 		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 
 
+class CustomUsernameView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def get(self, request):
+		serializer = CustomUsernameSerializer(request.user)
+		return Response({'user': serializer.data, 'success': True}, status=status.HTTP_200_OK)
+
 class CustomUserView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	def get(self, request):
 		serializer = CustomUserSerializer(request.user)
-		return Response({'user': serializer.data, 'success': True}, status=status.HTTP_200_OK)
-
-
+		return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
 
 
 #
