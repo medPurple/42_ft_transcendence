@@ -42,23 +42,30 @@ class WaitingAPI(APIView):
 
     def get(self, request, *args, **kwargs):
         game = request.query_params.get('game')
-        match game:
-            case ("pkm_multiplayer"):
-                pkm_waitinglist = WaitingModel.objects.filter(game="pkm_multiplayer").order_by('position')
-                serializer = WaitingModelSerializer(pkm_waitinglist, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            case ("pong_multiplayer"):
-                pong_waitinglist = WaitingModel.objects.filter(game="pong_multiplayer").order_by('position')
-                serializer = WaitingModelSerializer(pong_waitinglist, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            case ("pong_tournament"):
-                tpong_waitinglist = WaitingModel.objects.filter(game="pong_tournament").order_by('position')
-                serializer = WaitingModelSerializer(tpong_waitinglist, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            case None:
-                all_queues = WaitingModel.objects.all().order_by('position')
-                serializer = WaitingModelSerializer(all_queues, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+        user = request.query_params.get('userID')
+        
+        if game is not None:
+            match game:
+                case ("pkm_multiplayer"):
+                    pkm_waitinglist = WaitingModel.objects.filter(game="pkm_multiplayer").order_by('position')
+                    serializer = WaitingModelSerializer(pkm_waitinglist, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                case ("pong_multiplayer"):
+                    pong_waitinglist = WaitingModel.objects.filter(game="pong_multiplayer").order_by('position')
+                    serializer = WaitingModelSerializer(pong_waitinglist, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                case ("pong_tournament"):
+                    tpong_waitinglist = WaitingModel.objects.filter(game="pong_tournament").order_by('position')
+                    serializer = WaitingModelSerializer(tpong_waitinglist, many=True)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+        elif user is not None:
+            instance = get_object_or_404(WaitingModel, userID=user)
+            serializer = WaitingModelSerializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        all_queues = WaitingModel.objects.all().order_by('position')
+        serializer = WaitingModelSerializer(all_queues, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def delete(self, request, *args, **kwargs):
         user_id = request.query_params.get('userID')

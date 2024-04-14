@@ -206,6 +206,7 @@ export class MatchmakingButtons {
 		startbutton.onclick = () => {
 			const selectedGame = document.querySelector('input[name="game"]:checked');
 			if (selectedGame) {
+				this.removeButtons();
 				if (selectedGame.value == 'Pong Versus') {
 					// this.matchmaking.pongMatchmaking();
 					new WaitingScreen('pong_multiplayer');
@@ -216,6 +217,7 @@ export class MatchmakingButtons {
 					// this.matchmaking.pkmMatchmaking();
 					new WaitingScreen('pkm_multiplayer');
 				}
+				
 			}
 		}
 		return startbutton;
@@ -226,33 +228,38 @@ export class MatchmakingButtons {
 		const matchmakingdiv = document.createElement('div');
 		matchmakingdiv.classList.add('matchmakingdiv');
 
-		const titleDiv = document.createElement('div');
-		titleDiv.classList.add('title-div');
-		titleDiv.appendChild(this.matchmakingTitle());
+		if (Icookies.getCookie('token') != null) {
+			const titleDiv = document.createElement('div');
+			titleDiv.classList.add('title-div');
+			titleDiv.appendChild(this.matchmakingTitle());
 
-		const radioButtonsDiv = document.createElement('div');
-		radioButtonsDiv.classList.add('radio-buttons');
-		radioButtonsDiv.appendChild(this.multipongButton());
-		radioButtonsDiv.appendChild(this.tournapongButton());
-		radioButtonsDiv.appendChild(this.multipkmButton());
+			const radioButtonsDiv = document.createElement('div');
+			radioButtonsDiv.classList.add('radio-buttons');
+			radioButtonsDiv.appendChild(this.multipongButton());
+			radioButtonsDiv.appendChild(this.tournapongButton());
+			radioButtonsDiv.appendChild(this.multipkmButton());
 
-		const startButtonDiv = document.createElement('div');
-		startButtonDiv.classList.add('button-div');
-		startButtonDiv.appendChild(this.matchmakingStartButton());
+			const startButtonDiv = document.createElement('div');
+			startButtonDiv.classList.add('button-div');
+			startButtonDiv.appendChild(this.matchmakingStartButton());
 
-		matchmakingdiv.appendChild(titleDiv);
-		matchmakingdiv.appendChild(radioButtonsDiv);
-		matchmakingdiv.appendChild(startButtonDiv);
+			matchmakingdiv.appendChild(titleDiv);
+			matchmakingdiv.appendChild(radioButtonsDiv);
+			matchmakingdiv.appendChild(startButtonDiv);
+		} else {
+			const notLoggedDiv = document.createElement('div');
+			notLoggedDiv.classList.add('not-logged');
+			notLoggedDiv.innerText = 'You need to be logged in to play';
+			matchmakingdiv.appendChild(notLoggedDiv);
+		}
 
 		document.body.appendChild(matchmakingdiv);
 		return matchmakingdiv;
 	}
 
 	removeButtons() {
-        const buttonsContainer = document.body.querySelector('.matchmaking-buttons');
-        if (buttonsContainer) {
-            buttonsContainer.remove();
-        }
+		const matchmakingdiv = document.querySelector('.matchmakingdiv');
+		matchmakingdiv.remove();
     }
 }
 
