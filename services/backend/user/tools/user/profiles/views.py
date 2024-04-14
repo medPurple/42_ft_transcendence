@@ -10,7 +10,7 @@ import requests
 import logging
 
 from rest_framework.views import APIView
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserEditForm
 from .models import CustomUser
 from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer, CustomUserSerializer
 
@@ -57,7 +57,7 @@ class CustomUserLogin(APIView):
 			return Response({'success': True, 'token' : token},
 				status=201)
 		else:
-			return Response(form.errors, status=400)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
+			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
 
 class CustomUserLogout(APIView):
 	permission_classes = (permissions.AllowAny,)
@@ -92,6 +92,17 @@ class CustomUserView(APIView):
 	def get(self, request):
 		serializer = CustomUserSerializer(request.user)
 		return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
+
+class CustomUserEditView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def post(self, request):
+		form = CustomUserEditForm(request.data, instance=request.user)
+		if form.is_valid():
+			form.save()
+			return Response({'success': True}, status=status.HTTP_201_CREATED)
+		else:
+			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 #

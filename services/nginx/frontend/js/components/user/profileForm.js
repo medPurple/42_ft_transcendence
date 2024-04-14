@@ -1,12 +1,5 @@
-import Icookie from "../cookie/cookie.js"
 import Iuser from "./userInfo.js"
-
-// try {
-// 	const username = await Iuser.getUsername();
-// 	welcomeMessage = `Welcome, ${username} !`;
-// 	content = `
-// 		<h1>User Service</h1>
-// 		<p>${welcomeMessage}</p>
+import Icookies from "../cookie/cookie.js"
 
 export default class profileForm extends HTMLElement {
 	constructor() {
@@ -16,6 +9,7 @@ export default class profileForm extends HTMLElement {
 	
 	async connectedCallback() {
         await this.initUserInfo();
+		this.initFormSubmit();
     }
      
 	async initUserInfo() {
@@ -27,23 +21,82 @@ export default class profileForm extends HTMLElement {
 			console.log(profilePictureUrl);
 			console.log(data.user.profile_picture);
 			this.shadowRoot.innerHTML = `
-			<div class="profile-container">
-				<div class="profile-content">
+			<div id="profile-container">
+				<div id="profile-content">
 					<img src="${profilePictureUrl}" alt="Profile Picture" class="profile-pic">
 					<p><strong>Username:</strong> ${data.user.username}</p>
 					<p><strong>Email:</strong> ${data.user.email}</p>
 					<p><strong>First Name:</strong> ${data.user.first_name}</p>
 					<p><strong>Last Name:</strong> ${data.user.last_name}</p>
 					<p><strong>Online:</strong> ${data.user.is_online}</p>
-					<button type="editprofile" >Edit Profile</button>
+					<button id="edit-profile-button" type="button" >Edit Profile</button>
+				</div>
+				<div id="edit-profile" style="display:none;">
+					<form id="edit-profile-form">
+					<label for="profile_picture">Profile Picture:</label>
+					<input type="file" id="profile_picture" name="profile_picture">
+						<label for="username">Username:</label>
+						<input type="text" id="username" name="username" value="${data.user.username}">
+						<label for="email">Email:</label>
+						<input type="email" id="email" name="email" value="${data.user.email}">
+						<label for="first_name">First Name:</label>
+						<input type="text" id="first_name" name="first_name" value="${data.user.first_name}">
+						<label for="last_name">Last Name:</label>
+						<input type="text" id="last_name" name="last_name" value="${data.user.last_name}">
+						<label for="password">Password:</label>
+						<input type="password" id="password" name="password">					
+						<input type="submit" value="Save Changes">
+					</form>
 				</div>
 			</div>	
-			`
+			` ;
+		
+			this.shadowRoot.querySelector('#edit-profile-button').addEventListener('click', () => {
+                this.shadowRoot.querySelector('#profile-content').style.display = 'none';
+                this.shadowRoot.querySelector('#edit-profile').style.display = 'block';
+			
+			});
+		
 		} catch (error) {
 			console.error('Error:', error)
 		}
 	}
+	initFormSubmit() {
+		const editForm = this.shadowRoot.getElementById('edit-profile-form'); // Use getElementById to find the form within the component
+		editForm.addEventListener('submit', function(event) {
+			event.preventDefault();
+			let jwtToken = Icookies.getCookie('token');
+			let csrfToken = Icookies.getCookie('csrftoken');
+			let formData = new FormData(editForm);
+			// Send an AJAX request to submit the form
+			fetch('/api/profiles/edit-profile/', {
+				method: 'POST',
+				body: formData,
+				headers: {
+					'Authorization': jwtToken,
+					'X-CSRFToken': csrfToken
+				}
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					console.log('Profile updated successfully');
+					// Redirect to the home page
+						window.location.href = '/'; // Change the URL to your home page URL
+
+				} else {
+					// Display validation errors or any other error message
+					alert('An error occurred. Please try again.');
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				// Handle API errors
+			});
+		});
+	}
 }
+
 
 customElements.define('profile-form', profileForm);
 

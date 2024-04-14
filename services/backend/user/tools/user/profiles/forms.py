@@ -12,3 +12,24 @@ class CustomUserCreationForm(UserCreationForm):
 			'last_name'
 		)
 
+
+class CustomUserEditForm(forms.ModelForm):
+    # new_password = forms.CharField(widget=forms.PasswordInput)
+    # confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'first_name', 'last_name']
+		
+		
+		# , 'new_password', 'confirm_password']
+
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     password = cleaned_data.get("new_password")
+    #     confirm_password = cleaned_data.get("confirm_password")
+
+    #     if password != confirm_password:
+    #         self.add_error('confirm_password', "Password does not match")
+
+    #     return cleaned_data
