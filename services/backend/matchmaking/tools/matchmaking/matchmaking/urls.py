@@ -17,7 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from classic.views import WaitingAPI
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.urls import path
+from classic import consumers
 
+application = ProtocolTypeRouter({
+    'websocket': URLRouter([
+        path('api/wsqueue/', consumers.QueueConsumer.as_asgi()),
+    ]),
+})
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/queue/', WaitingAPI.as_view(), name='queue'),

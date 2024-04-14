@@ -28,3 +28,7 @@ sqlparse==0.4.4
 typing_extensions==4.10.0
 uritemplate==4.1.1
 urllib3==2.2.1
+channels==4.1.0
+channels-redis==4.2.0
+msgpack==1.0.8
+redis==5.0.3

@@ -90,6 +90,12 @@ re_us: down	run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
+re_ma: down	run_script
+	@ if [ $(MA_IMG) = "1" ]; then docker rmi $(MA_NAME); fi;
+	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
+
+
 clean : down
 	@ echo -e "\n$(YELLOW)★ Cleaning Images - Volumes ★$(CEND)"
 

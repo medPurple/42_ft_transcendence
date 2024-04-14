@@ -62,7 +62,6 @@ class WaitingAPI(APIView):
             instance = get_object_or_404(WaitingModel, userID=user)
             serializer = WaitingModelSerializer(instance)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
         all_queues = WaitingModel.objects.all().order_by('position')
         serializer = WaitingModelSerializer(all_queues, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
