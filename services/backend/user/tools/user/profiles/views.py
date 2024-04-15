@@ -5,12 +5,13 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import permissions, status
 import requests
 import logging
 
 from rest_framework.views import APIView
-from .forms import CustomUserCreationForm, CustomUserEditForm
+from .forms import CustomUserCreationForm, CustomUserEditForm, CustomUserPasswordForm
 from .models import CustomUser
 from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer, CustomUserSerializer
 
@@ -43,7 +44,7 @@ class CustomUserRegister(APIView):
 		else:
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-		
+
 class CustomUserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)
 	def post(self, request):
@@ -64,19 +65,19 @@ class CustomUserLogout(APIView):
 	def post(self, request):
 		# Récupérer l'utilisateur actuel
 		user = request.user
-		
+
 		# Mettre à jour le statut en ligne de l'utilisateur à False
 		user.is_online = False
 		user.save()
-		
+
 		# Communiquer avec le service de token (exemple)
 		token = request.headers.get('Authorization')
 		token_service_url = 'http://JWToken:8080/api/token/'
 		token_response = requests.get(token_service_url, headers={'Authorization': token})
-		
+
 		# Déconnecter l'utilisateur
 		logout(request)
-		
+
 		# Répondre avec un message de déconnexion réussie
 		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 
@@ -95,6 +96,7 @@ class CustomUserView(APIView):
 
 class CustomUserEditView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
+	parser_classes = (MultiPartParser, FormParser,)
 	def post(self, request):
 		form = CustomUserEditForm(request.data, instance=request.user)
 		if form.is_valid():
@@ -103,6 +105,15 @@ class CustomUserEditView(APIView):
 		else:
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class CustomUserPasswordView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def post(self, request):
+		form = CustomUserPasswordForm(request.data, instance=request.user)
+		if form.is_valid():
+			form.save()
+			return Response({'success': True}, status=status.HTTP_201_CREATED)
+		else:
+			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 #

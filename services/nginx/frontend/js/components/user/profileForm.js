@@ -54,9 +54,9 @@ export default class profileForm extends HTMLElement {
 	displayEditProfileForm(data){
 		let editProfileContainer = this.shadowRoot.querySelector('#edit-profile');
 		editProfileContainer.innerHTML = `
-			<form id="edit-profile-form">
+			<form id="edit-profile-form" method="post" action="">
 				<label for="profile_picture">Profile Picture:</label>
-				<input type="file" id="profile_picture" name="profile_picture">
+				<input type="file" id= "profile_picture name="profile_picture" accept="images/*" />
 				<label for="username">Username:</label>
 				<input type="text" id="username" name="username" value="${data.user.username}">
 				<label for="email">Email:</label>
