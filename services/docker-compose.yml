@@ -1,17 +1,3 @@
-version: '3.9'
-
-  # djangoTemplate:
-  #   container_name: djangotemplate
-  #   user: root
-  #   volumes:
-  #     - djangotemplate:/var/lib/postgresql/
-  #   networks:
-  #   - microservices
-  #   build: backend/djangotemplate
-  #   image: djangotemplate
-  #   expose :
-  #   - "8080"
-  #   restart: on-failure
 
 networks:
   microservices:
