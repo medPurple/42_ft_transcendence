@@ -1,5 +1,7 @@
 //Global variables for the project (scene, renderer, camera, lights)
 
+var party = false;
+
 var moveLeft = false;
 
 var moveRight = false;
@@ -342,6 +344,7 @@ function cameraLogic() {
 
 }
 
+
 function cameraLogic2() {
 
   //spotLight.position.x = ball.position.x * 2;
@@ -356,6 +359,8 @@ function cameraLogic2() {
 
 }
 
+
+
 function draw() {
 
   renderer.render(scene, camera);
@@ -365,7 +370,6 @@ function draw() {
   paddlePhysics();
   paddleMovement();
   opponentPaddleMovement();
-  //cameraLogic();
   //cameraLogic2();
 }
 
@@ -389,9 +393,6 @@ function setup() {
     //console.log("Message du websocket: ", event.data);
     handleServerMessage(event.data);
   }
-
-  createScene();
-  draw();
 }
 
 function handleServerMessage(message) {
@@ -400,6 +401,10 @@ function handleServerMessage(message) {
   //console.log("Message du websocket: ", map);
 
   for (let [key, value] of map.entries()) {
+    if (key == "start") {
+      createScene();
+      draw();
+    }
     if (key == "player") {
       player_id = value;
     }

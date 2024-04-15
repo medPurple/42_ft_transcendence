@@ -8,7 +8,7 @@ import gameService from "./views/gameService.js";
 import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
-import { setup } from "./components/pong3d/pongLogic.js";
+import { setup } from "./components/pong3d/pongServLogic.js";
 
 
 

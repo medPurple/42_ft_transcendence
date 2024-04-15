@@ -1,27 +1,9 @@
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from pongapp.game_classes import paddleC ballC gameState
 
-# class PongConsumer(WebsocketConsumer):
-#     def connect(self):
-#         async_to_sync(self.channel_layer.group_add("test", self.channel_name))
-#         self.accept()
-#
-#     def disconnect(self, close_code):
-#         async_to_sync(self.channel_layer.group_discard)("test", self.channel_name)
-#         pass
-#
-#     def receive(self, text_data):
-#         text_data_json = json.loads(text_data)
-#         paddle = text_data_json["paddle"]
-#
-#         async_to_sync(self.channel_layer.group_send)(
-#             self.room_group_name, {"type": "paddle_message", "paddle": paddle}
-#         )
-#
-#     def paddle_message(self, event):
-#
-
+parties = [];
 group_members = 0
 
 class PongConsumer(AsyncWebsocketConsumer):
@@ -29,11 +11,11 @@ class PongConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.player_id = 0
+        self.gameState;
+        self.paddle = paddleC();
 
     async def connect(self):
-        global group_members
-        self.player_id = group_members + 1
-        group_members += 1
+        self.gameState = findParty();
         await self.channel_layer.group_add("test", self.channel_name)
         await self.accept()
         await self.send(text_data=json.dumps({"player": self.player_id}))
@@ -59,5 +41,12 @@ class PongConsumer(AsyncWebsocketConsumer):
         elif(self.player_id == 2 and "paddleMov1" in event):
             paddleMov = event["paddleMov1"];
             await self.send(text_data=json.dumps({"paddleMov1": paddleMov}))
+
+    def findParty(self):
+        global parties
+        listLen = len(parties)
+        if (!listLength or parties[listLen - 1].players_nb == 2):
+            newPart = gameState()
+            parties.append(newPart)
 
 
