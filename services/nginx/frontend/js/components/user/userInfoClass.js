@@ -57,32 +57,31 @@ export default class userInfo {
 		} catch (error) {
 			console.error('Error', error);
 			throw error;
-		}	
+		}
+	}
+
+	async getID() {
+
+		try {
+			const response = await fetch('/api/token/', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': this.csrfToken,
+					'Authorization': this.jwtToken
+				}
+			});
+			if (!response.ok) {
+				throw new Error('identification failed');
+			}
+			const data = await response.json();
+			return data.user_id;
+		} catch (error) {
+			console.error('Error:', error);
+			throw error; // share the error
+		}
 	}
 }
 
 
-	// async getID() {
-	// 	let jwtToken = Icookies.getCookie('token');
-	// 	let csrfToken = Icookies.getCookie('csrftoken');
-
-	// 	try {
-	// 		const response = await fetch('/api/token/', {
-	// 			method: 'GET',
-	// 			headers: {
-	// 				'Content-Type': 'application/json',
-	// 				'X-CSRFToken': csrfToken,
-	// 				'Authorization': jwtToken
-	// 			}
-	// 		}); 
-	// 		if (!response.ok) {
-	// 			throw new Error('identification failed');
-	// 		}
-	// 		const data = await response.json();
-	// 		return data.user_id;
-	// 	} catch (error) {
-	// 		console.error('Error:', error);
-	// 		throw error; // share the error
-	// 	}
-	// }
 

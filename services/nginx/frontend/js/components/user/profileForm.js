@@ -6,61 +6,80 @@ export default class profileForm extends HTMLElement {
 		super();
 		this.attachShadow({mode: 'open'});
 	}
-	
+
 	async connectedCallback() {
-        await this.initUserInfo();
+
+		const profileContainer = document.createElement('div');
+		profileContainer.id = 'profile-container';
+		const editProfile = document.createElement('div');
+		editProfile.id = 'edit-profile';
+		editProfile.style.display = 'none'; // Assurez-vous qu'il est initialement masqué
+
+		// Ajouter les éléments à l'ombre
+		this.shadowRoot.appendChild(profileContainer);
+		this.shadowRoot.appendChild(editProfile);
+		await this.initUserInfo();
 		this.initFormSubmit();
     }
-     
+
 	async initUserInfo() {
 		try {
 			const data = await Iuser.getAllUserInfo();
 			// Access other properties from data here
-			const baseUrl = 'http://localhost:8000';
-			const profilePictureUrl = `${baseUrl}${data.user.profile_picture}`;
-			console.log(profilePictureUrl);
+			let profilePictureData = data.user.profile_picture_data;
 			console.log(data.user.profile_picture);
-			this.shadowRoot.innerHTML = `
-			<div id="profile-container">
-				<div id="profile-content">
-					<img src="${profilePictureUrl}" alt="Profile Picture" class="profile-pic">
-					<p><strong>Username:</strong> ${data.user.username}</p>
-					<p><strong>Email:</strong> ${data.user.email}</p>
-					<p><strong>First Name:</strong> ${data.user.first_name}</p>
-					<p><strong>Last Name:</strong> ${data.user.last_name}</p>
-					<p><strong>Online:</strong> ${data.user.is_online}</p>
-					<button id="edit-profile-button" type="button" >Edit Profile</button>
-				</div>
-				<div id="edit-profile" style="display:none;">
-					<form id="edit-profile-form">
-					<label for="profile_picture">Profile Picture:</label>
-					<input type="file" id="profile_picture" name="profile_picture">
-						<label for="username">Username:</label>
-						<input type="text" id="username" name="username" value="${data.user.username}">
-						<label for="email">Email:</label>
-						<input type="email" id="email" name="email" value="${data.user.email}">
-						<label for="first_name">First Name:</label>
-						<input type="text" id="first_name" name="first_name" value="${data.user.first_name}">
-						<label for="last_name">Last Name:</label>
-						<input type="text" id="last_name" name="last_name" value="${data.user.last_name}">
-						<label for="password">Password:</label>
-						<input type="password" id="password" name="password">					
-						<input type="submit" value="Save Changes">
-					</form>
-				</div>
-			</div>	
-			` ;
-		
-			this.shadowRoot.querySelector('#edit-profile-button').addEventListener('click', () => {
-                this.shadowRoot.querySelector('#profile-content').style.display = 'none';
-                this.shadowRoot.querySelector('#edit-profile').style.display = 'block';
-			
-			});
-		
+			this.displayUserProfile(data, profilePictureData);
+			this.displayEditProfileForm(data);
+			this.initEditProfileButton();
 		} catch (error) {
 			console.error('Error:', error)
 		}
 	}
+
+	displayUserProfile(data, profilePictureData){
+		let profileContainer = this.shadowRoot.querySelector('#profile-container');
+		profileContainer.innerHTML = `
+			<div id="profile-content">
+				<img src="data:image/jpeg;base64,${profilePictureData}" alt="Profile Picture" class="profile-pic">
+				<p><strong>Username:</strong> ${data.user.username}</p>
+				<p><strong>Email:</strong> ${data.user.email}</p>
+				<p><strong>First Name:</strong> ${data.user.first_name}</p>
+				<p><strong>Last Name:</strong> ${data.user.last_name}</p>
+				<p><strong>Online:</strong> ${data.user.is_online}</p>
+				<button id="edit-profile-button" type="button" >Edit Profile</button>
+			</div>
+		`;
+	}
+
+	displayEditProfileForm(data){
+		let editProfileContainer = this.shadowRoot.querySelector('#edit-profile');
+		editProfileContainer.innerHTML = `
+			<form id="edit-profile-form">
+				<label for="profile_picture">Profile Picture:</label>
+				<input type="file" id="profile_picture" name="profile_picture">
+				<label for="username">Username:</label>
+				<input type="text" id="username" name="username" value="${data.user.username}">
+				<label for="email">Email:</label>
+				<input type="email" id="email" name="email" value="${data.user.email}">
+				<label for="first_name">First Name:</label>
+				<input type="text" id="first_name" name="first_name" value="${data.user.first_name}">
+				<label for="last_name">Last Name:</label>
+				<input type="text" id="last_name" name="last_name" value="${data.user.last_name}">
+				<label for="password">Password:</label>
+				<input type="password" id="password" name="password">
+				<input type="submit" value="Save Changes">
+			</form>
+		`;
+	}
+
+	initEditProfileButton () {
+		this.shadowRoot.querySelector('#edit-profile-button').addEventListener('click', () => {
+			this.shadowRoot.querySelector('#profile-content').style.display = 'none';
+			this.shadowRoot.querySelector('#edit-profile').style.display = 'block';
+
+		});
+	}
+
 	initFormSubmit() {
 		const editForm = this.shadowRoot.getElementById('edit-profile-form'); // Use getElementById to find the form within the component
 		editForm.addEventListener('submit', function(event) {
