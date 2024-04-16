@@ -34,6 +34,7 @@ class CustomUserRegister(APIView):
 	permission_classes = (permissions.AllowAny,)
 	def post(self, request):
 		form = CustomUserCreationForm(request.POST, request.FILES)
+		logger.debug(form)
 		if form.is_valid():
 			user = form.save(commit=False)
 			user.is_online = True
@@ -98,7 +99,9 @@ class CustomUserEditView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	parser_classes = (MultiPartParser, FormParser,)
 	def post(self, request):
-		form = CustomUserEditForm(request.data, instance=request.user)
+		request.POST, request.FILES
+		form = CustomUserEditForm(request.data, request.FILES, instance=request.user)
+		logger.debug(form)
 		if form.is_valid():
 			form.save()
 			return Response({'success': True}, status=status.HTTP_201_CREATED)

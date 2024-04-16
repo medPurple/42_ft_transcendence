@@ -56,7 +56,7 @@ export default class profileForm extends HTMLElement {
 		editProfileContainer.innerHTML = `
 			<form id="edit-profile-form" method="post" action="">
 				<label for="profile_picture">Profile Picture:</label>
-				<input type="file" id= "profile_picture name="profile_picture" accept="images/*" />
+				<input type="file" name="profile_picture" accept="images/*" />
 				<label for="username">Username:</label>
 				<input type="text" id="username" name="username" value="${data.user.username}">
 				<label for="email">Email:</label>
@@ -65,9 +65,7 @@ export default class profileForm extends HTMLElement {
 				<input type="text" id="first_name" name="first_name" value="${data.user.first_name}">
 				<label for="last_name">Last Name:</label>
 				<input type="text" id="last_name" name="last_name" value="${data.user.last_name}">
-				<label for="password">Password:</label>
-				<input type="password" id="password" name="password">
-				<input type="submit" value="Save Changes">
+				<button type="submit" class="button">Save changes</button>
 			</form>
 		`;
 	}
@@ -86,7 +84,7 @@ export default class profileForm extends HTMLElement {
 			event.preventDefault();
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
-			let formData = new FormData(editForm);
+			const formData = new FormData(editForm);
 			// Send an AJAX request to submit the form
 			fetch('/api/profiles/edit-profile/', {
 				method: 'POST',

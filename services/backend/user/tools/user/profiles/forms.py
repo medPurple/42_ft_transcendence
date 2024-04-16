@@ -19,16 +19,6 @@ class CustomUserEditForm(forms.ModelForm):
         model = CustomUser
         fields = ['profile_picture', 'username', 'email', 'first_name', 'last_name']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['profile_picture'].widget.attrs.update({'accept': 'image/*'})  # Permet d'accepter uniquement les images
-
-    # Définissez une méthode clean_profile_picture pour valider et traiter le fichier de l'image
-    def clean_profile_picture(self):
-        profile_picture = self.cleaned_data.get('profile_picture')
-        # Effectuez ici les validations ou traitements nécessaires sur l'image
-        return profile_picture
-
 
 class CustomUserPasswordForm(forms.ModelForm):
     # new_password = forms.CharField(widget=forms.PasswordInput)
