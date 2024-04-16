@@ -39,6 +39,8 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'classic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,8 +50,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'drf_spectacular',
-    'classic',
-    'channels',
 
 ]
 
@@ -62,6 +62,24 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 ROOT_URLCONF = 'matchmaking.urls'
 
@@ -82,8 +100,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'matchmaking.wsgi.application'
-ASGI_APPLICATION = 'matchmaking.routing.application'
-
+ASGI_APPLICATION = "matchmaking.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -142,14 +159,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 8080)],
-        },
-    },
 }
 

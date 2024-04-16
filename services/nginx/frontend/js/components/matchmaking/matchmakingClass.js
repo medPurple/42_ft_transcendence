@@ -214,7 +214,7 @@ export class MatchmakingButtons {
 					// this.matchmaking.tournamentMatchmaking();
 					new WaitingScreen('pong_tournament');
 				} else if (selectedGame.value == 'Pokemon Versus') {
-					// this.matchmaking.pkmMatchmaking();
+					this.matchmaking.pkmMatchmaking();
 					new WaitingScreen('pkm_multiplayer');
 				}
 				

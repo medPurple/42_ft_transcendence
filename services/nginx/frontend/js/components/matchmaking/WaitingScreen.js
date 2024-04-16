@@ -49,25 +49,33 @@ export class WaitingScreen{
 
     }
 
-    async getUserinfo(){
+    async getUserinfo(game_name){
         const queueinfo = document.createElement('div');
         queueinfo.classList.add('queueinfo');
         
         let id = await this.getID();
-        const socket = new WebSocket(`ws://127.0.0.1:8080/api/wsqueue/?userID=${id}/`);        
+        const socket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/api/wsqueue/'
+        );
+        //const socket = new WebSocket(`ws://localhost:8080/api/wsqueue/?userID=${id}`);
+
         socket.addEventListener('error', function (event) {
             console.log('Error establishing websocket connection with the matchmaking server');
-            console.log(event);
         });
 
-        socket.addEventListener('open', function (event) {
-            socket.send('Websocket connection established with the matchmaking server'); 
-        });
+        socket.onopen = function(e) {
+            console.log('Connected to websocket server')
+            socket.send(JSON.stringify({
+                id: `${id}`,
+                game: `${game_name}`,
+            }));
+        };
 
-        socket.addEventListener('message', function (event) {
-            console.log('Message from server ', event.data);
-            queueinfo.innerText = event.data;
-        });
+        socket.onmessage = function(e) {
+            console.log('Message from server :', data);
+        };
 
         socket.addEventListener('close', function (event) {
             console.log('WebSocket connection closed by the server');
@@ -80,7 +88,7 @@ export class WaitingScreen{
         const waitingscreen = document.createElement('div');
 		waitingscreen.classList.add('matchmaking-screen')
         waitingscreen.appendChild(this.addWaitingText(game_name, waitingscreen));
-        const userinfodiv = await this.getUserinfo();
+        const userinfodiv = await this.getUserinfo(game_name);
         waitingscreen.appendChild(userinfodiv);
         document.body.appendChild(waitingscreen);
         

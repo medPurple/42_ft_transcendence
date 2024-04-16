@@ -1,30 +1,34 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-from urllib.parse import parse_qs
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+import json
+from json.decoder import JSONDecodeError
+from channels.generic.websocket import WebsocketConsumer
 from .models import WaitingModel
 from .serializers import WaitingModelSerializer
-import json
+from django.shortcuts import get_object_or_404
+from .views import pong_waitinglist, tpong_waitinglist, pkm_waitinglist
+import logging
 
-class QueueConsumer(AsyncWebsocketConsumer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.send_data = True
+logger = logging.getLogger(__name__)
 
-    async def connect(self):
+class QueueConsumer(WebsocketConsumer):
+    def connect(self):
         self.accept()
-        params = parse_qs(self.scope['query_string'].decode())
-        user_id = params.get('userID')
-        if user_id:
-            instance = get_object_or_404(WaitingModel, userID=user)
-            serializer = WaitingModelSerializer(instance)
-            while self.send_data:
-                await self.send(text_data=json.dumps(serializer.data))
 
-    async def disconnect(self, close_code):
-        self.send_data = False
 
-    async def receive(self, text_data):
+    def disconnect(self, close_code):
+        pass
+
+    def receive(self, text_data):
+        logger.info(text_data)
         text_data_json = json.loads(text_data)
-        if text_data_json.get('message') == 'stop':
-            self.send_data = False
+        user_id = text_data_json.get("id") 
+        logger.info(user_id)
+        try:
+            instance = WaitingModel.objects.get(userID=user_id)
+        except WaitingModel.DoesNotExist:
+            pass
+        else:
+            serializer = WaitingModelSerializer(instance)
+            self.send(serializer.data)
+
+
+# Django channel group 
