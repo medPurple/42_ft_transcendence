@@ -14,12 +14,16 @@ export default class profileForm extends HTMLElement {
 		const editProfile = document.createElement('div');
 		editProfile.id = 'edit-profile';
 		editProfile.style.display = 'none'; // Assurez-vous qu'il est initialement masqué
-
+		const updatePassword = document.createElement('div');
+		updatePassword.id = 'password-container';
+		updatePassword.style.display = 'none';
 		// Ajouter les éléments à l'ombre
 		this.shadowRoot.appendChild(profileContainer);
 		this.shadowRoot.appendChild(editProfile);
+		this.shadowRoot.appendChild(updatePassword);
 		await this.initUserInfo();
 		this.initFormSubmit();
+		this.initChangePasswordSubmit();
     }
 
 	async initUserInfo() {
@@ -31,6 +35,7 @@ export default class profileForm extends HTMLElement {
 			this.displayUserProfile(data, profilePictureData);
 			this.displayEditProfileForm(data);
 			this.initEditProfileButton();
+			this.displayUpdatePassword();
 		} catch (error) {
 			console.error('Error:', error)
 		}
@@ -47,6 +52,9 @@ export default class profileForm extends HTMLElement {
 				<p><strong>Last Name:</strong> ${data.user.last_name}</p>
 				<p><strong>Online:</strong> ${data.user.is_online}</p>
 				<button id="edit-profile-button" type="button" >Edit Profile</button>
+				<button id="update-password-button" type="button" >Update password</button>
+				<button id="see-friends-button" type="button">See my friends</button>
+				<button id="delete-account-button" type="button">Delete my account</button>
 			</div>
 		`;
 	}
@@ -70,11 +78,28 @@ export default class profileForm extends HTMLElement {
 		`;
 	}
 
+	displayUpdatePassword(){
+		let editPasswordContainer = this.shadowRoot.querySelector('#password-container');
+		editPasswordContainer.innerHTML = `
+			<form id="update-password-form" method="post" action="/api/profiles/update-password">
+				<label for="new_password"> New Password:</label>
+				<input type="password" name="new_password1">
+				<label for="confirm_password"> Confirm Password:</label>
+				<input type="password" name="new_password2">
+				<button type="submit" class="button">Save changes</button>
+			</form>
+		`;
+	}
+
 	initEditProfileButton () {
 		this.shadowRoot.querySelector('#edit-profile-button').addEventListener('click', () => {
 			this.shadowRoot.querySelector('#profile-content').style.display = 'none';
 			this.shadowRoot.querySelector('#edit-profile').style.display = 'block';
 
+		});
+		this.shadowRoot.querySelector('#update-password-button').addEventListener('click', () => {
+			this.shadowRoot.querySelector('#profile-content').style.display = 'none';
+			this.shadowRoot.querySelector('#password-container').style.display = 'block';
 		});
 	}
 
@@ -85,7 +110,6 @@ export default class profileForm extends HTMLElement {
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
 			const formData = new FormData(editForm);
-			// Send an AJAX request to submit the form
 			fetch('/api/profiles/edit-profile/', {
 				method: 'POST',
 				body: formData,
@@ -112,40 +136,37 @@ export default class profileForm extends HTMLElement {
 			});
 		});
 	}
-}
 
+	initChangePasswordSubmit() {
+		const pwdForm = this.shadowRoot.getElementById('update-password-form');
+		pwdForm.addEventListener('submit', function(event) {
+			event.preventDefault();
+			let jwtToken = Icookies.getCookie('token');
+			let csrfToken = Icookies.getCookie('csrftoken');
+			const formData = new FormData(pwdForm);
+			fetch('api/profiles/update-password/', {
+				method: 'POST',
+				body: formData,
+				headers: {
+					'Authorization': jwtToken,
+					'X-CSRFToken': csrfToken
+				}
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					console.log('Password updated successfully');
+					window.location.href = '/';
+				} else {
+					alert('An error occurred. Please try again.');
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+		});
+	}
+}
 
 customElements.define('profile-form', profileForm);
 
-/* <p><strong>Email:</strong> {{ user_profile.email }}</p>
-<p><strong>First Name:</strong> {{ user_profile.first_name }}</p>
-<p><strong>Last Name:</strong> {{ user_profile.last_name }}</p>
-<p><strong>Token:</strong> {{ user_profile.token }}</p>
-<p><strong>Online:</strong> {{user_profile.is_online }}</p>
-<button type="???" >Edit Profile</button>
-</div> */
-
-			// <div class="profile-header">
-			// 	<img
-			// 	src={this.state.userInfo.profileImg}
-			// 	alt="ProfilePicture"
-			// 	class="profile-picture"/>
-			// </div>
-
-
-// {% block content %}
-// 	<h1>User Profile</h1>
-// 		<div class="user-info">
-// 			<img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
-// 			<p><strong>Username:</strong> {{ user_profile.username }}</p>
-// 			<p><strong>Email:</strong> {{ user_profile.email }}</p>
-// 			<p><strong>First Name:</strong> {{ user_profile.first_name }}</p>
-// 			<p><strong>Last Name:</strong> {{ user_profile.last_name }}</p>
-// 			<p><strong>Token:</strong> {{ user_profile.token }}</p>
-// 			<p><strong>Online:</strong> {{user_profile.is_online }}</p>
-// 			<p><a href="{% url 'edit_profile' %}"  class="button" >Edit Profile</a></p>
-// 		</div>
-// 		<a href="{% url 'friends' %}" class="button">See my friends</a>
-
-// 	<a href="{% url 'delete_account' %}"  class="button">Supprimer mon compte</a>
-// {% endblock %}

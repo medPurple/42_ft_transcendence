@@ -17,7 +17,6 @@ from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer,
 
 logger = logging.getLogger(__name__)
 
-
 def user_token(request, user_id):
 	token_service_url = 'http://JWToken:8080/api/token/'
 	try:
@@ -64,24 +63,14 @@ class CustomUserLogin(APIView):
 class CustomUserLogout(APIView):
 	permission_classes = (permissions.AllowAny,)
 	def post(self, request):
-		# Récupérer l'utilisateur actuel
 		user = request.user
-
-		# Mettre à jour le statut en ligne de l'utilisateur à False
 		user.is_online = False
 		user.save()
-
-		# Communiquer avec le service de token (exemple)
 		token = request.headers.get('Authorization')
 		token_service_url = 'http://JWToken:8080/api/token/'
 		token_response = requests.get(token_service_url, headers={'Authorization': token})
-
-		# Déconnecter l'utilisateur
 		logout(request)
-
-		# Répondre avec un message de déconnexion réussie
 		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
-
 
 class CustomUsernameView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
@@ -111,25 +100,16 @@ class CustomUserEditView(APIView):
 class CustomUserPasswordView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	def post(self, request):
-		form = CustomUserPasswordForm(request.data, instance=request.user)
+		form = CustomUserPasswordForm(request.user, request.POST)
+		logger.debug(form)
 		if form.is_valid():
-			form.save()
+			user = form.save()
+			login(request, user)
 			return Response({'success': True}, status=status.HTTP_201_CREATED)
 		else:
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-#
-
-
-	# @action(detail=False, methods=['post'])
-	# def edit_profile(self, request):
-	# 	form = CustomProfileForm(request.data, instance=request.user)
-	# 	if form.is_valid():
-	# 		form.save()
-	# 		return Response({'success': True}, status=201)
-	# 	else:
-	# 		return Response(form.errors, status=400)
 
 	# @action(detail=False, methods=['post'])
 	# def delete_account(self, request):
