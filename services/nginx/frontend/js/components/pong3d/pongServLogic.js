@@ -370,7 +370,7 @@ function draw() {
   paddlePhysics();
   paddleMovement();
   opponentPaddleMovement();
-  //cameraLogic2();
+  cameraLogic();
 }
 
 function setup() {
@@ -390,7 +390,7 @@ function setup() {
   };
 
   gameSocket.onmessage = function(event) {
-    //console.log("Message du websocket: ", event.data);
+    console.log("Message du websocket: ", event.data);
     handleServerMessage(event.data);
   }
 }
@@ -398,10 +398,11 @@ function setup() {
 function handleServerMessage(message) {
 
   var map = new Map(Object.entries(JSON.parse(message)));
-  //console.log("Message du websocket: ", map);
+  console.log("Message du websocket: ", map);
 
   for (let [key, value] of map.entries()) {
-    if (key == "start") {
+    if (key == "party" && value == 'active') {
+      party = true;
       createScene();
       draw();
     }
