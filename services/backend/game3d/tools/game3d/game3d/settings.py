@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'gameservice',
     'localhost',
+    '127.0.0.1'
 ]
 
 LOGGING = {

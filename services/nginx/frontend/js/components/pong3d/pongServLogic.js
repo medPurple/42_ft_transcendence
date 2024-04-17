@@ -2,13 +2,13 @@
 
 var party = false;
 
-var moveLeft = false;
+var paddle1MovLeft = false;
 
-var moveRight = false;
+var paddle1MovRight = false;
 
-var advMoveLeft = false;
+var paddle2MovLeft = false;
 
-var advMoveRight = false;
+var paddle2MovRight = false;
 
 var gameSocket;
 
@@ -256,9 +256,9 @@ function paddlePhysics() {
 // }
 //
 
-function opponentPaddleMovement() {
+function paddle2Movement() {
 
-  if (advMoveRight == true) {
+  if (paddle2MovRight == true) {
     if (paddle2.position.y < fieldHeight * 0.45) {
       paddle2DirY = paddleSpeed * 0.5;
     }
@@ -267,7 +267,7 @@ function opponentPaddleMovement() {
       //paddle2.scale.z += (10 - paddle2.scale.z) * 0.2;
     }
   }
-  else if (advMoveLeft == true) {
+  else if (paddle2MovLeft == true) {
     if (paddle2.position.y > -fieldHeight * 0.45) {
       paddle2DirY = -paddleSpeed * 0.5;
     }
@@ -301,9 +301,9 @@ function resetBall(ballStartDirection) {
   ballDirY = 1;
 }
 
-function paddleMovement() {
+function paddle1Movement() {
 
-  if (moveLeft == true) {
+  if (paddle1MovLeft == true) {
     if (paddle1.position.y < fieldHeight * 0.45) {
       paddle1DirY = paddleSpeed * 0.5;
     }
@@ -312,7 +312,7 @@ function paddleMovement() {
       //paddle1.scale.z += (10 - paddle1.scale.z) * 0.2;
     }
   }
-  else if (moveRight == true) {
+  else if (paddle1MovRight == true) {
     if (paddle1.position.y > -fieldHeight * 0.45) {
       paddle1DirY = -paddleSpeed * 0.5;
     }
@@ -366,11 +366,16 @@ function draw() {
   renderer.render(scene, camera);
   requestAnimationFrame(draw);
 
-  //ballPhysics();
+  ballPhysics();
   paddlePhysics();
-  paddleMovement();
-  opponentPaddleMovement();
-  cameraLogic();
+  paddle1Movement();
+  paddle2Movement();
+  if (player_id == 1) {
+    cameraLogic();
+  }
+  else {
+    cameraLogic2();
+  }
 }
 
 function setup() {
@@ -416,18 +421,32 @@ function handleServerMessage(message) {
 
 function handleAdvMove(key, value) {
 
-  if ((key == "paddleMov2" && player_id == 1) || (key == "paddleMov1" && player_id == 2)) {
+  if (key == "paddleMov2" && player_id == 1) {
     if (value == "right") {
-      advMoveRight = true;
-      advMoveLeft = false;
+      paddle2MovRight = true;
+      paddle2MovLeft = false;
     }
     else if (value == "left") {
-      advMoveLeft = true;
-      advMoveRight = false;
+      paddle2MovLeft = true;
+      paddle2MovRight = false;
     }
     else {
-      advMoveLeft = false;
-      advMoveRight = false;
+      paddle2MovLeft = false;
+      paddle2MovRight = false;
+    }
+  }
+  else if (key == "paddleMov1" && player_id == 2) {
+    if (value == "right") {
+      paddle1MovRight = true;
+      paddle1MovLeft = false;
+    }
+    else if (value == "left") {
+      paddle1MovLeft = true;
+      paddle1MovRight = false;
+    }
+    else {
+      paddle1MovLeft = false;
+      paddle1MovRight = false;
     }
   }
 }
@@ -444,11 +463,11 @@ function handleAdvMove(key, value) {
 function onKeyDown(event) {
   switch (event.keyCode) {
     case 65:
-      moveLeft = true;
+      (player_id == 1 ? paddle1MovLeft = true : paddle2MovLeft = true);
       gameSocket.send(JSON.stringify({ 'paddleMov': "left" }))
       break;
     case 68:
-      moveRight = true;
+      (player_id == 1 ? paddle1MovRight = true : paddle2MovRight = true);
       gameSocket.send(JSON.stringify({ 'paddleMov': "right" }))
       break;
   }
@@ -457,11 +476,13 @@ function onKeyDown(event) {
 function onKeyUp(event) {
   switch (event.keyCode) {
     case 65:
-      moveLeft = false;
+      (player_id == 1 ? paddle1MovLeft = false : paddle2MovLeft = false);
+      paddle1MovLeft = false;
       gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
       break;
     case 68:
-      moveRight = false;
+      (player_id == 1 ? paddle1MovRight = false : paddle2MovRight = false);
+      paddle1MovRight = false;
       gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
       break;
   }
