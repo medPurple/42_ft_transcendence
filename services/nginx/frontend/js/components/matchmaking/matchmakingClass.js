@@ -109,6 +109,7 @@ class Matchmaking {
 		.then(data => {
 			if (data.position) {
 				console.log("Added to queue for pokemon multiplayer");
+				new WaitingScreen('pkm_multiplayer');
 				return;
 			} else {
 				alert('No such user');
@@ -146,6 +147,7 @@ export class MatchmakingButtons {
 		container.classList.add('queue-container');
 		container.appendChild(multipongbutton);
 		container.appendChild(multiponglabel);
+
 		return container;
 	}
 
@@ -203,7 +205,7 @@ export class MatchmakingButtons {
 		const startbutton = document.createElement('button');
 		startbutton.innerText = 'PLAY';
 		startbutton.classList.add('queue-button');
-		startbutton.onclick = () => {
+		startbutton.onclick = async () => {
 			const selectedGame = document.querySelector('input[name="game"]:checked');
 			if (selectedGame) {
 				this.removeButtons();
@@ -214,14 +216,12 @@ export class MatchmakingButtons {
 					// this.matchmaking.tournamentMatchmaking();
 					new WaitingScreen('pong_tournament');
 				} else if (selectedGame.value == 'Pokemon Versus') {
-					this.matchmaking.pkmMatchmaking();
-					new WaitingScreen('pkm_multiplayer');
+					await this.matchmaking.pkmMatchmaking();
 				}
 				
 			}
 		}
 		return startbutton;
-	
 	}
 
 	buttonsCreation() {

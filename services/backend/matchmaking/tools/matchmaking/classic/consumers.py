@@ -19,16 +19,20 @@ class QueueConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         logger.info(text_data)
-        text_data_json = json.loads(text_data)
-        user_id = text_data_json.get("id") 
-        logger.info(user_id)
         try:
-            instance = WaitingModel.objects.get(userID=user_id)
-        except WaitingModel.DoesNotExist:
+            text_data_json = json.loads(text_data)
+            user_id = text_data_json.get("id") 
+            logger.info(user_id)
+            try:
+                instance = WaitingModel.objects.get(userID=user_id)
+            except WaitingModel.DoesNotExist:
+                pass
+            else:
+                serializer = WaitingModelSerializer(instance)
+                serialized_data = json.dumps(serializer.data)
+                self.send(serialized_data)
+        except Exception:
             pass
-        else:
-            serializer = WaitingModelSerializer(instance)
-            self.send(serializer.data)
 
 
 # Django channel group 
