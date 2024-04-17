@@ -81,6 +81,30 @@ export default class userInfo {
 			throw error; // share the error
 		}
 	}
+
+	async getAllUsers(){
+		try {
+			const response = await fetch('api/profiles/all-users/', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': this.csrfToken,
+					'Authorization': this.jwtToken,
+				}
+			});
+			const data = await response.json();
+			if (data.success){
+				console.log(data);
+				return data
+			} else {
+				throw new Error('Failed to get user info');
+			}
+		} catch (error) {
+			console.error('Error', error);
+			throw error;
+		}
+
+	}
 }
 
 

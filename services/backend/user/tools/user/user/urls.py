@@ -27,6 +27,7 @@ urlpatterns = [
 	path('api/profiles/', include('profiles.urls')),
 	path('api/profiles/schema/', SpectacularAPIView.as_view(), name='schema'),
 	path('api/profiles/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
+	path('api/friends/', include('friends.urls')),
 	# path('admin/', admin.site.urls),
 	# path('profile/', profil.views.user_profile, name='user_profile'),
 	# path('delete_account/', profil.views.delete_account, name='delete_account'),

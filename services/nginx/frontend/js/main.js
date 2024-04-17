@@ -9,6 +9,10 @@ import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
 import profile from "./views/user/profile.js";
+import editProfile from "./views/user/editProfile.js";
+import updatePassword from "./views/user/updatePassword.js";
+import deleteAccount from "./views/user/deleteAccount.js";
+import friends from "./views/friends/friends.js"
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
 
@@ -46,6 +50,22 @@ const routes = {
 		title: "Profile",
 		render: profile
 	},
+	'/edit-profile': {
+		title: "Edit profile",
+		render: editProfile
+	},
+	'/update-password': {
+		title: "Update password",
+		render: updatePassword
+	},
+	'/delete-account': {
+		title: "Delete account",
+		render: deleteAccount
+	},
+	'/friends': {
+		title: "Friends",
+		render: friends
+	},
 	'/play' : {
 		title: "Play",
 		render: play
@@ -70,7 +90,7 @@ async function router() {
 		if (typeof result === 'string') {
 			// If it's a string, user innerHTML
 			app.innerHTML = result;
-		} else if (result instanceof Node) { 
+		} else if (result instanceof Node) {
             // If it's a Node, use appendChild
             app.appendChild(result);
         } else {

@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
@@ -29,11 +28,17 @@ def user_token(request, user_id):
 		return None
 
 
+class AllCustomUserView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def get(self, request):
+		users = CustomUser.objects.all()
+		serializer = CustomUserSerializer(users, many=True)
+		return (Response({'users': serializer.data}, status=status.HTTP_200_OK))
+
 class CustomUserRegister(APIView):
 	permission_classes = (permissions.AllowAny,)
 	def post(self, request):
 		form = CustomUserCreationForm(request.POST, request.FILES)
-		logger.debug(form)
 		if form.is_valid():
 			user = form.save(commit=False)
 			user.is_online = True
@@ -88,9 +93,7 @@ class CustomUserEditView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	parser_classes = (MultiPartParser, FormParser,)
 	def post(self, request):
-		request.POST, request.FILES
 		form = CustomUserEditForm(request.data, request.FILES, instance=request.user)
-		logger.debug(form)
 		if form.is_valid():
 			form.save()
 			return Response({'success': True}, status=status.HTTP_201_CREATED)
@@ -101,7 +104,6 @@ class CustomUserPasswordView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	def post(self, request):
 		form = CustomUserPasswordForm(request.user, request.POST)
-		logger.debug(form)
 		if form.is_valid():
 			user = form.save()
 			login(request, user)
@@ -109,18 +111,15 @@ class CustomUserPasswordView(APIView):
 		else:
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class CustomUserDeleteView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def delete(self, request):
+		user = request.user
+		try:
+			user.delete()
+		except CustomUser.DoesNotExist:
+			return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+		logout(request)
+		return Response({'success': True}, status=status.HTTP_200_OK)
 
-
-	# @action(detail=False, methods=['post'])
-	# def delete_account(self, request):
-	# 	user = request.user
-	# 	if not isinstance(user, AnonymousUser):
-	# 		try:
-	# 			user.delete()
-	# 		except CustomUser.DoesNotExist:
-	# 			return Response({'error': 'User not found'}, status=404)
-	# 		logout(request)
-	# 		return Response({'success': True}, status=200)
-	# 	else:
-	# 		return Response({'error': 'User not authenticated'}, status=401)
 
