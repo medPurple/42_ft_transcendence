@@ -22,7 +22,7 @@ export default class LogoutForm extends HTMLElement {
 			let csrfToken = Icookies.getCookie('csrftoken');
 
 			// Send the logout request to the Django API
-			fetch('/api/profiles/user_logout/', {
+			fetch('/api/profiles/logout/', {
 				method: 'POST',
 				//credentials: 'same-origin',
 				headers: {
@@ -52,7 +52,6 @@ export default class LogoutForm extends HTMLElement {
 }
 
 customElements.define('logout-form', LogoutForm);
-
 
 
 

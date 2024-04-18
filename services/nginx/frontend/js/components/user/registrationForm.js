@@ -1,6 +1,6 @@
 import Icookies from "../cookie/cookie.js"
 
-export default class RegistrationForm extends HTMLElement{
+export default class RegistrationForm extends HTMLElement {
 	constructor() {
 		super(); // Always call super first in constructor
 		this.attachShadow({ mode: 'open' }); // Create a new attached DOM tree for the component
@@ -37,9 +37,7 @@ export default class RegistrationForm extends HTMLElement{
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
-
-					Icookies.setCookie("token", data.token, 90);
-					console.log(Icookies.getCookie('token'));
+					Icookies.setCookie('token', data.token, 90);
 					// Redirect to the home page
 					 window.location.href = '/'; // Change the URL to your home page URL
 
