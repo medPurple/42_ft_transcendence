@@ -1,11 +1,11 @@
-// import Icookies from "../cookie/cookie"
-// import Iuser from "../user/userInfo"
+import Icookies from "../cookie/cookie.js"
+import Iuser from "../user/userInfo.js"
 
 class Friends {
 
 	async getAllUser() {
 		try {
-			// const data = await Iuser.getAllUsers();
+			const data = await Iuser.getAllUsers();
 			console.log(data);
 		} catch (error) {
 			console.error('Error:', error)
@@ -24,10 +24,11 @@ export class FriendsButtons{
 		buttonSendRequest.setAttribute('class', 'button');
 		buttonSendRequest.setAttribute('id', 'send-request-button');
 		buttonSendRequest.textContent = 'Send Request';
-		// buttonSendRequest.onclick = () => {
-		// 	this.friends.getAllUser();
-		// }
+		buttonSendRequest.onclick = () => {
+			this.friends.getAllUser();
+		}
 		document.body.appendChild(buttonSendRequest);
+		return buttonSendRequest;
 	}
 
 }

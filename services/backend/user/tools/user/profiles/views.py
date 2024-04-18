@@ -33,7 +33,7 @@ class AllCustomUserView(APIView):
 	def get(self, request):
 		users = CustomUser.objects.all()
 		serializer = CustomUserSerializer(users, many=True)
-		return (Response({'users': serializer.data}, status=status.HTTP_200_OK))
+		return (Response({'success': True, 'users': serializer.data}, status=status.HTTP_200_OK))
 
 class CustomUserRegister(APIView):
 	permission_classes = (permissions.AllowAny,)
