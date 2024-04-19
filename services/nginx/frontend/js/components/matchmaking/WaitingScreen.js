@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import Iuser from "../user/userInfo.js";
 
 export class WaitingScreen{
 
@@ -7,35 +8,6 @@ export class WaitingScreen{
         this.userdata = document.createElement('div');
 		this.userdata.classList.add('user-info');
     }
-
-    async getID() {
-		let jwtToken = Icookies.getCookie('token');
-		let csrfToken = Icookies.getCookie('csrftoken');
-
-		console.log("TOKEN BEFORE : " + jwtToken);
-
-		try {
-			const response = await fetch('/api/token/', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': csrfToken,
-					'Authorization': jwtToken
-				}
-			});
-
-			if (!response.ok) {
-				throw new Error('identification failed');
-			}
-
-			const data = await response.json();
-			console.log(data.user_id);
-			return data.user_id;
-		} catch (error) {
-			console.error('Error:', error);
-			// Handle API errors
-		}
-	}
 
     displayUserInfo(){
         this.gameData = document.createElement('p')
@@ -73,7 +45,7 @@ export class WaitingScreen{
         const queueinfo = document.createElement('div');
         queueinfo.classList.add('queueinfo');
         
-        let id = await this.getID();
+        let id = await Iuser.getID();
         const socket = new WebSocket(
             'ws://'
             + window.location.host

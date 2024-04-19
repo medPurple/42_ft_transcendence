@@ -1,39 +1,12 @@
 import Icookies from "../cookie/cookie.js"
+import Iuser from "../user/userInfo.js";
 import {WaitingScreen} from "./WaitingScreen.js"
+
 
 class Matchmaking {
 
-	async getID() {
-		let jwtToken = Icookies.getCookie('token');
-		let csrfToken = Icookies.getCookie('csrftoken');
-
-		console.log("TOKEN BEFORE : " + jwtToken);
-
-		try {
-			const response = await fetch('/api/token/', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': csrfToken,
-					'Authorization': jwtToken
-				}
-			});
-
-			if (!response.ok) {
-				throw new Error('identification failed');
-			}
-
-			const data = await response.json();
-			console.log(data.user_id);
-			return data.user_id;
-		} catch (error) {
-			console.error('Error:', error);
-			// Handle API errors
-		}
-	}
-
 	async pongMatchmaking() {
-		let id = await this.getID();
+		let id = await Iuser.getID();
 		console.log("id is : " + id);
 		fetch('/api/queue/', {
 			method: 'POST',
@@ -62,7 +35,7 @@ class Matchmaking {
 	}
 
 	async tournamentMatchmaking() {
-		let id = await this.getID();
+		let id = await Iuser.getID();
 		console.log("id is : " + id);
 		fetch('/api/queue/', {
 			method: 'POST',
@@ -91,7 +64,7 @@ class Matchmaking {
 	}
 
 	async pkmMatchmaking() {
-		let id = await this.getID();
+		let id = await Iuser.getID();
 		console.log("id is : " + id);
 		fetch('/api/queue/', {
 			method: 'POST',
