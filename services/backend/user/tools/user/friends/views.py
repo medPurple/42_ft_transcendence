@@ -6,33 +6,65 @@ from rest_framework.response import Response
 
 from profiles.models import CustomUser
 from friends.models import Friend_Request
+from friends.serializers import Friend_RequestSerializer
 
-class SendFriend_RequestView(APIView):
+class SendFriendRequestView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	def post(self, request):
 		from_user = request.user
-		to_user = CustomUser.objects.get_or_create(
-			from_user=from_user, to_user=to_user)
-		if created:
-			return Response({'success': True}, status=status.HTTP_201_CREATED)
-		else:
-			return Response({'error': 'Send request failed'}, status=status.HTTP_400_BAD_REQUEST)
+		friend_username = request.data.get('friend_username')
+		try:
+			to_user = CustomUser.objects.get(username=friend_username)
+			friend_request, created = Friend_Request.objects.get_or_create(
+				from_user=from_user, to_user=to_user)
+			
+			if created:
+				return Response({'success': True}, status=status.HTTP_201_CREATED)
+			else:
+				return Response({'error': 'Send request failed'}, status=status.HTTP_400_BAD_REQUEST)
+		except CustomUser.DoesNotExist:
+			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class FriendRequestView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def post(self, request):
+		from_user = request.user
+		friend_username = request.data.get('friend_username')
+		try:
+			to_user = CustomUser.objects.get(username=friend_username)
+			friend_request = Friend_Request.objects.get(
+				from_user=to_user, to_user=from_user)
+			from_user.friends.add(to_user)
+			to_user.friends.add(from_user)
+			friend_request.delete()
+			return Response({'success': True}, status=status.HTTP_200_OK)
+		except Friend_Request.DoesNotExist:
+			return Response({'error': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+	def get(self, request):
+		friend_requests = Friend_Request.objects.filter(to_user=request.user)
+		serializer = Friend_RequestSerializer(friend_requests, many=True)
+		return Response({'success': True, 'friend_requests': serializer.data}, status=status.HTTP_200_OK)
 
-# @login_required
-# def	send_friend_request(request, userID):
-# 	from_user = request.user
-# 	to_user = CustomUser.objects.get(id=userID)
-
-# 	# Vérifier si une demande d'ami a déjà été envoyée
-# 	# get_or_create retourne deux valeurs: l'objet et un booléen qui indique si l'objet a été créé ou récupéré
-# 	friend_request, created = Friend_Request.objects.get_or_create(
-# 		from_user=from_user, to_user=to_user)
-# 	if created:
-# 		return HttpResponse('friend request sent')
-# 	else:
-# 		return HttpResponse('friend request was already sent')
+	def delete(self, request):
+		from_user = request.user
+		friend_username = request.data.get('friend_username')
+		try:
+			to_user = CustomUser.objects.get(username=friend_username)
+			friend_request = Friend_Request.objects.get(
+				from_user=from_user, to_user=to_user)
+			friend_request.delete()
+			return Response({'success': True}, status=status.HTTP_200_OK)
+		except Friend_Request.DoesNotExist:
+			return Response({'error': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+	
+		
 
 # @login_required
 # def	accept_friend_request(request, requestID):
