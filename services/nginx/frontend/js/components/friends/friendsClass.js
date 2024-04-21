@@ -1,18 +1,7 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js"
 
-// Est ce que l'ajout d'un ami fonctionne ou non ? A verifier dans le back. 
-
 class Friends {
-
-	async getAllUser() {
-		try {
-			const data = await Iuser.getAllUsers();
-			return data;
-		} catch (error) {
-			console.error('Error:', error)
-		}
-	}
 
 	async sendFriendRequest(username) {
 		try {
@@ -79,6 +68,49 @@ class Friends {
 			console.error('Error:', error);
 		}
 	}
+
+	async rejectFriendRequest(username){
+		try {
+			const response = await fetch('api/friends/friend-request/', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': Icookies.getCookie('token')
+				},
+				body: JSON.stringify({friend_username: username})
+			});
+			const data = await response.json();
+			if (data.success) {
+				return 'Request rejected';
+			} else {
+				alert('Failed to reject friend request');
+			} 
+		} catch (error) {
+			console.error('Error', error); 
+		}
+	}
+
+	async getFriendsList() {
+		try {
+			const response = await fetch('api/friends/friends-list/', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': Icookies.getCookie('token')
+				}
+			});
+			const data = await response.json();
+			if (data.success) {
+				return data;
+			} else {
+				alert('Failed to get friends');
+			}
+		} catch (error) {
+			console.error('Error', error);
+		}
+	}
 }
 
 export class FriendsButtons{
@@ -96,9 +128,10 @@ export class FriendsButtons{
 		usersList.appendChild(pUsers);
 		const ulElement = document.createElement('ul');
 		ulElement.id = 'users-list';
-		const dataUsers = await this.friends.getAllUser();
+		const dataUsers = await Iuser.getAllUsers();
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.friends.getFriendsRequest();
+		const friendsList = await this.friends.getFriendsList();
 
 		if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(users => {
@@ -109,10 +142,18 @@ export class FriendsButtons{
 						const hasFriendRequest = requestFriend.friend_requests.some(request => {
 							return request.from_user === users.user_id || request.to_user === users.user_id;
 						});
-						if (!hasFriendRequest) {
-							this.sendFriendRequestButton(liElement, users.username);
+						const hasSendRequest = requestFriend.send_requests.some(request => { 
+							return request.from_user === users.user_id || request.to_user === users.user_id;
+						});
+						const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
+						if (isFriends) {
+							this.isFriends(liElement);
+						} else if (hasFriendRequest) {
+							this.acceptOrRejectFriendRequest(liElement, users.username);
+						} else if (hasSendRequest) {
+							this.requestSent(liElement);
 						} else {
-							this.acceptFriendRequestButton(liElement, users.username);
+							this.sendFriendRequestButton(liElement, users.username);
 						}
 						ulElement.appendChild(liElement);
 					}
@@ -148,16 +189,27 @@ export class FriendsButtons{
 		return buttonSendRequest;
 	}
 
-	async acceptFriendRequestButton(liElement, username){
+	acceptOrRejectFriendRequest(liElement, username){
 		const buttonAcceptRequest = document.createElement('button');
 		buttonAcceptRequest.setAttribute('id', 'accept-request-button');
-		buttonAcceptRequest.textContent = 'Accept Friend';
+		buttonAcceptRequest.textContent = 'Accept Request';
+
+		const buttonRejectRequest = document.createElement('button');
+		buttonRejectRequest.setAttribute('id', 'reject-request-button');
+		buttonRejectRequest.textContent = 'Reject Request';
+		this.acceptFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username);
+		this.rejectFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username);
+	}
+
+	async acceptFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username){
+
 		buttonAcceptRequest.onclick = async () => {
 			try {
 				const acceptIsValid = await this.friends.acceptFriendRequest(username);
 				if (acceptIsValid === 'Request accepted') {
 					buttonAcceptRequest.textContent = 'Request Accepted';
 					buttonAcceptRequest.disabled = true;
+					buttonRejectRequest.disabled = true;
 				}
 			} catch (error) {
 				console.error('Error:', error);
@@ -166,7 +218,43 @@ export class FriendsButtons{
 		liElement.appendChild(buttonAcceptRequest);
 		return buttonAcceptRequest;
 	}
+
+	async rejectFriendRequestButton(buttonAcceptRequest, buttonRejectRequest,liElement, username){
+
+		buttonRejectRequest.onclick = async () => {
+			try {
+				const rejectIsValid = await this.friends.rejectFriendRequest(username);
+				if (rejectIsValid === 'Request rejected'){
+					buttonRejectRequest.textContent = 'Request rejected';
+					buttonRejectRequest.disabled = true;
+					buttonAcceptRequest.disabled = true;
+				} 
+			} catch (error) {
+				console.error('Error', error);
+			}
+		};
+		liElement.appendChild(buttonRejectRequest);
+		return buttonRejectRequest;
+	}
+
+	requestSent(liElement){
+		const buttonRequestSent = document.createElement('button');
+		buttonRequestSent.textContent = 'Request Sent';
+		buttonRequestSent.disabled = true;
+		liElement.appendChild(buttonRequestSent);
+		return buttonRequestSent;
+	}
+	
+	isFriends (liElement) {
+		const buttonIsFriends = document.createElement('button');
+		buttonIsFriends.textContent = 'See profile';
+		buttonIsFriends.disabled = true;
+		liElement.appendChild(buttonIsFriends);
+		return buttonIsFriends;
+	
+	}
 }
+
 
 const friends = new Friends();
 export { friends };
