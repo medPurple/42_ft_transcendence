@@ -12,6 +12,7 @@ class WaitingModel(models.Model):
     waitingTime = models.DateTimeField(auto_now_add=True)
     position = models.IntegerField()
     game = models.CharField(choices=GameChoice, max_length=200)
+    match_ready = models.BooleanField(default=False)
 
     def waiting_duration(self):
         if self.waitingTime is not None:

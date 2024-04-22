@@ -59,6 +59,17 @@ class WaitingAPI(APIView):
                     serializer = WaitingModelSerializer(tpong_waitinglist, many=True)
                     return Response(serializer.data, status=status.HTTP_200_OK)
         elif user is not None:
+            self.check_waitinglist(user, game)
+            if instance.match_ready:
+                paired_with = self.get_paired_with(instance.position, game)
+                if instance.position == 1:
+                    game.remove(instance)
+                    instance.delete()
+                    return Response({"message": "match_ready", "paired_with": paired_with, "sender": "true"}, status=status.HTTP_200_OK)
+                else:
+                    game.remove(instance)
+                    instance.delete()
+                    return Response({"message": "match_ready", "paired_with": paired_with, "sender": "false"}, status=status.HTTP_200_OK)
             instance = get_object_or_404(WaitingModel, userID=user)
             serializer = WaitingModelSerializer(instance)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -72,9 +83,44 @@ class WaitingAPI(APIView):
             instance = get_object_or_404(WaitingModel, userID=user_id)
             game = instance.game
             position = instance.position
+            game.remove(instance)
             instance.delete()
             WaitingModel.objects.filter(game=game, position__gt=position).update(position=F('position') - 1)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({"error": "userID parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
-                
+    
+    def check_waitinglist(self, user, game):
+        instance = get_object_or_404(WaitingModel, userID=user)
+        match game:
+            case ("pkm_multiplayer"):
+                if (instance.position == 1 or instance.position == 2) and pkm_waitinglist.count() > 2:
+                    instance.match_ready = True
+                    instance.save()
+                    return
+            case ("pong_multiplayer"):
+                if (instance.position == 1 or instance.position == 2) and pong_waitinglist.count() > 2:
+                    instance.match_ready = True
+                    instance.save()
+                    return
+            case ("pong_tournament"):
+                if (instance.position == 1 or instance.position == 2) and tpong_waitinglist.count() > 2:
+                    instance.match_ready = True
+                    instance.save()
+                    return
+    
+    def get_paired_with(self, position, game):
+        match game:
+            case ("pkm_multiplayer"):
+                if position == 1:
+                    return pkm_waitinglist[1].userID
+                return pkm_waitinglist[0].userID
+            case ("pong_multiplayer"):
+                if position == 1:
+                    return pong_waitinglist[1].userID
+                return pong_waitinglist[0].userID
+            case ("pong_tournament"):
+                if position == 1:
+                    return tpong_waitinglist[1].userID
+                return tpong_waitinglist[0].userID
+
         

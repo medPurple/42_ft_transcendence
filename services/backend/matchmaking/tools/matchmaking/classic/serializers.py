@@ -7,4 +7,4 @@ class WaitingModelSerializer(serializers.ModelSerializer):
     waitingTime = serializers.DateTimeField(read_only=True)
     class Meta:
         model = WaitingModel
-        fields = ['userID', 'waitingTime', 'position', 'game']
+        fields = ['userID', 'waitingTime', 'position', 'game', 'match_ready']

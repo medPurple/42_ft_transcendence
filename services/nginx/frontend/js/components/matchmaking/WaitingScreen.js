@@ -7,6 +7,29 @@ export class WaitingScreen{
         this.displayWaitingScreen(game_name);
         this.userdata = document.createElement('div');
 		this.userdata.classList.add('user-info');
+        this.userdata.addEventListener('beforeunload', function (event) {
+            leaveQueueRequest();
+        });
+    }
+
+    async leaveQueueRequest(){
+		let id = await Iuser.getID();
+		console.log("id is : " + id);
+		fetch(`/api/queue/?userID=${id}`, {
+			method: 'DELETE',
+			headers: {
+				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+				'Authorization': Icookies.getCookie('token'),
+				'Content-Type': 'application/json'
+			},
+		})
+        .then(response => {
+            console.log("User left the queue");
+            return response.status;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 
     displayUserInfo(){
@@ -24,8 +47,8 @@ export class WaitingScreen{
     }
 
     updateUserInfo(data){
-        var parsed_data = JSON.parse(data)
-        let time = new Date(parsed_data.waitingTime);
+        // var parsed_data = JSON.parse(data)
+        let time = new Date(data.waitingTime);
         let now = new Date(); // Date actuelle
         let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
         let elapsedTime = Math.floor(elapsedTimeMillis / 1000);
@@ -37,8 +60,20 @@ export class WaitingScreen{
             this.timeData.innerText = `Elapsed time : ${elapsedTime}`;
             
         }
-        this.gameData.innerText = `You are now in queue for ${parsed_data.game}`;
-        this.positionData.innerText = `Position : ${parsed_data.position} | Y Players in queue`;
+        this.gameData.innerText = `You are now in queue for ${data.game}`;
+        this.positionData.innerText = `Position : ${data.position} | Y Players in queue`;
+    }
+
+    leaveButton(socket){
+        const leaveButton = document.createElement('button');
+        leaveButton.classList.add('leave-button');
+        leaveButton.innerText = 'Leave queue';
+        leaveButton.addEventListener('click', function(){
+            socket.close();
+            this.leaveQueueRequest();
+            window.location.href = '/home';
+        });
+        return leaveButton;
     }
 
     async getUserinfo(game_name){
@@ -51,8 +86,7 @@ export class WaitingScreen{
             + window.location.host
             + '/api/wsqueue/'
             );
-            //const socket = new WebSocket(`ws://localhost:8080/api/wsqueue/?userID=${id}`);
-            
+
             socket.addEventListener('error', function (event) {
                 console.log('Error establishing websocket connection with the matchmaking server');
             });
@@ -61,6 +95,7 @@ export class WaitingScreen{
                 console.log('Connected to websocket server')
                 this.displayUserInfo();
                 queueinfo.appendChild(this.userdata);
+                queueinfo.appendChild(this.leaveButton(socket));
                 socket.send(JSON.stringify({
                     id: `${id}`,
                     game: `${game_name}`,
@@ -68,15 +103,23 @@ export class WaitingScreen{
             };
             
             socket.onmessage = (e) => {
+                var parsed_data = JSON.parse(e.data)
+
+                if (parsed_data.message == "match_ready"){
+                    socket.close();
+                    // if (data.sender == true)
+                } else {
+                    this.updateUserInfo(parsed_data);
+                    socket.send(JSON.stringify({
+                        id: `${id}`,
+                        game: `${game_name}`,
+                    }));
+                }
                 //console.log('Message from server :', e.data);
-                this.updateUserInfo(e.data);
-                socket.send(JSON.stringify({
-                    id: `${id}`,
-                    game: `${game_name}`,
-                }));
         };
 
         socket.addEventListener('close', function (event) {
+            this.leaveQueueRequest();
             console.log('WebSocket connection closed by the server');
         });
         
