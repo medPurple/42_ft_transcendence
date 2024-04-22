@@ -66,6 +66,29 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
             return parties[listLen - 1]
 
+    async def logObject(self):
+        logbuff = self.gameState
+        logger.info("group_name : %s" % (logbuff.group_name))
+        logger.info("players_nb : %d" % (logbuff.players_nb))
+        logger.info("player1Score : %d" % (logbuff.player1Score))
+        logger.info("player2Score : %d" % (logbuff.player2Score))
+        logger.info("paddle1.positionX : %d" % (logbuff.paddle1.positionX))
+        logger.info("paddle1.width : %d" % (logbuff.paddle1.width))
+        logger.info("paddle1.dirY : %d" % (logbuff.paddle1.dirY))
+        logger.info("paddle1.speed : %d" % (logbuff.paddle1.speed))
+        logger.info("paddle1.move : %s" % (logbuff.paddle1.move))
+        logger.info("paddle2.positionX : %d" % (logbuff.paddle2.positionX))
+        logger.info("paddle2.width : %d" % (logbuff.paddle2.width))
+        logger.info("paddle2.dirY : %d" % (logbuff.paddle2.dirY))
+        logger.info("paddle2.speed : %d" % (logbuff.paddle2.speed))
+        logger.info("paddle2.move : %s" % (logbuff.paddle2.move))
+        logger.info("ball.positionX : %d" % (logbuff.ball.positionX))
+        logger.info("ball.positionY : %d" % (logbuff.ball.positionY))
+        logger.info("ball.dirX : %d" % (logbuff.ball.dirX))
+        logger.info("ball.dirY : %d" % (logbuff.ball.dirY))
+        logger.info("ball.speed : %d" % (logbuff.ball.speed))
+        logger.info("active : %d" % (logbuff.active))
+
     async def launch_party(self, event):
         await self.send(text_data=json.dumps({"party": "active"}))
 
