@@ -5,14 +5,14 @@ export default class userInfo {
 		this.jwtToken = Icookies.getCookie('token');
 		this.csrfToken = Icookies.getCookie('csrftoken');
 	}
-	async connectedCallback() {
-		try {
-			const username = await this.getUsername();
-			console.log(username);
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
+	// async connectedCallback() {
+	// 	try {
+	// 		const username = await this.getUsername();
+	// 		console.log(username);
+	// 	} catch (error) {
+	// 		console.error('Error:', error);
+	// 	}
+	// }
 
 	async getUsername() {
 		try {
