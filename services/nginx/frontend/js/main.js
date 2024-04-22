@@ -12,7 +12,8 @@ import profile from "./views/user/profile.js";
 import editProfile from "./views/user/editProfile.js";
 import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
-import friends from "./views/friends/friends.js"
+import friends from "./views/friends/friends.js";
+import friendsProfile from "./views/friends/friendsProfile.js";
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
 
@@ -66,6 +67,10 @@ const routes = {
 		title: "Friends",
 		render: friends
 	},
+	'/friends/:username': {
+		title: "Friends profile",
+		render: (params) => friendsProfile(params.username)
+	},
 	'/play' : {
 		title: "Play",
 		render: play
@@ -78,9 +83,23 @@ const routes = {
 
 // Define the router function that will render the view based on the route path name and update the browser history state
 async function router() {
-	let view = routes[location.pathname];
+	let path = location.pathname;
+	let view = routes[path];
 	// define the header title
 	const pageTitle = "Transcendence";
+
+	console.log ("Originial path:", path);
+	// define the header title
+	    // Check if the path starts with '/friends-profile/'
+	if (path.startsWith('/friends/')) {
+		const username = path.split('/').pop();
+		view = {
+			...routes['/friends/:username'],
+			render: () => routes['/friends/:username'].render({ username }),
+		};
+		path = '/friends/:username';
+		console.log("Updated path:", path);
+	}
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render();

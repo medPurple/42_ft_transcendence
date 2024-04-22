@@ -1,5 +1,6 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js"
+import Ifriends from "./friendsInfo.js";
 
 class Friends {
 
@@ -91,26 +92,48 @@ class Friends {
 		}
 	}
 
-	async getFriendsList() {
+	async deleteFriend(username) {
 		try {
 			const response = await fetch('api/friends/friends-list/', {
-				method: 'GET',
+				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': Icookies.getCookie('csrftoken'),
 					'Authorization': Icookies.getCookie('token')
-				}
+				},
+				body: JSON.stringify({friend_username: username})
 			});
 			const data = await response.json();
-			if (data.success) {
-				return data;
+			if(data.success){
+				return 'Friend deleted';
 			} else {
-				alert('Failed to get friends');
-			}
+				alert('Failed to delet friend');
+			} 
 		} catch (error) {
 			console.error('Error', error);
 		}
 	}
+
+	// async getFriendsList() {
+	// 	try {
+	// 		const response = await fetch('api/friends/friends-list/', {
+	// 			method: 'GET',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+	// 				'Authorization': Icookies.getCookie('token')
+	// 			}
+	// 		});
+	// 		const data = await response.json();
+	// 		if (data.success) {
+	// 			return data;
+	// 		} else {
+	// 			alert('Failed to get friends');
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('Error', error);
+	// 	}
+	// }
 }
 
 export class FriendsButtons{
@@ -131,7 +154,7 @@ export class FriendsButtons{
 		const dataUsers = await Iuser.getAllUsers();
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.friends.getFriendsRequest();
-		const friendsList = await this.friends.getFriendsList();
+		const friendsList = await Ifriends.getFriendsList();
 
 		if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(users => {
@@ -147,7 +170,8 @@ export class FriendsButtons{
 						});
 						const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
 						if (isFriends) {
-							this.isFriends(liElement);
+							this.profileFriend(liElement, users.username);
+							this.deleteFriend(liElement, users.username);
 						} else if (hasFriendRequest) {
 							this.acceptOrRejectFriendRequest(liElement, users.username);
 						} else if (hasSendRequest) {
@@ -197,6 +221,7 @@ export class FriendsButtons{
 		const buttonRejectRequest = document.createElement('button');
 		buttonRejectRequest.setAttribute('id', 'reject-request-button');
 		buttonRejectRequest.textContent = 'Reject Request';
+		
 		this.acceptFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username);
 		this.rejectFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username);
 	}
@@ -245,13 +270,40 @@ export class FriendsButtons{
 		return buttonRequestSent;
 	}
 	
-	isFriends (liElement) {
+	async profileFriend (liElement, username) {
 		const buttonIsFriends = document.createElement('button');
 		buttonIsFriends.textContent = 'See profile';
-		buttonIsFriends.disabled = true;
+		buttonIsFriends.onclick = async () => {
+			try {
+				// const getFriend = await this.friends.getFriendsList();
+				window.location.href = `/friends/${username}`;
+			} catch (error) {
+				console.error('Error', error);
+			}
+
+		}
+		// buttonIsFriends.disabled = true;
 		liElement.appendChild(buttonIsFriends);
 		return buttonIsFriends;
 	
+	}
+
+	async deleteFriend(liElement, username) {
+		const buttonDeleteFriend = document.createElement('button');
+		buttonDeleteFriend.textContent = 'Delete friend';
+		buttonDeleteFriend.onclick = async () => {
+			try {
+				const deleteIsValid = await this.friends.deleteFriend(username);
+				if (deleteIsValid === 'Friend deleted') {
+					buttonDeleteFriend.textContent = 'Friend deleted';
+					buttonDeleteFriend.disable = true
+				}
+			} catch (error) {
+				console.error('Error', error);
+			}
+		};
+		liElement.appendChild(buttonDeleteFriend);
+		return buttonDeleteFriend;
 	}
 }
 

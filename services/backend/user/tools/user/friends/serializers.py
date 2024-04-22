@@ -11,5 +11,18 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 class FriendsSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CustomUser
-		fields = ['user_id', 'username']
+		fields = ('user_id', 
+				'profile_picture', 
+				'username', 
+				'first_name', 
+				'last_name', 
+				'is_online')
+	
+	def get_profile_picture_data(self, obj):
+	# get binary data of image
+		if obj.profile_picture:
+			return base64.b64encode(obj.profile_picture.read()).decode('utf-8')
+		else:
+			return None
+
 
