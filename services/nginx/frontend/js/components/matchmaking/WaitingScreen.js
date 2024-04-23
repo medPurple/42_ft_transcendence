@@ -15,21 +15,23 @@ export class WaitingScreen{
     async leaveQueueRequest(){
 		let id = await Iuser.getID();
 		console.log("id is : " + id);
-		fetch(`/api/queue/?userID=${id}`, {
-			method: 'DELETE',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': Icookies.getCookie('token'),
-				'Content-Type': 'application/json'
-			},
-		})
-        .then(response => {
-            console.log("User left the queue");
-            return response.status;
-        })
-        .catch(error => {
+        try{
+            const response = await fetch(`api/queue/?userID=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': Icookies.getCookie('csrftoken'),
+                    'Authorization': Icookies.getCookie('token'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            const data = await response.json();
+            if (response.status == 204){
+                console.log("User left the queue");
+                return response.status;
+            }
+        } catch (error) {
             console.error('Error:', error);
-        });
+        }
     }
 
     displayUserInfo(){
@@ -47,7 +49,6 @@ export class WaitingScreen{
     }
 
     updateUserInfo(data){
-        // var parsed_data = JSON.parse(data)
         let time = new Date(data.waitingTime);
         let now = new Date(); // Date actuelle
         let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
@@ -68,10 +69,10 @@ export class WaitingScreen{
         const leaveButton = document.createElement('button');
         leaveButton.classList.add('leave-button');
         leaveButton.innerText = 'Leave queue';
-        leaveButton.addEventListener('click', function(){
+        leaveButton.addEventListener('click', async () => {
+            let test = await this.leaveQueueRequest();
             socket.close();
-            this.leaveQueueRequest();
-            window.location.href = '/home';
+            window.location.href = '/';
         });
         return leaveButton;
     }
@@ -104,7 +105,6 @@ export class WaitingScreen{
             
             socket.onmessage = (e) => {
                 var parsed_data = JSON.parse(e.data)
-
                 if (parsed_data.message == "match_ready"){
                     socket.close();
                     // if (data.sender == true)
@@ -118,8 +118,8 @@ export class WaitingScreen{
                 //console.log('Message from server :', e.data);
         };
 
-        socket.addEventListener('close', function (event) {
-            this.leaveQueueRequest();
+        socket.addEventListener('close', (event) => {
+            let test = this.leaveQueueRequest();
             console.log('WebSocket connection closed by the server');
         });
         

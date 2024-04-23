@@ -47,16 +47,16 @@ class WaitingAPI(APIView):
         if game is not None:
             match game:
                 case ("pkm_multiplayer"):
-                    pkm_waitinglist = WaitingModel.objects.filter(game="pkm_multiplayer").order_by('position')
-                    serializer = WaitingModelSerializer(pkm_waitinglist, many=True)
+                    pkm = WaitingModel.objects.filter(game="pkm_multiplayer").order_by('position')
+                    serializer = WaitingModelSerializer(pkm, many=True)
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 case ("pong_multiplayer"):
-                    pong_waitinglist = WaitingModel.objects.filter(game="pong_multiplayer").order_by('position')
-                    serializer = WaitingModelSerializer(pong_waitinglist, many=True)
+                    pong = WaitingModel.objects.filter(game="pong_multiplayer").order_by('position')
+                    serializer = WaitingModelSerializer(pong, many=True)
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 case ("pong_tournament"):
-                    tpong_waitinglist = WaitingModel.objects.filter(game="pong_tournament").order_by('position')
-                    serializer = WaitingModelSerializer(tpong_waitinglist, many=True)
+                    tpong = WaitingModel.objects.filter(game="pong_tournament").order_by('position')
+                    serializer = WaitingModelSerializer(tpong, many=True)
                     return Response(serializer.data, status=status.HTTP_200_OK)
         elif user is not None:
             self.check_waitinglist(user, game)
@@ -81,11 +81,28 @@ class WaitingAPI(APIView):
         user_id = request.query_params.get('userID')
         if user_id is not None:
             instance = get_object_or_404(WaitingModel, userID=user_id)
-            game = instance.game
-            position = instance.position
-            game.remove(instance)
-            instance.delete()
-            WaitingModel.objects.filter(game=game, position__gt=position).update(position=F('position') - 1)
+            match instance.game:
+                case ("pkm_multiplayer"):
+                    pkm_waitinglist.remove(instance)
+                    instance.delete()
+                    users = WaitingModel.objects.filter(game="pkm_multiplayer")
+                    for user in users:
+                        user.position - 1
+                        user.save
+                case ("pong_multiplayer"):
+                    pong_waitinglist.remove(instance)
+                    instance.delete()
+                    users = WaitingModel.objects.filter(game="pong_multiplayer")
+                    for user in users:
+                        user.position - 1
+                        user.save
+                case ("pong_tournament"):
+                    tpong_waitinglist.remove(instance)
+                    instance.delete()
+                    users = WaitingModel.objects.filter(game="pong_tournament")
+                    for user in users:
+                        user.position - 1
+                        user.save
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({"error": "userID parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
     
