@@ -2,6 +2,8 @@ import json
 import random
 import string
 import logging
+import asyncio
+import threading
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from pongapp.game_classes import paddleC, ballC, gameStateC
@@ -29,18 +31,27 @@ class PongConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         paddleMov = text_data_json["paddleMov"]
 
+        #logger.info("paddleMov : %s", paddleMov)
         if (self.player_id == 1):
-            await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov1": paddleMov})
+            with self.gameState._lock:
+                self.gameState.paddle1.move = paddleMov
+            #await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov1": paddleMov})
         else:
-            await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov2": paddleMov})
+            with self.gameState._lock:
+                self.gameState.paddle2.move = paddleMov
+            #await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov2": paddleMov})
 
-    async def paddle_message(self, event):
-        if(self.player_id == 1 and "paddleMov2" in event):
-            paddleMov = event["paddleMov2"];
-            await self.send(text_data=json.dumps({"paddleMov2": paddleMov}))
-        elif(self.player_id == 2 and "paddleMov1" in event):
-            paddleMov = event["paddleMov1"];
-            await self.send(text_data=json.dumps({"paddleMov1": paddleMov}))
+    # async def paddle_message(self, event):
+    #     if(self.player_id == 1 and "paddleMov2" in event):
+    #         paddleMov = event["paddleMov2"];
+    #         await self.send(text_data=json.dumps({"paddleMov2": paddleMov}))
+    #     elif(self.player_id == 2 and "paddleMov1" in event):
+    #         paddleMov = event["paddleMov1"];
+    #         await self.send(text_data=json.dumps({"paddleMov1": paddleMov}))
+    #
+
+    async def game_state(self,event):
+        await self.send(text_data=json.dumps(event["game_state"]))
 
     async def findParty(self):
         global parties
@@ -64,6 +75,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.gameState.players_nb = 2
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
+            asyncio.create_task(self.gameState.run_game_loop())
             return parties[listLen - 1]
 
     async def logObject(self):
