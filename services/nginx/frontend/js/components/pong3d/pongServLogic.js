@@ -194,144 +194,6 @@ function createScene() {
 
 }
 
-// function ballPhysics() {
-//
-//   if (ball.position.x <= -fieldWidth / 2) {
-//     resetBall(2);
-//   }
-//   if (ball.position.x >= fieldWidth / 2) {
-//     resetBall(1);
-//   }
-//   if (ball.position.y <= -fieldHeight / 2) {
-//     ballDirY = -ballDirY;
-//   }
-//   if (ball.position.y >= fieldHeight / 2) {
-//     ballDirY = -ballDirY;
-//   }
-//
-//   ball.position.x += ballDirX * ballSpeed;
-//   ball.position.y += ballDirY * ballSpeed;
-//
-//   if (ballDirY > ballSpeed * 2) {
-//     ballDirY = ballSpeed * 2;
-//   }
-//   if (ballDirY < -ballSpeed * 2) {
-//     ballDirY = -ballSpeed * 2;
-//   }
-// }
-//
-// function paddlePhysics() {
-//
-//   if (ball.position.x <= paddle1.position.x + paddleWidth && ball.position.x >= paddle1.position.x) {
-//     if (ball.position.y <= paddle1.position.y + paddleHeight / 2 && ball.position.y >= paddle1.position.y - paddleHeight / 2) {
-//       if (ballDirX < 0) {
-//         ballDirX = -ballDirX;
-//         ballDirY -= paddle1DirY * 0.7;
-//       }
-//     }
-//   }
-//   if (ball.position.x <= paddle2.position.x + paddleWidth && ball.position.x >= paddle2.position.x) {
-//     if (ball.position.y <= paddle2.position.y + paddleHeight / 2 && ball.position.y >= paddle2.position.y - paddleHeight / 2) {
-//       if (ballDirX > 0) {
-//         ballDirX = -ballDirX;
-//         ballDirY -= paddle2DirY * 0.7;
-//       }
-//     }
-//   }
-// }
-//
-// function opponentPaddleMovement() {
-//
-//   paddle2DirY = (ball.position.y - paddle2.position.y);
-//   if (Math.abs(paddle2DirY) <= paddleSpeed) {
-//     paddle2.position.y += paddle2DirY;
-//   }
-//   else {
-//     if (paddle2DirY > paddleSpeed) {
-//       paddle2.position.y += paddleSpeed;
-//     }
-//     else if (paddle2DirY < -paddleSpeed) {
-//       paddle2.position.y -= paddleSpeed;
-//     }
-//   }
-//   paddle2.scale.y += (1 - paddle2.scale.y) * 0.2;
-// }
-//
-//
-// function paddle2Movement() {
-//
-//   if (paddle2MovRight == true) {
-//     if (paddle2.position.y < fieldHeight * 0.45) {
-//       paddle2DirY = paddleSpeed * 0.5;
-//     }
-//     else {
-//       paddle2DirY = 0;
-//       //paddle2.scale.z += (10 - paddle2.scale.z) * 0.2;
-//     }
-//   }
-//   else if (paddle2MovLeft == true) {
-//     if (paddle2.position.y > -fieldHeight * 0.45) {
-//       paddle2DirY = -paddleSpeed * 0.5;
-//     }
-//     else {
-//       paddle2DirY = 0;
-//       //paddle2.scale.z += (10 - paddle2.scale.z) * 0.2;
-//     }
-//   }
-//   else {
-//     paddle2DirY = 0;
-//   }
-//
-//   paddle2.scale.y += (1 - paddle2.scale.y) * 0.2;
-//   paddle2.scale.z += (1 - paddle2.scale.z) * 0.2;
-//   paddle2.position.y += paddle2DirY;
-// }
-//
-//
-//
-// function resetBall(ballStartDirection) {
-//
-//   ball.position.x = 0;
-//   ball.position.y = 0;
-//
-//   if (ballStartDirection == 1) {
-//     ballDirX = -1;
-//   }
-//   else {
-//     ballDirX = 1;
-//   }
-//   ballDirY = 1;
-// }
-//
-// function paddle1Movement() {
-//
-//   if (paddle1MovLeft == true) {
-//     if (paddle1.position.y < fieldHeight * 0.45) {
-//       paddle1DirY = paddleSpeed * 0.5;
-//     }
-//     else {
-//       paddle1DirY = 0;
-//       //paddle1.scale.z += (10 - paddle1.scale.z) * 0.2;
-//     }
-//   }
-//   else if (paddle1MovRight == true) {
-//     if (paddle1.position.y > -fieldHeight * 0.45) {
-//       paddle1DirY = -paddleSpeed * 0.5;
-//     }
-//     else {
-//       paddle1DirY = 0;
-//       //paddle1.scale.z += (10 - paddle1.scale.z) * 0.2;
-//     }
-//   }
-//   else {
-//     paddle1DirY = 0;
-//   }
-//
-//   paddle1.scale.y += (1 - paddle1.scale.y) * 0.2;
-//   paddle1.scale.z += (1 - paddle1.scale.z) * 0.2;
-//   paddle1.position.y += paddle1DirY;
-// }
-
 function cameraLogic() {
 
   //spotLight.position.x = ball.position.x * 2;
@@ -345,7 +207,6 @@ function cameraLogic() {
   camera.rotation.y = -60 * Math.PI / 180;
 
 }
-
 
 function cameraLogic2() {
 
@@ -362,7 +223,6 @@ function cameraLogic2() {
 }
 
 
-
 function draw() {
 
   if (player_id == 1) {
@@ -373,12 +233,6 @@ function draw() {
   }
 
   renderer.render(scene, camera);
-  //requestAnimationFrame(draw);
-
-  // ballPhysics();
-  // paddlePhysics();
-  // paddle1Movement();
-  // paddle2Movement();
 }
 
 function setup() {
@@ -444,39 +298,6 @@ function handleServerMessage(message) {
   }
   draw();
 }
-
-//
-// function handleAdvMove(key, value) {
-//
-//   if (key == "paddleMov2" && player_id == 1) {
-//     if (value == "right") {
-//       paddle2MovRight = true;
-//       paddle2MovLeft = false;
-//     }
-//     else if (value == "left") {
-//       paddle2MovLeft = true;
-//       paddle2MovRight = false;
-//     }
-//     else {
-//       paddle2MovLeft = false;
-//       paddle2MovRight = false;
-//     }
-//   }
-//   else if (key == "paddleMov1" && player_id == 2) {
-//     if (value == "right") {
-//       paddle1MovRight = true;
-//       paddle1MovLeft = false;
-//     }
-//     else if (value == "left") {
-//       paddle1MovLeft = true;
-//       paddle1MovRight = false;
-//     }
-//     else {
-//       paddle1MovLeft = false;
-//       paddle1MovRight = false;
-//     }
-//   }
-// }
 
 function onKeyDown(event) {
   switch (event.keyCode) {
