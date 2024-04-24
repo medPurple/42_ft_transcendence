@@ -5,8 +5,8 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 
 from profiles.models import CustomUser
-from friends.models import Friend_Request
-from friends.serializers import Friend_RequestSerializer
+from friends.models import FriendRequest
+from friends.serializers import FriendRequestSerializer, FriendsSerializer
 
 class SendFriendRequestView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
@@ -15,9 +15,9 @@ class SendFriendRequestView(APIView):
 		friend_username = request.data.get('friend_username')
 		try:
 			to_user = CustomUser.objects.get(username=friend_username)
-			friend_request, created = Friend_Request.objects.get_or_create(
+			friend_request, created = FriendRequest.objects.get_or_create(
 				from_user=from_user, to_user=to_user)
-			
+
 			if created:
 				return Response({'success': True}, status=status.HTTP_201_CREATED)
 			else:
@@ -34,41 +34,72 @@ class FriendRequestView(APIView):
 		friend_username = request.data.get('friend_username')
 		try:
 			to_user = CustomUser.objects.get(username=friend_username)
-			friend_request = Friend_Request.objects.get(
+			friend_request = FriendRequest.objects.get(
 				from_user=to_user, to_user=from_user)
 			from_user.friends.add(to_user)
 			to_user.friends.add(from_user)
 			friend_request.delete()
 			return Response({'success': True}, status=status.HTTP_200_OK)
-		except Friend_Request.DoesNotExist:
+		except FriendRequest.DoesNotExist:
 			return Response({'error': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
 		except Exception as e:
 			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    # method to get all friend requests
 	def get(self, request):
-		friend_requests = Friend_Request.objects.filter(to_user=request.user)
-		serializer = Friend_RequestSerializer(friend_requests, many=True)
-		return Response({'success': True, 'friend_requests': serializer.data}, status=status.HTTP_200_OK)
+		friend_requests = FriendRequest.objects.filter(to_user=request.user)
+		send_friend_requests = FriendRequest.objects.filter(from_user=request.user)
+		serializer = FriendRequestSerializer(friend_requests, many=True)
+		serializer_send = FriendRequestSerializer(send_friend_requests, many=True)
+		return Response({'success': True, 'friend_requests': serializer.data,
+		'send_requests': serializer_send.data},
+		status=status.HTTP_200_OK)
 
 	def delete(self, request):
 		from_user = request.user
 		friend_username = request.data.get('friend_username')
 		try:
 			to_user = CustomUser.objects.get(username=friend_username)
-			friend_request = Friend_Request.objects.get(
-				from_user=from_user, to_user=to_user)
+			friend_request = FriendRequest.objects.get(
+				from_user=to_user, to_user=from_user)
 			friend_request.delete()
 			return Response({'success': True}, status=status.HTTP_200_OK)
-		except Friend_Request.DoesNotExist:
+		except FriendRequest.DoesNotExist:
 			return Response({'error': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
 		except Exception as e:
 			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-	
-		
+
+class FriendsView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	def get(self, request, username=None):
+		if username:
+			friend = get_object_or_404(request.user.friends, username=username)
+			serializer = FriendsSerializer(friend)
+		else:
+			friends = request.user.friends.all()
+			serializer = FriendsSerializer(friends, many=True)
+		return Response({'success': True, 'friends': serializer.data}, status=status.HTTP_200_OK)
+	def delete(self, request):
+		from_user = request.user
+		friend_username = request.data.get('friend_username')
+		try:
+			friend = CustomUser.objects.get(username=friend_username)
+			if friend in from_user.friends.all():
+				from_user.friends.remove(friend)
+				friend.friends.remove(from_user)
+				return Response({'success': True}, status=status.HTTP_200_OK)
+			else:
+				return Response({'error': 'Friend not found in friend list'}, status=status.HTTP_404_NOT_FOUND)
+		except CustomUser.DoesNotExist:
+			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 # @login_required
 # def	accept_friend_request(request, requestID):
-# 	friend_request = Friend_Request.objects.get(id=requestID)
+# 	friend_request = FriendRequest.objects.get(id=requestID)
 # 	if friend_request.to_user == request.user:
 # 		friend_request.to_user.friends.add(friend_request.from_user)
 # 		friend_request.from_user.friends.add(friend_request.to_user)
@@ -79,7 +110,7 @@ class FriendRequestView(APIView):
 
 # @login_required
 # def	reject_friend_request(request, requestID):
-# 	friend_request = Friend_Request.objects.get(id=requestID)
+# 	friend_request = FriendRequest.objects.get(id=requestID)
 # 	if friend_request.to_user == request.user:
 # 		friend_request.delete()
 # 		return HttpResponse('friend request rejected')
@@ -104,7 +135,7 @@ class FriendRequestView(APIView):
 # def all_users(request):
 # 	# Récupérer tous les utilisateurs enregistrés dans la base de données
 # 	users = CustomUser.objects.all()
-# 	friend_requests = Friend_Request.objects.filter(to_user=request.user)
+# 	friend_requests = FriendRequest.objects.filter(to_user=request.user)
 # 	return render(request, 'friends.html',
 # 			{'users': users, 'friend_requests' : friend_requests})
 
