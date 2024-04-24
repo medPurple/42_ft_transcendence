@@ -1,0 +1,127 @@
+// Initiate the router
+// Import the views
+
+import home from "./views/home.js";
+import about from "./views/about.js";
+import contact from "./views/contact.js";
+import gameService from "./views/gameService.js";
+import userService from "./views/user/userService.js";
+import register from "./views/user/register.js";
+import login from "./views/user/login.js";
+import profile from "./views/user/profile.js";
+import editProfile from "./views/user/editProfile.js";
+import updatePassword from "./views/user/updatePassword.js";
+import deleteAccount from "./views/user/deleteAccount.js";
+import friends from "./views/friends/friends.js";
+import friendsProfile from "./views/friends/friendsProfile.js";
+import play from "./views/play.js";
+import p404 from "./views/p404.js";
+
+// Define the routes
+const routes = {
+	'/': {
+		title: "Home",
+		render: home
+	},
+	'/about': {
+		title: "About",
+		render: about
+	},
+	'/contact': {
+		title: "Contact",
+		render: contact
+	},
+	'/userService': {
+		title: "User Service",
+		render: userService
+	},
+	'/gameService': {
+		title: "Game Service",
+		render: gameService
+	},
+	'/register': {
+		title: "Register",
+		render: register
+	},
+	'/login': {
+		title: "Log In",
+		render: login
+	},
+	'/profile': {
+		title: "Profile",
+		render: profile
+	},
+	'/edit-profile': {
+		title: "Edit profile",
+		render: editProfile
+	},
+	'/update-password': {
+		title: "Update password",
+		render: updatePassword
+	},
+	'/delete-account': {
+		title: "Delete account",
+		render: deleteAccount
+	},
+	'/friends': {
+		title: "Friends",
+		render: friends
+	},
+	'/friend-profile': {
+		title: "Friends profile",
+		render: friendsProfile
+	},
+	'/play' : {
+		title: "Play",
+		render: play
+	},
+	'/404' : {
+		title: "404",
+		render: p404
+	}
+};
+
+// Define the router function that will render the view based on the route path name and update the browser history state
+async function router() {
+	let path = location.pathname;
+	let view = routes[path];
+	// define the header title
+	const pageTitle = "Transcendence";
+
+
+	if (view) {
+		document.title = pageTitle + " | " + view.title;
+		let result = await view.render();
+		console.log('route', result);
+		//Clear the app content
+		app.innerHTML = '';
+		if (typeof result === 'string') {
+			// If it's a string, user innerHTML
+			app.innerHTML = result;
+		} else if (result instanceof Node) {
+            // If it's a Node, use appendChild
+            app.appendChild(result);
+        } else {
+            // If it's neither, create a text node and append it
+            let textNode = document.createTextNode(String(result));
+            app.appendChild(textNode);
+        }
+
+	} else {
+		history.replaceState("", "", "/404");
+		router();
+	}
+}
+// Handle navigation
+window.addEventListener("click", (e) => {
+	if (e.target.matches("[data-link]")) {
+		e.preventDefault();
+		history.pushState("", "", e.target.href);
+		router();
+	}
+});
+
+// Update router
+window.addEventListener("popstate", router);
+window.addEventListener("DOMContentLoaded", router);
+

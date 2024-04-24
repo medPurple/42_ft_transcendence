@@ -1,5 +1,4 @@
-version: '3'
-
+#version: '3'
 
   # djangoTemplate:
   #   container_name: djangotemplate
@@ -20,7 +19,8 @@ networks:
 volumes:
   secret_volume:
   user:
-  game3d:
+  matchmaking:
+  # game3d:
 
 
 services:
@@ -48,24 +48,37 @@ services:
     restart: on-failure
 
   token:
-    container_name: token
+    container_name: jwtoken
     networks:
       - microservices
-    build: backend/token
-    image: token
+    build: backend/JWToken
+    image: jwtoken
     expose :
       - "8080"
     restart: on-failure
 
-  game3d:
-    container_name: game3d
+  # game3d:
+  #   container_name: game3d
+  #   user: root
+  #   volumes:
+  #   - game3d:/var/lib/postgresql
+  #   networks:
+  #     - microservices
+  #   build: backend/game3d
+  #   image: game3d
+  #   expose :
+  #     - "8080"
+  #   restart: on-failure
+
+  matchmaking:
+    container_name: matchmaking
     user: root
     volumes:
-    - game3d:/var/lib/postgresql
+      - matchmaking:/var/lib/postgresql/
     networks:
-      - microservices
-    build: backend/game3d
-    image: game3d
+    - microservices
+    build: backend/matchmaking
+    image: matchmaking
     expose :
-      - "8080"
+    - "8080"
     restart: on-failure

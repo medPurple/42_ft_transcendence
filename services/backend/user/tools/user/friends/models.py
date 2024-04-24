@@ -2,7 +2,7 @@ from django.db import models
 from profiles.models import CustomUser
 from django.contrib.auth.models import AbstractUser
 
-class Friend_Request(models.Model):
+class FriendRequest(models.Model):
 	# it will have a foreignkey relation with a user(first user) who is sending this request,
 	from_user = models.ForeignKey(
 		CustomUser, related_name='from_user', on_delete=models.CASCADE)

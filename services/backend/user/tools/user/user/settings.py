@@ -38,11 +38,39 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
                         'http://127.0.0.1:8080',
-                        'http://userservice:8080']
+                        'http://userservice:8080',
+                        'http://paul-f4ar4s1:8080',]
 
+
+# # Définition de l'attribut SameSite pour le cookie CSRF
+# CSRF_COOKIE_SAMESITE = 'None'
+
+# # Définition de l'attribut SameSite pour le cookie de session
+# SESSION_COOKIE_SAMESITE = 'None'
+
+# # Assurez-vous également d'utiliser HTTPS et de définir CSRF_COOKIE_SECURE et SESSION_COOKIE_SECURE sur True
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
 
 # Application definition
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -168,3 +196,4 @@ LOGIN_URL = '/home/'
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+

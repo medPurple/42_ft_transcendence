@@ -24,20 +24,9 @@ import profiles.views
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
-	path('api/', include('profiles.urls')),
+	path('api/profiles/', include('profiles.urls')),
 	path('api/profiles/schema/', SpectacularAPIView.as_view(), name='schema'),
 	path('api/profiles/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
-	# path('admin/', admin.site.urls),
-
-	# path('profile/', profil.views.user_profile, name='user_profile'),
-	# path('delete_account/', profil.views.delete_account, name='delete_account'),
-	# path('edit_profile/', profil.views.edit_profile, name='edit_profile'),
-	# path('friends/', friends.views.all_users, name="friends"),
-	# path('send_friend_request/<int:userID>/', friends.views.send_friend_request, name='send_friend_request'),
-	# path('accept_friend_request/<int:requestID>/', friends.views.accept_friend_request, name='accept_friend_request'),
-	# path('reject_friend_request/<int:requestID>/', friends.views.reject_friend_request, name='reject_friend_request'),
-	# path('profile/<int:userID>/', friends.views.friend_profile, name='friend_profile'),
-	# path('delete_friend/<int:userID>/', friends.views.delete_friend, name='delete_friend'),
-
+	path('api/friends/', include('friends.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
