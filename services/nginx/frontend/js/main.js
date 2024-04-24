@@ -81,6 +81,25 @@ const routes = {
 	}
 };
 
+// Define a function to show or hide the navigation bar based on the route
+function navbarVisibility() {
+	const path = location.pathname;
+
+	// Check if the current route requires hiding the navigation bar
+	const hideNavbarRoutes = ['/']; // Add routes here where you want to hide the navigation bar
+	const hideNavbar = hideNavbarRoutes.includes(path);
+
+	  // Select the navigation bar
+	const navbar = document.getElementById('navbar');
+
+	 // Add or remove the 'hidden' class based on whether the navigation bar should be hidden or not
+	if (hideNavbar) {
+		navbar.classList.add('hidden');
+	} else {
+		navbar.classList.remove('hidden');
+	}
+}
+
 // Define the router function that will render the view based on the route path name and update the browser history state
 async function router() {
 	let path = location.pathname;
@@ -88,24 +107,25 @@ async function router() {
 	// define the header title
 	const pageTitle = "Transcendence";
 
-
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render();
-		console.log('route', result);
+
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
 			// If it's a string, user innerHTML
 			app.innerHTML = result;
 		} else if (result instanceof Node) {
-            // If it's a Node, use appendChild
-            app.appendChild(result);
-        } else {
-            // If it's neither, create a text node and append it
-            let textNode = document.createTextNode(String(result));
-            app.appendChild(textNode);
-        }
+			// If it's a Node, use appendChild
+			app.appendChild(result);
+		} else {
+			// If it's neither, create a text node and append it
+			let textNode = document.createTextNode(String(result));
+			app.appendChild(textNode);
+		}
+
+		navbarVisibility();
 
 	} else {
 		history.replaceState("", "", "/404");
@@ -124,4 +144,6 @@ window.addEventListener("click", (e) => {
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
+
+
 

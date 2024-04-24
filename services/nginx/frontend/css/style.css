@@ -132,3 +132,7 @@ footer {
 .matchmakingdiv .button-div .queue-button {
 	margin-top: 50px;
 }
+
+#navbar.hidden {
+    display: none;
+}

@@ -20,6 +20,7 @@ volumes:
   secret_volume:
   user:
   matchmaking:
+  chat:
   # game3d:
 
 
@@ -79,6 +80,19 @@ services:
     - microservices
     build: backend/matchmaking
     image: matchmaking
+    expose :
+    - "8080"
+    restart: on-failure
+
+  chat:
+    container_name: chat
+    user: root
+    volumes:
+      - chat:/var/lib/postgresql/
+    networks:
+    - microservices
+    build: backend/chat
+    image: chat
     expose :
     - "8080"
     restart: on-failure

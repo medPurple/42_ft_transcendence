@@ -74,3 +74,18 @@ else
 	echo "$ENV_FILE unknow file."
 fi
 #------------------------------------------------#
+
+#------------------------------------------------#
+echo "[VAULT SECRET] chat container secret"
+ENV_FILE="/vault/chat/.env"
+SECRET_PATH="chat_db"
+
+if [ -f "$ENV_FILE" ]; then
+	set -a
+	. "$ENV_FILE"
+	set +a
+    vault kv put kv/chat_db db_name=testbase db_password=kingp4bl0 db_username=dbking 
+else
+	echo "$ENV_FILE unknow file."
+fi
+#------------------------------------------------#

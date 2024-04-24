@@ -6,6 +6,7 @@ COPY env_file/.env_user  /vault/user/.env
 COPY env_file/.env_JWToken  /vault/JWToken/.env
 COPY env_file/.env_game3d  /vault/game3d/.env
 COPY env_file/.env_matchmaking  /vault/matchmaking/.env
+COPY env_file/.env_chat  /vault/chat/.env
 
 COPY vault.json /vault/vault.json
 
