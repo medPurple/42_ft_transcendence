@@ -9,42 +9,37 @@
 	<!-- Here we include links to CSS -->
 	<link rel="stylesheet" href="/css/style.css" />
 	<!-- Here we include links to Images (logos or other) -->
-	<link rel="favicon" href="/images/myfav.png" />
+	<link rel="favicon" href="./images/myfav.jpg" />
 	<!-- Include / download Libraries (Bootstrap, ThreeJs, WebGL, etc) -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Include Scripts, with DEFER key word -->
-	<script type="module" src="/js/main.js" defer></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+	<script type="module" src="./js/main.js" defer></script> 
 </head>
 
-<!-- BODY ZONE: (all blank page) -->
+<!-- BODY ZONE : Main structure -->
 <body>
-	<!-- HEADER ZONE (index-menus-logos-etc a construire) -->
-	<header class="mymarvelousheaderband">
-		<h1>Transcendence</h1>
-		<!-- more things to do here! -->
+	<!-- HEADER ZONE (index-menus) -->
+	<header class="header-zone">
+		<div id="navbar">
+			<a href="/home" data-link>home</a>
+			<!-- <a href="./templates-test/stats.html">stats</a> -->
+			<a href="/register" data-link>register</a>
+			<!-- <a href="./templates-test/register.html">register</a> -->
+			<a href="/login" data-link>log in</a>
+			<!-- <a href="./templates-test/login.html">log in</a> -->
+			<a href="/about" data-link>about</a>
+			<!-- <a href="./templates-test/about.html">about</a> -->
+		</div>
 	</header>
 
-	<!-- NAVIGATION ZONE (all menus, links, etc) -->
-	<div id="navbar">
-		<!-- data-link is used to prevent the page from reloading -->
-		<a href="/" data-link>Home</a>
-		<a href="/about" data-link> About Us</a>
-		<a href="/contact" data-link>Contact Us</a>
-	</div>
+	<!-- MAIN ZONE ('CHANGING body' here) -->
+	<main id="app"></main>
 
-	<!-- MAIN ZONE (all 'central body' here, balises<machin> and classes serve as identifier to CSS, id is a JS identifier) -->
-	<main id="app" class="mycontainer">
-		<div id="JSidentifier" class="myawesomelinks">
-
-		</div>
-	<!-- more things to do here! -->
-	</main>
-
-		<!-- FOOTER ZONE (links, contacts, logos, small text!)-->
-		<footer class="myfooter">
-			<p>© 2024 La pat patrouille</p>
-			<!-- more things to do here! -->
-		</footer>
+	<!-- FOOTER ZONE -->
+	<footer id="custom-footer">
+		<a href="/contact" data-link>© 2024 La pat patrouille</a>
+	</footer>
 </body>
 </html>
 

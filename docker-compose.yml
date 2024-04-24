@@ -1,0 +1,84 @@
+#version: '3'
+
+  # djangoTemplate:
+  #   container_name: djangotemplate
+  #   user: root
+  #   volumes:
+  #     - djangotemplate:/var/lib/postgresql/
+  #   networks:
+  #   - microservices
+  #   build: services/backend/djangotemplate
+  #   image: djangotemplate
+  #   expose :
+  #   - "8080"
+  #   restart: on-failure
+
+networks:
+  microservices:
+    external: true
+
+volumes:
+  secret_volume:
+  user:
+  matchmaking:
+  game3d:
+
+services:
+  nginx:
+    container_name: nginx
+    networks:
+    - microservices
+    build: services/nginx
+    image: nginx
+    ports:
+      - "8080:80"
+    restart: on-failure
+
+  user:
+    container_name: user
+    user: root
+    volumes:
+      - user:/var/lib/postgresql/
+    networks:
+    - microservices
+    build: services/backend/user
+    image: user
+    expose :
+    - "8080"
+    restart: on-failure
+
+  token:
+    container_name: jwtoken
+    networks:
+      - microservices
+    build: services/backend/JWToken
+    image: jwtoken
+    expose :
+      - "8080"
+    restart: on-failure
+
+  game3d:
+    container_name: game3d
+    user: root
+    volumes:
+    - game3d:/var/lib/postgresql
+    networks:
+      - microservices
+    build: services/backend/game3d
+    image: game3d
+    expose :
+      - "8080"
+    restart: on-failure
+
+  matchmaking:
+    container_name: matchmaking
+    user: root
+    volumes:
+      - matchmaking:/var/lib/postgresql/
+    networks:
+    - microservices
+    build: services/backend/matchmaking
+    image: matchmaking
+    expose :
+    - "8080"
+    restart: on-failure

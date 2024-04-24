@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcendence</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="favicon" href="./images/myfav.jpg" />
+    <script>
+        function validateCodeAndRedirect() {
+            var code = document.querySelector('.code-input').value;
+            var expectedCode = '8650 4006';
+
+            code = code.trim();
+
+            if (code === expectedCode) {
+                window.location.href = '/home';
+            } else {
+                alert('Incorrect code. Please try again.');
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="image-container">
+        <img src="./images/InvitationCard_Front.png" alt="Original Image" class="original-image">
+        <img src="./images/InvitationCard_Rev.png" alt="Hover Image" class="hover-image">
+    </div>
+    <div class="buttons-container">
+        <input type="text" placeholder="Enter Code" class="code-input">
+        <button onclick="validateCodeAndRedirect();">Start</button>
+    </div>
+
+</body>
+
+</html>

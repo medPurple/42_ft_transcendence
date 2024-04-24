@@ -1,80 +1,156 @@
-h1 {
-	font-family: 'Courier New', Courier, monospace;
-	font-size: 2em;
+
+/********** GENERAL ***********/
+html {
 	text-align: center;
-	color: #fdfdfd;
 }
 
-h2 {
-	font-family: 'Courier New', Courier;
-	font-size: 1em;
-	text-align: center;
-	color: #8b2d2d;
-}
-
-h3 {
+p {
 	font-family: 'Avenir';
+	text-align: justify;
+    margin-top: 5em;
+	margin-left: 1.5em;
+	margin-right: 1.5em;
+	display: flex;
+	text-justify: center;
+}
+
+a {
+	text-decoration: none !important;
+	color: black !important;
+}
+
+a:hover {
+	text-decoration: none !important;
+	color: #ff0099 !important;
+}
+
+#custom-footer {
+	font-family: 'Courier New', Courier, monospace;
 	font-size: 0.75em;
 	text-align: center;
 	color: #f3f3f3;
 	text-align: center;
 }
 
-html,
-body {
-	font-family: 'Avenir';
-	background-color: #b6b6b6;
-	margin: 20px;
-	padding: 20px;
-	text-align: center;
+#custom-footer.hidden {
+	display: none;
 }
 
-a,
-button {
-	display: inline-block;
-	font-family: 'Courier New', Courier;
-	font-size: 1em;
-	padding: 7px 30px;
-	background-color: #fdfdfd;
-	color: #000000;
-	text-decoration: none;
-	border-radius: 7px;
-	transition: background-color 0.3s;
-	cursor: pointer;
-	border: none;
+#app {
+	padding-top: 15em;
+	padding-bottom: 15em;
 }
 
-a:hover,
-button:hover {
-	background-color: #ca9999;
-	color: #ffffff;
-}
 
-section {
-	margin-bottom: 39px;
-	padding: 30px;
-	border: 2px solid #8b2d2d;
-	border-radius: 10px;
-
-
-}
-
-footer {
+/********** MENU BAR ***********/
+#navbar {
+	position: fixed;
 	font-family: 'Courier New', Courier, monospace;
-	margin: 20px;
+	font-size: 1em;
+	display: flex;
+	justify-content: space-between;
+	background-color: #f9f9f9;
+	border-radius: 10px;
+    top: 0;
+    width: 42%;
+	margin: 1.5em;
+	padding: 1em;
+	z-index: 1000;
+
+}
+
+#navbar.hidden {
+    display: none;
+}
+
+/********** HOME CARD PAGE ***********/
+.image-container {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.original-image,
+.hover-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
+    transition: opacity 0.3s ease;
+}
+
+.hover-image {
+    opacity: 0; /* Initially hidden */
+}
+
+.image-container:hover .hover-image {
+    opacity: 1; /* Visible on hover */
+}
+
+.buttons-container {
+	display: flex;
+	justify-content: space-between;
+	width: 300px;
+	margin: 0 auto;
+	margin-top: 1em;
+}
+
+.buttons-container button {
+    padding: 8px 20px;
+	border-radius: 7px;
+    border: none;
+    background-color: #1b1b1c; /* Default color */
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.buttons-container button:hover {
+    background-color: #ff0099;
+}
+
+.code-input {
+    padding: 8px 20px;
+	border-radius: 7px;
+    color: #ff0099;
+}
+
+/********** LOGIN PAGE ***********/
+#login-form {
+	width: 300px;
+	margin: 0 auto;
 	padding: 20px;
-	color: #fdfdfd;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #f9f9f9;
 }
 
+/* LOGIN Form Input Fields */
+#login-form input[type="text"],
+#login-form input[type="password"],
+#login-form input[type="submit"] {
+	width: 100%;
+	padding: 10px;
+	margin: 5px 0;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	box-sizing: border-box; /* Include padding and border in element's total width and height */
+  }
 
-.profile-content .profile-pic {
-	border-radius: 50%;
-	width: 100px;
-	height: 100px;
-	object-fit: cover;
+/* Media query for small devices */
+@media screen and (max-width: 600px) {
+#login-form {
+	  width: 80%; /* Adjust width as needed */
+	}
+  }
+
+#pong-renderer {
+	display: flex;
+	justify-content: center;
 }
-
-
 
 .profile-content .profile-pic {
 	border-radius: 50%;
@@ -85,7 +161,6 @@ footer {
 
 
 /* CSS FOR THE MATCHMAKING PAGE */
-
 .matchmakingdiv {
 	display: flex;
 	flex-direction: column;
