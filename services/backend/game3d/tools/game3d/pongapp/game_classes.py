@@ -51,6 +51,7 @@ class   gameStateC:
         self.players_nb = 0
         self.player1Score = initvalues.PADDLE1_SCORE
         self.player2Score = initvalues.PADDLE2_SCORE
+        self.limitScore = initvalues.SMALL_LIMIT_SCORE
         self.paddle1 = 0
         self.paddle2 = 0
         self.ball = ballC()
@@ -63,8 +64,8 @@ class   gameStateC:
             with self._lock:
                 self.ballPhysics(self.ball)
                 self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
-                self.paddle1Movement(self.paddle1)
-                self.paddle2Movement(self.paddle2)
+                #self.paddle1Movement(self.paddle1)
+                #self.paddle2Movement(self.paddle2)
 
             await asyncio.sleep(0.016)
             #self.logObject()
@@ -91,10 +92,17 @@ class   gameStateC:
         ball.positionY = 0
 
         if (index == 1):
+            self.player1Score += 1
             ball.dirX = -1
         else:
+            self.player2Score += 1
             ball.dirX = 1
         ball.dirY = 1
+        self.checkForScore()
+
+    def checkForScore(self):
+        if (self.player1Score == self.limitScore or self.player2Score == self.limitScore):
+            self.active = 0
 
     def paddlePhysics(self, ball, paddle1, paddle2):
         if (ball.positionX <= paddle1.positionX + paddle1.width and ball.positionX >= paddle1.positionX):
@@ -151,6 +159,7 @@ class   gameStateC:
                 "game_state": {
                     "player1Score": self.player1Score,
                     "player2Score": self.player2Score,
+                    "limitScore": self.limitScore,
                     "paddle1.positionX": self.paddle1.positionX,
                     "paddle1.positionY": self.paddle1.positionY,
                     "paddle1.width": self.paddle1.width,

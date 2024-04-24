@@ -4,6 +4,7 @@ import string
 import logging
 import asyncio
 import threading
+from . import initvalues
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 from pongapp.game_classes import paddleC, ballC, gameStateC
@@ -34,12 +35,52 @@ class PongConsumer(AsyncWebsocketConsumer):
         #logger.info("paddleMov : %s", paddleMov)
         if (self.player_id == 1):
             with self.gameState._lock:
-                self.gameState.paddle1.move = paddleMov
+                await self.testpaddle1Mov(self.gameState.paddle1, paddleMov)
+                #self.gameState.paddle1.move = paddleMov
             #await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov1": paddleMov})
         else:
             with self.gameState._lock:
-                self.gameState.paddle2.move = paddleMov
+                await self.testpaddle2Mov(self.gameState.paddle2, paddleMov)
+                #self.gameState.paddle2.move = paddleMov
             #await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov2": paddleMov})
+
+    async def testpaddle1Mov(self, paddle1, paddleMov):
+        if (paddleMov == "left"):
+            if (paddle1.positionY < initvalues.FIELD_HEIGHT * 0.45):
+                paddle1.dirY = paddle1.speed * 0.5
+            else:
+                paddle1.dirY = 0
+        elif (paddleMov == "right"):
+            if (paddle1.positionY > -initvalues.FIELD_HEIGHT * 0.45):
+                paddle1.dirY = -paddle1.speed * 0.5
+            else:
+                paddle1.dirY = 0
+        else:
+            paddle1.dirY = 0
+        paddle1.scaleY += (1 - paddle1.scaleY) * 0.2
+        paddle1.scaleZ += (1 - paddle1.scaleZ) * 0.2
+        paddle1.positionY += paddle1.dirY
+
+    async def testpaddle2Mov(self, paddle2, paddleMov):
+        if (paddleMov == "right"):
+            if (paddle2.positionY < initvalues.FIELD_HEIGHT * 0.45):
+                paddle2.dirY = paddle2.speed * 0.5
+            else:
+                paddle2.dirY = 0
+        elif (paddleMov == "left"):
+            if (paddle2.positionY > -initvalues.FIELD_HEIGHT * 0.45):
+                paddle2.dirY = -paddle2.speed * 0.5
+            else:
+                paddle2.dirY = 0
+        else:
+            paddle2.dirY = 0
+        paddle2.scaleY += (1 - paddle2.scaleY) * 0.2
+        paddle2.scaleZ += (1 - paddle2.scaleZ) * 0.2
+        paddle2.positionY += paddle2.dirY
+
+
+
+        
 
     # async def paddle_message(self, event):
     #     if(self.player_id == 1 and "paddleMov2" in event):

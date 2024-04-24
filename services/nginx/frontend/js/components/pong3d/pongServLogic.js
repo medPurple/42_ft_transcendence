@@ -3,6 +3,7 @@
 var gameState = {
   player1Score: 0,
   player2Score: 0,
+  score_limit: 7,
   paddle1_positionX: 0,
   paddle1_positionY: 0,
   paddle1_width: 0,
@@ -34,6 +35,19 @@ var paddleWidth = 10, paddleHeight = 30, paddleDepth = 10, paddleQuality = 1;
 var ball, paddle1, paddle2;
 
 var ballStartDirection;
+
+function displayScore() {
+
+  var scoreDiv = document.getElementById("pong-score");
+
+  scoreDiv.innerHTML = "Player 1 : " + gameState.player1Score + " - Player 2 : " + gameState.player2Score;
+  if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
+    if (gameState.player1Score == gameState.score_limit)
+      scoreDiv.innerHTML = "Game Over ! Player 1 Won !"
+    else
+      scoreDiv.innerHTML = "Game Over ! Player 2 Won !"
+  }
+}
 
 function createScene() {
 
@@ -216,7 +230,7 @@ function cameraLogic2() {
   camera.position.y += (paddle2.position.y - camera.position.y) * 0.05;
   camera.position.z = paddle2.position.z + 100;
 
-  camera.rotation.x = 0.01 * (ball.position.y) * Math.PI / 180;
+  //camera.rotation.x = 0.01 * (ball.position.y) * Math.PI / 180;
   camera.rotation.z = 90 * Math.PI / 180;
   camera.rotation.y = 60 * Math.PI / 180;
 
@@ -260,11 +274,12 @@ function setup() {
 function handleServerMessage(message) {
 
   var map = new Map(Object.entries(JSON.parse(message)));
-  console.log("Message du websocket: ", map);
+  //console.log("Message du websocket: ", map);
 
   for (let [key, value] of map.entries()) {
     if (key == "party" && value == 'active') {
       party = true;
+      displayScore();
       createScene();
       draw();
       return;
@@ -277,6 +292,8 @@ function handleServerMessage(message) {
       gameState.player1Score = value;
     if (key == "player2Score")
       gameState.player2Score = value;
+    if (key == "limitScore")
+      gameState.score_limit = value;
     if (key == "paddle1.positionX")
       paddle1.position.x = value;
     if (key == "paddle1.positionY")
@@ -296,6 +313,7 @@ function handleServerMessage(message) {
     if (key == "active")
       gameState.active = value;
   }
+  displayScore();
   draw();
 }
 
