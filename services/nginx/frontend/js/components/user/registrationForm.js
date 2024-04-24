@@ -1,4 +1,6 @@
-export default class RegistrationForm extends HTMLElement{
+import Icookies from "../cookie/cookie.js"
+
+export default class RegistrationForm extends HTMLElement {
 	constructor() {
 		super(); // Always call super first in constructor
 		this.attachShadow({ mode: 'open' }); // Create a new attached DOM tree for the component
@@ -13,7 +15,7 @@ export default class RegistrationForm extends HTMLElement{
 			<input type="password" name="password2" placeholder="Confirm Password">
 			<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 			<button type="submit" class="button">Register</button>
-		</form>`;    
+		</form>`;
 	}
 
 	connectedCallback() {
@@ -25,7 +27,7 @@ export default class RegistrationForm extends HTMLElement{
 			const formData = new FormData(signupForm);
 
             // Send an AJAX request to submit the form
-			fetch('/api/profiles/signup/', {
+			fetch('/api/profiles/register/', {
 				method: 'POST',
 				body: formData,
 				headers: {
@@ -35,7 +37,8 @@ export default class RegistrationForm extends HTMLElement{
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
-                     // Redirect to the home page
+					Icookies.setCookie('token', data.token, 90);
+					// Redirect to the home page
 					 window.location.href = '/'; // Change the URL to your home page URL
 
 				} else {

@@ -1,3 +1,5 @@
+import Icookies from "../cookie/cookie.js"
+
 export default class LoginForm extends HTMLElement{
 	constructor() {
 		super(); // Always call super first in constructor
@@ -9,7 +11,7 @@ export default class LoginForm extends HTMLElement{
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <button type="submit" class="button">Log in</button>
         </form>
-        `;    
+        `;
 	}
 
 	connectedCallback() {
@@ -21,7 +23,7 @@ export default class LoginForm extends HTMLElement{
 			const formData = new FormData(signupForm);
 
             // Send an AJAX request to submit the form
-			fetch('/api/profiles/user_login/', {
+			fetch('/api/profiles/login/', {
 				method: 'POST',
 				body: formData,
 				headers: {
@@ -31,6 +33,8 @@ export default class LoginForm extends HTMLElement{
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
+					
+					Icookies.setCookie('token', data.token, 90);
                      // Redirect to the home page
 					 window.location.href = '/'; // Change the URL to your home page URL
 

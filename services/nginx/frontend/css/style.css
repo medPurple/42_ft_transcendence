@@ -27,17 +27,11 @@ a:hover {
 footer {
 	font-family: 'Courier New', Courier, monospace;
 	font-size: 0.75em;
-    position: fixed;
-    bottom: 0.5em;
-    width: 100%;
-    background-color: #f9f9f9;
-    z-index: 1000;
+	text-align: center;
+	color: #f3f3f3;
+	text-align: center;
 }
 
-#app {
-	padding-top: 15em;
-	padding-bottom: 15em;
-}
 
 /********** MENU BAR ***********/
 #navbar {
@@ -119,7 +113,7 @@ footer {
 	border-radius: 5px;
 	background-color: #f9f9f9;
 }
-  
+
 /* LOGIN Form Input Fields */
   .login-form input[type="text"],
   .login-form input[type="password"],
@@ -144,3 +138,59 @@ footer {
 	justify-content: center;
 }
 
+.profile-content .profile-pic {
+	border-radius: 50%;
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+}
+
+
+/* CSS FOR THE MATCHMAKING PAGE */
+
+.matchmakingdiv {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.matchmakingdiv .title-div .matchmaking-title {
+	margin-top: 50px;
+}
+
+.matchmakingdiv .radio-buttons {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+.matchmakingdiv .radio-buttons .queue-checkbox {
+	appearance: none;
+	background-color: #fafafa;
+	border: 2px solid #cacece;
+	border-radius: 50%;
+	display: inline-block;
+	position: relative;
+	height: 100px;
+	width: 100px;
+	margin: 20px;
+	transition: border .5s;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 70%;
+}
+
+.matchmakingdiv .radio-buttons .queue-checkbox:checked {
+	border: 2px solid #3090C7;
+}
+
+.matchmakingdiv .radio-buttons .queue-label {
+	display: block;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.matchmakingdiv .button-div .queue-button {
+	margin-top: 50px;
+}

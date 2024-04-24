@@ -10,15 +10,16 @@ SRCS_PATH = ./services/
 NG_NAME = nginx
 G3_NAME = game3d
 CH_NAME = chat
-TK_NAME = token
+TK_NAME = jwtoken
 US_NAME = user
 VA_NAME = vault
+MA_NAME = matchmaking
 VA_VOL_NAME = secret_volume
 
 NG_IMG = $(shell docker images | grep nginx | wc -l)
 G3_IMG = $(shell docker images | grep game3d | wc -l)
 CH_IMG = $(shell docker images | grep chat | wc -l)
-TK_IMG = $(shell docker images | grep token | wc -l)
+TK_IMG = $(shell docker images | grep jwtoken | wc -l)
 US_IMG = $(shell docker images | grep user | wc -l)
 VA_IMG = $(shell docker images | grep vault | wc -l)
 
@@ -27,6 +28,7 @@ VA_PS = $(shell docker ps | grep vault | wc -l)
 US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
+MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
 
 #######	COLORS #######
 
@@ -104,8 +106,14 @@ re_us: down	run_script
 	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
+re_ma: down	run_script
+	@ if [ $(MA_IMG) = "1" ]; then docker rmi $(MA_NAME); fi;
+	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
+
+
 clean : down
-	@ echo -e "\n$(YELLOW)★ Cleaning Images - Volumes ★$(CEND)"
+	@ echo -e -e "\n$(YELLOW)★ Cleaning Images - Volumes ★$(CEND)"
 
 	@ if [ $(NG_IMG) = "1" ]; then docker rmi $(NG_NAME); \
 	else echo "	NGINX Image already deleted"; fi;
@@ -124,14 +132,16 @@ clean : down
 	else echo "	game3d Volume already deleted"; fi;
 	@ if [ $(US_VOL) = "1" ]; then docker volume rm services_$(US_NAME); \
 	else echo "	user Volume already deleted"; fi;
+	@ if [ $(MA_VOL) = "1" ]; then docker volume rm services_$(MA_NAME); \
+	else echo "	user Volume already deleted"; fi;
 
 # Weird volumes created somewhere using secret volume?
 	@ docker system prune -af
 	@ docker volume prune -f
 # after prune, the secret volume is still there!
 
-	@ if [ $(VA_VOL) = "1" ]; then docker volume rm -f $(VA_VOL_NAME); \
-	else echo "	Secret Volume already deleted"; fi;
+	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL); \
+	else echo "	Vault Volume already deleted"; fi;
 
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 

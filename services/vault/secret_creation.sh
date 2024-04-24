@@ -31,21 +31,6 @@ fi
 #------------------------------------------------#
 
 #------------------------------------------------#
-echo "[VAULT SECRET] token container secret"
-ENV_FILE="/vault/token/.env"
-SECRET_PATH="jwt"
-
-if [ -f "$ENV_FILE" ]; then
-	set -a
-	. "$ENV_FILE"
-	set +a
-    vault kv put kv/jwt SECRET_KEY=fsdfbjsgdf
-else
-	echo "$ENV_FILE unknow file."
-fi
-#------------------------------------------------#
-
-#------------------------------------------------#
 echo "[VAULT SECRET] user container secret"
 ENV_FILE="/vault/user/.env"
 SECRET_PATH="user_db"
@@ -55,6 +40,36 @@ if [ -f "$ENV_FILE" ]; then
 	. "$ENV_FILE"
 	set +a
     vault kv put kv/user_db db_username=dbking db_name=testbase db_password=kingp4bl0 
+else
+	echo "$ENV_FILE unknow file."
+fi
+#------------------------------------------------#
+
+#------------------------------------------------#
+echo "[VAULT SECRET] matchmaking container secret"
+ENV_FILE="/vault/matchmaking/.env"
+SECRET_PATH="mm_db"
+
+if [ -f "$ENV_FILE" ]; then
+	set -a
+	. "$ENV_FILE"
+	set +a
+    vault kv put kv/mm_db username_db=mmdb password_db=nnpassdb0 basename_db=dbmm 
+else
+	echo "$ENV_FILE unknow file."
+fi
+#------------------------------------------------#
+
+#------------------------------------------------#
+echo "[VAULT SECRET] JWToken container secret"
+ENV_FILE="/vault/JWToken/.env"
+SECRET_PATH="key"
+
+if [ -f "$ENV_FILE" ]; then
+	set -a
+	. "$ENV_FILE"
+	set +a
+    vault kv put kv/key SECRET_KEY="refinery strongman stricken tassel enjoyment frigidity underage curling spouse cheating armory jarring"
 else
 	echo "$ENV_FILE unknow file."
 fi
