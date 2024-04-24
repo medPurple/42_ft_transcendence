@@ -24,7 +24,6 @@ export class WaitingScreen{
                     'Content-Type': 'application/json'
                 },
             })
-            const data = await response.json();
             if (response.status == 204){
                 console.log("User left the queue");
                 return response.status;
