@@ -17,34 +17,38 @@
 	<script type="module" src="./js/main.js" defer></script> 
 </head>
 
-<!-- BODY ZONE: (all blank page) -->
+<!-- BODY ZONE : Main structure -->
 <body>
-	<!-- HEADER ZONE (index-menus-logos-etc a construire) -->
-	<header class="mymarvelousheaderband">
-		<h1>Transcendence</h1>
-		<!-- more things to do here! -->
+	<!-- HEADER ZONE (index-menus) -->
+	<header class="header-zone">
+		<div id="navbar">
+			<!-- <a href="/monitoring" data-link>stats</a> -->
+			<a href="./templates-test/stats.html">stats</a>
+			<!-- <a href="/register" data-link>>register</a> -->
+			<a href="./templates-test/register.html">register</a>
+			<!-- <a href="/login" data-link>>log in</a> -->
+			<a href="./templates-test/login.html">log in</a>
+			<!-- <a href="/about" data-link>about</a> -->
+			<a href="./templates-test/about.html">about</a>
+		</div>
 	</header>
 
-	<!-- NAVIGATION ZONE (all menus, links, etc) -->
-	<div id="navbar">
-		<!-- data-link is used to prevent the page from reloading -->
-		<a href="/" data-link>Home</a>
-		<a href="/about" data-link> About Us</a>
-		<a href="/contact" data-link>Contact Us</a>
-	</div>
-
-	<!-- MAIN ZONE (all 'central body' here -->
-	<main id="app" class="main-container">
-		<div id="JSidentifier" class="myawesomelinks">
-
+	<!-- MAIN ZONE ('CHANGING body' here) -->
+	<main id="app">
+		<!-- <div class="image-container">
+			<img src="./images/InvitationCard_Front.png" alt="Original Image" class="original-image">
+			<img src="./images/InvitationCard_Rev.png" alt="Hover Image" class="hover-image">
 		</div>
-	<!-- more things to do here! -->
+		<div class="buttons-container">
+			<input type="text" placeholder="Enter Code" class="code-input">
+			<button onclick="location.href='/register';">Start</button>
+		</div> -->
 	</main>
 
-	<!-- FOOTER ZONE (links, contacts, logos, small text!)-->
-	<footer class="myfooter">
-		<p>© 2024 La pat patrouille</p>
-		<!-- more things to do here! -->
+	<!-- FOOTER ZONE -->
+	<footer>
+			<!-- <a href="/contact" data-link>© 2024 La pat patrouille</a> -->
+			<a href="./templates-test/contact.html" data-link>© 2024 La pat patrouille</a>
 	</footer>
 </body>
 </html>
