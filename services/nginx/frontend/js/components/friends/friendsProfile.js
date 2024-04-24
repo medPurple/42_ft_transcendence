@@ -2,7 +2,7 @@ import Iuser from "../user/userInfo.js"
 import Icookies from "../cookie/cookie.js"
 import Ifriends from "./friendsInfo.js";
 
-export class FriendsProfile extends HTMLElement{
+export default class FriendsProfile extends HTMLElement{
 
     static get observedAttributes(){
         return ['username'];

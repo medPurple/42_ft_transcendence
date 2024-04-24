@@ -17,7 +17,7 @@ class SendFriendRequestView(APIView):
 			to_user = CustomUser.objects.get(username=friend_username)
 			friend_request, created = FriendRequest.objects.get_or_create(
 				from_user=from_user, to_user=to_user)
-			
+
 			if created:
 				return Response({'success': True}, status=status.HTTP_201_CREATED)
 			else:
@@ -51,8 +51,8 @@ class FriendRequestView(APIView):
 		send_friend_requests = FriendRequest.objects.filter(from_user=request.user)
 		serializer = FriendRequestSerializer(friend_requests, many=True)
 		serializer_send = FriendRequestSerializer(send_friend_requests, many=True)
-		return Response({'success': True, 'friend_requests': serializer.data, 
-		'send_requests': serializer_send.data}, 
+		return Response({'success': True, 'friend_requests': serializer.data,
+		'send_requests': serializer_send.data},
 		status=status.HTTP_200_OK)
 
 	def delete(self, request):
@@ -68,7 +68,7 @@ class FriendRequestView(APIView):
 			return Response({'error': 'Friend request not found'}, status=status.HTTP_404_NOT_FOUND)
 		except Exception as e:
 			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-	
+
 class FriendsView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	def get(self, request, username=None):
@@ -94,7 +94,7 @@ class FriendsView(APIView):
 			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 		except Exception as e:
 			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-			
+
 
 
 # @login_required

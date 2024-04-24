@@ -1,6 +1,28 @@
+import "../../components/friends/friendsProfile.js";
+import Icookies from "../../components/cookie/cookie.js"
 
-export default function createFriendsProfile(username) {
-    let friendsProfile = document.createElement('friends-profile'); // Crée une nouvelle instance de 'friends-profile'
-    friendsProfile.setAttribute('username', username); // Définit l'attribut 'username', ce qui déclenche 'attributeChangedCallback' dans 'FriendsProfile'
-    document.body.appendChild(friendsProfile); // Ajoute l'élément 'friends-profile' au corps du document
+export default async function friendsProfile() {
+
+	let username =  'wil';
+	let content = '<p> salut </p>'
+	try {
+		const response = await fetch(`api/friends/friends-list/${username}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+				'Authorization': Icookies.getCookie('token')
+			},
+		});
+		const data = await response.json();
+		if (data.success) {
+			content = '<p> success </p>';
+		} else {
+			alert('Failed to get friends');
+		}
+	} catch (error) {
+		console.error('Error', error);
+	}
+	return content;
+
 }

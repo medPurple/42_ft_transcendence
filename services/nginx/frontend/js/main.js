@@ -67,9 +67,9 @@ const routes = {
 		title: "Friends",
 		render: friends
 	},
-	'/friends/:username': {
+	'/friend-profile': {
 		title: "Friends profile",
-		render: (params) => friendsProfile(params.username)
+		render: friendsProfile
 	},
 	'/play' : {
 		title: "Play",
@@ -88,22 +88,11 @@ async function router() {
 	// define the header title
 	const pageTitle = "Transcendence";
 
-	console.log ("Originial path:", path);
-	// define the header title
-	    // Check if the path starts with '/friends-profile/'
-	if (path.startsWith('/friends/')) {
-		const username = path.split('/').pop();
-		view = {
-			...routes['/friends/:username'],
-			render: () => routes['/friends/:username'].render({ username }),
-		};
-		path = '/friends/:username';
-		console.log("Updated path:", path);
-	}
+
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render();
-		// console.log(view.render());
+		console.log('route', result);
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
