@@ -12,7 +12,7 @@ function onKeyDown(event) {
     case 65:
       moveLeft = true;
       break;
-    case 68:
+    case 68:Service
       moveRight = true;
       break;
   }

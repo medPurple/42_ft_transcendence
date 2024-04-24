@@ -6,6 +6,7 @@ SHELL := /bin/bash
 NAME = ft_transcendence
 
 SRCS_PATH = ./services/
+PREFIX = 42_ft_transcendence
 
 NG_NAME = nginx
 G3_NAME = game3d
@@ -56,7 +57,7 @@ up:
 	@ echo -e "\n$(YELLOW)★ Launching Docker ★$(CEND)"
 	@ docker --version
 	@ echo -e "$(WHITE) A self-sufficient runtime for containers$(CEND)"
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 	@ echo -e "$(GREEN)★ Images Ready ★$(CEND)\n"
 
@@ -72,7 +73,7 @@ run_script:
 
 down:
 	@ echo -e "\n$(YELLOW)★ Stopping Docker ★$(CEND)"
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml down
+	@ docker compose -f docker-compose.yml down
 	@ if [ $(VA_PS) = "1" ]; then docker stop $(VA_NAME); \
 	else echo "	VAULT Process already stopped"; fi;
 	@ echo -e "$(GREEN)★ Docker stopped ★$(CEND)\n"
@@ -83,32 +84,32 @@ microservices:
 
 re_ng: down run_script
 	@ if [ $(NG_IMG) = "1" ]; then docker rmi $(NG_NAME); fi;
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
 re_g3: down	run_script
 	@ if [ $(G3_IMG) = "1" ]; then docker rmi $(G3_NAME); fi;
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
 re_ch: down	run_script
 	@ if [ $(CH_IMG) = "1" ]; then docker rmi $(CH_NAME); fi;
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
 re_tk: down	run_script
 	@ if [ $(TK_IMG) = "1" ]; then docker rmi $(TK_NAME); fi;
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
 re_us: down	run_script
 	@ if [ $(US_IMG) = "1" ]; then docker rmi $(US_NAME); fi;
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
 re_ma: down	run_script
 	@ if [ $(MA_IMG) = "1" ]; then docker rmi $(MA_NAME); fi;
-	@ docker compose -f $(SRCS_PATH)docker-compose.yml up -d --pull never
+	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
 
@@ -128,20 +129,20 @@ clean : down
 	@ if [ $(VA_IMG) = "1" ]; then docker rmi -f $(VA_NAME); \
 	else echo "	VAULT Image already deleted"; fi;
 
-	@ if [ $(G3_VOL) = "1" ]; then docker volume rm services_$(G3_NAME); \
-	else echo "	game3d Volume already deleted"; fi;
-	@ if [ $(US_VOL) = "1" ]; then docker volume rm services_$(US_NAME); \
-	else echo "	user Volume already deleted"; fi;
-	@ if [ $(MA_VOL) = "1" ]; then docker volume rm services_$(MA_NAME); \
-	else echo "	user Volume already deleted"; fi;
+	@ if [ $(G3_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(G3_NAME); \
+	else echo "	GAME3D Volume already deleted"; fi;
+	@ if [ $(US_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(US_NAME); \
+	else echo "	USER Volume already deleted"; fi;
+	@ if [ $(MA_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(MA_NAME); \
+	else echo "	MATCHMAKING Volume already deleted"; fi;
 
 # Weird volumes created somewhere using secret volume?
 	@ docker system prune -af
 	@ docker volume prune -f
 # after prune, the secret volume is still there!
 
-	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL); \
-	else echo "	Vault Volume already deleted"; fi;
+	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL_NAME); \
+	else echo "	VAULT Volume already deleted"; fi;
 
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 

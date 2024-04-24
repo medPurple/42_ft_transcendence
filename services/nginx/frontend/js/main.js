@@ -1,6 +1,7 @@
 // Initiate the router
 // Import the views
 
+import intro from "./views/intro.js";
 import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
@@ -8,7 +9,6 @@ import gameService from "./views/gameService.js";
 import userService from "./views/user/userService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
-import { setup } from "./components/pong3d/pongLogic.js";
 import profile from "./views/user/profile.js";
 import editProfile from "./views/user/editProfile.js";
 import updatePassword from "./views/user/updatePassword.js";
@@ -17,10 +17,15 @@ import friends from "./views/friends/friends.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
+import { setup } from "./components/pong3d/pongLogic.js";
 
 // Define the routes
 const routes = {
 	'/': {
+		title: "Intro",
+		render: intro
+	},
+	'/home': {
 		title: "Home",
 		render: home
 	},
@@ -82,6 +87,32 @@ const routes = {
 	}
 };
 
+function navbarVisibility() {
+    const path = location.pathname;
+    const hideNavbarRoutes = ['/'];
+    const hideNavbar = hideNavbarRoutes.includes(path);
+	const navbar = document.getElementById('navbar');
+
+    if (hideNavbar) {
+        navbar.classList.add('hidden');
+    } else {
+        navbar.classList.remove('hidden');
+    }
+}
+
+function footerVisibility() {
+    const path = location.pathname;
+    const hideFooterRoute = ['/'];
+    const hideFooter = hideFooterRoute.includes(path);
+	const footer = document.getElementById('custom-footer');
+
+    if (hideFooter) {
+        footer.classList.add('hidden');
+    } else {
+        footer.classList.remove('hidden');
+    }
+}
+
 // Define the router function that will render the view based on the route path name and update the browser history state
 async function router() {
 	let path = location.pathname;
@@ -94,7 +125,7 @@ async function router() {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render();
 		console.log('route', result);
-		if ((view.render()).includes("pong-renderer")) {
+		if (result.includes("pong-renderer")) {
 			setup();
 		}
 		//Clear the app content
@@ -110,7 +141,9 @@ async function router() {
             let textNode = document.createTextNode(String(result));
             app.appendChild(textNode);
         }
-
+		navbarVisibility();
+		footerVisibility();
+		
 	} else {
 		history.replaceState("", "", "/404");
 		router();

@@ -13,7 +13,7 @@
 	<!-- Include / download Libraries (Bootstrap, ThreeJs, WebGL, etc) -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Include Scripts, with DEFER key word -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 	<script type="module" src="./js/main.js" defer></script> 
 </head>
 
@@ -22,33 +22,23 @@
 	<!-- HEADER ZONE (index-menus) -->
 	<header class="header-zone">
 		<div id="navbar">
-			<!-- <a href="/monitoring" data-link>stats</a> -->
-			<a href="./templates-test/stats.html">stats</a>
-			<!-- <a href="/register" data-link>>register</a> -->
-			<a href="./templates-test/register.html">register</a>
-			<!-- <a href="/login" data-link>>log in</a> -->
-			<a href="./templates-test/login.html">log in</a>
-			<!-- <a href="/about" data-link>about</a> -->
-			<a href="./templates-test/about.html">about</a>
+			<a href="/home" data-link>home</a>
+			<!-- <a href="./templates-test/stats.html">stats</a> -->
+			<a href="/register" data-link>register</a>
+			<!-- <a href="./templates-test/register.html">register</a> -->
+			<a href="/login" data-link>log in</a>
+			<!-- <a href="./templates-test/login.html">log in</a> -->
+			<a href="/about" data-link>about</a>
+			<!-- <a href="./templates-test/about.html">about</a> -->
 		</div>
 	</header>
 
 	<!-- MAIN ZONE ('CHANGING body' here) -->
-	<main id="app">
-		<!-- <div class="image-container">
-			<img src="./images/InvitationCard_Front.png" alt="Original Image" class="original-image">
-			<img src="./images/InvitationCard_Rev.png" alt="Hover Image" class="hover-image">
-		</div>
-		<div class="buttons-container">
-			<input type="text" placeholder="Enter Code" class="code-input">
-			<button onclick="location.href='/register';">Start</button>
-		</div> -->
-	</main>
+	<main id="app"></main>
 
 	<!-- FOOTER ZONE -->
-	<footer>
-			<!-- <a href="/contact" data-link>© 2024 La pat patrouille</a> -->
-			<a href="./templates-test/contact.html" data-link>© 2024 La pat patrouille</a>
+	<footer id="custom-footer">
+		<a href="/contact" data-link>© 2024 La pat patrouille</a>
 	</footer>
 </body>
 </html>

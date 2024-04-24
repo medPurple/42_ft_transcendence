@@ -24,12 +24,21 @@ a:hover {
 	color: #ff0099 !important;
 }
 
-footer {
+#custom-footer {
 	font-family: 'Courier New', Courier, monospace;
 	font-size: 0.75em;
 	text-align: center;
 	color: #f3f3f3;
 	text-align: center;
+}
+
+#custom-footer.hidden {
+	display: none;
+}
+
+#app {
+	padding-top: 15em;
+	padding-bottom: 15em;
 }
 
 
@@ -47,6 +56,11 @@ footer {
 	margin: 1.5em;
 	padding: 1em;
 	z-index: 1000;
+
+}
+
+#navbar.hidden {
+    display: none;
 }
 
 /********** HOME CARD PAGE ***********/
@@ -105,7 +119,7 @@ footer {
 }
 
 /********** LOGIN PAGE ***********/
-.login-form {
+#login-form {
 	width: 300px;
 	margin: 0 auto;
 	padding: 20px;
@@ -115,9 +129,9 @@ footer {
 }
 
 /* LOGIN Form Input Fields */
-  .login-form input[type="text"],
-  .login-form input[type="password"],
-  .login-form input[type="submit"] {
+#login-form input[type="text"],
+#login-form input[type="password"],
+#login-form input[type="submit"] {
 	width: 100%;
 	padding: 10px;
 	margin: 5px 0;
@@ -126,9 +140,9 @@ footer {
 	box-sizing: border-box; /* Include padding and border in element's total width and height */
   }
 
-  /* Media query for small devices */
-  @media screen and (max-width: 600px) {
-	.login-form {
+/* Media query for small devices */
+@media screen and (max-width: 600px) {
+#login-form {
 	  width: 80%; /* Adjust width as needed */
 	}
   }
@@ -147,7 +161,6 @@ footer {
 
 
 /* CSS FOR THE MATCHMAKING PAGE */
-
 .matchmakingdiv {
 	display: flex;
 	flex-direction: column;

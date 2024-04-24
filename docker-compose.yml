@@ -7,7 +7,7 @@
   #     - djangotemplate:/var/lib/postgresql/
   #   networks:
   #   - microservices
-  #   build: backend/djangotemplate
+  #   build: services/backend/djangotemplate
   #   image: djangotemplate
   #   expose :
   #   - "8080"
@@ -28,7 +28,7 @@ services:
     container_name: nginx
     networks:
     - microservices
-    build: nginx
+    build: services/nginx
     image: nginx
     ports:
       - "8080:80"
@@ -41,7 +41,7 @@ services:
       - user:/var/lib/postgresql/
     networks:
     - microservices
-    build: backend/user
+    build: services/backend/user
     image: user
     expose :
     - "8080"
@@ -51,7 +51,7 @@ services:
     container_name: jwtoken
     networks:
       - microservices
-    build: backend/JWToken
+    build: services/backend/JWToken
     image: jwtoken
     expose :
       - "8080"
@@ -64,7 +64,7 @@ services:
     - game3d:/var/lib/postgresql
     networks:
       - microservices
-    build: backend/game3d
+    build: services/backend/game3d
     image: game3d
     expose :
       - "8080"
@@ -77,7 +77,7 @@ services:
       - matchmaking:/var/lib/postgresql/
     networks:
     - microservices
-    build: backend/matchmaking
+    build: services/backend/matchmaking
     image: matchmaking
     expose :
     - "8080"
