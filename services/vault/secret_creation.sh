@@ -74,3 +74,18 @@ else
 	echo "$ENV_FILE unknow file."
 fi
 #------------------------------------------------#
+
+#------------------------------------------------#
+echo "[VAULT SECRET] pokemap container secret"
+ENV_FILE="/vault/pokemap/.env"
+SECRET_PATH="pokemap"
+
+if [ -f "$ENV_FILE" ]; then
+	set -a
+	. "$ENV_FILE"
+	set +a
+    vault kv put kv/pokemap db_name=pokebase db_username=kingdb db_password=kingp4bl0 
+else
+	echo "$ENV_FILE unknow file."
+fi
+#------------------------------------------------#

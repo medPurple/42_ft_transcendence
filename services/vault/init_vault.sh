@@ -20,6 +20,8 @@ if [ ! -f /vault/file/vault_init.txt ]; then
 	vault login "$ROOT_TOKEN"
 
 	echo "[VAULT] Token creation"
+	vault token create -display-name="pokemap" > "/vault/file/pokemap_token.txt"
+
 	vault token create -display-name="JWToken" > "/vault/file/JWToken_token.txt"
 	vault token create -display-name="matchmaking" > "/vault/file/matchmaking_token.txt"
 	vault token create -display-name="user" > "/vault/file/user_token.txt"

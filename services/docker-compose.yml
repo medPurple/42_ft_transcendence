@@ -20,6 +20,7 @@ volumes:
   secret_volume:
   user:
   matchmaking:
+  pokemap:
   # game3d:
 
 
@@ -53,6 +54,16 @@ services:
       - microservices
     build: backend/JWToken
     image: jwtoken
+    expose :
+      - "8080"
+    restart: on-failure
+
+  pokemap:
+    container_name: pokemap
+    networks:
+      - microservices
+    build: backend/pokemap
+    image: pokemap
     expose :
       - "8080"
     restart: on-failure
