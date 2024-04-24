@@ -22,10 +22,12 @@ TK_IMG = $(shell docker images | grep jwtoken | wc -l)
 US_IMG = $(shell docker images | grep user | wc -l)
 VA_IMG = $(shell docker images | grep vault | wc -l)
 
+
 US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
 MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
+CH_VOL = $(shell docker volume ls | grep chat | wc -l)
 
 #######	COLORS #######
 
