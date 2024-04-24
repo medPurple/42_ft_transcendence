@@ -92,7 +92,7 @@ async function router() {
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render();
-		console.log('route', result);
+		// console.log('route', result);
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
