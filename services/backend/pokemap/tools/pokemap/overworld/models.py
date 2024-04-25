@@ -29,7 +29,8 @@ map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 class player(models.Model) :
-    posX = models.IntegerField()
-    posY = models.IntegerField()
-    orientation = models.CharField()
+    userID = models.IntegerField(primary_key=True , unique=True)
+    posX = models.IntegerField(default=14)
+    posY = models.IntegerField(default=7)
+    orientation = models.CharField(default='S')
 
