@@ -1,9 +1,9 @@
 export default () => `
-	<div class="github-links">
-		<a href="www.github.com">link one</a>
-		<a href="www.github.com">link two</a>
-		<a href="www.github.com">link three</a>
-		<a href="www.github.com">link four</a>
-		<a href="www.github.com">link five</a>
-	<div>
+	<ul class="list-inline">
+		<li class="list-inline-item"><i class="bi bi-github"></i></li>
+		<li class="list-inline-item"><i class="bi bi-github"></i></li>
+		<li class="list-inline-item"><i class="bi bi-github"></i></li>
+		<li class="list-inline-item"><i class="bi bi-github"></i></li>
+		<li class="list-inline-item"><i class="bi bi-github"></i></li>
+	</ul>
 	`;
