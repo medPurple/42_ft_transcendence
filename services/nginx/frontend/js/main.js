@@ -12,7 +12,7 @@ import profile from "./views/user/profile.js";
 import editProfile from "./views/user/editProfile.js";
 import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
-import friends from "./views/friends/friends.js";
+import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
@@ -65,11 +65,15 @@ const routes = {
 	},
 	'/friends': {
 		title: "Friends",
-		render: friends
+		render: friendsRequest
 	},
-	'/friend-profile': {
-		title: "Friends profile",
-		render: friendsProfile
+    '/friend-profile/:username': {
+        title: "Friends profile",
+        render: async (params) => {
+            // params.username contiendra le nom d'utilisateur
+            let username = params.username;
+            return await friendsProfile(username);
+        }
 	},
 	'/play' : {
 		title: "Play",
@@ -100,16 +104,45 @@ function navbarVisibility() {
 	}
 }
 
+
 // Define the router function that will render the view based on the route path name and update the browser history state
 async function router() {
 	let path = location.pathname;
-	let view = routes[path];
-	// define the header title
+	let view = null;
+
+	for (let route in routes) {
+		let params = {}
+		if (route.includes(':')) {
+			let routeParts = route.split('/');
+			let pathParts = path.split('/');
+			if (routeParts.length === pathParts.length) {
+				let match = true;
+				for (let i = 0; i < routeParts.length; i++) {
+					if (routeParts[i].startsWith(':')) {
+						params[routeParts[i].substring(1)] = pathParts[i];
+					} else if (routeParts[i] !== pathParts[i]) {
+						match = false;
+						break;
+					}
+				}
+				if (match) {
+					view = routes[route];
+					view.params = params; 
+					break;
+				}
+			}
+		} else if (route === path) {
+			view = routes[route];
+			view.params = params; 
+			break;
+		}
+	}
+        
 	const pageTitle = "Transcendence";
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
-		let result = await view.render();
+		let result = await view.render(view.params);
 
 		//Clear the app content
 		app.innerHTML = '';
@@ -124,13 +157,12 @@ async function router() {
 			let textNode = document.createTextNode(String(result));
 			app.appendChild(textNode);
 		}
-
 		navbarVisibility();
 
 	} else {
 		history.replaceState("", "", "/404");
 		router();
-	}
+	}	
 }
 // Handle navigation
 window.addEventListener("click", (e) => {

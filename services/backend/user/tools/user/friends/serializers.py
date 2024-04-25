@@ -9,10 +9,12 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 class FriendsSerializer(serializers.ModelSerializer):
+	profile_picture_data = serializers.SerializerMethodField()
+	
 	class Meta:
 		model = CustomUser
 		fields = ('user_id', 
-				'profile_picture', 
+				'profile_picture_data', 
 				'username', 
 				'first_name', 
 				'last_name', 
