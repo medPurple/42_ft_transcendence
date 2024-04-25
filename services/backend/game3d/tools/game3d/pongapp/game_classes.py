@@ -2,45 +2,60 @@ import time
 import threading
 import asyncio
 import logging
+import time
 from channels.layers import get_channel_layer
-from . import initvalues
+from . import initvalues as iv
 
 logger = logging.getLogger(__name__)
+
+map_locations = {
+    NORTH_WEST: [100, 50],
+    NORTH: [100, 0],
+    NORTH_EAST: [100, -50],
+    WEST: [0, 50],
+    CENTER: [0, 0],
+    EAST: [0, -50],
+    SOUTH_WEST: [-100, 50],
+    SOUTH: [-100, 0],
+    SOUTH_EAST: [-100, -50]
+}
 
 class   paddleC:
 
     def __init__(self, player, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if (player == 1):
-            self.positionX = initvalues.PADDLE1_POSITION_X
+            self.positionX = iv.PADDLE1_POSITION_X
             self.positionY = 0
             self.scaleY = 0
             self.scaleZ = 0
-            self.width = initvalues.PADDLE1_WIDTH
-            self.height = initvalues.PADDLE1_HEIGHT
-            self.dirY = initvalues.PADDLE1_DIR_Y
-            self.speed = initvalues.PADDLE1_SPEED
+            self.width = iv.PADDLE1_WIDTH
+            self.height = iv.PADDLE1_HEIGHT
+            self.dirY = iv.PADDLE1_DIR_Y
+            self.speed = iv.PADDLE1_SPEED
+            self.powerup = iv.NONE_PU
             self.move = "false";
         else :
-            self.positionX = initvalues.PADDLE2_POSITION_X
+            self.positionX = iv.PADDLE2_POSITION_X
             self.positionY = 0
             self.scaleY = 0
             self.scaleZ = 0
-            self.width = initvalues.PADDLE2_WIDTH
-            self.height = initvalues.PADDLE2_HEIGHT
-            self.dirY = initvalues.PADDLE2_DIR_Y
-            self.speed = initvalues.PADDLE2_SPEED
+            self.width = iv.PADDLE2_WIDTH
+            self.height = iv.PADDLE2_HEIGHT
+            self.dirY = iv.PADDLE2_DIR_Y
+            self.speed = iv.PADDLE2_SPEED
+            self.powerup = iv.NONE_PU
             self.move = "false";
 
 class   ballC:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.positionX = initvalues.BALL_POSITION_X
-        self.positionY = initvalues.BALL_POSITION_Y
-        self.dirX = initvalues.BALL_DIR_X
-        self.dirY = initvalues.BALL_DIR_Y
-        self.speed = initvalues.BALL_SPEED
+        self.positionX = iv.BALL_POSITION_X
+        self.positionY = iv.BALL_POSITION_Y
+        self.dirX = iv.BALL_DIR_X
+        self.dirY = iv.BALL_DIR_Y
+        self.speed = iv.BALL_SPEED
 
 
 class   gameStateC:
@@ -49,12 +64,17 @@ class   gameStateC:
         super().__init__(*args, **kwargs)
         self.group_name = 0
         self.players_nb = 0
-        self.player1Score = initvalues.PADDLE1_SCORE
-        self.player2Score = initvalues.PADDLE2_SCORE
-        self.limitScore = initvalues.SMALL_LIMIT_SCORE
+        self.player1Score = iv.PADDLE1_SCORE
+        self.player2Score = iv.PADDLE2_SCORE
+        self.limitScore = iv.SMALL_LIMIT_SCORE
         self.paddle1 = 0
         self.paddle2 = 0
         self.ball = ballC()
+        self.powerUpTimer = 0
+        self.powerUpState = iv.PU_NO
+        self.powerUpPositionX = iv.DEFAULT_PU_LOC 
+        self.powerUpPositionY = iv.DEFAULT_PU_LOC 
+        self.activePowerUp = iv.NONE_PU
         self.active = 0
         self._lock = threading.Lock()
 
@@ -62,23 +82,44 @@ class   gameStateC:
         self.active = 1 
         while self.active:
             with self._lock:
+                self.powerUpHandling(self.ball, self.paddle1, self.paddle2)
                 self.ballPhysics(self.ball)
                 self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
-                #self.paddle1Movement(self.paddle1)
-                #self.paddle2Movement(self.paddle2)
+                self.paddle1Movement(self.paddle1)
+                self.paddle2Movement(self.paddle2)
 
-            await asyncio.sleep(0.016)
+            await asyncio.sleep(0.008)
             #self.logObject()
             await self.broadcastGameState()
 
+    def popPowerUp(self):
+        global map_locations
+        powerUpLoc = chr(random.randint(0, 8) + ord('a'))
+        self.powerUpPositionX = map_locations[powerUpLoc][0]
+        self.powerUpPositionY = map_locations[powerUpLoc][1]
+        self.activePowerUp = random.randint(0, 4)
+        self.powerUpState = iv.PU_ON_FIELD
+        self.powerUpTimer = time.time()
+
+    def depopPowerUp(self):
+
+
+    def powerUpHandling(self, ball, paddle1, paddle2):
+        if (self.powerUpState == iv.PU_NO and time.time() - self.powerUpTimer >= 10):
+            popPowerUp(self)
+        if (self.powerUpState == iv.PU_ON_FIELD and time.time() - self.powerUpTimer >= 7):
+            depopPowerUp(self, iv.RESET_POWERUP)
+        if (self.powerUpState == iv.PU_ON_PLAYER and time.time() - self.powerUpTimer >= 7):
+            depopPowerUp(self, iv.RESET_POWERUP)
+
     def ballPhysics(self, ball):
-        if (ball.positionX <= -initvalues.FIELD_WIDTH / 2):
+        if (ball.positionX <= -iv.FIELD_WIDTH / 2):
             self.resetBall(self.ball, 2)
-        if (ball.positionX >= initvalues.FIELD_WIDTH / 2):
+        if (ball.positionX >= iv.FIELD_WIDTH / 2):
             self.resetBall(self.ball, 1)
-        if (ball.positionY <= -initvalues.FIELD_HEIGHT / 2):
+        if (ball.positionY <= -iv.FIELD_HEIGHT / 2):
             ball.dirY = -ball.dirY
-        if (ball.positionY >= initvalues.FIELD_HEIGHT / 2):
+        if (ball.positionY >= iv.FIELD_HEIGHT / 2):
             ball.dirY = -ball.dirY
         ball.positionX += ball.dirX * ball.speed
         ball.positionY += ball.dirY * ball.speed
@@ -118,12 +159,12 @@ class   gameStateC:
 
     def paddle1Movement(self, paddle1):
         if (paddle1.move == "left"):
-            if (paddle1.positionY < initvalues.FIELD_HEIGHT * 0.45):
+            if (paddle1.positionY < iv.FIELD_HEIGHT * 0.45):
                 paddle1.dirY = paddle1.speed * 0.5
             else:
                 paddle1.dirY = 0
         elif (paddle1.move == "right"):
-            if (paddle1.positionY > -initvalues.FIELD_HEIGHT * 0.45):
+            if (paddle1.positionY > -iv.FIELD_HEIGHT * 0.45):
                 paddle1.dirY = -paddle1.speed * 0.5
             else:
                 paddle1.dirY = 0
@@ -135,12 +176,12 @@ class   gameStateC:
 
     def paddle2Movement(self, paddle2):
         if (paddle2.move == "right"):
-            if (paddle2.positionY < initvalues.FIELD_HEIGHT * 0.45):
+            if (paddle2.positionY < iv.FIELD_HEIGHT * 0.45):
                 paddle2.dirY = paddle2.speed * 0.5
             else:
                 paddle2.dirY = 0
         elif (paddle2.move == "left"):
-            if (paddle2.positionY > -initvalues.FIELD_HEIGHT * 0.45):
+            if (paddle2.positionY > -iv.FIELD_HEIGHT * 0.45):
                 paddle2.dirY = -paddle2.speed * 0.5
             else:
                 paddle2.dirY = 0

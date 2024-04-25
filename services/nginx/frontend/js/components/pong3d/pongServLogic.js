@@ -318,6 +318,7 @@ function handleServerMessage(message) {
 }
 
 function onKeyDown(event) {
+  //console.log("J'envoie la touche", event.keyCode)
   switch (event.keyCode) {
     case 65:
       gameSocket.send(JSON.stringify({ 'paddleMov': "left" }))

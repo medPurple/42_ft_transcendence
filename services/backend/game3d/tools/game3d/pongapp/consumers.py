@@ -2,6 +2,7 @@ import json
 import random
 import string
 import logging
+import time
 import asyncio
 import threading
 from . import initvalues
@@ -32,16 +33,16 @@ class PongConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         paddleMov = text_data_json["paddleMov"]
 
-        #logger.info("paddleMov : %s", paddleMov)
+        logger.info("paddleMov : %s", paddleMov)
         if (self.player_id == 1):
             with self.gameState._lock:
-                await self.testpaddle1Mov(self.gameState.paddle1, paddleMov)
-                #self.gameState.paddle1.move = paddleMov
+                #await self.testpaddle1Mov(self.gameState.paddle1, paddleMov)
+                self.gameState.paddle1.move = paddleMov
             #await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov1": paddleMov})
         else:
             with self.gameState._lock:
-                await self.testpaddle2Mov(self.gameState.paddle2, paddleMov)
-                #self.gameState.paddle2.move = paddleMov
+                #await self.testpaddle2Mov(self.gameState.paddle2, paddleMov)
+                self.gameState.paddle2.move = paddleMov
             #await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov2": paddleMov})
 
     async def testpaddle1Mov(self, paddle1, paddleMov):
@@ -116,6 +117,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             self.gameState.players_nb = 2
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
+            self.gameState.powerUpTimer = time.time()
             asyncio.create_task(self.gameState.run_game_loop())
             return parties[listLen - 1]
 
