@@ -8,3 +8,10 @@ class PlayerModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = player
         fields = ['userID', 'posX', 'posY', 'orientation']
+
+
+class editplayerModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = player
+        fields = ['userID', 'posX', 'posY', 'orientation']
+        read_only_fields = ['userID']

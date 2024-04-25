@@ -5,7 +5,7 @@ service postgresql start
 
 sleep 5
 
-#python3 manage.py makemigrations <app_name>
+python3 manage.py makemigrations overworld
 
 
 sleep 5

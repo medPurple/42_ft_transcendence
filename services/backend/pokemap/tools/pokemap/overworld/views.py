@@ -4,8 +4,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import player
 from django.shortcuts import get_object_or_404
-from .serializers import PlayerModelSerializer
+from .serializers import PlayerModelSerializer, editplayerModelSerializer
+import logging
 
+logger = logging.getLogger(__name__)
 
 class playerAPI(APIView):
     # delete player deletion
@@ -42,5 +44,14 @@ class playerAPI(APIView):
                 instance.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({"error": "userID parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, *args, **kwargs):
+        logger.info(request.data)
+        playerobj = get_object_or_404(player, userID=request.data["userID"])
+        instance = editplayerModelSerializer(playerobj, data=request.data)
+        if instance.is_valid():
+            instance.save()
+            return Response(instance.data, status=status.HTTP_200_OK)
+        return Response(instance.errors, status=status.HTTP_400_BAD_REQUEST)
 
  
