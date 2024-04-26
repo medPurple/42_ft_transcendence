@@ -6,6 +6,7 @@ import about from "./views/about.js";
 import contact from "./views/contact.js";
 import gameService from "./views/gameService.js";
 import userService from "./views/user/userService.js";
+import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
 import profile from "./views/user/profile.js";
@@ -75,9 +76,13 @@ const routes = {
             return await friendsProfile(username);
         }
 	},
-	'/play' : {
+	'/play': {
 		title: "Play",
 		render: play
+	},
+	'/chat': {
+		title: "Chat",
+		render: chatService
 	},
 	'/404' : {
 		title: "404",

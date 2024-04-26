@@ -7,6 +7,7 @@ export default () => `
 	<a href="/userService" data-link>User Service</a> <!-- New link -->
     <a href="/gameService" data-link>Game Service</a> <!-- New link -->
 	<a href="/play" data-link>Play</a> <!-- New link -->
+	<a href="/chat" data-link>Chat Service</a> <!-- New link -->
 
 	
 	`;
