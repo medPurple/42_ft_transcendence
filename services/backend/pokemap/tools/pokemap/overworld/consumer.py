@@ -1,45 +1,111 @@
 import json
 import logging
 from channels.generic.websocket import WebsocketConsumer
-logger = logging.getLogger(__name__)
+from django.shortcuts import get_object_or_404
+from urllib.parse import parse_qs
 
-from overworld import models, serializers
+from .models import player, map
+from .serializers import PlayerModelSerializer, editplayerModelSerializer
+
+logger = logging.getLogger(__name__)
 
 class PlayerConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
+        query_string = self.scope['query_string'].decode()
+        params = parse_qs(query_string)
+        user_id = params.get('userID', [None])[0]
+        if user_id is not None:
+            playerobj = get_object_or_404(player, userID=user_id)
+            basejson = {
+                    "userID": playerobj.userID,
+                    "posX": playerobj.posX,
+                    "posY": playerobj.posY,
+                    "orientation": playerobj.orientation,
+                    "active": True
+                }
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+        
 
     def disconnect(self, close_code):
-        pass
+        query_string = self.scope['query_string'].decode()
+        params = parse_qs(query_string)
+        user_id = params.get('userID', [None])[0]
+        if user_id is not None:
+            playerobj = get_object_or_404(player, userID=user_id)
+            basejson = {
+                "userID": playerobj.userID,
+                "posX": playerobj.posX,
+                "posY": playerobj.posY,
+                "orientation": playerobj.orientation,
+                "active": False
+            }
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
 
     def receive(self, text_data):
-        logger.info("test")
         try:
             text_data_json = json.loads(text_data)
-            logger.info(text_data_json)
-            if text_data_json.get(userID):
-                playerobj = get_object_or_404(player, userID=text_data_json.userID)
-                match (text_data_json.get("new")):
-                    case ("y+"):
-                        if (map[playerobj.posX][playerobj.posY + 1] == 0):
-                            playerobj.posY += 1
-                    case ("y-"):
-                        if (map[playerobj.posX][playerobj.posY - 1] == 0):
-                            playerobj.posY -= 1
-                    case ("x+"):
-                        if (map[playerobj.posX + 1][playerobj.posY] == 0):
-                            playerobj.posX += 1
-                    case ("x-"):
-                        if (map[playerobj.posX - 1][playerobj.posY] == 0):
-                            playerobj.posX -= 1
-                playerobj.save()
-                serializer = PlayerModelSerializer(playerobj)
-                serialized_data = json.dumps(serializer.data)
-                logger.info(serialized_data)
-                self.send(serialized_data)
-        except Exception:
-            pass
-            
-        # text_data_json = json.loads(text_data)
-        # message = text_data_json["message"]
-        # self.send(text_data=json.dumps({"message": message}))
+            # logger.info("data receive ", text_data_json)
+            id = text_data_json.get("userID")
+            if id:
+                playerobj = get_object_or_404(player, userID=id)
+                data = text_data_json.get("new");
+                # logger.info(data)
+                basejson = {
+                    "userID": playerobj.userID,
+                    "posX": playerobj.posX,
+                    "posY": playerobj.posY,
+                    "orientation": playerobj.orientation,
+                    "active": playerobj.active
+                }
+                match data:
+                    case "y+":
+                        if (basejson["orientation"] == "S"):
+                            if (map[playerobj.posY + 1][playerobj.posX] == 0):
+                                basejson["posY"] += 1
+                                basejson["orientation"] = "S"
+                            else:
+                                logger.info("match y+ failed")
+                        else:
+                            basejson["orientation"] = "S"
+                    case "y-":
+                        if (basejson["orientation"] == "N"):
+                            if (map[playerobj.posY - 1 ][playerobj.posX] == 0):
+                                basejson["posY"] -= 1
+                                basejson["orientation"] = "N"
+                            else:
+                                logger.info("match y- failed")
+                        else:
+                            basejson["orientation"] = "N"
+                    case "x+":
+                        if (basejson["orientation"] == "E"):
+                            if (map[playerobj.posY][playerobj.posX + 1] == 0):
+                                basejson["posX"] += 1
+                                basejson["orientation"] = "E"
+                            else:
+                                logger.info("match x+ failed")
+                        else:
+                            basejson["orientation"] = "E"
+                    case "x-":
+                        if (basejson["orientation"] == "W"):
+                            if (map[playerobj.posY][playerobj.posX - 1] == 0):
+                                basejson["posX"] -= 1
+                                basejson["orientation"] = "W"
+                            else:
+                                logger.info("match x- failed")
+                        else:
+                            basejson["orientation"] = "W"
+                    case _:
+                        logger.info("data not found")
+                # logger.info(basejson)
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    json_data = json.dumps(instance.data)
+                    self.send(json_data)
+        except Exception as e:
+            logger.error("error", e)

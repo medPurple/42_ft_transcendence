@@ -28,14 +28,12 @@ SECRET_KEY = 'django-insecure-&sm8v8$^3mu+jtnyz-e(d^8@92d!qott$^w8jr*bl8u&1!s@-p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    'pokemapservice']
+ALLOWED_HOSTS = ['*']
 
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
-                        'http://127.0.0.1:8080']
+                        'http://127.0.0.1:8080',
+                        'http://pokemap:8080']
 # Application definition
 
 INSTALLED_APPS = [

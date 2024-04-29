@@ -8,6 +8,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import permissions, status
 import requests
 import logging
+import json
 
 from rest_framework.views import APIView
 from .forms import CustomUserCreationForm, CustomUserEditForm, CustomUserPasswordForm
@@ -45,10 +46,13 @@ class CustomUserRegister(APIView):
 			user.save()
 			token = user_token(request, user.user_id)
 			login(request, user)
+			url = "http://pokemap:8080/api/pokemap/"
+			headers = {'Content-Type': 'application/json'}
+			data = {"userID": user.user_id}
+			response = requests.post(url, headers=headers, data=json.dumps(data))
 			return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 		else:
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class CustomUserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)

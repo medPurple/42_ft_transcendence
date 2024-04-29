@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'userservice',
+    '*',
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
