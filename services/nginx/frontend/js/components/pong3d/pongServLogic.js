@@ -7,11 +7,17 @@ var gameState = {
   paddle1_positionX: 0,
   paddle1_positionY: 0,
   paddle1_width: 0,
+  paddle1_powerup: 0,
   paddle2_positionX: 0,
   paddle2_positionY: 0,
   paddle2_width: 0,
+  paddle2_powerup: 0,
   ball_positionX: 0,
   ball_positionY: 0,
+  powerup_positionX: 0,
+  powerup_positionY: 0,
+  powerup_status: 0,
+  powerup_type: 0,
   active: 0
 }
 
@@ -32,7 +38,11 @@ var WIDTH = 640, HEIGHT = 360, VIEW_ANGLE = 75, ASPECT = WIDTH / HEIGHT, NEAR = 
 
 var paddleWidth = 10, paddleHeight = 30, paddleDepth = 10, paddleQuality = 1;
 
+var powerUpWidth = 10, powerUpHeight = 10, powerUpDepth = 10, powerUpQuality = 1;
+
 var ball, paddle1, paddle2;
+
+var powerUp, pUpIsDisplayed = false, pUpEffectIsDisplayed = false;
 
 var ballStartDirection;
 
@@ -236,6 +246,107 @@ function cameraLogic2() {
 
 }
 
+function createGeometryWithHoles(shape, holes) {
+  var geometry = new THREE.ShapeGeometry(shape);
+
+  holes.forEach(function(hole) {
+    var holeGeometry = new THREE.ExtrudeGeometry(hole, {
+      steps: 2,
+      depth: 2,
+      bevelEnabled: true,
+      bevelThickness: 1,
+      bevelSize: 1,
+      bevelSegments: 1
+    });
+
+    var holeMesh = new THREE.Mesh(holeGeometry);
+    geometry.merge(holeMesh.geometry, holeMesh.matrix);
+  });
+
+  return geometry;
+}
+
+
+// function createStarMesh() {
+//
+//   var starShape = new THREE.Shape();
+//   starShape.moveTo(0, 10);
+//   for (var i = 0; i < 5; i++) {
+//     starShape.lineTo(Math.cos((Math.PI / 5) * i * 2) * 10, Math.sin((Math.PI / 5) * i * 2) * 10);
+//     starShape.lineTo(Math.cos((Math.PI / 5) * (i * 2 + 1)) * 5, Math.sin((Math.PI / 5) * (i * 2 + 1)) * 5);
+//   }
+//   starShape.lineTo(0, 10);
+//
+//   // Create geometry
+//   var geometry = new THREE.ExtrudeGeometry(starShape, {
+//     depth: 2, // Thickness of the star
+//     bevelEnabled: false // Disable bevel to make the star full
+//   });
+//
+//   // Center the star geometry
+//   geometry.center();
+//
+//   // Rotate the star to make it stand upright
+//   geometry.rotateX(Math.PI / 2); // Rotate around X-axis
+//
+//   geometry.rotateY(Math.PI / 2);
+//
+//   // Create material
+//   var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+//
+//   // Create mesh
+//   powerUp = new THREE.Mesh(geometry, material);
+//   powerUp.position.z = 10;
+//
+// }
+
+function popPowerUpOnScene() {
+
+  var color;
+
+  console.log("color :", gameState.powerup_type);
+  switch (gameState.powerup_type) {
+    case 0:
+      color = 0xECC8AE;
+      break;
+    case 1:
+      color = 0xD7907B;
+      break;
+    case 2:
+      color = 0x6C4B5E;
+      break;
+    default:
+      color = 0xB3679B;
+  }
+
+  createStarMesh();
+  var powerUpMaterial = new THREE.MeshLambertMaterial({ color: color });
+  powerUp = new THREE.Mesh(new THREE.BoxGeometry(powerUpWidth, powerUpHeight, powerUpDepth, powerUpQuality, powerUpQuality, powerUpQuality), powerUpMaterial);
+  powerUp.position.x = gameState.powerup_positionX;
+  powerUp.position.y = gameState.powerup_positionY;
+  powerUp.castShadow = true;
+  powerUp.receiveShadow = true;
+  scene.add(powerUp);
+  pUpIsDisplayed = true;
+}
+
+function depopPowerUpFromScene() {
+
+  scene.remove(powerUp);
+  //scene.dispose(powerUp);
+  pUpIsDisplayed = false;
+}
+
+function handlePowerUp() {
+  if (gameState.powerup_status == 1 && !pUpIsDisplayed) {
+    popPowerUpOnScene();
+  }
+  if ((gameState.powerup_status == 2 || gameState.powerup_status == 0) && pUpIsDisplayed) {
+    depopPowerUpFromScene();
+  }
+  if 
+}
+
 
 function draw() {
 
@@ -300,19 +411,32 @@ function handleServerMessage(message) {
       paddle1.position.y = value;
     if (key == "paddle1.width")
       gameState.paddle1_width = value;
+    if (key == "paddle1.powerup")
+      gameState.paddle1_powerup = value;
     if (key == "paddle2.positionX")
       paddle2.position.x = value;
     if (key == "paddle2.positionY")
       paddle2.position.y = value;
     if (key == "paddle2.width")
       gameState.paddle2_width = value;
+    if (key == "paddle2.powerup")
+      gameState.paddle2_powerup = value;
     if (key == "ball.positionX")
       ball.position.x = value;
     if (key == "ball.positionY")
       ball.position.y = value;
+    if (key == "powerup.positionX")
+      gameState.powerup_positionX = value;
+    if (key == "powerup.positionY")
+      gameState.powerup_positionY = value;
+    if (key == "powerup.state")
+      gameState.powerup_status = value;
+    if (key == "powerup.active")
+      gameState.powerup_type = value;
     if (key == "active")
       gameState.active = value;
   }
+  handlePowerUp();
   displayScore();
   draw();
 }

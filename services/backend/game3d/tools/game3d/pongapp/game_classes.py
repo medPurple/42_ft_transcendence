@@ -1,6 +1,7 @@
 import time 
 import threading
 import asyncio
+import random
 import logging
 import time
 from channels.layers import get_channel_layer
@@ -9,15 +10,15 @@ from . import initvalues as iv
 logger = logging.getLogger(__name__)
 
 map_locations = {
-    NORTH_WEST: [100, 50],
-    NORTH: [100, 0],
-    NORTH_EAST: [100, -50],
-    WEST: [0, 50],
-    CENTER: [0, 0],
-    EAST: [0, -50],
-    SOUTH_WEST: [-100, 50],
-    SOUTH: [-100, 0],
-    SOUTH_EAST: [-100, -50]
+    iv.NORTH_WEST: [100, 50],
+    iv.NORTH: [100, 0],
+    iv.NORTH_EAST: [100, -50],
+    iv.WEST: [0, 50],
+    iv.CENTER: [0, 0],
+    iv.EAST: [0, -50],
+    iv.SOUTH_WEST: [-100, 50],
+    iv.SOUTH: [-100, 0],
+    iv.SOUTH_EAST: [-100, -50]
 }
 
 class   paddleC:
@@ -94,23 +95,27 @@ class   gameStateC:
 
     def popPowerUp(self):
         global map_locations
-        powerUpLoc = chr(random.randint(0, 8) + ord('a'))
+        powerUpLoc = chr(random.randint(0, 8) + ord('0'))
         self.powerUpPositionX = map_locations[powerUpLoc][0]
         self.powerUpPositionY = map_locations[powerUpLoc][1]
-        self.activePowerUp = random.randint(0, 4)
+        self.activePowerUp = random.randint(0, 3)
         self.powerUpState = iv.PU_ON_FIELD
         self.powerUpTimer = time.time()
 
-    def depopPowerUp(self):
-
+    def depopPowerUp(self, status):
+        self.powerUpPositionX = iv.DEFAULT_PU_LOC
+        self.powerUpPositionY = iv.DEFAULT_PU_LOC 
+        self.activePowerUp = iv.NONE_PU 
+        self.powerUpState = iv.PU_NO
+        self.powerUpTimer = time.time()
 
     def powerUpHandling(self, ball, paddle1, paddle2):
-        if (self.powerUpState == iv.PU_NO and time.time() - self.powerUpTimer >= 10):
-            popPowerUp(self)
-        if (self.powerUpState == iv.PU_ON_FIELD and time.time() - self.powerUpTimer >= 7):
-            depopPowerUp(self, iv.RESET_POWERUP)
-        if (self.powerUpState == iv.PU_ON_PLAYER and time.time() - self.powerUpTimer >= 7):
-            depopPowerUp(self, iv.RESET_POWERUP)
+        if (self.powerUpState == iv.PU_NO and time.time() - self.powerUpTimer >= 3):
+            self.popPowerUp()
+        if (self.powerUpState == iv.PU_ON_FIELD and time.time() - self.powerUpTimer >= 5):
+            self.depopPowerUp(0)
+        if (self.powerUpState == iv.PU_ON_PLAYER and time.time() - self.powerUpTimer >= 5):
+            self.depopPowerUp(0)
 
     def ballPhysics(self, ball):
         if (ball.positionX <= -iv.FIELD_WIDTH / 2):
@@ -204,11 +209,17 @@ class   gameStateC:
                     "paddle1.positionX": self.paddle1.positionX,
                     "paddle1.positionY": self.paddle1.positionY,
                     "paddle1.width": self.paddle1.width,
+                    "paddle1.powerup": self.paddle1.powerup,
                     "paddle2.positionX": self.paddle2.positionX,
                     "paddle2.positionY": self.paddle2.positionY,
                     "paddle2.width": self.paddle2.width,
+                    "paddle2.powerup": self.paddle2.powerup,
                     "ball.positionX": self.ball.positionX,
                     "ball.positionY": self.ball.positionY,
+                    "powerup.state": self.powerUpState,
+                    "powerup.positionX": self.powerUpPositionX,
+                    "powerup.positionY": self.powerUpPositionY,
+                    "powerup.active": self.activePowerUp,
                     "active": self.active
                 }
             }
