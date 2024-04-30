@@ -27,10 +27,7 @@ var gameSocket;
 
 var player_id = 0;
 
-window.addEventListener('keydown', onKeyDown, false);
-window.addEventListener('keyup', onKeyUp, false);
-
-var camera, scene, renderer, pointLight, spotLight;
+var camera, scene, renderer, pointLight, pointLight2, spotLight;
 
 var fieldWidth = 400, fieldHeight = 200;
 
@@ -42,21 +39,28 @@ var powerUpWidth = 10, powerUpHeight = 10, powerUpDepth = 10, powerUpQuality = 1
 
 var ball, paddle1, paddle2;
 
-var powerUp, pUpIsDisplayed = false, pUpEffectIsDisplayed = false;
+var powerUp, pUpIsDisplayed = false, pUpEffectIsApplied = false;
 
 var ballStartDirection;
 
-function displayScore() {
+window.addEventListener('keydown', onKeyDown, false);
+window.addEventListener('keyup', onKeyUp, false);
 
-  var scoreDiv = document.getElementById("pong-score");
+//Functions used to create the scene
 
-  scoreDiv.innerHTML = "Player 1 : " + gameState.player1Score + " - Player 2 : " + gameState.player2Score;
-  if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
-    if (gameState.player1Score == gameState.score_limit)
-      scoreDiv.innerHTML = "Game Over ! Player 1 Won !"
-    else
-      scoreDiv.innerHTML = "Game Over ! Player 2 Won !"
-  }
+function populatePaddle(height, color, positionX, positionY) {
+
+  var paddleMaterial = new THREE.MeshLambertMaterial({ color: color });
+
+  var paddle = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, height, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddleMaterial);
+
+  paddle.position.x = positionX;
+  paddle.position.y = positionY;
+  paddle.position.z = paddleDepth;
+  paddle.receiveShadow = true;
+  paddle.castShadow = true;
+
+  return paddle;
 }
 
 function createScene() {
@@ -107,8 +111,18 @@ function createScene() {
   pointLight.position.x = -1000;
   pointLight.position.y = 0;
   pointLight.position.z = 1000;
-  pointLight.intensity = 2.9;
+  pointLight.intensity = 1.5;
   pointLight.distance = 10000;
+
+  pointLight2 = new THREE.PointLight(0xF8D898);
+
+  pointLight2.position.x = 1000;
+  pointLight2.position.y = 0;
+  pointLight2.position.z = 1000;
+  pointLight2.intensity = 1.5;
+  pointLight2.distance = 10000;
+
+
 
   //Spotlight setup
 
@@ -132,23 +146,26 @@ function createScene() {
 
   //Paddle Setupjs
 
-  var paddle1Material = new THREE.MeshLambertMaterial({ color: 0x1B32C0 });
+  // var paddle1Material = new THREE.MeshLambertMaterial({ color: 0x1B32C0 });
+  //
+  // paddle1 = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddle1Material);
+  //
+  // var paddle2Material = new THREE.MeshLambertMaterial({ color: 0xFF4045 });
+  //
+  // paddle2 = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddle2Material);
+  //
+  // paddle1.position.x = -fieldWidth / 2 + paddleWidth;
+  // paddle2.position.x = fieldWidth / 2 - paddleWidth;
+  //
+  // paddle1.position.z = paddleDepth;
+  // paddle2.position.z = paddleDepth;
+  // paddle1.receiveShadow = true;
+  // paddle1.castShadow = true;
+  // paddle2.receiveShadow = true;
+  // paddle2.castShadow = true;
 
-  paddle1 = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddle1Material);
-
-  var paddle2Material = new THREE.MeshLambertMaterial({ color: 0xFF4045 });
-
-  paddle2 = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddle2Material);
-
-  paddle1.position.x = -fieldWidth / 2 + paddleWidth;
-  paddle2.position.x = fieldWidth / 2 - paddleWidth;
-
-  paddle1.position.z = paddleDepth;
-  paddle2.position.z = paddleDepth;
-  paddle1.receiveShadow = true;
-  paddle1.castShadow = true;
-  paddle2.receiveShadow = true;
-  paddle2.castShadow = true;
+  paddle1 = populatePaddle(30, 0x1B32C0, -fieldWidth / 2 + paddleWidth, 0);
+  paddle2 = populatePaddle(30, 0xFF4045, fieldWidth / 2 + paddleWidth, 0);
 
   //Table Setup
 
@@ -205,6 +222,7 @@ function createScene() {
   //Add all to the scene
 
   scene.add(pointLight);
+  scene.add(pointLight2);
   scene.add(spotLight);
   scene.add(paddle1);
   scene.add(paddle2);
@@ -216,6 +234,19 @@ function createScene() {
 
   //renderer.shadowMapEnabled = true;
 
+}
+
+function displayScore() {
+
+  var scoreDiv = document.getElementById("pong-score");
+
+  scoreDiv.innerHTML = "Player 1 : " + gameState.player1Score + " - Player 2 : " + gameState.player2Score;
+  if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
+    if (gameState.player1Score == gameState.score_limit)
+      scoreDiv.innerHTML = "Game Over ! Player 1 Won !"
+    else
+      scoreDiv.innerHTML = "Game Over ! Player 2 Won !"
+  }
 }
 
 function cameraLogic() {
@@ -246,24 +277,13 @@ function cameraLogic2() {
 
 }
 
-function createGeometryWithHoles(shape, holes) {
-  var geometry = new THREE.ShapeGeometry(shape);
+function cameraLogic2d() {
 
-  holes.forEach(function(hole) {
-    var holeGeometry = new THREE.ExtrudeGeometry(hole, {
-      steps: 2,
-      depth: 2,
-      bevelEnabled: true,
-      bevelThickness: 1,
-      bevelSize: 1,
-      bevelSegments: 1
-    });
-
-    var holeMesh = new THREE.Mesh(holeGeometry);
-    geometry.merge(holeMesh.geometry, holeMesh.matrix);
-  });
-
-  return geometry;
+  camera.position.x = 0;
+  camera.position.y = 0;
+  camera.position.z = 230;
+  camera.rotation.z = 0;
+  camera.rotation.y = 0;
 }
 
 
@@ -319,7 +339,7 @@ function popPowerUpOnScene() {
       color = 0xB3679B;
   }
 
-  createStarMesh();
+  //createStarMesh();
   var powerUpMaterial = new THREE.MeshLambertMaterial({ color: color });
   powerUp = new THREE.Mesh(new THREE.BoxGeometry(powerUpWidth, powerUpHeight, powerUpDepth, powerUpQuality, powerUpQuality, powerUpQuality), powerUpMaterial);
   powerUp.position.x = gameState.powerup_positionX;
@@ -328,6 +348,40 @@ function popPowerUpOnScene() {
   powerUp.receiveShadow = true;
   scene.add(powerUp);
   pUpIsDisplayed = true;
+}
+
+function changePaddle(paddle, height, color, positionX, positionY) {
+
+  scene.remove(paddle);
+  paddle = populatePaddle(height, color, positionX, positionY);
+  return paddle;
+}
+
+function applyHeightPaddleChange() {
+
+  if (gameState.paddle1_powerup == 1) {
+    paddle2 = changePaddle(paddle2, 20, 0xFF4045, paddle2.position.x, paddle2.position.y);
+    scene.add(paddle2);
+  }
+  else if (gameState.paddle1_powerup == 2) {
+    paddle1 = changePaddle(paddle1, 40, 0x1B32C0, paddle1.position.x, paddle1.position.y);
+    scene.add(paddle1);
+  }
+  else if (gameState.paddle2_powerup == 1) {
+    paddle1 = changePaddle(paddle1, 20, 0x1B32C0, paddle1.position.x, paddle1.position.y);
+    scene.add(paddle1);
+  }
+  else if (gameState.paddle2_powerup == 2) {
+    paddle2 = changePaddle(paddle2, 40, 0xFF4045, paddle2.position.x, paddle2.position.y);
+    scene.add(paddle2);
+  }
+}
+
+function resetPaddles() {
+  paddle1 = changePaddle(paddle1, 30, 0x1B32C0, paddle1.position.x, paddle1.position.y);
+  scene.add(paddle1);
+  paddle2 = changePaddle(paddle2, 30, 0xFF4045, paddle2.position.x, paddle2.position.y);
+  scene.add(paddle2);
 }
 
 function depopPowerUpFromScene() {
@@ -341,20 +395,34 @@ function handlePowerUp() {
   if (gameState.powerup_status == 1 && !pUpIsDisplayed) {
     popPowerUpOnScene();
   }
-  if ((gameState.powerup_status == 2 || gameState.powerup_status == 0) && pUpIsDisplayed) {
+  if (gameState.powerup_status == 2 && !pUpEffectIsApplied) {
+    depopPowerUpFromScene();
+    if (gameState.powerup_type == 1 || gameState.powerup_type == 2) {
+      applyHeightPaddleChange();
+    }
+    pUpEffectIsApplied = true;
+  }
+  if (gameState.powerup_status == 0 && pUpIsDisplayed) {
     depopPowerUpFromScene();
   }
-  if 
+  if (gameState.powerup_status == 0 && pUpEffectIsApplied) {
+    resetPaddles();
+    pUpEffectIsApplied = false;
+  }
 }
+
 
 
 function draw() {
 
-  if (player_id == 1) {
+  if (player_id == 1 && gameState.paddle2_powerup != 3) {
     cameraLogic();
   }
-  else {
+  else if (player_id == 2 && gameState.paddle1_powerup != 3) {
     cameraLogic2();
+  }
+  else {
+    cameraLogic2d();
   }
 
   renderer.render(scene, camera);

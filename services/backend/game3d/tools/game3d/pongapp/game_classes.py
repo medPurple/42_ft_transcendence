@@ -57,6 +57,7 @@ class   ballC:
         self.dirX = iv.BALL_DIR_X
         self.dirY = iv.BALL_DIR_Y
         self.speed = iv.BALL_SPEED
+        self.boosted = 0
 
 
 class   gameStateC:
@@ -85,6 +86,7 @@ class   gameStateC:
             with self._lock:
                 self.powerUpHandling(self.ball, self.paddle1, self.paddle2)
                 self.ballPhysics(self.ball)
+                self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2)
                 self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
                 self.paddle1Movement(self.paddle1)
                 self.paddle2Movement(self.paddle2)
@@ -102,22 +104,34 @@ class   gameStateC:
         self.powerUpState = iv.PU_ON_FIELD
         self.powerUpTimer = time.time()
 
-    def depopPowerUp(self, status):
+    def depopPowerUp(self):
         self.powerUpPositionX = iv.DEFAULT_PU_LOC
         self.powerUpPositionY = iv.DEFAULT_PU_LOC 
         self.activePowerUp = iv.NONE_PU 
         self.powerUpState = iv.PU_NO
         self.powerUpTimer = time.time()
 
+    def resetPowerUp(self):
+        self.powerUpPositionX = iv.DEFAULT_PU_LOC
+        self.powerUpPositionY = iv.DEFAULT_PU_LOC 
+        self.activePowerUp = iv.NONE_PU 
+        self.powerUpState = iv.PU_NO
+        self.paddle1.powerup = iv.NONE_PU
+        self.paddle2.powerup = iv.NONE_PU
+        self.powerUpTimer = time.time()
+
     def powerUpHandling(self, ball, paddle1, paddle2):
         if (self.powerUpState == iv.PU_NO and time.time() - self.powerUpTimer >= 3):
             self.popPowerUp()
-        if (self.powerUpState == iv.PU_ON_FIELD and time.time() - self.powerUpTimer >= 5):
-            self.depopPowerUp(0)
+        if (self.powerUpState == iv.PU_ON_FIELD and time.time() - self.powerUpTimer >= 30):
+            self.depopPowerUp()
         if (self.powerUpState == iv.PU_ON_PLAYER and time.time() - self.powerUpTimer >= 5):
-            self.depopPowerUp(0)
+            self.resetPowerUp()
 
     def ballPhysics(self, ball):
+        if ((self.paddle1.powerup == iv.SELF_BALL_ACCEL and ball.dirX > 0) or (self.paddle2.powerup == iv.SELF_BALL_ACCEL and ball.dirX < 0)):
+            ball.boosted = 1
+            ball.speed *= 1.5
         if (ball.positionX <= -iv.FIELD_WIDTH / 2):
             self.resetBall(self.ball, 2)
         if (ball.positionX >= iv.FIELD_WIDTH / 2):
@@ -132,6 +146,35 @@ class   gameStateC:
             ball.dirY = ball.speed * 2
         if (ball.dirY < -ball.speed * 2):
             ball.dirY = -ball.speed * 2
+        if (ball.boosted == 1):
+            ball.boosted = 0
+            ball.speed /= 1.5
+
+    def applyHeightChange(self, paddle):
+        if (self.activePowerUp == iv.SELF_BIG_PADDLE):
+            paddle.height = iv.PADDLE1_AUGMENTED_HEIGHT
+        if (self.activePowerUp == iv.OTHER_SMALL_PADDLE):
+            if (paddle == self.paddle1):
+                self.paddle2.height == iv.PADDLE2_DIMINISHED_HEIGHT
+            else:
+                self.paddle1.height == iv.PADDLE1_DIMINISHED_HEIGHT
+
+    def pickupPowerUp(self, paddle):
+        paddle.powerup = self.activePowerUp;
+        if (self.activePowerUp == iv.OTHER_SMALL_PADDLE or self.activePowerUp == iv.SELF_BIG_PADDLE):
+            self.applyHeightChange(paddle)
+        self.powerUpPositionX = iv.DEFAULT_PU_LOC
+        self.powerUpPositionY = iv.DEFAULT_PU_LOC
+        self.powerUpState = iv.PU_ON_PLAYER
+        self.powerUpTimer = time.time()
+
+    def isBallOnPowerUp(self, ball, paddle1, paddle2):
+        if (ball.positionX <= self.powerUpPositionX + iv.PU_OFFSET and ball.positionX >= self.powerUpPositionX - iv.PU_OFFSET):
+            if (ball.positionY <= self.powerUpPositionY + iv.PU_OFFSET and ball.positionY >= self.powerUpPositionY - iv.PU_OFFSET):
+                if (ball.dirX < 0):
+                    self.pickupPowerUp(paddle2);
+                else :
+                    self.pickupPowerUp(paddle1);
 
     def resetBall(self, ball, index):
         ball.positionX = 0
@@ -144,6 +187,10 @@ class   gameStateC:
             self.player2Score += 1
             ball.dirX = 1
         ball.dirY = 1
+        if (ball.boosted == 1):
+            ball.speed /= 1.5;
+            ball.boosted = 0
+        self.resetPowerUp()
         self.checkForScore()
 
     def checkForScore(self):
