@@ -5,17 +5,39 @@ export default class RegistrationForm extends HTMLElement {
 		super(); // Always call super first in constructor
 		this.attachShadow({ mode: 'open' }); // Create a new attached DOM tree for the component
         this.shadowRoot.innerHTML = `
-		<form id="signup-form" method="post" action="">
-			<input type="file" name="profile_picture" accept="images/*" />
-			<input type="text" name="username" placeholder="Username">
-			<input type="text" name="first_name" placeholder="Firstname">
-			<input type="text" name="last_name" placeholder="Lastname">
-			<input type="email" name="email" placeholder="Email">
-			<input type="password" name="password1" placeholder="Password">
-			<input type="password" name="password2" placeholder="Confirm Password">
-			<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-			<button type="submit" class="button">Register</button>
-		</form>`;
+		<form id="signup-form" method="post" action="" class="container">
+		<div class="mb-4 row">
+			<div class="col">
+				<input type="file" class="form-control" name="profile_picture" accept="images/*" />
+			</div>
+			<div class="col">
+				<input type="text" class="form-control" name="username" placeholder="Username">
+			</div>
+		</div>
+
+		<div class="mb-4">
+			<input type="text" class="form-control" name="first_name" placeholder="Firstname">
+		</div>
+
+		<div class="mb-4">
+			<input type="text" class="form-control" name="last_name" placeholder="Lastname">
+		</div>
+		
+		<div class="mb-4">
+			<input type="email" class="form-control"  name="email" placeholder="Email">
+		</div>
+
+		<div class="mb-4">
+			<input type="password" class="form-control" name="password1" placeholder="Password">
+		</div>
+
+		<div class="mb-4">
+			<input type="password" class="form-control" name="password2" placeholder="Confirm Password">
+		</div>
+
+		<input type="hidden" class="form-control" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+		<button type="submit" class="btn btn-dark">Register</button>
+	</form>`;
 	}
 
 	connectedCallback() {

@@ -130,10 +130,10 @@ async function router() {
 		navbarVisibility();
 		footerVisibility();
 
-		if (path === '/' && codeValidated) {
+		if (path === '/' && result.includes("code-validated")) {
 			path = '/home';
 			view = routes[path];
-            result = view.render();
+			result = view.render();
 		}
 
 		if (result.includes("pong-renderer")) {
