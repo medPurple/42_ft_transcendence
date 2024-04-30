@@ -11,14 +11,27 @@ export class pokeMap{
         this.lastY = 0;
     }
     divmapCreation(){
+
+        // MAP DIV
         const divmap = document.createElement('div');
+        divmap.style.textAlign = 'center';
         divmap.style.position = 'relative';
+        divmap.style.width = '800px';
+        divmap.style.height = '400px';
+        divmap.style.marginLeft = '28%';
+        divmap.style.marginTop = '5%';
+        // divmap.style.marginRight = 'auto';
+        
         
         // MAP CANVAS
         
         const pokecanva = document.createElement('canvas');
         pokecanva.width = 800;
         pokecanva.height = 400;
+        pokecanva.style.zIndex = '1';
+        pokecanva.style.position = 'absolute';
+        pokecanva.style.top = '0';
+        pokecanva.style.left = '0';
         this.ctxMAP = pokecanva.getContext('2d');
         divmap.appendChild(pokecanva);
         
@@ -27,13 +40,10 @@ export class pokeMap{
         const characterCanvas = document.createElement('canvas');
         characterCanvas.width = 800;
         characterCanvas.height = 400;
+        characterCanvas.style.zIndex = '2';
         characterCanvas.style.position = 'absolute';
-
-        const divmapRect = divmap.getBoundingClientRect();
-        characterCanvas.style.top = divmapRect.top + 'px';
-        characterCanvas.style.right = divmapRect.right + 'px';
-        characterCanvas.style.left = divmapRect.left + 'px';
-        characterCanvas.style.bottom = divmap.bottom + 'px'
+        characterCanvas.style.top = '0';
+        characterCanvas.style.left = '0';
 
         this.ctxCharacter = characterCanvas.getContext('2d');
         divmap.appendChild(characterCanvas);
