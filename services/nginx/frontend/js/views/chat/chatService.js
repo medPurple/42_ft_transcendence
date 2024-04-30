@@ -1,4 +1,4 @@
+import {chat} from "../../components/chat/chatClass.js"
 
-export default () =>  `
-    <p>chat service </p>
-`;
+export default () =>
+    new chat().initChat();

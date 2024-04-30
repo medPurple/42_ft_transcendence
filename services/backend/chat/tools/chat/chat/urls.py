@@ -20,5 +20,5 @@ import chatapp.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/chat/', inclue('chatapp.urls')),
+    # path('api/chat/', include('chatapp.routing')),
 ]

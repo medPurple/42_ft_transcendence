@@ -30,6 +30,26 @@ SECRET_KEY = 'django-insecure-gn3cxfoh@a7w)#-$7bgy!$o*l*lqn!1m0h(+br@acq5j&i3m-n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Application definition
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
@@ -45,6 +65,7 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -91,6 +112,8 @@ ASGI_APPLICATION = 'chat.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
+db_info = vault.secret('chat_db')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
