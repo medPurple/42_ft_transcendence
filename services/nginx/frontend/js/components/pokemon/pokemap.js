@@ -11,29 +11,30 @@ export class pokeMap{
         this.lastY = 0;
     }
     divmapCreation(){
-        
         const divmap = document.createElement('div');
         divmap.style.position = 'relative';
         
         // MAP CANVAS
-
+        
         const pokecanva = document.createElement('canvas');
         pokecanva.width = 800;
         pokecanva.height = 400;
-        // pokecanva.style.position = 'absolute';
-        // pokecanva.style.top = '0';
-        // pokecanva.style.left = '0';
         this.ctxMAP = pokecanva.getContext('2d');
         divmap.appendChild(pokecanva);
-
+        
         // CHARACTER CANVAS
-
+        
         const characterCanvas = document.createElement('canvas');
         characterCanvas.width = 800;
         characterCanvas.height = 400;
         characterCanvas.style.position = 'absolute';
-        characterCanvas.style.top = '0';
-        characterCanvas.style.right = '253px';
+
+        const divmapRect = divmap.getBoundingClientRect();
+        characterCanvas.style.top = divmapRect.top + 'px';
+        characterCanvas.style.right = divmapRect.right + 'px';
+        characterCanvas.style.left = divmapRect.left + 'px';
+        characterCanvas.style.bottom = divmap.bottom + 'px'
+
         this.ctxCharacter = characterCanvas.getContext('2d');
         divmap.appendChild(characterCanvas);
 
@@ -49,6 +50,15 @@ export class pokeMap{
         return divmap;
     }
 
+    // function updateCharacterPosition() {
+    //     const divmapRect = divmap.getBoundingClientRect();        
+    //     // Calculate the responsive position of the characterCanvas
+    //     characterCanvas.style.top = (divmapRect.top + divmapRect.height / 2 - characterCanvas.height / 2) + 'px';
+    //     characterCanvas.style.left = (divmapRect.left + divmapRect.width / 2 - characterCanvas.width / 2) + 'px';
+    // }
+
+    // updateCharacterPosition();
+    // window.addEventListener('resize', updateCharacterPosition);
     drawplayer(x, y, orientation){
         const img = new Image();
         switch(orientation){
