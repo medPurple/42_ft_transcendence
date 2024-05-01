@@ -53,11 +53,17 @@ export class chat {
 			}
 		};
 
-		chatMessageSubmit.onclick = function(e) {
+		chatMessageSubmit.onclick = async function(e) {
 			const message = chatMessageInput.value;
-			chatSocket.send(JSON.stringify ({
-				'message': message
-			}));
+			const username = await Iuser.getUsername();
+			if (username === '') {
+				console.error("You're not logged !");
+			} else {
+				chatSocket.send(JSON.stringify ({
+					'message': message,
+					'usernamechat': username
+				}));
+			}
 			chatMessageInput.value = '';
 		}
 

@@ -3,6 +3,8 @@
 sh /tmp/init_db.sh
 service postgresql start
 
+sleep 5
+
 # Start Redis server
 redis-server &
 

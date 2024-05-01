@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VAULT_ADDR="http://vault:8200"
-SECRET_PATH="user_db"
+SECRET_PATH="chat_db"
 VAULT_TOKEN=$(cat /tmp/.key)
 
 response=$(curl -s --header "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/kv/$SECRET_PATH")
