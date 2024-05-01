@@ -3,6 +3,9 @@
 sh /tmp/init_db.sh
 service postgresql start
 
+# Start Redis server
+redis-server &
+
 sleep 5
 
 #python3 manage.py makemigrations <app_name>

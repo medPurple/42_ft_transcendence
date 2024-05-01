@@ -8,26 +8,58 @@ export class chat {
 		const chatContainer = document.createElement('div');
 		chatContainer.id = 'chat-container';
 
+		const chatLog = document.createElement('textarea');
+		chatLog.id = 'chat-log';
+		chatLog.cols = '100';
+		chatLog.rows = '20';
+		chatContainer.appendChild(chatLog);
+
+		const chatMessageInput = document.createElement('input');
+		chatMessageInput.id = 'chat-message-input';
+		chatMessageInput.type = 'text';
+		chatMessageInput.size = '100';
+		chatContainer.appendChild(chatMessageInput);
+
+		const chatMessageSubmit = document.createElement('input');
+		chatMessageSubmit.id = 'chat-message-submit';
+		chatMessageSubmit.type = 'button';
+		chatMessageSubmit.value = 'Send';
+		chatContainer.appendChild(chatMessageSubmit);
+
+		const roomName = 'myroom';
 		const chatSocket = new WebSocket(
 			'ws://'
 			+ window.location.host
 			+ '/api/wschat/'
+			+ roomName
+			+ '/'
 		);
 
 		// receive msg from server
 		chatSocket.onmessage = function(e) {
 			const data = JSON.parse(e.data);
-			console.log(data);
-			let message = "salut";
-			chatSocket.send(JSON.stringify({
-				"message": message,
-			}));
+			chatLog.value += (data.message + '\n');
 		};
 
 		// loosed connection with wbs
 		chatSocket.onclose = function(e) {
 			console.error('Chat socket closed unexpectedly');
 		};
+		
+		chatMessageInput.focus(); // Sets the focus to the chat message input field.
+		chatMessageInput.onkeyup = function(e) {
+			if (e.key === 'Enter') {
+				chatMessageSubmit.click();
+			}
+		};
+
+		chatMessageSubmit.onclick = function(e) {
+			const message = chatMessageInput.value;
+			chatSocket.send(JSON.stringify ({
+				'message': message
+			}));
+			chatMessageInput.value = '';
+		}
 
 		// connection to wbs
 		chatSocket.onopen = function(e) {
