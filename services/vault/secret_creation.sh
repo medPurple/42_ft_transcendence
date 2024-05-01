@@ -16,6 +16,24 @@
 #------------------------------------------------#
 
 #------------------------------------------------#
+echo "[VAULT SECRET] nginx container secret"
+ENV_FILE="/vault/nginx/.env"
+SECRET_PATH="game_db"
+if [ -f "$ENV_FILE" ]; then
+	set -a
+	. "$ENV_FILE"
+	set +a
+	cert_value=$(cat /tmp/.transcendance_crt.crt)
+	key_value=$(cat /tmp/.transcendance_key.key)
+	echo "$cert_value"
+	echo "$key_value"
+	vault kv put kv/nginx ssl_certificate="$cert_value" ssl_certificate_key="$key_value"
+else
+	echo "$ENV_FILE unknow file."
+fi
+#------------------------------------------------#
+
+#------------------------------------------------#
 echo "[VAULT SECRET] game3d container secret"
 ENV_FILE="/vault/game3d/.env"
 SECRET_PATH="game_db"
