@@ -319,6 +319,169 @@ function cameraLogic2d() {
 //   powerUp.position.z = 10;
 //
 // }
+//
+
+// function populateCircleShape(color) {
+//   // Define the radius of the circle
+//   var radius = 10;
+//
+//   // Create a new instance of THREE.Shape
+//   var circleShape = new THREE.Shape();
+//
+//   // Move the starting point to the initial position of the circle
+//   circleShape.moveTo(radius, 0);
+//
+//   // Create a loop to draw the circular arc
+//   for (var i = 0; i <= 64; i++) {
+//     var theta = (i / 64) * Math.PI * 2;
+//     var x = radius * Math.cos(theta);
+//     var y = radius * Math.sin(theta);
+//     circleShape.lineTo(x, y);
+//   }
+//
+//   // Close the shape
+//   circleShape.closePath();
+//
+//   // Create geometry from the circle shape
+//   var circleGeometry = new THREE.ShapeGeometry(circleShape);
+//
+//   // Create material
+//   var material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
+//
+//   // Create mesh
+//   var circleMesh = new THREE.Mesh(circleGeometry, material);
+//
+//   circleMesh.rotateX(Math.PI / 2);
+//   circleMesh.rotateY(Math.PI / 2);
+//   circleMesh.position.z = 20;
+//   return circleMesh;
+// }
+
+function populateCircleShape(color) {
+
+  // Define the radius of the circle and the number of segments
+  var radius = 10; // Adjust as needed
+  var segments = 64; // Adjust as needed
+
+  // Create an array to hold the vertices of the circle
+  var vertices = [];
+
+  // Calculate the angle between each segment
+  var angleIncrement = (Math.PI * 2) / segments;
+
+  // Generate vertices for the circle border
+  for (var i = 0; i <= segments; i++) {
+    var angle = angleIncrement * i;
+    var x = radius * Math.cos(angle);
+    var y = radius * Math.sin(angle);
+    vertices.push(new THREE.Vector3(x, y, 0));
+  }
+
+  // Create a geometry to hold the vertices
+  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+
+  // Create a material for the border
+  var material = new THREE.LineBasicMaterial({ color: color });
+
+  // Create the circle border mesh
+  var circleMesh = new THREE.LineLoop(geometry, material);
+  circleMesh.rotateX(Math.PI / 2);
+  circleMesh.rotateY(Math.PI / 2);
+  circleMesh.position.z = 20;
+  return circleMesh;
+}
+
+function populateTriangleShape(color) {
+
+  // Define the size of the triangle
+  var size = 15; // Adjust as needed
+
+  // Define the vertices of the triangle
+  var vertices = [
+    new THREE.Vector3(0, size / Math.sqrt(3), 0),
+    new THREE.Vector3(-size / 2, -size / (2 * Math.sqrt(3)), 0),
+    new THREE.Vector3(size / 2, -size / (2 * Math.sqrt(3)), 0)
+  ];
+
+  // Create a geometry to hold the vertices
+  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+
+  // Create a material for the border
+  var material = new THREE.LineBasicMaterial({ color: color });
+
+  // Create the triangle border mesh
+  var triangleMesh = new THREE.LineLoop(geometry, material);
+
+  triangleMesh.rotateX(Math.PI / 2);
+  triangleMesh.rotateY(Math.PI / 2);
+  triangleMesh.position.z = 20;
+  return triangleMesh;
+}
+
+function populateStarShape(color) {
+
+  // Define the size of the star
+  var size = 10; // Adjust as needed
+
+  // Define the number of points for the star
+  var numPoints = 5; // Adjust as needed
+
+  // Define an array to hold the vertices of the star
+  var vertices = [];
+
+  // Calculate the angles for the outer and inner points of the star
+  for (var i = 0; i < numPoints * 2; i++) {
+    var angle = (i / numPoints) * Math.PI;
+    var r = (i % 2 === 0) ? size : size / 2; // Alternate between outer and inner radius
+    var x = r * Math.cos(angle);
+    var y = r * Math.sin(angle);
+    vertices.push(new THREE.Vector3(x, y, 0));
+  }
+
+  // Create a geometry to hold the vertices
+  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+
+  // Create a material for the border
+  var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+  // Create the star border mesh
+  var starMesh = new THREE.LineLoop(geometry, material);
+
+  starMesh.rotateX(Math.PI / 2);
+  starMesh.rotateY(Math.PI / 2);
+  starMesh.rotateZ(Math.PI / 10);
+  starMesh.position.z = 20;
+  return starMesh;
+}
+
+function populateSquareShape(color) {
+
+  var size = 15; // Adjust as needed
+
+  // Define the vertices of the square
+  var vertices = [
+    new THREE.Vector3(-size / 2, size / 2, 0),
+    new THREE.Vector3(size / 2, size / 2, 0),
+    new THREE.Vector3(size / 2, -size / 2, 0),
+    new THREE.Vector3(-size / 2, -size / 2, 0),
+    new THREE.Vector3(-size / 2, size / 2, 0) // Close the square
+  ];
+
+  // Create a geometry to hold the vertices
+  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+
+  // Create a material for the border
+  var material = new THREE.LineBasicMaterial({ color: color });
+
+  // Create the square border mesh
+  var squareMesh = new THREE.LineLoop(geometry, material);
+
+  squareMesh.rotateX(Math.PI / 2);
+  squareMesh.rotateY(Math.PI / 2);
+  squareMesh.position.z = 20;
+  return squareMesh;
+}
+
 
 function popPowerUpOnScene() {
 
@@ -327,21 +490,22 @@ function popPowerUpOnScene() {
   console.log("color :", gameState.powerup_type);
   switch (gameState.powerup_type) {
     case 0:
-      color = 0xECC8AE;
+      color = 0x22ff00;
+      powerUp = populateCircleShape(color);
       break;
     case 1:
-      color = 0xD7907B;
+      color = 0xff0000;
+      powerUp = populateTriangleShape(color);
       break;
     case 2:
-      color = 0x6C4B5E;
+      color = 0xfbff00;
+      powerUp = populateStarShape(color);
       break;
     default:
-      color = 0xB3679B;
+      color = 0x0004ff;
+      powerUp = populateSquareShape(color);
   }
 
-  //createStarMesh();
-  var powerUpMaterial = new THREE.MeshLambertMaterial({ color: color });
-  powerUp = new THREE.Mesh(new THREE.BoxGeometry(powerUpWidth, powerUpHeight, powerUpDepth, powerUpQuality, powerUpQuality, powerUpQuality), powerUpMaterial);
   powerUp.position.x = gameState.powerup_positionX;
   powerUp.position.y = gameState.powerup_positionY;
   powerUp.castShadow = true;
