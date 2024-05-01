@@ -125,7 +125,7 @@ class   gameStateC:
             self.popPowerUp()
         if (self.powerUpState == iv.PU_ON_FIELD and time.time() - self.powerUpTimer >= 30):
             self.depopPowerUp()
-        if (self.powerUpState == iv.PU_ON_PLAYER and time.time() - self.powerUpTimer >= 5):
+        if (self.powerUpState == iv.PU_ON_PLAYER and time.time() - self.powerUpTimer >= 15):
             self.resetPowerUp()
 
     def ballPhysics(self, ball):
