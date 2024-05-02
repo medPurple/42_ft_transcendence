@@ -2,8 +2,8 @@
 import { FriendsProfile } from "../../components/friends/friendsProfileForm.js";
 
 export default async function friendsProfile(username) {
-	new FriendsProfile(username).initFriendsInfo();
-}
+	return new FriendsProfile(username).initFriendsInfo();}
+
 
 //     return `
 //     <body>

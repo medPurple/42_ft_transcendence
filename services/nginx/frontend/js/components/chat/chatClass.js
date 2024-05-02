@@ -45,7 +45,7 @@ export class chat {
 		chatSocket.onclose = function(e) {
 			console.error('Chat socket closed unexpectedly');
 		};
-		
+
 		chatMessageInput.focus(); // Sets the focus to the chat message input field.
 		chatMessageInput.onkeyup = function(e) {
 			if (e.key === 'Enter') {
@@ -55,13 +55,13 @@ export class chat {
 
 		chatMessageSubmit.onclick = async function(e) {
 			const message = chatMessageInput.value;
-			const username = await Iuser.getUsername();
-			if (username === '') {
+			const user_id = await Iuser.getID();
+			if (user_id === '') {
 				console.error("You're not logged !");
 			} else {
 				chatSocket.send(JSON.stringify ({
 					'message': message,
-					'usernamechat': username
+					'user_id': user_id
 				}));
 			}
 			chatMessageInput.value = '';
