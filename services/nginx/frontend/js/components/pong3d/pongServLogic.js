@@ -31,7 +31,7 @@ var camera, scene, renderer, pointLight, pointLight2, spotLight;
 
 var fieldWidth = 400, fieldHeight = 200;
 
-var WIDTH = 640, HEIGHT = 360, VIEW_ANGLE = 75, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
+var WIDTH = 640, HEIGHT = 426, VIEW_ANGLE = 75, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
 
 var paddleWidth = 10, paddleHeight = 30, paddleDepth = 10, paddleQuality = 1;
 
@@ -181,36 +181,36 @@ function createScene() {
 
   //Pillar Setup
 
-  var pillarMaterial = new THREE.MeshLambertMaterial({ color: 0x534d0d });
-
-  for (var i = 0; i < 5; i++) {
-
-    var pillar = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 500, 1, 1, 1), pillarMaterial);
-
-    pillar.position.x = -50 + i * 100;
-    pillar.position.y = -230;
-    pillar.position.z = -30;
-    pillar.castShadow = true;
-    pillar.receiveShadow = true;
-    scene.add(pillar);
-  }
-
-  for (var i = 0; i < 5; i++) {
-
-    var pillar = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 500, 1, 1, 1), pillarMaterial);
-
-    pillar.position.x = -50 + i * 100;
-    pillar.position.y = 230;
-    pillar.position.z = -30;
-    pillar.castShadow = true;
-    pillar.receiveShadow = true;
-    scene.add(pillar);
-  }
+  // var pillarMaterial = new THREE.MeshLambertMaterial({ color: 0x534d0d });
+  //
+  // for (var i = 0; i < 5; i++) {
+  //
+  //   var pillar = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 500, 1, 1, 1), pillarMaterial);
+  //
+  //   pillar.position.x = -50 + i * 100;
+  //   pillar.position.y = -230;
+  //   pillar.position.z = -30;
+  //   pillar.castShadow = true;
+  //   pillar.receiveShadow = true;
+  //   scene.add(pillar);
+  // }
+  //
+  // for (var i = 0; i < 5; i++) {
+  //
+  //   var pillar = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 500, 1, 1, 1), pillarMaterial);
+  //
+  //   pillar.position.x = -50 + i * 100;
+  //   pillar.position.y = 230;
+  //   pillar.position.z = -30;
+  //   pillar.castShadow = true;
+  //   pillar.receiveShadow = true;
+  //   scene.add(pillar);
+  // }
 
   //Ground setup
 
   var groundWidth = 1000,
-    groundHeight = 1000,
+    groundHeight = 2200,
     groundQuality = 3;
 
   var groundMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
@@ -218,6 +218,63 @@ function createScene() {
   var ground = new THREE.Mesh(new THREE.BoxGeometry(groundWidth, groundHeight, groundQuality, 1, 1, 1), groundMaterial);
   ground.position.z = -132;
   ground.receiveShadow = true;
+
+  // Wall setup
+
+  var wallHeight = 1365, wallWidth = 2048, wallQuality = 3;
+
+  const texLoader = new THREE.TextureLoader();
+
+  var wallMaterial = new THREE.MeshLambertMaterial({
+    map: texLoader.load('../../../images/Walls/Wall-Back-Figures.png',
+      function(texture) {
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+      })
+  });
+
+
+
+  var wall = new THREE.Mesh(new THREE.BoxGeometry(wallWidth, wallHeight, wallQuality, 1, 1, 1), wallMaterial);
+
+  if (player_id == 1) {
+    wall.position.x = 500;
+  }
+  else {
+    wall.position.x = -500;
+  }
+  wall.position.z = 75;
+  wall.rotateY(Math.PI / 2);
+  wall.rotateZ(Math.PI / 2);
+  wall.receiveShadow = true;
+
+  var objLoader = new THREE.GLTFLoader();
+
+  objLoader.load('../../../images/3D/untitled.glb', function(gltf) {
+    var referee = gltf.scene;
+    referee.scale.set(50, 50, 50);
+    referee.rotateX(Math.PI / 2);
+    referee.position.y = 220;
+    scene.add(referee);
+  })
+
+  // var mtlLoader = new MTLLoader();
+  // mtlLoader.load("../../../images/3D/squid_game_man.obj.mtl", function(materials) {
+  //   materials.preload();
+  //   var objLoader = new THREE.OBJLoader();
+  //
+  //   objLoader.setMaterials(materials);
+  //   objLoader.load('../../../images/3D/squid_game_man.obj', function(object) {
+  //     var referee = object;
+  //     referee.scale.set(50, 50, 50);
+  //     referee.rotateX(Math.PI / 2);
+  //     referee.position.y = 220;
+  //     scene.add(referee);
+  //   });
+  // });
+  //
 
   //Add all to the scene
 
@@ -229,6 +286,7 @@ function createScene() {
   scene.add(ball);
   scene.add(table);
   scene.add(plane);
+  scene.add(wall);
   scene.add(ground);
   scene.add(camera);
 
