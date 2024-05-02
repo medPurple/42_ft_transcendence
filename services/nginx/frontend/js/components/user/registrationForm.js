@@ -61,7 +61,7 @@ export default class RegistrationForm extends HTMLElement {
 				if (data.success) {
 					Icookies.setCookie('token', data.token, 90);
 					// Redirect to the home page
-					 window.location.href = '/'; // Change the URL to your home page URL
+					 window.location.href = `/home`; // Change the URL to your home page URL
 
 				} else {
                     // Display validation errors or any other error message

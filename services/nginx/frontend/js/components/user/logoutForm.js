@@ -41,7 +41,7 @@ export default class LogoutForm extends HTMLElement {
 			.then(data => {
 				console.log(data);
 				Icookies.clearAllCookies();
-				window.location.href = '/'; // Change the URL to your home page URL
+				window.location.href = '/home'; // Change the URL to your home page URL
 			})
 			.catch(error => {
 				console.error('Error:', error);

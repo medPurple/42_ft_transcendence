@@ -6,7 +6,7 @@ const routes = {
         title : "404 | " + pageTitle,
         description: "Page not found"
     },
-    "/": {
+    "/home": {
         template: "/templates/home.html",
         title: "Home | " + pageTitle,
         description: "Welcome to the homepage"

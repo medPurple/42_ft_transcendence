@@ -113,54 +113,42 @@ function footerVisibility() {
     }
 }
 
-let codeValidated = false;
-window.validateCodeAndRedirect = validateCodeAndRedirect;
-
-// Define the router function that will render the view based on the route path name and update the browser history state
 async function router() {
-	const pageTitle = "Transcendence";
 	let path = location.pathname;
 	let view = routes[path];
-	
+	const pageTitle = "Transcendence";
+
+	navbarVisibility();
+	footerVisibility();
+
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render();
-		console.log('route', result);
-
-		navbarVisibility();
-		footerVisibility();
-
-		if (path === '/' && result.includes("code-validated")) {
-			path = '/home';
-			view = routes[path];
-			result = view.render();
-		}
-
+		// console.log('route', result);
+		
 		if (result.includes("pong-renderer")) {
 			setup();
 		}
-
+		
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
 			// If it's a string, user innerHTML
 			app.innerHTML = result;
 		} else if (result instanceof Node) {
-			// If it's a Node, use appendChild
-			app.appendChild(result);
-		} else {
-			// If it's neither, create a text node and append it
-			let textNode = document.createTextNode(String(result));
-			app.appendChild(textNode);
-		}
+            // If it's a Node, use appendChild
+            app.appendChild(result);
+        } else {
+            // If it's neither, create a text node and append it
+            let textNode = document.createTextNode(String(result));
+            app.appendChild(textNode);
+        }
 
-		
 	} else {
 		history.replaceState("", "", "/404");
 		router();
 	}
 }
-
 // Handle navigation
 window.addEventListener("click", (e) => {
 	if (e.target.matches("[data-link]")) {
@@ -172,9 +160,4 @@ window.addEventListener("click", (e) => {
 
 // Update router
 window.addEventListener("popstate", router);
-window.addEventListener("DOMContentLoaded", () => {
-    if (!codeValidated) {
-        router();
-    }
-});
-
+window.addEventListener("DOMContentLoaded", router);

@@ -35,7 +35,7 @@ export default class deleteAccountForm extends HTMLElement {
 				if (data.success){
 					console.log('Account deleted successfully');
 					Icookies.clearAllCookies();
-					window.location.href = '/';
+					window.location.href = '/home';
 				} else {
 					alert('An error occurred. Please try again.')
 				}

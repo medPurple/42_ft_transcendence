@@ -13,14 +13,13 @@ export default () => `
 window.validateCodeAndRedirect = validateCodeAndRedirect;
 
 function validateCodeAndRedirect() {
-	const codeInput = document.querySelector('.code-input');
-	const startButton = document.querySelector('.buttons-container button');
 
+	const codeInput = document.querySelector('.code-input');
 	if (codeInput) {
+
 		const code = codeInput.value;
 		if (code === '8650 4006') {
 			console.log('Code is correct!');
-			startButton.classList.add('code-validated');
 			window.location.href = '/home';
 		} else {
 			console.log('Incorrect code!');
