@@ -25,8 +25,7 @@ export default class Cookies{
 			expires = "; expires=" + date.toUTCString();
 		}
 		var encodedValue = encodeURIComponent(value || "");
-		document.cookie = name + "=" + encodedValue + expires + "; path=/; SameSite=None; Secure: true";
-
+		document.cookie = name + "=" + encodedValue + expires + "; path=/; SameSite=None; Secure";
 	}
 	
 		clearAllCookies() {

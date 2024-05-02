@@ -102,13 +102,13 @@ export class pokeMap{
     
     async connection(){
         let id = await Iuser.getID();
-        const socket = new WebSocket("ws://localhost:8080/ws/pokemap/");
+        const socket = new WebSocket("wss://localhost:4430/ws/pokemap/");
 
         
         socket.onopen = async (e) => {
             console.log("WebSocket connection opened.");
             try{
-                const response = await fetch(`http://localhost:8080/api/pokemap/?userID=${id}`, {
+                const response = await fetch(`http://localhost:4430/api/pokemap/?userID=${id}`, {
                     method: 'GET',
                     headers: {
                         'X-CSRFToken': Icookies.getCookie('csrftoken'),

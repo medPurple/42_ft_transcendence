@@ -10,7 +10,7 @@
   #   build: backend/djangotemplate
   #   image: djangotemplate
   #   expose :
-  #   - "8080"
+  #   - "4430"
   #   restart: on-failure
 
 networks:
@@ -32,7 +32,7 @@ services:
     build: nginx
     image: nginx
     ports:
-      - "8080:80"
+      - "4430:4430"
     restart: on-failure
 
   user:
@@ -45,7 +45,7 @@ services:
     build: backend/user
     image: user
     expose :
-    - "8080"
+    - "4430"
     restart: on-failure
 
   token:
@@ -55,7 +55,7 @@ services:
     build: backend/JWToken
     image: jwtoken
     expose :
-      - "8080"
+      - "4430"
     restart: on-failure
 
   pokemap:
@@ -65,7 +65,7 @@ services:
     build: backend/pokemap
     image: pokemap
     expose :
-      - "8080"
+      - "4430"
     restart: on-failure
 
   # game3d:
@@ -78,7 +78,7 @@ services:
   #   build: backend/game3d
   #   image: game3d
   #   expose :
-  #     - "8080"
+  #     - "4430"
   #   restart: on-failure
 
   matchmaking:
@@ -91,5 +91,5 @@ services:
     build: backend/matchmaking
     image: matchmaking
     expose :
-    - "8080"
+    - "4430"
     restart: on-failure

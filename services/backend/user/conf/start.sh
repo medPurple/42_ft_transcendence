@@ -11,4 +11,4 @@ python3 manage.py makemigrations profiles
 
 python3 manage.py migrate
 
-python3 manage.py runserver 0.0.0.0:8080
+python3 manage.py runserver 0.0.0.0:4430

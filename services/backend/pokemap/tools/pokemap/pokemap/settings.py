@@ -31,10 +31,21 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
-                        'http://127.0.0.1:8080',
-                        'http://pokemap:8080']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4430',
+                        'http://127.0.0.1:4430',
+                        'http://pokemap:4430']
 # Application definition
+
+# # Définition de l'attribut SameSite pour le cookie CSRF
+CSRF_COOKIE_SAMESITE = 'None'
+
+# # Définition de l'attribut SameSite pour le cookie de session
+SESSION_COOKIE_SAMESITE = 'None'
+
+# # Assurez-vous également d'utiliser HTTPS et de définir CSRF_COOKIE_SECURE et SESSION_COOKIE_SECURE sur True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 INSTALLED_APPS = [
     'daphne',

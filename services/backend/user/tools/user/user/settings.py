@@ -37,21 +37,23 @@ ALLOWED_HOSTS = [
     '*',
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
-                        'http://127.0.0.1:8080',
-                        'http://userservice:8080',
-                        'http://paul-f4ar4s1:8080',]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4430',
+                        'http://127.0.0.1:4430',
+                        'http://userservice:4430',
+                        'http://paul-f4ar4s1:4430']
 
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_ALLOW_ALL_ORIGINS = True
 
 # # Définition de l'attribut SameSite pour le cookie CSRF
-# CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
 
 # # Définition de l'attribut SameSite pour le cookie de session
-# SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 
 # # Assurez-vous également d'utiliser HTTPS et de définir CSRF_COOKIE_SECURE et SESSION_COOKIE_SECURE sur True
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 
 # Application definition
@@ -85,6 +87,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'profiles',
     'friends',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -95,6 +98,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 
 ]
 
