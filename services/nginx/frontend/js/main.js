@@ -18,6 +18,7 @@ import friendsProfile from "./views/friends/friendsProfile.js";
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
 import { setup } from "./components/pong3d/pongLogic.js";
+import Icookies from "./components/cookie/cookie.js";
 
 // Define the routes
 const routes = {
@@ -101,7 +102,34 @@ function NavbarFooterVisibility() {
 	}
 }
 
-//if cookies(Icookie), get userID affiche connected else not connected 
+function updateNavbarDropdown() {
+    var dropdownMenu = document.getElementById("navbar-dropdown-menu");
+
+    var condition = checkConnected();
+
+    if (condition) {
+        dropdownMenu.innerHTML = `
+            <li><a class="dropdown-item" href="/profile">settings</a></li>
+            <li><a class="dropdown-item" href="/friends">friends</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">log out</a></li>
+            <li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
+        `;
+    } else {
+        dropdownMenu.innerHTML = `
+            <li><a class="dropdown-item" href="/login">log in</a></li>
+            <li><a class="dropdown-item" href="/register">register</a></li>
+        `;
+    }
+}
+
+function checkConnected() {
+
+	if (Icookies.getCookie('token')){
+		return true;
+	}
+	return false;
+}
 
 
 async function router() {
@@ -110,6 +138,7 @@ async function router() {
 	const pageTitle = "Transcendence";
 
 	NavbarFooterVisibility();
+	updateNavbarDropdown();
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
