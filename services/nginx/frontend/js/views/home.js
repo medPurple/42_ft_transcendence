@@ -1,5 +1,4 @@
 export default () => `
-
 <div class="container">
 	<div class="row">
 		<div class="col-md-6 g-3 d-flex align-items-center justify-content-center">
@@ -26,4 +25,3 @@ export default () => `
 </div>
 
 	`;
-

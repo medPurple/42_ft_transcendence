@@ -30,6 +30,7 @@ US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
 MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
+CH_VOL = $(shell docker volume ls | grep chat | wc -l)
 
 #######	COLORS #######
 
@@ -49,6 +50,7 @@ all: run_script up
 	@ echo -e "\n$(WHITE)	game3d set $(CEND)"
 	@ echo -e "\n$(WHITE)	token set $(CEND)"
 	@ echo -e "\n$(WHITE)	user set $(CEND)"
+	@ echo -e "\n$(WHITE)	chat set $(CEND)"
 
 	@ echo -e "\n$(GREEN)★ Everything is running smoothly at http://localhost:8080/ ★$(CEND)"
 	@ echo -e "\n$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
@@ -135,6 +137,8 @@ clean : down
 	else echo "	USER Volume already deleted"; fi;
 	@ if [ $(MA_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(MA_NAME); \
 	else echo "	MATCHMAKING Volume already deleted"; fi;
+	@ if [ $(CH_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(CH_NAME); \
+	else echo "	CHAT Volume already deleted"; fi;
 
 # Weird volumes created somewhere using secret volume?
 	@ docker system prune -af
@@ -143,6 +147,7 @@ clean : down
 
 	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL_NAME); \
 	else echo "	VAULT Volume already deleted"; fi;
+
 
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 

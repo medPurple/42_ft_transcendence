@@ -29,6 +29,7 @@ class SendFriendRequestView(APIView):
 
 class FriendRequestView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
+	# accept friend's request
 	def post(self, request):
 		from_user = request.user
 		friend_username = request.data.get('friend_username')
@@ -55,6 +56,7 @@ class FriendRequestView(APIView):
 		'send_requests': serializer_send.data},
 		status=status.HTTP_200_OK)
 
+	# delete friend's request
 	def delete(self, request):
 		from_user = request.user
 		friend_username = request.data.get('friend_username')
@@ -71,6 +73,7 @@ class FriendRequestView(APIView):
 
 class FriendsView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
+	# get profile friend
 	def get(self, request, username=None):
 		if username:
 			friend = get_object_or_404(request.user.friends, username=username)
@@ -79,6 +82,7 @@ class FriendsView(APIView):
 			friends = request.user.friends.all()
 			serializer = FriendsSerializer(friends, many=True)
 		return Response({'success': True, 'friends': serializer.data}, status=status.HTTP_200_OK)
+	# delete friend
 	def delete(self, request):
 		from_user = request.user
 		friend_username = request.data.get('friend_username')
@@ -96,46 +100,4 @@ class FriendsView(APIView):
 			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-# @login_required
-# def	accept_friend_request(request, requestID):
-# 	friend_request = FriendRequest.objects.get(id=requestID)
-# 	if friend_request.to_user == request.user:
-# 		friend_request.to_user.friends.add(friend_request.from_user)
-# 		friend_request.from_user.friends.add(friend_request.to_user)
-# 		friend_request.delete()
-# 		return HttpResponse('friend request accepted')
-# 	else:
-# 		return HttpResponse('friend request not accepted')
-
-# @login_required
-# def	reject_friend_request(request, requestID):
-# 	friend_request = FriendRequest.objects.get(id=requestID)
-# 	if friend_request.to_user == request.user:
-# 		friend_request.delete()
-# 		return HttpResponse('friend request rejected')
-# 	else:
-# 		return HttpResponse('friend request not rejected')
-
-# @login_required
-# def	delete_friend(request, userID):
-# 	friend_profile = get_object_or_404(CustomUser, id=userID)
-# 	request.user.friends.remove(friend_profile)
-# 	friend_profile.friends.remove(request.user)
-# 	return redirect('friends')
-
-
-
-# @login_required
-# def friend_profile(request, userID):
-# 	friend = get_object_or_404(CustomUser, id=userID)
-# 	return render(request, 'friend_profile.html', {'friend': friend})
-
-# @login_required
-# def all_users(request):
-# 	# Récupérer tous les utilisateurs enregistrés dans la base de données
-# 	users = CustomUser.objects.all()
-# 	friend_requests = FriendRequest.objects.filter(to_user=request.user)
-# 	return render(request, 'friends.html',
-# 			{'users': users, 'friend_requests' : friend_requests})
 

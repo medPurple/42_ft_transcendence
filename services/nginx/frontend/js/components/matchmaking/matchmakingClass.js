@@ -96,10 +96,10 @@ class Matchmaking {
 
 // Pour utiliser cette classe, vous pouvez créer une nouvelle instance et appeler les méthodes appropriées
 export class MatchmakingButtons {
-	
+
 
 	constructor(matchmaking) {
-		this.matchmaking = matchmaking;		
+		this.matchmaking = matchmaking;
 	}
 
 	multipongButton(){
@@ -115,7 +115,7 @@ export class MatchmakingButtons {
 		multiponglabel.htmlFor = 'pong_multiplayer';
 		multiponglabel.innerText = 'Pong Versus';
 		multiponglabel.classList.add('queue-label');
-	
+
 		const container = document.createElement('div');
 		container.classList.add('queue-container');
 		container.appendChild(multipongbutton);
@@ -137,7 +137,7 @@ export class MatchmakingButtons {
 		multipkmlabel.htmlFor = 'pkm_multiplayer';
 		multipkmlabel.innerText = 'Pokemon Versus';
 		multipkmlabel.classList.add('queue-label');
-	
+
 		const container = document.createElement('div');
 		container.classList.add('queue-container');
 		container.appendChild(multipkmbutton);
@@ -171,7 +171,7 @@ export class MatchmakingButtons {
 		matchmakingtitle.innerText = 'Select the game you want to play';
 		matchmakingtitle.classList.add('matchmaking-title');
 		return matchmakingtitle;
-	
+
 	}
 
 	matchmakingStartButton(){
@@ -191,7 +191,7 @@ export class MatchmakingButtons {
 				} else if (selectedGame.value == 'Pokemon Versus') {
 					await this.matchmaking.pkmMatchmaking();
 				}
-				
+
 			}
 		}
 		return startbutton;
