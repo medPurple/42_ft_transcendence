@@ -101,6 +101,9 @@ function NavbarFooterVisibility() {
 	}
 }
 
+//if cookies(Icookie), get userID affiche connected else not connected 
+
+
 async function router() {
 	let path = location.pathname;
 	let view = routes[path];

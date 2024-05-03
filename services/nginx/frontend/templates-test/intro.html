@@ -33,13 +33,13 @@
 			<img src="../images/Site/InvitationCard_Front.png" alt="Original Image" class="original-image">
 			<img src="../images/Site/InvitationCard_Rev.png" alt="Hover Image" class="hover-image">
 		</div>
-		<form class="buttons-container">
+		<form class="buttons-container" onsubmit="validateCodeAndRedirect(); return false;">
 			<div class="row">
 				<div class="col g-2">
 					<input type="text" placeholder="Enter Code" class="code-input">
 				</div>
 				<div class="col g-2">
-					<button type="submit" class="btn btn-dark" onclick="validateCodeAndRedirect()">Start</button>
+					<button type="submit" class="btn btn-dark">Start</button>
 				</div>
 			</div>
 		</form>
