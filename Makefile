@@ -119,6 +119,8 @@ clean : down
 	else echo "	user Volume already deleted"; fi;
 	@ if [ $(MA_VOL) = "1" ]; then docker volume rm services_$(MA_NAME); \
 	else echo "	user Volume already deleted"; fi;
+	@ if [ $(CH_VOL) = "1" ]; then docker volume rm services_$(CH_NAME); \
+	else echo "	user Volume already deleted"; fi;
 	@ docker volume rm secret_volume
 
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"

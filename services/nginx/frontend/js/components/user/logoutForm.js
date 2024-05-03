@@ -33,15 +33,12 @@ export default class LogoutForm extends HTMLElement {
 			})
 			.then(response => {
 				if (response.ok) {
-					return response.json();
+					Icookies.clearAllCookies();
+					window.location.href = '/'; // Change the URL to your home page URL
+
 				} else {
 					throw new Error('Logout failed');
 				}
-			})
-			.then(data => {
-				console.log(data);
-				Icookies.clearAllCookies();
-				window.location.href = '/'; // Change the URL to your home page URL
 			})
 			.catch(error => {
 				console.error('Error:', error);
