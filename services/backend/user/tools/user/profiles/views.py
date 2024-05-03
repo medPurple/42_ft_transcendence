@@ -18,9 +18,9 @@ from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer,
 logger = logging.getLogger(__name__)
 
 def user_token(request, user_id):
-	token_service_url = 'http://JWToken:4430/api/token/'
+	token_service_url = 'https://JWToken:4430/api/token/'
 	try:
-		token_response = requests.post(token_service_url, json={'user_id' : user_id})
+		token_response = requests.post(token_service_url, json={'user_id' : user_id}, verify=False)
 		token_response.raise_for_status()
 		user_token = token_response.json().get('token')
 		return user_token
@@ -45,12 +45,20 @@ class CustomUserRegister(APIView):
 			user.is_online = True
 			user.save()
 			token = user_token(request, user.user_id)
-			login(request, user)
-			url = "http://pokemap:4430/api/pokemap/"
-			headers = {'Content-Type': 'application/json'}
-			data = {"userID": user.user_id}
-			response = requests.post(url, headers=headers, data=json.dumps(data))
-			return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
+			if token is not None:
+				logger.info('Token created')
+				url = "https://pokemap:4430/api/pokemap/"
+				headers = {'Content-Type': 'application/json'}
+				data = {"userID": user.user_id}
+				response = requests.post(url, headers=headers, data=json.dumps(data), verify=False)
+				logger.info(response)
+				if response.ok:
+					login(request, user)
+					return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
+				else:
+					return Response({'error': 'Error creating pokemap user'}, status=status.HTTP_400_BAD_REQUEST)
+			else:
+				return Response({'error': 'Error creating token'}, status=status.HTTP_400_BAD_REQUEST)
 		else:
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -76,8 +84,8 @@ class CustomUserLogout(APIView):
 		user.is_online = False
 		user.save()
 		token = request.headers.get('Authorization')
-		token_service_url = 'http://JWToken:4430/api/token/'
-		token_response = requests.get(token_service_url, headers={'Authorization': token})
+		token_service_url = 'https://JWToken:4430/api/token/'
+		token_response = requests.get(token_service_url, headers={'Authorization': token}, verify=False)
 		logout(request)
 		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 
@@ -88,8 +96,10 @@ class CustomUsernameView(APIView):
 		return Response({'user': serializer.data, 'success': True}, status=status.HTTP_200_OK)
 
 class CustomUserView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
+	permission_classes = (permissions.AllowAny,)
 	def get(self, request):
+		logger.info('User info')
+		logger.info(request)
 		serializer = CustomUserSerializer(request.user)
 		return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
 

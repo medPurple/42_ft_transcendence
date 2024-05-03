@@ -28,26 +28,42 @@ SECRET_KEY = 'django-insecure-&sm8v8$^3mu+jtnyz-e(d^8@92d!qott$^w8jr*bl8u&1!s@-p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
 
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'queueservice',
+    'pokemapservice',
+    'tokenservice',
+    'userservice',
+    '*',]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:4430',
-                        'http://127.0.0.1:4430',
-                        'http://pokemap:4430']
-# Application definition
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ['https://localhost:4430',
+                        'https://127.0.0.1:4430',
+                        'https://userservice:4430',
+                        'https://tokenservice:4430',
+                        'https://queueservice:4430',
+                        'https://pokemapservice:4430',]
+
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    'https://localhost:4430',
+    'https://127.0.0.1:4430',
+    'https://userservice:4430',
+    'https://tokenservice:4430',
+    'https://queueservice:4430',
+    'https://pokemapservice:4430', # Remplacez par les origines que vous voulez autoriser
+]
 
-CSRF_ALLOW_ALL_ORIGINS = True
 
 # # Définition de l'attribut SameSite pour le cookie CSRF
-CSRF_COOKIE_SAMESITE = 'None'
 
 # # Définition de l'attribut SameSite pour le cookie de session
 SESSION_COOKIE_SAMESITE = 'None'
-
-# # Assurez-vous également d'utiliser HTTPS et de définir CSRF_COOKIE_SECURE et SESSION_COOKIE_SECURE sur True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 

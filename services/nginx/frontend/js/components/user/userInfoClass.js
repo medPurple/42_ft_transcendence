@@ -47,7 +47,8 @@ export default class userInfo {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': this.csrfToken,
 					'Authorization': this.jwtToken,
-				}
+				},
+				credentials: 'include',
 			});
 			const data = await response.json();
 			if (data.success){
@@ -72,7 +73,8 @@ export default class userInfo {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': this.csrfToken,
 					'Authorization': this.jwtToken
-				}
+				},
+				credentials: 'include',
 			});
 			if (!response.ok) {
 				throw new Error('identification failed');
