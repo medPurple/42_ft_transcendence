@@ -96,26 +96,6 @@ const routes = {
 	}
 };
 
-// Define a function to show or hide the navigation bar based on the route
-function navbarVisibility() {
-	const path = location.pathname;
-
-	// Check if the current route requires hiding the navigation bar
-	const hideNavbarRoutes = ['/']; // Add routes here where you want to hide the navigation bar
-	const hideNavbar = hideNavbarRoutes.includes(path);
-
-	  // Select the navigation bar
-	const navbar = document.getElementById('navbar');
-
-	 // Add or remove the 'hidden' class based on whether the navigation bar should be hidden or not
-	if (hideNavbar) {
-		navbar.classList.add('hidden');
-	} else {
-		navbar.classList.remove('hidden');
-	}
-}
-
-
 function NavbarFooterVisibility() {
 	const path = location.pathname;
 	const showInRoute = ['/home', '/about', '/contact'];
@@ -167,6 +147,7 @@ async function router() {
 
 	const pageTitle = "Transcendence";
 
+	NavbarFooterVisibility();
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
@@ -191,7 +172,6 @@ async function router() {
 			let textNode = document.createTextNode(String(result));
 			app.appendChild(textNode);
 		}
-		navbarVisibility();
 
 	} else {
 		history.replaceState("", "", "/404");

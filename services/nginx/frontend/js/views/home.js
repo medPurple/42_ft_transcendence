@@ -1,12 +1,27 @@
 export default () => `
-	<h1>Home</h1>
-
-	<h2>Welcome to Transcendence</h2>
-	<p>Transcendence is a web application that allows you to play games, chat with other users, and save your progress. You can also register and login to access more features.</p>
-	<p>Click on the links below to access the different services:</p>
-	<a href="/userService" data-link>User Service</a> <!-- New link -->
-    <a href="/gameService" data-link>Game Service</a> <!-- New link -->
-	<a href="/play" data-link>Play</a> <!-- New link -->
-
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 g-3 d-flex align-items-center justify-content-center">
+			<a href="/register" data-link>
+				<img src="../images/Site/Register.png" class="img-fluid" alt="Register">
+			</a>
+		</div>
+		<div class="col-md-6 g-3 d-flex align-items-center justify-content-center">
+			<a href="/login" data-link>
+				<img src="../images/Site/Login.png" class="img-fluid" alt="Login">
+			</a>
+		</div>
+		<div class="col-md-6 g-3 d-flex align-items-center justify-content-center">
+			<a href="/gameService" data-link>
+				<img src="../images/Site/Login.png" class="img-fluid" alt="Pong3D">
+			</a>
+		</div>
+		<div class="col-md-6 g-3 d-flex align-items-center justify-content-center">
+			<a href="/play" data-link>
+				<img src="../images/Site/Login.png" class="img-fluid" alt="Metaverse">
+			</a>
+		</div>
+	</div>
+</div>
 
 	`;
