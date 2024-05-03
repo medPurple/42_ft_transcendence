@@ -6,8 +6,8 @@ export default class LogoutForm extends HTMLElement {
 		this.attachShadow({ mode: 'open' });
 		const button = document.createElement('button');
         button.setAttribute('id', 'logout-button');
-        button.setAttribute('class', 'button');
-        button.textContent = 'Logout';
+        button.setAttribute('class', 'btn btn-dark');
+        button.textContent = 'Log out';
         // Attacher le bouton à l'ombre de l'élément
         this.shadowRoot.appendChild(button);
     }
