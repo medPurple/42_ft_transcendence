@@ -31,5 +31,5 @@ else
   psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_BASENAME} TO ${DB_USER};"
   psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${DB_USER};"
 EOF
-fi
 
+fi

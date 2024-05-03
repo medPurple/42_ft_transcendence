@@ -26,10 +26,12 @@ VA_IMG = $(shell docker images | grep vault | wc -l)
 
 VA_PS = $(shell docker ps | grep vault | wc -l)
 
+
 US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
 MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
+CH_VOL = $(shell docker volume ls | grep chat | wc -l)
 
 #######	COLORS #######
 
@@ -134,6 +136,8 @@ clean : down
 	@ if [ $(US_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(US_NAME); \
 	else echo "	USER Volume already deleted"; fi;
 	@ if [ $(MA_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(MA_NAME); \
+	else echo "	user Volume already deleted"; fi;
+	@ if [ $(CH_VOL) = "1" ]; then docker volume rm services_$(CH_NAME); \
 	else echo "	MATCHMAKING Volume already deleted"; fi;
 
 # Weird volumes created somewhere using secret volume?

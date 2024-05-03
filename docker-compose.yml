@@ -7,7 +7,7 @@
   #     - djangotemplate:/var/lib/postgresql/
   #   networks:
   #   - microservices
-  #   build: services/backend/djangotemplate
+  #   build: backend/djangotemplate
   #   image: djangotemplate
   #   expose :
   #   - "8080"
@@ -16,19 +16,19 @@
 networks:
   microservices:
     external: true
-
 volumes:
   secret_volume:
   user:
   matchmaking:
-  game3d:
+  # game3d:
+
 
 services:
   nginx:
     container_name: nginx
     networks:
     - microservices
-    build: services/nginx
+    build: nginx
     image: nginx
     ports:
       - "8080:80"
@@ -41,7 +41,7 @@ services:
       - user:/var/lib/postgresql/
     networks:
     - microservices
-    build: services/backend/user
+    build: backend/user
     image: user
     expose :
     - "8080"
@@ -51,24 +51,24 @@ services:
     container_name: jwtoken
     networks:
       - microservices
-    build: services/backend/JWToken
+    build: backend/JWToken
     image: jwtoken
     expose :
       - "8080"
     restart: on-failure
 
-  game3d:
-    container_name: game3d
-    user: root
-    volumes:
-    - game3d:/var/lib/postgresql
-    networks:
-      - microservices
-    build: services/backend/game3d
-    image: game3d
-    expose :
-      - "8080"
-    restart: on-failure
+  # game3d:
+  #   container_name: game3d
+  #   user: root
+  #   volumes:
+  #   - game3d:/var/lib/postgresql
+  #   networks:
+  #     - microservices
+  #   build: backend/game3d
+  #   image: game3d
+  #   expose :
+  #     - "8080"
+  #   restart: on-failure
 
   matchmaking:
     container_name: matchmaking
@@ -77,7 +77,7 @@ services:
       - matchmaking:/var/lib/postgresql/
     networks:
     - microservices
-    build: services/backend/matchmaking
+    build: backend/matchmaking
     image: matchmaking
     expose :
     - "8080"

@@ -149,8 +149,7 @@ export class FriendsButtons{
 						});
 						const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
 						if (isFriends) {
-							this.profileFriend(liElement, users.username);
-							this.deleteFriend(liElement, users.username);
+							this.seeFriendOrDeleteFriend(liElement, users.username);
 						} else if (hasFriendRequest) {
 							this.acceptOrRejectFriendRequest(liElement, users.username);
 						} else if (hasSendRequest) {
@@ -205,6 +204,21 @@ export class FriendsButtons{
 		this.rejectFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username);
 	}
 
+	seeFriendOrDeleteFriend(liElement, username) {
+		const linkToFriendsProfile = document.createElement('a');
+		linkToFriendsProfile.textContent = 'See profile';
+		linkToFriendsProfile.href = `/friend-profile/${username}`;
+		linkToFriendsProfile.setAttribute('data-link', '');
+
+		const buttonDeleteFriend = document.createElement('button');
+		buttonDeleteFriend.textContent = 'Delete friend';
+
+
+		this.profileFriend(liElement, linkToFriendsProfile);
+		this.deleteFriend(liElement, username, buttonDeleteFriend, linkToFriendsProfile);
+		
+	}
+
 	async acceptFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username){
 
 		buttonAcceptRequest.onclick = async () => {
@@ -212,8 +226,9 @@ export class FriendsButtons{
 				const acceptIsValid = await this.friends.acceptFriendRequest(username);
 				if (acceptIsValid === 'Request accepted') {
 					buttonAcceptRequest.textContent = 'Request Accepted';
-					buttonAcceptRequest.disabled = true;
-					buttonRejectRequest.disabled = true;
+					buttonAcceptRequest.style.display = 'none';
+					buttonRejectRequest.style.display = 'none';
+					this.seeFriendOrDeleteFriend(liElement, username);
 				}
 			} catch (error) {
 				console.error('Error:', error);
@@ -230,8 +245,9 @@ export class FriendsButtons{
 				const rejectIsValid = await this.friends.rejectFriendRequest(username);
 				if (rejectIsValid === 'Request rejected'){
 					buttonRejectRequest.textContent = 'Request rejected';
-					buttonRejectRequest.disabled = true;
-					buttonAcceptRequest.disabled = true;
+					buttonAcceptRequest.style.display = 'none';
+					buttonRejectRequest.style.display = 'none';
+					this.sendFriendRequestButton(liElement, username);
 				}
 			} catch (error) {
 				console.error('Error', error);
@@ -249,33 +265,24 @@ export class FriendsButtons{
 		return buttonRequestSent;
 	}
 
-	async profileFriend (liElement, username) {
-		const buttonIsFriends = document.createElement('button');
-		buttonIsFriends.textContent = 'See profile';
-		buttonIsFriends.onclick = async () => {
-			try {
-				// const getFriend = await this.friends.getFriendsList();
-				window.location.href = `/friend-profile`;
-			} catch (error) {
-				console.error('Error', error);
-			}
+	async profileFriend (liElement, linkToFriendsProfile) {
 
-		}
-		// buttonIsFriends.disabled = true;
-		liElement.appendChild(buttonIsFriends);
-		return buttonIsFriends;
-
+		liElement.appendChild(linkToFriendsProfile);
+		return linkToFriendsProfile;
 	}
 
-	async deleteFriend(liElement, username) {
-		const buttonDeleteFriend = document.createElement('button');
-		buttonDeleteFriend.textContent = 'Delete friend';
+
+	async deleteFriend(liElement, username, buttonDeleteFriend, linkToFriendsProfile) {
+
 		buttonDeleteFriend.onclick = async () => {
 			try {
 				const deleteIsValid = await this.friends.deleteFriend(username);
 				if (deleteIsValid === 'Friend deleted') {
 					buttonDeleteFriend.textContent = 'Friend deleted';
-					buttonDeleteFriend.disable = true
+					buttonDeleteFriend.style.display = 'none';
+					linkToFriendsProfile.style.display = 'none';
+					this.sendFriendRequestButton(liElement, username);
+					
 				}
 			} catch (error) {
 				console.error('Error', error);
