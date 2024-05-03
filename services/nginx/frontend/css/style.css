@@ -16,7 +16,7 @@ p {
 
 a {
 	text-decoration: none !important;
-	color: black !important;
+	/* color: black !important; */
 }
 
 a:hover {
@@ -36,6 +36,10 @@ a:hover {
 	display: none;
 }
 
+#navbar.hidden {
+	display: none;
+}
+
 #app {
 	padding-top: 15em;
 	padding-bottom: 15em;
@@ -43,23 +47,16 @@ a:hover {
 
 
 /********** MENU BAR ***********/
-#navbar {
+.container-fluid {
 	position: fixed;
 	font-family: 'Courier New', Courier, monospace;
-	font-size: 1em;
-	display: flex;
-	justify-content: space-between;
 	background-color: #f9f9f9;
 	border-radius: 10px;
-    top: 0;
-    width: 42%;
 	margin: 1.5em;
-	padding: 1em;
 	z-index: 1000;
-
 }
 
-#navbar.hidden {
+.container-fluid.hidden {
     display: none;
 }
 

@@ -34,7 +34,7 @@ export default class updatePasswordForm extends HTMLElement {
 			.then(data => {
 				if (data.success) {
 					console.log('Password updated successfully');
-					window.location.href = '/';
+					window.location.href = '/home';
 				} else {
 					alert('An error occurred. Please try again.');
 				}

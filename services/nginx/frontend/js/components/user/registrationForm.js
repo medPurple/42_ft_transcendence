@@ -5,17 +5,47 @@ export default class RegistrationForm extends HTMLElement {
 		super(); // Always call super first in constructor
 		this.attachShadow({ mode: 'open' }); // Create a new attached DOM tree for the component
         this.shadowRoot.innerHTML = `
-		<form id="signup-form" method="post" action="">
-			<input type="file" name="profile_picture" accept="images/*" />
-			<input type="text" name="username" placeholder="Username">
-			<input type="text" name="first_name" placeholder="Firstname">
-			<input type="text" name="last_name" placeholder="Lastname">
-			<input type="email" name="email" placeholder="Email">
-			<input type="password" name="password1" placeholder="Password">
-			<input type="password" name="password2" placeholder="Confirm Password">
-			<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-			<button type="submit" class="button">Register</button>
-		</form>`;
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="favicon" href="./images/Favicons/Logo.png" />
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
+		<script type="module" src="./js/main.js" defer></script>
+
+		<form id="signup-form" method="post" action="" class="container">
+		<div class="mb-4 row">
+			<div class="col">
+				<input type="file" class="form-control" name="profile_picture" accept="images/*" />
+			</div>
+			<div class="col">
+				<input type="text" class="form-control" name="username" placeholder="Username">
+			</div>
+		</div>
+
+		<div class="mb-4">
+			<input type="text" class="form-control" name="first_name" placeholder="Firstname">
+		</div>
+
+		<div class="mb-4">
+			<input type="text" class="form-control" name="last_name" placeholder="Lastname">
+		</div>
+		
+		<div class="mb-4">
+			<input type="email" class="form-control"  name="email" placeholder="Email">
+		</div>
+
+		<div class="mb-4">
+			<input type="password" class="form-control" name="password1" placeholder="Password">
+		</div>
+
+		<div class="mb-4">
+			<input type="password" class="form-control" name="password2" placeholder="Confirm Password">
+		</div>
+
+		<input type="hidden" class="form-control" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+		<button type="submit" class="btn btn-dark">Register</button>
+	</form>`;
 	}
 
 	connectedCallback() {
@@ -39,7 +69,7 @@ export default class RegistrationForm extends HTMLElement {
 				if (data.success) {
 					Icookies.setCookie('token', data.token, 90);
 					// Redirect to the home page
-					 window.location.href = '/'; // Change the URL to your home page URL
+					 window.location.href = `/home`; // Change the URL to your home page URL
 
 				} else {
                     // Display validation errors or any other error message

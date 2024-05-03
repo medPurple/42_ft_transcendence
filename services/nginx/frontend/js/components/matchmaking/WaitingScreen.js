@@ -71,7 +71,7 @@ export class WaitingScreen{
         leaveButton.addEventListener('click', async () => {
             let test = await this.leaveQueueRequest();
             socket.close();
-            window.location.href = '/';
+            window.location.href = '/home';
         });
         return leaveButton;
     }

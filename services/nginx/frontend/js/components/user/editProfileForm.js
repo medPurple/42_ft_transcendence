@@ -67,7 +67,7 @@ export default class editProfileForm extends HTMLElement {
 				if (data.success) {
 					console.log('Profile updated successfully');
 					// Redirect to the home page
-						window.location.href = '/'; // Change the URL to your home page URL
+						window.location.href = '/home'; // Change the URL to your home page URL
 
 				} else {
 					// Display validation errors or any other error message
