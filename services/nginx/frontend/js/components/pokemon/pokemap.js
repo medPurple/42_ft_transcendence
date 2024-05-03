@@ -132,6 +132,7 @@ export class pokeMap{
 
         socket.onclose = function(event){
             console.log("Websocket connection closed.");
+            
         }
 
         socket.onmessage = (e) => {

@@ -38,6 +38,9 @@ export default class userInfo {
 
 	async getAllUserInfo() {
 		try {
+			console.log('getting user info')
+			console.log(this.csrfToken)
+			console.log(this.jwtToken)
 			const response = await fetch('api/profiles/user-info/', {
 				method: 'GET',
 				headers: {
