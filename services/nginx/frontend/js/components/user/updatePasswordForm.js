@@ -6,13 +6,24 @@ export default class updatePasswordForm extends HTMLElement {
 		super();
 		this.attachShadow({mode: 'open'});
 		this.shadowRoot.innerHTML = `
-			<form id="update-password-form" method="post" action="/api/profiles/update-password">
-				<label for="new_password"> New Password:</label>
-				<input type="password" name="new_password1">
-				<label for="confirm_password"> Confirm Password:</label>
-				<input type="password" name="new_password2">
-				<button type="submit" class="button">Save changes</button>
-			</form>
+
+		<link rel="stylesheet" href="css/style.css" />
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
+
+		<form id="update-password-form" method="post" action="/api/profiles/update-password" class="container">
+			<div class="mb-4">
+				<input type="password" name="new_password1" label="New Password" placeholder="New Password">
+			</div>
+			<div class="mb-4">
+				<input type="password" name="new_password2 label="Confirm Password" placeholder="Confirm Password">
+			</div>
+			<div class="mb-4">
+				<button type="submit" class="btn btn-dark">Save changes</button>
+			</div>
+		</form>
 		`;
 	}
 	connectedCallback() {

@@ -2,7 +2,6 @@ import "../../components/user/profileForm.js";
 
 export default () => `
 
-	<h1>Profile</h1>
 	<profile-form></profile-form>
 	<a href="/edit-profile" data-link>Edit Profile</a><br>
 	<a href="/update-password" data-link>Update password</a><br>

@@ -1,6 +1,10 @@
 import "../../components/user/deleteAccountForm.js";
 
 export default () => `
-	<h1>Delete account</h1>
+
+	<div class="mb-4">
+		<h2>Delete Profile</h2>
+	</div>
 	<delete-account-form></delete-account-form>
+	
 `
