@@ -33,6 +33,9 @@ ALLOWED_HOSTS = [
     '*',
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_ALLOW_ALL_ORIGINS = True
+
 # # Définition de l'attribut SameSite pour le cookie CSRF
 CSRF_COOKIE_SAMESITE = 'None'
 
@@ -71,6 +74,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tokenAPI',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +85,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'JWToken.urls'

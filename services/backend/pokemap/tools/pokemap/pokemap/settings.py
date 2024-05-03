@@ -36,6 +36,11 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:4430',
                         'http://pokemap:4430']
 # Application definition
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_ALLOW_ALL = True
+
+CSRF_ALLOW_ALL_ORIGINS = True
+
 # # Définition de l'attribut SameSite pour le cookie CSRF
 CSRF_COOKIE_SAMESITE = 'None'
 
@@ -57,6 +62,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +73,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'pokemap.urls'

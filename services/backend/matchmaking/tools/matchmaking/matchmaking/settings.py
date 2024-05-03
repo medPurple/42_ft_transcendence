@@ -31,13 +31,16 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'queueservice']
+    'queueservice',
+    '*',]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4430',
-                        'http://127.0.0.1:4430',
-                        '*:4430']
+                        'http://127.0.0.1:4430',]
 
 # Application definition
+CORS_ALLOW_ALL_ORIGINS = True
+CSRF_ALLOW_ALL_ORIGINS = True
+
 # # Définition de l'attribut SameSite pour le cookie CSRF
 CSRF_COOKIE_SAMESITE = 'None'
 
@@ -61,6 +64,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'drf_spectacular',
+    'corsheaders',
+
 
 ]
 
@@ -72,6 +77,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 LOGGING = {

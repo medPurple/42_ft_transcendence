@@ -27,6 +27,8 @@ class PlayerConsumer(WebsocketConsumer):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 instance.save()
+                json_data = json.dumps(instance.data)
+                self.send(json_data)
         
 
     def disconnect(self, close_code):
