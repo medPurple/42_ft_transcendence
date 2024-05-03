@@ -87,30 +87,18 @@ const routes = {
 	}
 };
 
-function navbarVisibility() {
-    const path = location.pathname;
-    const hideNavbarRoutes = ['/'];
-    const hideNavbar = hideNavbarRoutes.includes(path);
+function NavbarFooterVisibility() {
+	const path = location.pathname;
+	const showInRoute = ['/home', '/about', '/contact'];
+	const showNavbarFooter = showInRoute.includes(path);
+
+	const footer = document.getElementById('custom-footer');
 	const navbar = document.getElementById('navbar');
 
-    if (hideNavbar) {
-        navbar.classList.add('hidden');
-    } else {
-        navbar.classList.remove('hidden');
-    }
-}
-
-function footerVisibility() {
-    const path = location.pathname;
-    const hideFooterRoute = ['/'];
-    const hideFooter = hideFooterRoute.includes(path);
-	const footer = document.getElementById('custom-footer');
-
-    if (hideFooter) {
-        footer.classList.add('hidden');
-    } else {
-        footer.classList.remove('hidden');
-    }
+	if (showNavbarFooter) {
+		footer.classList.remove('hidden');
+		navbar.classList.remove('hidden');
+	}
 }
 
 async function router() {
@@ -118,8 +106,7 @@ async function router() {
 	let view = routes[path];
 	const pageTitle = "Transcendence";
 
-	navbarVisibility();
-	footerVisibility();
+	NavbarFooterVisibility();
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
