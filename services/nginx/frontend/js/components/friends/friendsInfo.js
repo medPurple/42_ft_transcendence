@@ -1,6 +1,6 @@
 import Icookies from "../cookie/cookie.js"
 
-class friendInfo {
+class friendsInfo {
 	constructor(){
 		this.jwtToken = Icookies.getCookie('token');
 		this.csrfToken = Icookies.getCookie('csrftoken');
@@ -8,7 +8,7 @@ class friendInfo {
 
     async getFriendsList() {
 		try {
-			const response = await fetch('api/friends/friends-list/', {
+			const response = await fetch('/api/friends/friends-list/', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ class friendInfo {
 
     async getFriend(username) {
         try {
-			const response = await fetch(`api/friends/friends-list/${username}`, {
+			const response = await fetch(`/api/friends/friends-list/${username}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -50,6 +50,6 @@ class friendInfo {
 
 }
 
-let Ifriends = new friendInfo();
+let Ifriends = new friendsInfo();
 
 export default Ifriends;

@@ -5,14 +5,6 @@ export default class userInfo {
 		this.jwtToken = Icookies.getCookie('token');
 		this.csrfToken = Icookies.getCookie('csrftoken');
 	}
-	// async connectedCallback() {
-	// 	try {
-	// 		const username = await this.getUsername();
-	// 		console.log(username);
-	// 	} catch (error) {
-	// 		console.error('Error:', error);
-	// 	}
-	// }
 
 	async getUsername() {
 		try {
@@ -48,8 +40,6 @@ export default class userInfo {
 			});
 			const data = await response.json();
 			if (data.success){
-				console.log(data);
-				console.log(data.user.username);
 				return data
 			} else {
 				throw new Error('Failed to get user info');
@@ -94,7 +84,6 @@ export default class userInfo {
 			});
 			const data = await response.json();
 			if (data.success){
-				console.log(data);
 				return data
 			} else {
 				throw new Error('Failed to get user info');
