@@ -31,7 +31,7 @@ class Friends {
 		try {
 			const response = await fetch('api/friends/friend-request/', {
 				method: 'GET',
-				headears: {
+				headers: {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': Icookies.getCookie('csrftoken'),
 					'Authorization': Icookies.getCookie('token')
@@ -134,13 +134,13 @@ export class FriendsButtons{
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.friends.getFriendsRequest();
 		const friendsList = await Ifriends.getFriendsList();
-
+		
 		if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(users => {
-					if (currentUser != users.username) {
-						const liElement = document.createElement('li');
-						liElement.id = 'user';
-						liElement.textContent = users.username;
+				if (currentUser != users.username) {
+					const liElement = document.createElement('li');
+					liElement.id = 'user';
+					liElement.textContent = users.username;
 						const hasFriendRequest = requestFriend.friend_requests.some(request => {
 							return request.from_user === users.user_id || request.to_user === users.user_id;
 						});

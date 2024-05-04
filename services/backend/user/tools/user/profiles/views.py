@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import permissions, status
+from rest_framework.authentication import BaseAuthentication
+from rest_framework import exceptions
 import requests
 import logging
 import json
@@ -28,9 +30,27 @@ def user_token(request, user_id):
 		print(f"Error token : {e}")
 		return None
 
+class JWTAuthentication(BaseAuthentication):
+	def authenticate(self, request):
+		auth_header = request.headers.get('Authorization')
+		if not auth_header:
+			return None
+		
+		token = auth_header.split(' ')[1]
+		token_service_url = 'https://JWToken:4430/api/token/'
+		try:
+			token_response = requests.get(token_service_url, headers={'Authorization': auth_header}, verify=False)
+			token_response.raise_for_status()
+			user_id = token_response.json().get('user_id')
+			user = CustomUser.objects.get(user_id=user_id)
+			return (user, token)
+		except (requests.exceptions.RequestException, CustomUser.DoesNotExist):
+			raise exceptions.AuthenticationFailed('Invalid token')
+			
+
 
 class AllCustomUserView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = [JWTAuthentication]
 	def get(self, request):
 		users = CustomUser.objects.all()
 		serializer = CustomUserSerializer(users, many=True)
@@ -78,25 +98,22 @@ class CustomUserLogin(APIView):
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
 
 class CustomUserLogout(APIView):
-	permission_classes = (permissions.AllowAny,)
+	authentication_classes = [JWTAuthentication]
 	def post(self, request):
+		logger.debug(request)
 		user = request.user
 		user.is_online = False
 		user.save()
-		token = request.headers.get('Authorization')
-		token_service_url = 'https://JWToken:4430/api/token/'
-		token_response = requests.get(token_service_url, headers={'Authorization': token}, verify=False)
-		logout(request)
 		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 
 class CustomUsernameView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = [JWTAuthentication]
 	def get(self, request):
 		serializer = CustomUsernameSerializer(request.user)
 		return Response({'user': serializer.data, 'success': True}, status=status.HTTP_200_OK)
 
 class CustomUserView(APIView):
-	permission_classes = (permissions.AllowAny,)
+	authentication_classes = [JWTAuthentication]
 	def get(self, request):
 		logger.info('User info')
 		logger.info(request)
@@ -104,7 +121,7 @@ class CustomUserView(APIView):
 		return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
 
 class CustomUserEditView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = [JWTAuthentication]
 	parser_classes = (MultiPartParser, FormParser,)
 	def post(self, request):
 		form = CustomUserEditForm(request.data, request.FILES, instance=request.user)
@@ -115,7 +132,7 @@ class CustomUserEditView(APIView):
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CustomUserPasswordView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = [JWTAuthentication]
 	def post(self, request):
 		form = CustomUserPasswordForm(request.user, request.POST)
 		if form.is_valid():
@@ -126,7 +143,7 @@ class CustomUserPasswordView(APIView):
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CustomUserDeleteView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = [JWTAuthentication]
 	def delete(self, request):
 		user = request.user
 		try:
