@@ -87,22 +87,22 @@ class WaitingAPI(APIView):
                     instance.delete()
                     users = WaitingModel.objects.filter(game="pkm_multiplayer")
                     for user in users:
-                        user.position - 1
-                        user.save
+                        user.position = user.position - 1
+                        user.save()
                 case ("pong_multiplayer"):
                     pong_waitinglist.remove(instance)
                     instance.delete()
                     users = WaitingModel.objects.filter(game="pong_multiplayer")
                     for user in users:
-                        user.position - 1
-                        user.save
+                        user.position = user.position - 1
+                        user.save()
                 case ("pong_tournament"):
                     tpong_waitinglist.remove(instance)
                     instance.delete()
                     users = WaitingModel.objects.filter(game="pong_tournament")
                     for user in users:
-                        user.position - 1
-                        user.save
+                        user.position = user.position - 1
+                        user.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({"error": "userID parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
     

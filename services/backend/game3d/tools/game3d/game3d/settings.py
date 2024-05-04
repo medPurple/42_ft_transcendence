@@ -35,6 +35,9 @@ ALLOWED_HOSTS = [
     'gameservice',
 ]
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4430',
+                        'http://127.0.0.1:4430',
+                        'http://gameservice:4430']
 
 # Application definition
 INSTALLED_APPS = [

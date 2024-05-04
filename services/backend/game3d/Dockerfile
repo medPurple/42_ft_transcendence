@@ -32,8 +32,9 @@ COPY  /tools/game3d/ /app/
 COPY /conf/start.sh .
 RUN chmod 777 start.sh
 
-### Expose on port 8080 and 5432
-EXPOSE 8080
+
+### Expose on port 4430
+EXPOSE 4430
 EXPOSE 5432
 
 ### Launch server/application

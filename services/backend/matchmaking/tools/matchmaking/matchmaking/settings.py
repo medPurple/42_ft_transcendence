@@ -31,12 +31,41 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    'queueservice']
+    'queueservice',
+    'pokemapservice',
+    'tokenservice',
+    'userservice',
+    '*',]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
-                        'http://127.0.0.1:8080']
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ['https://localhost:4430',
+                        'https://127.0.0.1:4430',
+                        'https://userservice:4430',
+                        'https://tokenservice:4430',
+                        'https://queueservice:4430',
+                        'https://pokemapservice:4430',]
 
-# Application definition
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    'https://localhost:4430',
+    'https://127.0.0.1:4430',
+    'https://userservice:4430',
+    'https://tokenservice:4430',
+    'https://queueservice:4430',
+    'https://pokemapservice:4430', # Remplacez par les origines que vous voulez autoriser
+]
+
+# # Définition de l'attribut SameSite pour le cookie CSRF
+
+# # Définition de l'attribut SameSite pour le cookie de session
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+
 
 INSTALLED_APPS = [
     'daphne',
@@ -50,6 +79,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'drf_spectacular',
+    'corsheaders',
+
 
 ]
 
@@ -61,6 +92,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 LOGGING = {

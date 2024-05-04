@@ -82,7 +82,7 @@ export class WaitingScreen{
         
         let id = await Iuser.getID();
         const socket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
             + '/api/wsqueue/'
             );

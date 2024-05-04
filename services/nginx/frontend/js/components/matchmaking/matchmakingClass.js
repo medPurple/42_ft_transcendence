@@ -201,7 +201,7 @@ export class MatchmakingButtons {
 		const matchmakingdiv = document.createElement('div');
 		matchmakingdiv.classList.add('matchmakingdiv');
 
-		if (Icookies.getCookie('token') != null) {
+
 			const titleDiv = document.createElement('div');
 			titleDiv.classList.add('title-div');
 			titleDiv.appendChild(this.matchmakingTitle());
@@ -219,14 +219,9 @@ export class MatchmakingButtons {
 			matchmakingdiv.appendChild(titleDiv);
 			matchmakingdiv.appendChild(radioButtonsDiv);
 			matchmakingdiv.appendChild(startButtonDiv);
-		} else {
-			const notLoggedDiv = document.createElement('div');
-			notLoggedDiv.classList.add('not-logged');
-			notLoggedDiv.innerText = 'You need to be logged in to play';
-			matchmakingdiv.appendChild(notLoggedDiv);
-		}
+		
 
-		document.body.appendChild(matchmakingdiv);
+		// document.body.appendChild(matchmakingdiv);
 		return matchmakingdiv;
 	}
 

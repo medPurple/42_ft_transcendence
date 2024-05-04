@@ -28,4 +28,5 @@ sqlparse==0.4.4
 Twisted==24.3.0
 txaio==23.1.1
 typing_extensions==4.10.0
-zope.interface==6.2
+gunicorn==22.0.0
+packaging==24.0zope.interface==6.2
