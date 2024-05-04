@@ -7,9 +7,9 @@ html {
 p {
 	font-family: 'Avenir';
 	text-align: justify;
-    margin-top: 5em;
-	margin-left: 1.5em;
-	margin-right: 1.5em;
+    margin-top: 3em;
+	margin-left: 5em;
+	margin-right: 5em;
 	display: flex;
 	text-justify: center;
 }
@@ -41,8 +41,8 @@ a:hover {
 }
 
 #app {
-	padding-top: 15em;
-	padding-bottom: 15em;
+	padding-top: 10em;
+	padding-bottom: 10em;
 }
 
 

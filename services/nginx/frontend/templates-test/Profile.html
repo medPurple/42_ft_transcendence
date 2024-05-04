@@ -60,7 +60,7 @@
 
 	<!-- MAIN ZONE ('CHANGING body' here) -->
 	<main id="app">
-		<div class="container ">
+		<div class="d-flex justify-content-center">
 			<div class="card text-center" style="width: 20rem;">
 				<img src="data:image/jpeg;base64,${profilePictureData}" class="card-img-top profile-pic" alt="Profile Picture">
 				<div class="card-body">
@@ -71,7 +71,7 @@
 					<li class="list-group-item">${data.user.first_name}</li>
 					<li class="list-group-item">${data.user.last_name}</li>
 					<li class="list-group-item">${data.user.email}</li>
-					<li class="list-group-item">${data.user.is_online}</li>	
+					<li class="list-group-item">online: ${data.user.is_online}</li>
 				</ul>
 				<div class="card-body">
 					<a href="/edit-profile" class="card-link" data-link >Edit Profile</a><br>
@@ -79,7 +79,7 @@
 					<a href="/friends" class="card-link" data-link>See my friends</a><br>
 				</div>
 				<div class="card-body">
-					<a href="/delete-account" class="card-link" data-link>Delete Profile</a><br>
+					<a href="/delete-account" class="btn btn-light">Delete Profile</a>
 				</div>
 				<div class="card-footer text-body-secondary">
 					2 days ago
@@ -89,7 +89,7 @@
 	</main>
 
 	<!-- FOOTER ZONE -->
-	<footer id="custom-footer">
+	<footer id="custom-footer" class="fixed-bottom">
 		<a href="/contact" data-link>© 2024 La pat patrouille</a>
 	</footer>
 </body>

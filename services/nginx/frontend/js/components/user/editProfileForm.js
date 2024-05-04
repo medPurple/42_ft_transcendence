@@ -39,27 +39,42 @@ export default class editProfileForm extends HTMLElement {
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
 		<form id="edit-profile-form" method="post" action="" class="container">
-		<div class="mb-4">
-			<label for="profile_picture">Profile Picture:</label>
-			<input type="file" class="form-control" name="profile_picture" accept="images/*" />
-		</div>
-		<div class="mb-4">	
-			<label for="username">Username:</label>
-			<input type="text" class="form-control" id="username" name="username" value="${data.user.username}">
-		</div>
-		<div class="mb-4">
-			<label for="email">Email:</label>
-			<input type="email" class="form-control" id="email" name="email" value="${data.user.email}">
-		</div>
-		<div class="mb-4">
-			<label for="first_name">First Name:</label>
-			<input type="text" class="form-control" id="first_name" name="first_name" value="${data.user.first_name}">
-		</div>
-		<div class="mb-4">
-			<label for="last_name">Last Name:</label>
-			<input type="text" class="form-control" id="last_name" name="last_name" value="${data.user.last_name}">
-		</div>
-			<button type="submit" class="btn btn-dark">Save changes</button>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="profile_picture">Profile Picture</label>
+				<div class="col-sm-9">
+					<input type="file" class="form-control" name="profile_picture" accept="images/*" />
+				</div>
+			</div>
+			<div class="row mb-4">    
+				<label class="col-sm-3 col-form-label text-start" for="username">Username</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" id="username" name="username" value="${data.user.username}">
+				</div>
+			</div>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="first_name">First Name</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" id="first_name" name="first_name" value="${data.user.first_name}">
+				</div>
+			</div>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="last_name">Last Name</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" id="last_name" name="last_name" value="${data.user.last_name}">
+				</div>
+			</div>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="email">Email</label>
+				<div class="col-sm-9">
+					<input type="email" class="form-control" id="email" name="email" value="${data.user.email}">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-9">
+					<button type="submit" class="btn btn-dark">Save changes</button>
+				</div>
+			</div>
 		</form>
 
 		`;
