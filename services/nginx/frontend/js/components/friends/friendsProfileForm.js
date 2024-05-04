@@ -19,10 +19,10 @@ export class FriendsProfile {
 
     displayFriendsProfile(data, profilePictureData){
         let profileContainer = document.createElement('div');
-        profileContainer.id = 'profile-friends-container';
+        profileContainer.id = 'profile-friends-container'; //needed?? check classes and ids
         document.querySelector('main').appendChild(profileContainer);
         profileContainer.innerHTML = `
-            <div id="profile-content">
+            <div id="profile-content"> 
                 <p> My friend ${data.friends.username} </p>
                 <img src="data:image/jpeg;base64,${profilePictureData}" alt="Profile Picture" class="profile-pic">
                 <p><strong>Username:</strong> ${data.friends.username}</p>

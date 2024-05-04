@@ -1,6 +1,18 @@
+
+# Volumes
 ./services/volumes
+
+# Django
 __init__
 __pycache__
+
+# Environment
 env
 .env
+
+# Secrets
 .key
+
+# Systeme
+**/.vscode
+**/.DS_Store
