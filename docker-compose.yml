@@ -23,6 +23,7 @@ volumes:
   matchmaking:
   chat:
   game3d:
+  pokemap:
 
 
 services:
@@ -83,6 +84,16 @@ services:
     image: matchmaking
     expose :
     - "8080"
+    restart: on-failure
+
+  pokemap:
+    container_name: pokemap
+    networks:
+      - microservices
+    build: services/backend/pokemap
+    image: pokemap
+    expose :
+      - "8080"
     restart: on-failure
 
   chat:
