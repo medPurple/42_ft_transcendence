@@ -7,28 +7,28 @@ html {
 p {
 	font-family: 'Avenir';
 	text-align: justify;
-    margin-top: 5em;
-	margin-left: 1.5em;
-	margin-right: 1.5em;
+    margin-top: 3em;
+	margin-left: 5em;
+	margin-right: 5em;
 	display: flex;
 	text-justify: center;
 }
 
 a {
 	text-decoration: none !important;
-	/* color: black !important; */
+	color: black !important;
 }
 
 a:hover {
 	text-decoration: none !important;
-	color: #ff0099 !important;
+	color: #b32c6f !important;
 }
 
 #custom-footer {
 	font-family: 'Courier New', Courier, monospace;
 	font-size: 0.75em;
 	text-align: center;
-	color: #f3f3f3;
+	color: #7b8787;
 	text-align: center;
 }
 
@@ -41,8 +41,8 @@ a:hover {
 }
 
 #app {
-	padding-top: 15em;
-	padding-bottom: 15em;
+	padding-top: 10em;
+	padding-bottom: 10em;
 }
 
 
@@ -50,7 +50,7 @@ a:hover {
 .container-fluid {
 	position: fixed;
 	font-family: 'Courier New', Courier, monospace;
-	background-color: #f9f9f9;
+	background-color: #7b8787;
 	border-radius: 10px;
 	margin: 1.5em;
 	z-index: 1000;
@@ -100,27 +100,22 @@ a:hover {
     padding: 8px 20px;
 	border-radius: 7px;
     border: none;
-    background-color: #1b1b1c; /* Default color */
+    background-color: #1b1b1c;
     color: #fff;
     transition: background-color 0.3s;
 }
 
 .buttons-container button:hover {
-    background-color: #ff0099;
-}
+    background-color: #b32c6f;
+} 
 
-.code-input {
-    padding: 8px 20px;
-	border-radius: 7px;
-    color: #ff0099;
-}
 
 /********** LOGIN PAGE ***********/
 #login-form {
 	width: 300px;
 	margin: 0 auto;
 	padding: 20px;
-	border: 1px solid #ccc;
+	border: 1px solid #7b8787;
 	border-radius: 5px;
 	background-color: #f9f9f9;
 }
@@ -132,7 +127,7 @@ a:hover {
 	width: 100%;
 	padding: 10px;
 	margin: 5px 0;
-	border: 1px solid #ccc;
+	border: 1px solid #7b8787;
 	border-radius: 3px;
 	box-sizing: border-box; /* Include padding and border in element's total width and height */
   }
@@ -149,12 +144,12 @@ a:hover {
 	justify-content: center;
 }
 
-.profile-content .profile-pic {
+/* .profile-content .profile-pic {
 	border-radius: 50%;
 	width: 100px;
 	height: 100px;
 	object-fit: cover;
-}
+} */
 
 
 /* CSS FOR THE MATCHMAKING PAGE */
@@ -178,7 +173,7 @@ a:hover {
 .matchmakingdiv .radio-buttons .queue-checkbox {
 	appearance: none;
 	background-color: #fafafa;
-	border: 2px solid #cacece;
+	border: 2px solid #7b8787;
 	border-radius: 50%;
 	display: inline-block;
 	position: relative;
@@ -192,7 +187,7 @@ a:hover {
 }
 
 .matchmakingdiv .radio-buttons .queue-checkbox:checked {
-	border: 2px solid #3090C7;
+	border: 2px solid #b32c6f;
 }
 
 .matchmakingdiv .radio-buttons .queue-label {

@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Transcendence</title>
 	<!-- Link to Custom CSS -->
-	<link rel="stylesheet" href="css/style.css"/>
+	<link rel="stylesheet" href="../css/style.css"/>
 	<!-- Links to Images (logos or other) -->
 	<link rel="icon" href="../images/Favicons/favicon.png"/>
 	<!-- CSS Bootstrap Libraries -->
@@ -19,17 +19,17 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 	<!-- JS Custom Script -->
-	<script type="module" src="./js/main.js" defer></script>
+	<script type="module" src="../js/main.js" defer></script>
 </head>
 
 <!-- BODY ZONE : Main structure -->
 <body>
 	<!-- HEADER ZONE (index-menus) -->
 	<header>
-		<nav id="navbar" class="navbar navbar-expand-md hidden">
+		<nav id="navbar" class="navbar navbar-expand-md">
 			<div class="container">
 				<a class="navbar-brand" href="#">
-					<img src="./images/Logos/LogoSG-mod.png" alt="logo" width="75" height="40" class="d-inline-block align-text-top">
+					<img src="../images/Logos/LogoSG-mod.png" alt="logo" width="75" height="40" class="d-inline-block align-text-top">
 				</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -37,13 +37,13 @@
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 					<li class="nav-item">
-						<a class="nav-link" href="/home">home</a>
+						<a class="nav-link active" aria-current="page" href="/home">home</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/about">about</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="https://www.pinterest.fr/search/pins/?q=squid%20game%20design&rs=typed">moodboard</a>
+						<a class="nav-link" href="/moodboard">moodboard</a>
 					</li>
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -59,10 +59,51 @@
 	</header>
 
 	<!-- MAIN ZONE ('CHANGING body' here) -->
-	<main id="app"></main>
+	<main id="app">
+
+		<form id="edit-profile-form" method="post" action="" class="container">
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="profile_picture">Profile Picture</label>
+				<div class="col-sm-9">
+					<input type="file" class="form-control" name="profile_picture" accept="images/*" />
+				</div>
+			</div>
+			<div class="row mb-4">    
+				<label class="col-sm-3 col-form-label text-start" for="username">Username</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" id="username" name="username" value="${data.user.username}">
+				</div>
+			</div>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="first_name">First Name</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" id="first_name" name="first_name" value="${data.user.first_name}">
+				</div>
+			</div>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="last_name">Last Name</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" id="last_name" name="last_name" value="${data.user.last_name}">
+				</div>
+			</div>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="email">Email</label>
+				<div class="col-sm-9">
+					<input type="email" class="form-control" id="email" name="email" value="${data.user.email}">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-3"></div>
+				<div class="col-sm-9">
+					<button type="submit" class="btn btn-dark">Save changes</button>
+				</div>
+			</div>
+		</form>
+		
+	</main>
 
 	<!-- FOOTER ZONE -->
-	<footer id="custom-footer" class="fixed-bottom hidden">
+	<footer id="custom-footer" class="fixed-bottom">
 		<a href="/contact" data-link>© 2024 La pat patrouille</a>
 	</footer>
 </body>
