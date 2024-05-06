@@ -99,7 +99,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');
@@ -120,6 +120,8 @@ function updateNavbarDropdown() {
         dropdownMenu.innerHTML = `
             <li><a class="dropdown-item" href="/profile">settings</a></li>
             <li><a class="dropdown-item" href="/friends">friends</a></li>
+			<li><a class="dropdown-item" href="/chat">chat</a></li>
+			<li><a class="dropdown-item" href="/play">play</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="/logout">log out</a></li>
             <li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
@@ -184,8 +186,10 @@ async function router() {
 
 				// console.log('route', result);
 
-		if (result.includes("pong-renderer")) {
-			setup();
+		if (typeof result === 'string' || Array.isArray(result)) {
+			if (result.includes("pong-renderer")) {
+				setup();
+			}
 		}
 
 		//Clear the app content
