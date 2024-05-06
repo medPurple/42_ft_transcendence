@@ -21,13 +21,60 @@ var gameState = {
   active: 0
 }
 
-var party = false;
+const gameCustom = {
 
-var gameSocket;
+  ownPaddle: 0,
+  otherPaddle: 0,
+  ball: 0,
+  map: 0,
+  table: 0,
+  powerup: 0,
+  score_limit: 0
+}
 
-var player_id = 0;
+var core = {
+  scene: 0,
+  renderer: 0,
+  camera: 0,
+  gameSocket: 0,
+  party: 0,
+  player_id: 0
+}
 
-var camera, scene, renderer, pointLight, pointLight2, spotLight;
+var playMesh = {
+  paddle1: 0,
+  paddle2: 0,
+  ball: 0
+}
+
+var pUpMesh = {
+  triangle: 0,
+  circle: 0,
+  square: 0,
+  star: 0
+}
+
+var decMesh = {
+  ground: 0,
+  plane: 0,
+  table: 0,
+  wall: 0
+}
+
+var objMesh = {
+
+  referee: 0,
+  firstprop: 0,
+  secondprop: 0
+}
+
+var lights = {
+
+  pointLight: 0,
+  pointLight2: 0,
+  spotLight: 0
+}
+
 
 var fieldWidth = 400, fieldHeight = 200;
 
@@ -35,13 +82,7 @@ var WIDTH = 640, HEIGHT = 426, VIEW_ANGLE = 75, ASPECT = WIDTH / HEIGHT, NEAR = 
 
 var paddleWidth = 10, paddleHeight = 30, paddleDepth = 10, paddleQuality = 1;
 
-var powerUpWidth = 10, powerUpHeight = 10, powerUpDepth = 10, powerUpQuality = 1;
-
-var ball, paddle1, paddle2;
-
 var powerUp, pUpIsDisplayed = false, pUpEffectIsApplied = false;
-
-var ballStartDirection;
 
 window.addEventListener('keydown', onKeyDown, false);
 window.addEventListener('keyup', onKeyUp, false);
@@ -67,9 +108,10 @@ function createScene() {
 
   //Render setup
 
-  renderer = new THREE.WebGLRenderer();
+  console.log("Scene is created");
+  core.renderer = new THREE.WebGLRenderer();
 
-  renderer.setSize(WIDTH, HEIGHT);
+  core.renderer.setSize(WIDTH, HEIGHT);
 
   var c = document.getElementById("pong-renderer");
 
@@ -77,16 +119,16 @@ function createScene() {
     console.error("Game div not found !");
     return;
   }
-  c.appendChild(renderer.domElement);
+  c.appendChild(core.renderer.domElement);
 
   //Scene setup
 
-  scene = new THREE.Scene();
+  core.scene = new THREE.Scene();
 
   //Camera setup
 
-  camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
-  camera.position.z = 230;
+  core.camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
+  core.camera.position.z = 230;
 
   //Ball setup
 
@@ -96,42 +138,42 @@ function createScene() {
 
   var sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xD43001 });
 
-  ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial);
+  playMesh.ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial);
 
-  ball.position.x = 0;
-  ball.position.y = 0;
-  ball.position.z = radius;
-  ball.receiveShadow = true;
-  ball.castShadow = true;
+  playMesh.ball.position.x = 0;
+  playMesh.ball.position.y = 0;
+  playMesh.ball.position.z = radius;
+  playMesh.ball.receiveShadow = true;
+  playMesh.ball.castShadow = true;
 
   // PointLight setup
 
-  pointLight = new THREE.PointLight(0xF8D898);
+  lights.pointLight = new THREE.PointLight(0xF8D898);
 
-  pointLight.position.x = -1000;
-  pointLight.position.y = 0;
-  pointLight.position.z = 1000;
-  pointLight.intensity = 1.5;
-  pointLight.distance = 10000;
+  lights.pointLight.position.x = -1000;
+  lights.pointLight.position.y = 0;
+  lights.pointLight.position.z = 1000;
+  lights.pointLight.intensity = 1.5;
+  lights.pointLight.distance = 10000;
 
-  pointLight2 = new THREE.PointLight(0xF8D898);
+  lights.pointLight2 = new THREE.PointLight(0xF8D898);
 
-  pointLight2.position.x = 1000;
-  pointLight2.position.y = 0;
-  pointLight2.position.z = 1000;
-  pointLight2.intensity = 1.5;
-  pointLight2.distance = 10000;
+  lights.pointLight2.position.x = 1000;
+  lights.pointLight2.position.y = 0;
+  lights.pointLight2.position.z = 1000;
+  lights.pointLight2.intensity = 1.5;
+  lights.pointLight2.distance = 10000;
 
 
 
   //Spotlight setup
 
-  spotLight = new THREE.SpotLight(0xF8D898);
-  spotLight.position.x = 0;
-  spotLight.position.y = 0;
-  spotLight.position.z = 460;
-  spotLight.intensity = 1.5;
-  spotLight.castShadow = true;
+  lights.spotLight = new THREE.SpotLight(0xF8D898);
+  lights.spotLight.position.x = 0;
+  lights.spotLight.position.y = 0;
+  lights.spotLight.position.z = 460;
+  lights.spotLight.intensity = 1.5;
+  lights.spotLight.castShadow = true;
 
   //Plane setup
 
@@ -141,31 +183,13 @@ function createScene() {
 
   var planeMaterial = new THREE.MeshLambertMaterial({ color: 0x4BD121 });
 
-  var plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth * 0.95, planeHeight, planeQuality, planeQuality), planeMaterial);
-  plane.receiveShadow = true;
+  decMesh.plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth * 0.95, planeHeight, planeQuality, planeQuality), planeMaterial);
+  decMesh.plane.receiveShadow = true;
 
-  //Paddle Setupjs
+  //Paddle Setup
 
-  // var paddle1Material = new THREE.MeshLambertMaterial({ color: 0x1B32C0 });
-  //
-  // paddle1 = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddle1Material);
-  //
-  // var paddle2Material = new THREE.MeshLambertMaterial({ color: 0xFF4045 });
-  //
-  // paddle2 = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, paddleHeight, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddle2Material);
-  //
-  // paddle1.position.x = -fieldWidth / 2 + paddleWidth;
-  // paddle2.position.x = fieldWidth / 2 - paddleWidth;
-  //
-  // paddle1.position.z = paddleDepth;
-  // paddle2.position.z = paddleDepth;
-  // paddle1.receiveShadow = true;
-  // paddle1.castShadow = true;
-  // paddle2.receiveShadow = true;
-  // paddle2.castShadow = true;
-
-  paddle1 = populatePaddle(30, 0x1B32C0, -fieldWidth / 2 + paddleWidth, 0);
-  paddle2 = populatePaddle(30, 0xFF4045, fieldWidth / 2 + paddleWidth, 0);
+  playMesh.paddle1 = populatePaddle(30, 0x1B32C0, -fieldWidth / 2 + paddleWidth, 0);
+  playMesh.paddle2 = populatePaddle(30, 0xFF4045, fieldWidth / 2 + paddleWidth, 0);
 
   //Table Setup
 
@@ -175,37 +199,9 @@ function createScene() {
 
   var tableMaterial = new THREE.MeshLambertMaterial({ color: 0x111111 });
 
-  var table = new THREE.Mesh(new THREE.BoxGeometry(tableWidth, tableHeight, tableQuality, tableQuality, 1), tableMaterial);
-  table.position.z = -7;
-  table.receiveShadow = true;
-
-  //Pillar Setup
-
-  // var pillarMaterial = new THREE.MeshLambertMaterial({ color: 0x534d0d });
-  //
-  // for (var i = 0; i < 5; i++) {
-  //
-  //   var pillar = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 500, 1, 1, 1), pillarMaterial);
-  //
-  //   pillar.position.x = -50 + i * 100;
-  //   pillar.position.y = -230;
-  //   pillar.position.z = -30;
-  //   pillar.castShadow = true;
-  //   pillar.receiveShadow = true;
-  //   scene.add(pillar);
-  // }
-  //
-  // for (var i = 0; i < 5; i++) {
-  //
-  //   var pillar = new THREE.Mesh(new THREE.BoxGeometry(30, 30, 500, 1, 1, 1), pillarMaterial);
-  //
-  //   pillar.position.x = -50 + i * 100;
-  //   pillar.position.y = 230;
-  //   pillar.position.z = -30;
-  //   pillar.castShadow = true;
-  //   pillar.receiveShadow = true;
-  //   scene.add(pillar);
-  // }
+  decMesh.table = new THREE.Mesh(new THREE.BoxGeometry(tableWidth, tableHeight, tableQuality, tableQuality, 1), tableMaterial);
+  decMesh.table.position.z = -7;
+  decMesh.table.receiveShadow = true;
 
   //Ground setup
 
@@ -215,9 +211,9 @@ function createScene() {
 
   var groundMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
 
-  var ground = new THREE.Mesh(new THREE.BoxGeometry(groundWidth, groundHeight, groundQuality, 1, 1, 1), groundMaterial);
-  ground.position.z = -132;
-  ground.receiveShadow = true;
+  decMesh.ground = new THREE.Mesh(new THREE.BoxGeometry(groundWidth, groundHeight, groundQuality, 1, 1, 1), groundMaterial);
+  decMesh.ground.position.z = -132;
+  decMesh.ground.receiveShadow = true;
 
   // Wall setup
 
@@ -235,60 +231,42 @@ function createScene() {
       })
   });
 
+  decMesh.wall = new THREE.Mesh(new THREE.BoxGeometry(wallWidth, wallHeight, wallQuality, 1, 1, 1), wallMaterial);
 
-
-  var wall = new THREE.Mesh(new THREE.BoxGeometry(wallWidth, wallHeight, wallQuality, 1, 1, 1), wallMaterial);
-
-  if (player_id == 1) {
-    wall.position.x = 500;
+  if (core.player_id == 1) {
+    decMesh.wall.position.x = 500;
   }
   else {
-    wall.position.x = -500;
+    decMesh.wall.position.x = -500;
   }
-  wall.position.z = 75;
-  wall.rotateY(Math.PI / 2);
-  wall.rotateZ(Math.PI / 2);
-  wall.receiveShadow = true;
+  decMesh.wall.position.z = 75;
+  decMesh.wall.rotateY(Math.PI / 2);
+  decMesh.wall.rotateZ(Math.PI / 2);
+  decMesh.wall.receiveShadow = true;
 
   var objLoader = new THREE.GLTFLoader();
 
   objLoader.load('../../../images/3D/untitled.glb', function(gltf) {
-    var referee = gltf.scene;
-    referee.scale.set(50, 50, 50);
-    referee.rotateX(Math.PI / 2);
-    referee.position.y = 220;
-    scene.add(referee);
+    objMesh.referee = gltf.scene;
+    objMesh.referee.scale.set(50, 50, 50);
+    objMesh.referee.rotateX(Math.PI / 2);
+    objMesh.referee.position.y = 220;
+    core.scene.add(objMesh.referee);
   })
-
-  // var mtlLoader = new MTLLoader();
-  // mtlLoader.load("../../../images/3D/squid_game_man.obj.mtl", function(materials) {
-  //   materials.preload();
-  //   var objLoader = new THREE.OBJLoader();
-  //
-  //   objLoader.setMaterials(materials);
-  //   objLoader.load('../../../images/3D/squid_game_man.obj', function(object) {
-  //     var referee = object;
-  //     referee.scale.set(50, 50, 50);
-  //     referee.rotateX(Math.PI / 2);
-  //     referee.position.y = 220;
-  //     scene.add(referee);
-  //   });
-  // });
-  //
 
   //Add all to the scene
 
-  scene.add(pointLight);
-  scene.add(pointLight2);
-  scene.add(spotLight);
-  scene.add(paddle1);
-  scene.add(paddle2);
-  scene.add(ball);
-  scene.add(table);
-  scene.add(plane);
-  scene.add(wall);
-  scene.add(ground);
-  scene.add(camera);
+  core.scene.add(lights.pointLight);
+  core.scene.add(lights.pointLight2);
+  core.scene.add(lights.spotLight);
+  core.scene.add(playMesh.paddle1);
+  core.scene.add(playMesh.paddle2);
+  core.scene.add(playMesh.ball);
+  core.scene.add(decMesh.table);
+  core.scene.add(decMesh.plane);
+  core.scene.add(decMesh.wall);
+  core.scene.add(decMesh.ground);
+  core.scene.add(core.camera);
 
   //renderer.shadowMapEnabled = true;
 
@@ -309,111 +287,30 @@ function displayScore() {
 
 function cameraLogic() {
 
-  //spotLight.position.x = ball.position.x * 2;
-  //spotLight.position.y = ball.position.y * 2;
-  camera.position.x = paddle1.position.x - 60;
-  camera.position.y += (paddle1.position.y - camera.position.y) * 0.05;
-  camera.position.z = paddle1.position.z + 100;
-
-  //camera.rotation.x = -0.01 * (ball.position.y) * Math.PI / 180;
-  camera.rotation.z = -90 * Math.PI / 180;
-  camera.rotation.y = -60 * Math.PI / 180;
-
+  core.camera.position.x = playMesh.paddle1.position.x - 60;
+  core.camera.position.y += (playMesh.paddle1.position.y - core.camera.position.y) * 0.05;
+  core.camera.position.z = playMesh.paddle1.position.z + 100;
+  core.camera.rotation.z = -90 * Math.PI / 180;
+  core.camera.rotation.y = -60 * Math.PI / 180;
 }
 
 function cameraLogic2() {
 
-  //spotLight.position.x = ball.position.x * 2;
-  //spotLight.position.y = ball.position.y * 2;
-  camera.position.x = paddle2.position.x + 60;
-  camera.position.y += (paddle2.position.y - camera.position.y) * 0.05;
-  camera.position.z = paddle2.position.z + 100;
-
-  //camera.rotation.x = 0.01 * (ball.position.y) * Math.PI / 180;
-  camera.rotation.z = 90 * Math.PI / 180;
-  camera.rotation.y = 60 * Math.PI / 180;
-
+  core.camera.position.x = playMesh.paddle2.position.x + 60;
+  core.camera.position.y += (playMesh.paddle2.position.y - core.camera.position.y) * 0.05;
+  core.camera.position.z = playMesh.paddle2.position.z + 100;
+  core.camera.rotation.z = 90 * Math.PI / 180;
+  core.camera.rotation.y = 60 * Math.PI / 180;
 }
 
 function cameraLogic2d() {
 
-  camera.position.x = 0;
-  camera.position.y = 0;
-  camera.position.z = 230;
-  camera.rotation.z = 0;
-  camera.rotation.y = 0;
+  core.camera.position.x = 0;
+  core.camera.position.y = 0;
+  core.camera.position.z = 230;
+  core.camera.rotation.z = 0;
+  core.camera.rotation.y = 0;
 }
-
-
-// function createStarMesh() {
-//
-//   var starShape = new THREE.Shape();
-//   starShape.moveTo(0, 10);
-//   for (var i = 0; i < 5; i++) {
-//     starShape.lineTo(Math.cos((Math.PI / 5) * i * 2) * 10, Math.sin((Math.PI / 5) * i * 2) * 10);
-//     starShape.lineTo(Math.cos((Math.PI / 5) * (i * 2 + 1)) * 5, Math.sin((Math.PI / 5) * (i * 2 + 1)) * 5);
-//   }
-//   starShape.lineTo(0, 10);
-//
-//   // Create geometry
-//   var geometry = new THREE.ExtrudeGeometry(starShape, {
-//     depth: 2, // Thickness of the star
-//     bevelEnabled: false // Disable bevel to make the star full
-//   });
-//
-//   // Center the star geometry
-//   geometry.center();
-//
-//   // Rotate the star to make it stand upright
-//   geometry.rotateX(Math.PI / 2); // Rotate around X-axis
-//
-//   geometry.rotateY(Math.PI / 2);
-//
-//   // Create material
-//   var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-//
-//   // Create mesh
-//   powerUp = new THREE.Mesh(geometry, material);
-//   powerUp.position.z = 10;
-//
-// }
-//
-
-// function populateCircleShape(color) {
-//   // Define the radius of the circle
-//   var radius = 10;
-//
-//   // Create a new instance of THREE.Shape
-//   var circleShape = new THREE.Shape();
-//
-//   // Move the starting point to the initial position of the circle
-//   circleShape.moveTo(radius, 0);
-//
-//   // Create a loop to draw the circular arc
-//   for (var i = 0; i <= 64; i++) {
-//     var theta = (i / 64) * Math.PI * 2;
-//     var x = radius * Math.cos(theta);
-//     var y = radius * Math.sin(theta);
-//     circleShape.lineTo(x, y);
-//   }
-//
-//   // Close the shape
-//   circleShape.closePath();
-//
-//   // Create geometry from the circle shape
-//   var circleGeometry = new THREE.ShapeGeometry(circleShape);
-//
-//   // Create material
-//   var material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
-//
-//   // Create mesh
-//   var circleMesh = new THREE.Mesh(circleGeometry, material);
-//
-//   circleMesh.rotateX(Math.PI / 2);
-//   circleMesh.rotateY(Math.PI / 2);
-//   circleMesh.position.z = 20;
-//   return circleMesh;
-// }
 
 function populateCircleShape(color) {
 
@@ -568,48 +465,41 @@ function popPowerUpOnScene() {
   powerUp.position.y = gameState.powerup_positionY;
   powerUp.castShadow = true;
   powerUp.receiveShadow = true;
-  scene.add(powerUp);
+  core.scene.add(powerUp);
   pUpIsDisplayed = true;
 }
 
-function changePaddle(paddle, height, color, positionX, positionY) {
-
-  scene.remove(paddle);
-  paddle = populatePaddle(height, color, positionX, positionY);
-  return paddle;
-}
+// function changePaddle(paddle, height, color, positionX, positionY) {
+//
+//   scene.remove(paddle);
+//   paddle = populatePaddle(height, color, positionX, positionY);
+//   return paddle;
+// }
 
 function applyHeightPaddleChange() {
 
   if (gameState.paddle1_powerup == 1) {
-    paddle2 = changePaddle(paddle2, 20, 0xFF4045, paddle2.position.x, paddle2.position.y);
-    scene.add(paddle2);
+    playMesh.paddle2.scale.set(1, 20 / paddleHeight, 1);
   }
   else if (gameState.paddle1_powerup == 2) {
-    paddle1 = changePaddle(paddle1, 40, 0x1B32C0, paddle1.position.x, paddle1.position.y);
-    scene.add(paddle1);
+    playMesh.paddle1.scale.set(1, 40 / paddleHeight, 1);
   }
   else if (gameState.paddle2_powerup == 1) {
-    paddle1 = changePaddle(paddle1, 20, 0x1B32C0, paddle1.position.x, paddle1.position.y);
-    scene.add(paddle1);
+    playMesh.paddle1.scale.set(1, 20 / paddleHeight, 1);
   }
   else if (gameState.paddle2_powerup == 2) {
-    paddle2 = changePaddle(paddle2, 40, 0xFF4045, paddle2.position.x, paddle2.position.y);
-    scene.add(paddle2);
+    playMesh.paddle2.scale.set(1, 40 / paddleHeight, 1);
   }
 }
 
 function resetPaddles() {
-  paddle1 = changePaddle(paddle1, 30, 0x1B32C0, paddle1.position.x, paddle1.position.y);
-  scene.add(paddle1);
-  paddle2 = changePaddle(paddle2, 30, 0xFF4045, paddle2.position.x, paddle2.position.y);
-  scene.add(paddle2);
+  playMesh.paddle1.scale.set(1, 30 / playMesh.paddle1.geometry.parameters.height, 1);
+  playMesh.paddle2.scale.set(1, 30 / playMesh.paddle2.geometry.parameters.height, 1);
 }
 
 function depopPowerUpFromScene() {
 
-  scene.remove(powerUp);
-  //scene.dispose(powerUp);
+  core.scene.remove(powerUp);
   pUpIsDisplayed = false;
 }
 
@@ -637,36 +527,37 @@ function handlePowerUp() {
 
 function draw() {
 
-  if (player_id == 1 && gameState.paddle2_powerup != 3) {
+  console.log("Frame is drawn")
+  if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
     cameraLogic();
   }
-  else if (player_id == 2 && gameState.paddle1_powerup != 3) {
+  else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
     cameraLogic2();
   }
   else {
     cameraLogic2d();
   }
 
-  renderer.render(scene, camera);
+  core.renderer.render(core.scene, core.camera);
 }
 
 function setup() {
 
-  gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
+  core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
 
-  gameSocket.onopen = function(e) {
+  core.gameSocket.onopen = function(e) {
     console.log('Connected');
   };
 
-  gameSocket.onerror = function(e) {
+  core.gameSocket.onerror = function(e) {
     console.log('Error');
   };
 
-  gameSocket.onclose = function(e) {
+  core.gameSocket.onclose = function(e) {
     console.log('Closed');
   };
 
-  gameSocket.onmessage = function(event) {
+  core.gameSocket.onmessage = function(event) {
     //console.log("Message du websocket: ", event.data);
     handleServerMessage(event.data);
   }
@@ -679,14 +570,14 @@ function handleServerMessage(message) {
 
   for (let [key, value] of map.entries()) {
     if (key == "party" && value == 'active') {
-      party = true;
+      core.party = true;
       displayScore();
       createScene();
       draw();
       return;
     }
     if (key == "player") {
-      player_id = value;
+      core.player_id = value;
       return;
     }
     if (key == "player1Score")
@@ -696,25 +587,25 @@ function handleServerMessage(message) {
     if (key == "limitScore")
       gameState.score_limit = value;
     if (key == "paddle1.positionX")
-      paddle1.position.x = value;
+      playMesh.paddle1.position.x = value;
     if (key == "paddle1.positionY")
-      paddle1.position.y = value;
+      playMesh.paddle1.position.y = value;
     if (key == "paddle1.width")
       gameState.paddle1_width = value;
     if (key == "paddle1.powerup")
       gameState.paddle1_powerup = value;
     if (key == "paddle2.positionX")
-      paddle2.position.x = value;
+      playMesh.paddle2.position.x = value;
     if (key == "paddle2.positionY")
-      paddle2.position.y = value;
+      playMesh.paddle2.position.y = value;
     if (key == "paddle2.width")
       gameState.paddle2_width = value;
     if (key == "paddle2.powerup")
       gameState.paddle2_powerup = value;
     if (key == "ball.positionX")
-      ball.position.x = value;
+      playMesh.ball.position.x = value;
     if (key == "ball.positionY")
-      ball.position.y = value;
+      playMesh.ball.position.y = value;
     if (key == "powerup.positionX")
       gameState.powerup_positionX = value;
     if (key == "powerup.positionY")
@@ -735,10 +626,10 @@ function onKeyDown(event) {
   //console.log("J'envoie la touche", event.keyCode)
   switch (event.keyCode) {
     case 65:
-      gameSocket.send(JSON.stringify({ 'paddleMov': "left" }))
+      core.gameSocket.send(JSON.stringify({ 'paddleMov': "left" }))
       break;
     case 68:
-      gameSocket.send(JSON.stringify({ 'paddleMov': "right" }))
+      core.gameSocket.send(JSON.stringify({ 'paddleMov': "right" }))
       break;
   }
 }
@@ -746,10 +637,10 @@ function onKeyDown(event) {
 function onKeyUp(event) {
   switch (event.keyCode) {
     case 65:
-      gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
+      core.gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
       break;
     case 68:
-      gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
+      core.gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
       break;
   }
 }

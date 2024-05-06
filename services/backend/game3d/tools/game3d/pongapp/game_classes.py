@@ -91,7 +91,7 @@ class   gameStateC:
                 self.paddle1Movement(self.paddle1)
                 self.paddle2Movement(self.paddle2)
 
-            await asyncio.sleep(0.008)
+            await asyncio.sleep(0.032)
             #self.logObject()
             await self.broadcastGameState()
 
