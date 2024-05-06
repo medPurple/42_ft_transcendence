@@ -5,7 +5,7 @@ import intro from "./views/intro.js";
 import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
-import gameService from "./views/gameService.js";
+import pongService from "./views/pongService.js";
 import userService from "./views/user/userService.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
@@ -43,9 +43,9 @@ const routes = {
 		title: "User Service",
 		render: userService
 	},
-	'/gameService': {
-		title: "Game Service",
-		render: gameService
+	'/pongService': {
+		title: "Pong Service",
+		render: pongService
 	},
 	'/register': {
 		title: "Register",
