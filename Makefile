@@ -117,6 +117,11 @@ re_ma: down	run_script
 	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
+re_pm: down	run_script
+	@ if [ $(PM_IMG) = "1" ]; then docker rmi $(PM_NAME); fi;
+	@ docker compose -f docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
+
 
 clean : down
 	@ echo -e -e "\n$(YELLOW)★ Cleaning Images - Volumes ★$(CEND)"

@@ -27,4 +27,5 @@ cp /tmp/server.crt /usr/local/share/ca-certificates/
 update-ca-certificates
 openssl x509 -in /usr/local/share/ca-certificates/server.crt -out /usr/local/share/ca-certificates/server.pem -outform PEM
 
-gunicorn --certfile=/tmp/server.crt --keyfile=/tmp/server.key pokemap.wsgi:application --bind 0.0.0.0:4430
+# gunicorn --certfile=/tmp/server.crt --keyfile=/tmp/server.key pokemap.wsgi:application --bind 0.0.0.0:4430
+gunicorn pokemap.wsgi:application --bind 0.0.0.0:4430 --worker-class uvicorn.workers.UvicornWorker --certfile=/tmp/server.crt --keyfile=/tmp/server.key
