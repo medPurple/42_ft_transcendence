@@ -1,86 +1,5 @@
-//Global variables for the project (scene, renderer, camera, lights)
-
-var gameState = {
-  player1Score: 0,
-  player2Score: 0,
-  score_limit: 7,
-  paddle1_positionX: 0,
-  paddle1_positionY: 0,
-  paddle1_width: 0,
-  paddle1_powerup: 0,
-  paddle2_positionX: 0,
-  paddle2_positionY: 0,
-  paddle2_width: 0,
-  paddle2_powerup: 0,
-  ball_positionX: 0,
-  ball_positionY: 0,
-  powerup_positionX: 0,
-  powerup_positionY: 0,
-  powerup_status: 0,
-  powerup_type: 0,
-  active: 0
-}
-
-const gameCustom = {
-
-  ownPaddle: 0,
-  otherPaddle: 0,
-  ball: 0,
-  map: 0,
-  table: 0,
-  powerup: 0,
-  score_limit: 0
-}
-
-var core = {
-  scene: 0,
-  renderer: 0,
-  camera: 0,
-  gameSocket: 0,
-  party: 0,
-  player_id: 0
-}
-
-var playMesh = {
-  paddle1: 0,
-  paddle2: 0,
-  ball: 0
-}
-
-var pUpMesh = {
-  triangle: 0,
-  circle: 0,
-  square: 0,
-  star: 0
-}
-
-var decMesh = {
-  ground: 0,
-  plane: 0,
-  table: 0,
-  wall: 0
-}
-
-var objMesh = {
-
-  referee: 0,
-  firstprop: 0,
-  secondprop: 0
-}
-
-var lights = {
-
-  pointLight: 0,
-  pointLight2: 0,
-  spotLight: 0
-}
-
-
-var fieldWidth = 400, fieldHeight = 200;
-
-var WIDTH = 640, HEIGHT = 426, VIEW_ANGLE = 75, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
-
-var paddleWidth = 10, paddleHeight = 30, paddleDepth = 10, paddleQuality = 1;
+import { gameState, gameCustom, core, playMesh, pUpMesh, decMesh, objMesh, lights, constants } from "./config.js"
+import { createScene } from "./createScene.js"
 
 var powerUp, pUpIsDisplayed = false, pUpEffectIsApplied = false;
 
@@ -88,189 +7,6 @@ window.addEventListener('keydown', onKeyDown, false);
 window.addEventListener('keyup', onKeyUp, false);
 
 //Functions used to create the scene
-
-function populatePaddle(height, color, positionX, positionY) {
-
-  var paddleMaterial = new THREE.MeshLambertMaterial({ color: color });
-
-  var paddle = new THREE.Mesh(new THREE.BoxGeometry(paddleWidth, height, paddleDepth, paddleQuality, paddleQuality, paddleQuality), paddleMaterial);
-
-  paddle.position.x = positionX;
-  paddle.position.y = positionY;
-  paddle.position.z = paddleDepth;
-  paddle.receiveShadow = true;
-  paddle.castShadow = true;
-
-  return paddle;
-}
-
-function createScene() {
-
-  //Render setup
-
-  console.log("Scene is created");
-  core.renderer = new THREE.WebGLRenderer();
-
-  core.renderer.setSize(WIDTH, HEIGHT);
-
-  var c = document.getElementById("pong-renderer");
-
-  if (!c) {
-    console.error("Game div not found !");
-    return;
-  }
-  c.appendChild(core.renderer.domElement);
-
-  //Scene setup
-
-  core.scene = new THREE.Scene();
-
-  //Camera setup
-
-  core.camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
-  core.camera.position.z = 230;
-
-  //Ball setup
-
-  var radius = 5,
-    segments = 6,
-    rings = 6;
-
-  var sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xD43001 });
-
-  playMesh.ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial);
-
-  playMesh.ball.position.x = 0;
-  playMesh.ball.position.y = 0;
-  playMesh.ball.position.z = radius;
-  playMesh.ball.receiveShadow = true;
-  playMesh.ball.castShadow = true;
-
-  // PointLight setup
-
-  lights.pointLight = new THREE.PointLight(0xF8D898);
-
-  lights.pointLight.position.x = -1000;
-  lights.pointLight.position.y = 0;
-  lights.pointLight.position.z = 1000;
-  lights.pointLight.intensity = 1.5;
-  lights.pointLight.distance = 10000;
-
-  lights.pointLight2 = new THREE.PointLight(0xF8D898);
-
-  lights.pointLight2.position.x = 1000;
-  lights.pointLight2.position.y = 0;
-  lights.pointLight2.position.z = 1000;
-  lights.pointLight2.intensity = 1.5;
-  lights.pointLight2.distance = 10000;
-
-
-
-  //Spotlight setup
-
-  lights.spotLight = new THREE.SpotLight(0xF8D898);
-  lights.spotLight.position.x = 0;
-  lights.spotLight.position.y = 0;
-  lights.spotLight.position.z = 460;
-  lights.spotLight.intensity = 1.5;
-  lights.spotLight.castShadow = true;
-
-  //Plane setup
-
-  var planeWidth = fieldWidth,
-    planeHeight = fieldHeight,
-    planeQuality = 10;
-
-  var planeMaterial = new THREE.MeshLambertMaterial({ color: 0x4BD121 });
-
-  decMesh.plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth * 0.95, planeHeight, planeQuality, planeQuality), planeMaterial);
-  decMesh.plane.receiveShadow = true;
-
-  //Paddle Setup
-
-  playMesh.paddle1 = populatePaddle(30, 0x1B32C0, -fieldWidth / 2 + paddleWidth, 0);
-  playMesh.paddle2 = populatePaddle(30, 0xFF4045, fieldWidth / 2 + paddleWidth, 0);
-
-  //Table Setup
-
-  var tableWidth = planeWidth * 1.05,
-    tableHeight = planeHeight * 1.03,
-    tableQuality = planeQuality;
-
-  var tableMaterial = new THREE.MeshLambertMaterial({ color: 0x111111 });
-
-  decMesh.table = new THREE.Mesh(new THREE.BoxGeometry(tableWidth, tableHeight, tableQuality, tableQuality, 1), tableMaterial);
-  decMesh.table.position.z = -7;
-  decMesh.table.receiveShadow = true;
-
-  //Ground setup
-
-  var groundWidth = 1000,
-    groundHeight = 2200,
-    groundQuality = 3;
-
-  var groundMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
-
-  decMesh.ground = new THREE.Mesh(new THREE.BoxGeometry(groundWidth, groundHeight, groundQuality, 1, 1, 1), groundMaterial);
-  decMesh.ground.position.z = -132;
-  decMesh.ground.receiveShadow = true;
-
-  // Wall setup
-
-  var wallHeight = 1365, wallWidth = 2048, wallQuality = 3;
-
-  const texLoader = new THREE.TextureLoader();
-
-  var wallMaterial = new THREE.MeshLambertMaterial({
-    map: texLoader.load('../../../images/Walls/Wall-Back-Figures.png',
-      function(texture) {
-        texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.ClampToEdgeWrapping;
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-      })
-  });
-
-  decMesh.wall = new THREE.Mesh(new THREE.BoxGeometry(wallWidth, wallHeight, wallQuality, 1, 1, 1), wallMaterial);
-
-  if (core.player_id == 1) {
-    decMesh.wall.position.x = 500;
-  }
-  else {
-    decMesh.wall.position.x = -500;
-  }
-  decMesh.wall.position.z = 75;
-  decMesh.wall.rotateY(Math.PI / 2);
-  decMesh.wall.rotateZ(Math.PI / 2);
-  decMesh.wall.receiveShadow = true;
-
-  var objLoader = new THREE.GLTFLoader();
-
-  objLoader.load('../../../images/3D/untitled.glb', function(gltf) {
-    objMesh.referee = gltf.scene;
-    objMesh.referee.scale.set(50, 50, 50);
-    objMesh.referee.rotateX(Math.PI / 2);
-    objMesh.referee.position.y = 220;
-    core.scene.add(objMesh.referee);
-  })
-
-  //Add all to the scene
-
-  core.scene.add(lights.pointLight);
-  core.scene.add(lights.pointLight2);
-  core.scene.add(lights.spotLight);
-  core.scene.add(playMesh.paddle1);
-  core.scene.add(playMesh.paddle2);
-  core.scene.add(playMesh.ball);
-  core.scene.add(decMesh.table);
-  core.scene.add(decMesh.plane);
-  core.scene.add(decMesh.wall);
-  core.scene.add(decMesh.ground);
-  core.scene.add(core.camera);
-
-  //renderer.shadowMapEnabled = true;
-
-}
 
 function displayScore() {
 
@@ -350,7 +86,6 @@ function populateTriangleShape(color) {
 
   // Define the size of the triangle
   var size = 15; // Adjust as needed
-
   // Define the vertices of the triangle
   var vertices = [
     new THREE.Vector3(0, size / Math.sqrt(3), 0),
@@ -469,26 +204,19 @@ function popPowerUpOnScene() {
   pUpIsDisplayed = true;
 }
 
-// function changePaddle(paddle, height, color, positionX, positionY) {
-//
-//   scene.remove(paddle);
-//   paddle = populatePaddle(height, color, positionX, positionY);
-//   return paddle;
-// }
-
 function applyHeightPaddleChange() {
 
   if (gameState.paddle1_powerup == 1) {
-    playMesh.paddle2.scale.set(1, 20 / paddleHeight, 1);
+    playMesh.paddle2.scale.set(1, 20 / constants.paddleHeight, 1);
   }
   else if (gameState.paddle1_powerup == 2) {
-    playMesh.paddle1.scale.set(1, 40 / paddleHeight, 1);
+    playMesh.paddle1.scale.set(1, 40 / constants.paddleHeight, 1);
   }
   else if (gameState.paddle2_powerup == 1) {
-    playMesh.paddle1.scale.set(1, 20 / paddleHeight, 1);
+    playMesh.paddle1.scale.set(1, 20 / constants.paddleHeight, 1);
   }
   else if (gameState.paddle2_powerup == 2) {
-    playMesh.paddle2.scale.set(1, 40 / paddleHeight, 1);
+    playMesh.paddle2.scale.set(1, 40 / constants.paddleHeight, 1);
   }
 }
 
@@ -522,8 +250,6 @@ function handlePowerUp() {
     pUpEffectIsApplied = false;
   }
 }
-
-
 
 function draw() {
 
