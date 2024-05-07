@@ -1,0 +1,56 @@
+#chatbox {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    height: 400px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#chatbox-header {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#toggle-chat-button {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+#chatbox-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+    display: none;
+}
+
+#chatbox-chatwindow {
+    flex-grow: 1;
+    border: 1px solid black;
+    padding: 10px;
+    overflow-y: auto;
+    text-align: center;
+}
+
+#chatbox-friendlist {
+    width: 100px;
+    border: 1px solid black;
+    padding: 10px;
+    overflow-y: auto;
+    text-align: center;
+}
+
+#chatbox-friendlist-list {
+    list-style: none;
+}
