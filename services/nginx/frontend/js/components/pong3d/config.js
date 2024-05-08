@@ -75,6 +75,13 @@ export var lights = {
   spotLight: 0
 }
 
+export var pUpState = {
+
+  powerUp: 0,
+  pUpIsDisplayed: false,
+  pUpEffectIsApplied: false
+}
+
 export const constants = {
 
   WIDTH: 640,
