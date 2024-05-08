@@ -2,6 +2,7 @@ import { core, gameCustom, playMesh, pUpMesh, decMesh, objMesh, lights, constant
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populatePaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
 import { populateAssets } from './populateAssets.js'
+import { populatePowerUps } from "./populatePowerUps.js";
 
 export function createScene() {
 
@@ -69,7 +70,7 @@ export function createScene() {
 
   // Powerups setup
 
-  //populatePowerups();
+  populatePowerUps();
 
   //Add all to the scene
 
