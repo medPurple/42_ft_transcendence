@@ -4,30 +4,16 @@ var moveLeft = false;
 
 var moveRight = false;
 
+var advMoveLeft = false;
+
+var advMoveRight = false;
+
+var gameSocket;
+
+var player_id = 0;
+
 window.addEventListener('keydown', onKeyDown, false);
 window.addEventListener('keyup', onKeyUp, false);
-
-function onKeyDown(event) {
-  switch (event.keyCode) {
-    case 65:
-      moveLeft = true;
-      break;
-    case 68:Service
-      moveRight = true;
-      break;
-  }
-}
-
-function onKeyUp(event) {
-  switch (event.keyCode) {
-    case 65:
-      moveLeft = false;
-      break;
-    case 68:
-      moveRight = false;
-      break;
-  }
-}
 
 var camera, scene, renderer, pointLight, spotLight;
 
@@ -116,7 +102,7 @@ function createScene() {
   var plane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth * 0.95, planeHeight, planeQuality, planeQuality), planeMaterial);
   plane.receiveShadow = true;
 
-  //Paddle Setup
+  //Paddle Setupjs
 
   var paddle1Material = new THREE.MeshLambertMaterial({ color: 0x1B32C0 });
 
@@ -250,22 +236,54 @@ function paddlePhysics() {
   }
 }
 
+// function opponentPaddleMovement() {
+//
+//   paddle2DirY = (ball.position.y - paddle2.position.y);
+//   if (Math.abs(paddle2DirY) <= paddleSpeed) {
+//     paddle2.position.y += paddle2DirY;
+//   }
+//   else {
+//     if (paddle2DirY > paddleSpeed) {
+//       paddle2.position.y += paddleSpeed;
+//     }
+//     else if (paddle2DirY < -paddleSpeed) {
+//       paddle2.position.y -= paddleSpeed;
+//     }
+//   }
+//   paddle2.scale.y += (1 - paddle2.scale.y) * 0.2;
+// }
+//
+
 function opponentPaddleMovement() {
 
-  paddle2DirY = (ball.position.y - paddle2.position.y);
-  if (Math.abs(paddle2DirY) <= paddleSpeed) {
-    paddle2.position.y += paddle2DirY;
+  if (advMoveRight == true) {
+    if (paddle2.position.y < fieldHeight * 0.45) {
+      paddle2DirY = paddleSpeed * 0.5;
+    }
+    else {
+      paddle2DirY = 0;
+      //paddle2.scale.z += (10 - paddle2.scale.z) * 0.2;
+    }
+  }
+  else if (advMoveLeft == true) {
+    if (paddle2.position.y > -fieldHeight * 0.45) {
+      paddle2DirY = -paddleSpeed * 0.5;
+    }
+    else {
+      paddle2DirY = 0;
+      //paddle2.scale.z += (10 - paddle2.scale.z) * 0.2;
+    }
   }
   else {
-    if (paddle2DirY > paddleSpeed) {
-      paddle2.position.y += paddleSpeed;
-    }
-    else if (paddle2DirY < -paddleSpeed) {
-      paddle2.position.y -= paddleSpeed;
-    }
+    paddle2DirY = 0;
   }
+
   paddle2.scale.y += (1 - paddle2.scale.y) * 0.2;
+  paddle2.scale.z += (1 - paddle2.scale.z) * 0.2;
+  paddle2.position.y += paddle2DirY;
 }
+
+
 
 function resetBall(ballStartDirection) {
 
@@ -324,22 +342,123 @@ function cameraLogic() {
 
 }
 
+function cameraLogic2() {
+
+  //spotLight.position.x = ball.position.x * 2;
+  //spotLight.position.y = ball.position.y * 2;
+  camera.position.x = paddle2.position.x + 60;
+  camera.position.y += (paddle2.position.y - camera.position.y) * 0.05;
+  camera.position.z = paddle2.position.z + 100;
+
+  camera.rotation.x = 0.01 * (ball.position.y) * Math.PI / 180;
+  camera.rotation.z = 90 * Math.PI / 180;
+  camera.rotation.y = 60 * Math.PI / 180;
+
+}
 
 function draw() {
 
   renderer.render(scene, camera);
   requestAnimationFrame(draw);
 
-  ballPhysics();
+  //ballPhysics();
   paddlePhysics();
   paddleMovement();
   opponentPaddleMovement();
-  cameraLogic();
+  //cameraLogic();
+  //cameraLogic2();
 }
 
 function setup() {
+
+  gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
+
+  gameSocket.onopen = function(e) {
+    console.log('Connected');
+  };
+
+  gameSocket.onerror = function(e) {
+    console.log('Error');
+  };
+
+  gameSocket.onclose = function(e) {
+    console.log('Closed');
+  };
+
+  gameSocket.onmessage = function(event) {
+    //console.log("Message du websocket: ", event.data);
+    handleServerMessage(event.data);
+  }
+
   createScene();
   draw();
+}
+
+function handleServerMessage(message) {
+
+  var map = new Map(Object.entries(JSON.parse(message)));
+  //console.log("Message du websocket: ", map);
+
+  for (let [key, value] of map.entries()) {
+    if (key == "player") {
+      player_id = value;
+    }
+    else if (key == "paddleMov2" || key == "paddleMov1")
+      handleAdvMove(key, value)
+  }
+}
+
+function handleAdvMove(key, value) {
+
+  if ((key == "paddleMov2" && player_id == 1) || (key == "paddleMov1" && player_id == 2)) {
+    if (value == "right") {
+      advMoveRight = true;
+      advMoveLeft = false;
+    }
+    else if (value == "left") {
+      advMoveLeft = true;
+      advMoveRight = false;
+    }
+    else {
+      advMoveLeft = false;
+      advMoveRight = false;
+    }
+  }
+}
+// if (obj.hasOwnProperty('player'))
+//   //console.log("Player message detected")
+//
+// else if (obj.hasOwnProperty('paddleMov2')) // Rajouter la condition d identite
+//   console.log("PaddleMov2 message detected")
+// else if (obj.hasOwnProperty('paddleMov1')) // Rajouter la condition d identite
+//   console.log("PaddleMov1 message detected")
+// //if (message == )
+
+
+function onKeyDown(event) {
+  switch (event.keyCode) {
+    case 65:
+      moveLeft = true;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "left" }))
+      break;
+    case 68:
+      moveRight = true;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "right" }))
+      break;
+  }
+}
+
+function onKeyUp(event) {
+  switch (event.keyCode) {
+    case 65:
+      moveLeft = false;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
+      break;
+    case 68:
+      moveRight = false;
+      gameSocket.send(JSON.stringify({ 'paddleMov': "false" }))
+      break;
+  }
 }
 
 export { setup };

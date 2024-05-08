@@ -19,8 +19,8 @@ import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
-import { setup } from "./components/pong3d/pongLogic.js";
 import Icookies from "./components/cookie/cookie.js";
+import { setup } from "./components/pong3d/pongServLogic.js";
 
 // Define the routes
 const routes = {
