@@ -6,6 +6,7 @@ import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
 import pongService from "./views/pongService.js";
+import gameService from "./views/gameService.js";
 import metaService from "./views/metaService.js";
 import userService from "./views/user/userService.js";
 import chatService from "./views/chat/chatService.js";
@@ -47,6 +48,10 @@ const routes = {
 	'/pongService': {
 		title: "Pong Service",
 		render: pongService
+	},
+	'/gameService': {
+		title: "Game Service",
+		render: gameService
 	},
 	'/metaService': {
 		title: "Meta Service",

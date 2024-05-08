@@ -4,17 +4,17 @@ export default () => `
 <div class="container">
 <div class="row mb-4 g-4">
   <div class="col-sm-4">
-	<a href="/pongService/local" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Local">
+	<a href="/gameService" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Local">
 	  <img src="../images/Site/Play-Local.jpg" class="img-fluid" alt="Local">
 	</a>
   </div>
   <div class="col-sm-4 g-4">
-	<a href="/pongService/remote" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Remote">
+	<a href="/gameService" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Remote">
 	  <img src="../images/Site/Play-Remote.jpg" class="img-fluid" alt="Remote">
 	</a>
   </div>
   <div class="col-sm-4 g-4">
-	<a href="/pongService/tournament" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Tournament">
+	<a href="/gameService" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Tournament">
 	  <img src="../images/Site/Play-Tournament.jpg" class="img-fluid" alt="Tournament">
 	</a>
   </div>
