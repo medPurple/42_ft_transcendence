@@ -28,9 +28,7 @@ export class chat {
 
 		const roomName = 'myroom';
 		const chatSocket = new WebSocket(
-			'wss://'
-			+ window.location.host
-			+ '/api/wschat/'
+			'wss://localhost:4430/ws/chat/'
 			+ roomName
 			+ '/'
 		);

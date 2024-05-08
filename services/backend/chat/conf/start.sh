@@ -31,4 +31,4 @@ cp /tmp/server.crt /usr/local/share/ca-certificates/
 update-ca-certificates
 openssl x509 -in /usr/local/share/ca-certificates/server.crt -out /usr/local/share/ca-certificates/server.pem -outform PEM
 
-gunicorn --certfile=/tmp/server.crt --keyfile=/tmp/server.key chat.wsgi:application --bind 0.0.0.0:4430
+uvicorn chat.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt
