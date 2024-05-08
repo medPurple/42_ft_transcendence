@@ -5,7 +5,9 @@ import intro from "./views/intro.js";
 import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
+import pongService from "./views/pongService.js";
 import gameService from "./views/gameService.js";
+import metaService from "./views/metaService.js";
 import userService from "./views/user/userService.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
@@ -18,8 +20,8 @@ import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
 import play from "./views/play.js";
 import p404 from "./views/p404.js";
-import { setup } from "./components/pong3d/pongLogic.js";
 import Icookies from "./components/cookie/cookie.js";
+import { setup } from "./components/pong3d/pongServLogic.js";
 
 // Define the routes
 const routes = {
@@ -43,9 +45,17 @@ const routes = {
 		title: "User Service",
 		render: userService
 	},
+	'/pongService': {
+		title: "Pong Service",
+		render: pongService
+	},
 	'/gameService': {
 		title: "Game Service",
 		render: gameService
+	},
+	'/metaService': {
+		title: "Meta Service",
+		render: metaService
 	},
 	'/register': {
 		title: "Register",
@@ -99,7 +109,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/pongService', '/metaService'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');

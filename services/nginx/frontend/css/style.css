@@ -203,3 +203,18 @@ a:hover {
 #navbar.hidden {
     display: none;
 }
+
+
+.chat-popup {
+	display: none;
+	position: fixed;
+	bottom: 20px; /* Adjust this value as needed */
+	right: 20px;
+	width: 300px;
+	background-color: #f1f1f1;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 10px;
+	z-index: 999;
+  }
+  

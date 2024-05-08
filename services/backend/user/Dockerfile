@@ -5,6 +5,7 @@ RUN apt update -y
 RUN apt install python3 python3-pip -y
 RUN apt install postgresql -y
 RUN apt install curl -y
+#RUN apt install iputils-ping -y
 RUN apt-get install jq -y
 
 

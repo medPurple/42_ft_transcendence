@@ -1,5 +1,7 @@
 #!/bin/bash
 
+redis-server --daemonize yes
+
 sh /tmp/init_db.sh
 service postgresql start
 

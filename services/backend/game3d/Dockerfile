@@ -6,6 +6,8 @@ RUN apt install python3 python3-pip -y
 RUN apt install postgresql -y
 RUN apt install curl -y
 RUN apt install -y libpq-dev
+RUN apt install redis-server -y
+#RUN apt install redis-cli -y
 RUN apt-get install jq -y
 
 ### Clean up
@@ -29,12 +31,17 @@ WORKDIR /app
 COPY  /tools/game3d/ /app/
 
 ### Copy start script
-COPY /conf/start.sh .
-RUN chmod 777 start.sh
+COPY /conf/start.sh /home/
+RUN chmod 777 /home/start.sh
+
+### Launch redis-server
+
+#RUN redis-server --daemonize yes
 
 ### Expose on port 8080 and 5432
 EXPOSE 8080
 EXPOSE 5432
+EXPOSE 6379
 
 ### Launch server/application
-ENTRYPOINT [ "sh", "start.sh" ]
+ENTRYPOINT [ "sh", "/home/start.sh" ]
