@@ -6,6 +6,7 @@ import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
 import pongService from "./views/pongService.js";
+import metaService from "./views/metaService.js";
 import userService from "./views/user/userService.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
@@ -46,6 +47,10 @@ const routes = {
 	'/pongService': {
 		title: "Pong Service",
 		render: pongService
+	},
+	'/metaService': {
+		title: "Meta Service",
+		render: metaService
 	},
 	'/register': {
 		title: "Register",
@@ -99,7 +104,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/pongService'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/pongService', '/metaService'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');
