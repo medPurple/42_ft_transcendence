@@ -1,4 +1,4 @@
-import { constants } from "./config.js"
+import { constants, gameCustom } from "./config.js"
 
 export function populatePaddle(color, posX, posY) {
 
@@ -64,20 +64,31 @@ export function populateFloor() {
   var path = '../../../images/Floor/FL_RedCarpet.png';
 
   //Rajouter le switch ici quant a la map
+  switch (gameCustom.map) {
+    case 0:
+      path = '../../../images/Floor/F-Cornfield.jpg';
+      break;
+    case 1:
+      path = '../../../images/Floor/F-Playground.jpg';
+      break;
+    default:
+      path = '../../../images/Floor/F-Concrete.jpg';
+  }
+
 
   var groundMaterial = new THREE.MeshLambertMaterial({
     map: groundTexLoader.load(path,
       function(texture) {
-        //texture.wrapS = THREE.ClampToEdgeWrapping;
-        //texture.wrapT = THREE.ClampToEdgeWrapping;
-        //texture.minFilter = THREE.LinearFilter;
-        //texture.magFilter = THREE.LinearFilter;
-        const repeatX = 2200 / 512;
-        const repeatY = 2200 / 512;
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(repeatX, repeatY);
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
+        // const repeatX = 2200 / 512;
+        // const repeatY = 2200 / 512;
+        // texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        // texture.repeat.set(repeatX, repeatY);
+        // texture.minFilter = THREE.LinearFilter;
+        // texture.magFilter = THREE.LinearFilter;
       })
   });
 
@@ -92,9 +103,25 @@ export function populateWall(player_id) {
 
   const wallTexLoader = new THREE.TextureLoader();
 
-  var path = '../../../images/Walls/Wall-Back-Figures.png'
+  var path;
 
   //Rajouter le switch ici quant a la map
+  switch (gameCustom.map) {
+    case 0:
+      path = '../../../images/Walls/final/W-Cornfield.jpg';
+      break;
+    case 1:
+      path = '../../../images/Walls/final/W-Playground.jpg';
+      break;
+    case 2:
+      path = '../../../images/Walls/final/W-Dorm.jpg';
+      break;
+    case 3:
+      path = '../../../images/Walls/final/W-Tiled.png';
+      break;
+    default:
+      path = '../../../images/Walls/final/W-Tiled2.png'
+  }
 
   var wallMaterial = new THREE.MeshLambertMaterial({
     map: wallTexLoader.load(path,
@@ -114,7 +141,11 @@ export function populateWall(player_id) {
   else {
     wall.position.x = -500;
   }
-  wall.position.z = 25;
+  if (gameCustom.map == 3) {
+    wall.position.z = 100;
+  }
+  else
+    wall.position.z = 380;
   wall.rotateY(Math.PI / 2);
   wall.rotateZ(Math.PI / 2);
   wall.receiveShadow = true;
