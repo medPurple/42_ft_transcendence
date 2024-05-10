@@ -3,7 +3,7 @@ import Iuser from "../user/userInfo.js"
 import Ifriends from "./friendsInfo.js";
 
 class Friends {
-
+	
 	async sendFriendRequest(username) {
 		try {
 			const response = await fetch('api/friends/send-request/', {
@@ -12,7 +12,7 @@ class Friends {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': Icookies.getCookie('csrftoken'),
 					'Authorization': Icookies.getCookie('token')
-
+					
 				},
 				body: JSON.stringify({friend_username: username})
 			});
@@ -26,7 +26,7 @@ class Friends {
 			console.error('Error:', error);
 		}
 	}
-
+	
 	async getFriendsRequest() {
 		try {
 			const response = await fetch('api/friends/friend-request/', {
@@ -47,7 +47,7 @@ class Friends {
 			console.error('Error:', error);
 		}
 	}
-
+	
 	async acceptFriendRequest(username) {
 		try {
 			const response = await fetch('api/friends/friend-request/', {
@@ -69,7 +69,7 @@ class Friends {
 			console.error('Error:', error);
 		}
 	}
-
+	
 	async rejectFriendRequest(username){
 		try {
 			const response = await fetch('api/friends/friend-request/', {
@@ -91,7 +91,7 @@ class Friends {
 			console.error('Error', error);
 		}
 	}
-
+	
 	async deleteFriend(username) {
 		try {
 			const response = await fetch('api/friends/friends-list/', {
@@ -113,15 +113,80 @@ class Friends {
 			console.error('Error', error);
 		}
 	}
+	async connect() {
+		let token = Icookies.getCookie('token'); 
+		const socket = new WebSocket(`wss://localhost:4430/ws/friends/?token=${token}`);
+		socket.onopen = function(e) {
+			console.log("[open] Connection established");
+		};
+	
+		socket.onmessage = function(event) {
+			console.log(`[message] Data received from server: ${event.data}`);
+			let data = JSON.parse(event.data);
+			if (data.error) {
+				console.error(data.error);
+			} else if (data.success) {
+				console.log(data);
+			}
+		};
+	
+		socket.onclose = function(event) {
+			if (event.wasClean) {
+				console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+			} else {
+				console.log('[close] Connection died');
+			}
+		};
+	
+		socket.onerror = function(error) {
+			console.log(`[error] ${error.message}`);
+		};
+	
+		return socket;
+	}
+	
+	async sendRequest(socket, friend_username) {
+		let message = JSON.stringify({
+			command: "send_request",
+			friend_username: friend_username
+		});
+		socket.send(message);
+	}
+	
+	async acceptRequest(socket, friend_username) {
+		let message = JSON.stringify({
+			command: "accept_request",
+			friend_username: friend_username
+		});
+		socket.send(message);
+	}
+	
+	async deleteRequest(socket, friend_username) {
+		let message = JSON.stringify({
+			command: "delete_request",
+			friend_username: friend_username
+		});
+		socket.send(message);
+	}
+	
+	async getRequests(socket) {
+		let message = JSON.stringify({
+			command: "get_requests"
+		});
+		socket.send(message);
+	}
 }
 
 export class FriendsButtons{
-
+	
 	constructor(friends) {
 		this.friends = friends;
-	}
 
+	}
+	
 	async viewUsers(){
+		const socket = await friends.connect();
+		
 		const usersList = document.createElement('div');
 		usersList.id = 'users';
 		const pUsers = document.createElement('p');
@@ -130,9 +195,11 @@ export class FriendsButtons{
 		usersList.appendChild(pUsers);
 		const ulElement = document.createElement('ul');
 		ulElement.id = 'users-list';
+
 		const dataUsers = await Iuser.getAllUsers();
 		const currentUser = await Iuser.getUsername();
-		const requestFriend = await this.friends.getFriendsRequest();
+		const requestFriend = await this.friends.getRequests(socket);
+		console.log(requestFriend);
 		const friendsList = await Ifriends.getFriendsList();
 		
 		if (dataUsers.users.length > 1) {
@@ -141,21 +208,21 @@ export class FriendsButtons{
 					const liElement = document.createElement('li');
 					liElement.id = 'user';
 					liElement.textContent = users.username;
-						const hasFriendRequest = requestFriend.friend_requests.some(request => {
+						const hasFriendRequest = requestFriend.received_requests.some(request => {
 							return request.from_user === users.user_id || request.to_user === users.user_id;
 						});
-						const hasSendRequest = requestFriend.send_requests.some(request => {
+						const hasSendRequest = requestFriend.sent_requests.some(request => {
 							return request.from_user === users.user_id || request.to_user === users.user_id;
 						});
 						const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
 						if (isFriends) {
-							this.seeFriendOrDeleteFriend(liElement, users.username);
+							this.seeFriendOrDeleteFriend(socket,liElement, users.username);
 						} else if (hasFriendRequest) {
-							this.acceptOrRejectFriendRequest(liElement, users.username);
+							this.acceptOrRejectFriendRequest(socket,liElement, users.username);
 						} else if (hasSendRequest) {
 							this.requestSent(liElement);
 						} else {
-							this.sendFriendRequestButton(liElement, users.username);
+							this.sendFriendRequestButton(socket, liElement, users.username);
 						}
 						ulElement.appendChild(liElement);
 					}
@@ -170,13 +237,13 @@ export class FriendsButtons{
 		return usersList;
 	}
 
-	async sendFriendRequestButton(liElement, username){
+	async sendFriendRequestButton(socket, liElement, username){
 		const buttonSendRequest = document.createElement('button');
 		buttonSendRequest.setAttribute('id', 'send-request-button');
 		buttonSendRequest.textContent = 'Add Friend';
 		buttonSendRequest.onclick = async () => {
 			try {
-				const requestIsValid = await this.friends.sendFriendRequest(username);
+				const requestIsValid = await this.sendRequest(socket, username);
 				console.log(requestIsValid);
 				if (requestIsValid === 'Request sent') {
 					buttonSendRequest.textContent = 'Request Sent';
@@ -191,7 +258,7 @@ export class FriendsButtons{
 		return buttonSendRequest;
 	}
 
-	acceptOrRejectFriendRequest(liElement, username){
+	acceptOrRejectFriendRequest(socket, liElement, username){
 		const buttonAcceptRequest = document.createElement('button');
 		buttonAcceptRequest.setAttribute('id', 'accept-request-button');
 		buttonAcceptRequest.textContent = 'Accept Request';
@@ -200,8 +267,8 @@ export class FriendsButtons{
 		buttonRejectRequest.setAttribute('id', 'reject-request-button');
 		buttonRejectRequest.textContent = 'Reject Request';
 
-		this.acceptFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username);
-		this.rejectFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username);
+		this.acceptFriendRequestButton(socket, buttonAcceptRequest, buttonRejectRequest, liElement, username);
+		this.rejectFriendRequestButton(socket, buttonAcceptRequest, buttonRejectRequest, liElement, username);
 	}
 
 	seeFriendOrDeleteFriend(liElement, username) {
@@ -219,11 +286,11 @@ export class FriendsButtons{
 		
 	}
 
-	async acceptFriendRequestButton(buttonAcceptRequest, buttonRejectRequest, liElement, username){
+	async acceptFriendRequestButton(socket, buttonAcceptRequest, buttonRejectRequest, liElement, username){
 
 		buttonAcceptRequest.onclick = async () => {
 			try {
-				const acceptIsValid = await this.friends.acceptFriendRequest(username);
+				const acceptIsValid = await this.acceptRequest(socket, username);
 				if (acceptIsValid === 'Request accepted') {
 					buttonAcceptRequest.textContent = 'Request Accepted';
 					buttonAcceptRequest.style.display = 'none';
@@ -238,11 +305,11 @@ export class FriendsButtons{
 		return buttonAcceptRequest;
 	}
 
-	async rejectFriendRequestButton(buttonAcceptRequest, buttonRejectRequest,liElement, username){
+	async rejectFriendRequestButton(socket, buttonAcceptRequest, buttonRejectRequest,liElement, username){
 
 		buttonRejectRequest.onclick = async () => {
 			try {
-				const rejectIsValid = await this.friends.rejectFriendRequest(username);
+				const rejectIsValid = await this.deleteRequest(socket, username);
 				if (rejectIsValid === 'Request rejected'){
 					buttonRejectRequest.textContent = 'Request rejected';
 					buttonAcceptRequest.style.display = 'none';
@@ -295,5 +362,7 @@ export class FriendsButtons{
 
 
 const friends = new Friends();
+// const socket = await friends.connect();
+// friends.viewUsers(socket);
 export { friends };
 

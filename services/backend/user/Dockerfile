@@ -7,6 +7,8 @@ RUN apt install postgresql -y
 RUN apt install curl -y
 RUN apt-get install jq -y
 
+### Install Redis
+RUN apt-get install redis-server -y
 
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
 COPY /conf/.key /tmp/.key
