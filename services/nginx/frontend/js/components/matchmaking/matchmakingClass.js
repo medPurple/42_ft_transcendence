@@ -1,105 +1,35 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
-import {WaitingScreen} from "./WaitingScreen.js"
 
 
-class Matchmaking {
-
-	async pongMatchmaking() {
-		let id = await Iuser.getID();
-		console.log("id is : " + id);
-		fetch('/api/queue/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': Icookies.getCookie('token'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-						"userID": id,
-						"game": "pong_multiplayer"
-					})
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.position) {
-				console.log("Added to queue for pong multiplayer");
-				return;
-			} else {
-				alert('No such user');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
-	}
-
-	async tournamentMatchmaking() {
-		let id = await Iuser.getID();
-		console.log("id is : " + id);
-		fetch('/api/queue/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': Icookies.getCookie('token'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-						"userID": id,
-						"game": "pong_tournament"
-					})
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.position) {
-				console.log("Added to queue for pong tournament");
-				return;
-			} else {
-				alert('No such user');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
-	}
-
-	async pkmMatchmaking() {
-		let id = await Iuser.getID();
-		console.log("id is : " + id);
-		fetch('/api/queue/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': Icookies.getCookie('token'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-						"userID": id,
-						"game": "pkm_multiplayer"
-					})
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.position) {
-				console.log("Added to queue for pokemon multiplayer");
-				new WaitingScreen('pkm_multiplayer');
-				return;
-			} else {
-				alert('No such user');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
-	}
-}
-
-// Pour utiliser cette classe, vous pouvez créer une nouvelle instance et appeler les méthodes appropriées
 export class MatchmakingButtons {
 
 
-	constructor(matchmaking) {
-		this.matchmaking = matchmaking;
+	constructor() {
+		this.matchsocket = new WebSocket("wss://localhost:4430/api/wsqueue/");
+		this.matchmakingsocketaction();
+		this.status = null;
+		this.timer = null;
+		this.game = null;
+	}
+
+	matchmakingsocketaction() {
+		this.matchsocket.onopen = (event) => {
+			console.log("Matchmaking socket opened.");
+		}
+
+		this.matchsocket.onclose = (event) => {
+			console.log("Matchmaking socket closed.", event.data);
+		}
+		
+		this.matchsocket.onmessage = (event) => {
+			console.log("Matchmaking socket message: ", event.data);
+			const data = JSON.parse(event.data);
+			this.status = data.status;
+			this.timer = data.timer;
+			this.game = data.game;
+		}
+
 	}
 
 	multipongButton(){
@@ -174,29 +104,6 @@ export class MatchmakingButtons {
 
 	}
 
-	matchmakingStartButton(){
-		const startbutton = document.createElement('button');
-		startbutton.innerText = 'PLAY';
-		startbutton.classList.add('queue-button');
-		startbutton.onclick = async () => {
-			const selectedGame = document.querySelector('input[name="game"]:checked');
-			if (selectedGame) {
-				this.removeButtons();
-				if (selectedGame.value == 'Pong Versus') {
-					// this.matchmaking.pongMatchmaking();
-					new WaitingScreen('pong_multiplayer');
-				} else if (selectedGame.value == 'Pong Tournament') {
-					// this.matchmaking.tournamentMatchmaking();
-					new WaitingScreen('pong_tournament');
-				} else if (selectedGame.value == 'Pokemon Versus') {
-					await this.matchmaking.pkmMatchmaking();
-				}
-
-			}
-		}
-		return startbutton;
-	}
-
 	buttonsCreation() {
 		const matchmakingdiv = document.createElement('div');
 		matchmakingdiv.classList.add('matchmakingdiv');
@@ -228,8 +135,84 @@ export class MatchmakingButtons {
 	removeButtons() {
 		const matchmakingdiv = document.querySelector('.matchmakingdiv');
 		matchmakingdiv.remove();
-    }
-}
+	}
 
-const matchmaking = new Matchmaking();
-export { matchmaking };
+	displayWaitingScreen(){
+		const waitingScreen = document.createElement('div');
+		waitingScreen.classList.add('waiting-screen');
+
+		let waitingText = document.createElement('p');
+		waitingText.classList.add('waiting-text');
+
+		let timertext = document.createElement('p');
+		timertext.classList.add('waiting-timer');
+
+		let gametext = document.createElement('p');
+		gametext.classList.add('waiting-game');
+
+		let cancelbutton = document.createElement('button');
+		cancelbutton.classList.add('cancel-button');
+		cancelbutton.innerText = 'CANCEL';
+
+
+		waitingScreen.appendChild(waitingText);
+		waitingScreen.appendChild(timertext);
+		waitingScreen.appendChild(gametext);
+		waitingScreen.appendChild(cancelbutton);
+		waitingScreen.appendChild(waitingText);
+
+		return {
+			waitingScreen: waitingScreen,
+			waitingText: waitingText,
+			timertext: timertext,
+			gametext: gametext,
+			cancelbutton: cancelbutton
+		};
+	}
+
+	timerCalculation(){
+		let time = new Date(this.timer);
+        let now = new Date(); // Date actuelle
+        let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+        return (Math.floor(elapsedTimeMillis / 1000));
+	}
+
+	waitingScreen(){
+		const elements = this.displayWaitingScreen();
+		const waitingText = elements.waitingText;
+		if (this.status === 'found') {
+			waitingText.innerText = 'Match found!';
+		}
+		else if (this.status === 'waiting') {
+			waitingText.innerText = 'Waiting for players...';
+		}
+		const timertext = elements.timertext;
+		timertext.innerText = `Time remaining: ${this.timerCalculation()}`;
+		const gametext = elements.gametext;
+		gametext.innerText = `Game: ${this.game}`;
+	}
+
+	matchmakingStartButton(){
+		const startbutton = document.createElement('button');
+		startbutton.innerText = 'PLAY';
+		startbutton.classList.add('queue-button');
+		startbutton.onclick = async () => {
+			const selectedGame = document.querySelector('input[name="game"]:checked');
+			if (selectedGame) {
+				const msg = {
+					"action": "queue_add",
+					"game": selectedGame.value,
+					"id": await Iuser.getID(),
+				}
+				this.matchsocket.send(JSON.stringify(msg));
+				this.removeButtons();
+				const waitingpage = this.displayWaitingScreen()
+				return waitingpage;
+				
+			}
+		}
+		return startbutton;
+	}
+	
+	
+}

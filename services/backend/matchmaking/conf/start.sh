@@ -5,6 +5,9 @@ service postgresql start
 
 sleep 5
 
+redis-server &
+sleep 5
+
 python3 manage.py makemigrations classic
 
 sleep 5
@@ -27,4 +30,4 @@ update-ca-certificates
 openssl x509 -in /usr/local/share/ca-certificates/server.crt -out /usr/local/share/ca-certificates/server.pem -outform PEM
 
 # gunicorn --certfile=/tmp/server.crt --keyfile=/tmp/server.key matchmaking.wsgi:application --bind 0.0.0.0:4430
-uvicorn pokemap.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt
+uvicorn matchmaking.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt

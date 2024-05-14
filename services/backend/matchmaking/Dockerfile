@@ -6,6 +6,7 @@ RUN apt install python3 python3-pip -y
 RUN apt install postgresql -y
 RUN apt install curl -y
 RUN apt-get install jq -y
+RUN apt-get install redis-server -y
 
 
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf

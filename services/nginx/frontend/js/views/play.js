@@ -1,5 +1,5 @@
 
-import {MatchmakingButtons,matchmaking} from "../components/matchmaking/matchmakingClass.js";
+import {MatchmakingButtons} from "../components/matchmaking/matchmakingClass.js";
 import {pokeMap} from "../components/pokemon/pokemap.js";
 import Icookies from "../components/cookie/cookie.js"
 
@@ -7,7 +7,7 @@ import Icookies from "../components/cookie/cookie.js"
 export default () => {
         const gamediv = document.createElement('div');
 	if (Icookies.getCookie('token') != null) {
-                gamediv.appendChild(new MatchmakingButtons(matchmaking).buttonsCreation());
+                gamediv.appendChild(new MatchmakingButtons().buttonsCreation());
                 gamediv.appendChild(new pokeMap().startingPokeverse());
         } else {
                 gamediv.classList.add('not-logged');
