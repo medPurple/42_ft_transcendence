@@ -55,7 +55,7 @@ all: run_script up
 	@ echo -e "\n$(WHITE)	user set $(CEND)"
 	@ echo -e "\n$(WHITE)	chat set $(CEND)"
 
-	@ echo -e "\n$(GREEN)★ Everything is running smoothly at http://localhost:8080/ ★$(CEND)"
+	@ echo -e "\n$(GREEN)★ Everything is running smoothly at https://localhost:4430/ ★$(CEND)"
 	@ echo -e "\n$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
 
 up:
