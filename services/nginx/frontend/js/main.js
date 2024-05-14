@@ -5,8 +5,9 @@ import intro from "./views/intro.js";
 import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
-import pongService from "./views/pongService.js";
-import gameService from "./views/gameService.js";
+import pongService from "./views/pong3d/pongService.js";
+import gameService from "./views/pong3d/gameService.js";
+import pongSettings from "./views/pong3d/pongSettings.js";
 import metaService from "./views/metaService.js";
 import userService from "./views/user/userService.js";
 import chatService from "./views/chat/chatService.js";
@@ -52,6 +53,10 @@ const routes = {
 	'/gameService': {
 		title: "Game Service",
 		render: gameService
+	},
+	'/pongSettings': {
+		title: "Pong Settings",
+		render: pongSettings
 	},
 	'/metaService': {
 		title: "Meta Service",
@@ -109,7 +114,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/pongService', '/metaService'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/pongService', '/pongSettings', '/metaService'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');
@@ -191,12 +196,6 @@ async function router() {
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render(view.params);
-
-				// console.log('route', result);
-
-		if (result.includes("pong-renderer")) {
-			setup();
-		}
 
 		//Clear the app content
 		app.innerHTML = '';

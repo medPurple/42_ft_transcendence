@@ -21,7 +21,7 @@ export default () => `
 </div>
 <div class="row">
   <div class="col-sm-12">
-	<a href="/pongService/customization" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Customization">
+	<a href="/pongSettings" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Customization">
 	  <img src="../images/Site/Play-Customization.jpg" class="img-fluid w-100" alt="Customization">
 	</a>
   </div>

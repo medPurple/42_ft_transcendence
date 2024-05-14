@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from game3d.vault import VaultClient
+import os
 
 # Create a Vault link
 vault = VaultClient()
@@ -34,6 +35,10 @@ ALLOWED_HOSTS = [
     'localhost',
     'pongservice',
 ]
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8080',
+                        'http://127.0.0.1:8080',
+                        'http://pongservice:8080',]
 
 LOGGING = {
     'version': 1,
