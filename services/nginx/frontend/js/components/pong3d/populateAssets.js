@@ -82,79 +82,76 @@ function populateSlide() {
   })
 }
 
-// function populateBeds() {
+// function populateABed(index, positionX, positionY, positionZ, rotation) {
 //
-//   //THREE.Cache.enabled = true;
-//
-//   console.log("Je vais faire pop un plumard")
 //   var objLoader = new THREE.GLTFLoader();
-//
 //   objLoader.load('../../../images/3D/Original/bed_squid_game_multiple_slots.glb', function(gltf) {
-//     objMesh.beds[0] = gltf.scene;
-//     objMesh.beds[0].scale.set(20, 20, 20);
-//     objMesh.beds[0].position.y = -650;
-//     objMesh.beds[0].position.z = -130;
-//     objMesh.beds[0].rotateX(Math.PI / 2);
+//     objMesh.beds[index] = gltf.scene;
+//     objMesh.beds[index].scale.set(20, 20, 20);
+//     objMesh.beds[index].rotateX(Math.PI / 2);
 //     if (core.player_id == 2) {
-//       objMesh.beds[0].position.x = -500;
-//       objMesh.beds[0].rotateY(THREE.Math.degToRad(180));
+//       objMesh.beds[index].position.x = -positionX;
+//       objMesh.beds[index].rotateY(THREE.Math.degToRad(rotation));
 //     }
 //     else {
-//       objMesh.beds[0].position.x = 500;
-//
+//       objMesh.beds[index].position.x = positionX;
 //     }
-//     core.scene.add(objMesh.beds[0]);
-//   })
-//   for (var i = 1; i <= 10; i++) {
-//     objMesh.beds[i] = objMesh.beds[0].clone();
-//     objMesh.beds[i].position.x = objMesh.beds[0].position.x;
-//     if (i % 3 == 0) {
-//       objMesh.beds[i].position.y = objMesh.beds[i - 1].position.y + 125;
-//     }
-//     else
-//       objMesh.beds[i].position.y = objMesh.beds[i - 1].position.y;
-//     objMesh.beds[i].position.z = objMesh.beds[i - 1].position.z + 125;
-//     core.scene.add(objMesh.beds[i]);
-//   }
+//     objMesh.beds[index].position.y = positionY;
+//     objMesh.beds[index].position.z = positionZ;
+//     core.scene.add(objMesh.beds[index]);
+//   });
 // }
+
+function populateABed(index, positionX, positionY, positionZ, rotation, scale) {
+
+  var objLoader = new THREE.GLTFLoader();
+  objLoader.load('../../../images/3D/Original/bed_squid_game_multiple_slots.glb', function(gltf) {
+    objMesh.beds[index] = gltf.scene;
+    objMesh.beds[index].scale.set(scale, scale, scale);
+    objMesh.beds[index].rotateX(Math.PI / 2);
+    objMesh.beds[index].rotateY(THREE.Math.degToRad(rotation));
+    objMesh.beds[index].position.x = positionX;
+    objMesh.beds[index].position.y = positionY;
+    objMesh.beds[index].position.z = positionZ;
+    core.scene.add(objMesh.beds[index]);
+  });
+}
 
 // function populateBeds() {
 //
-//   THREE.Cache.enabled = true;
-//
-//   console.log("Je vais faire pop un plumard")
-//   var objLoader = new THREE.GLTFLoader();
-//
-//   for (var i = 0; i < 10; i++) {
-//
-//     objLoader.load('../../../images/3D/Original/bed_squid_game_multiple_slots.glb', function(gltf) {
-//       objMesh.beds.push(gltf.scene);
-//     })
-//   }
-//   objMesh.beds[0].scale.set(20, 20, 20);
-//   objMesh.beds[0].position.y = -650;
-//   objMesh.beds[0].position.z = -130;
-//   objMesh.beds[0].rotateX(Math.PI / 2);
-//   if (core.player_id == 2) {
-//     objMesh.beds[0].position.x = -500;
-//     objMesh.beds[0].rotateY(THREE.Math.degToRad(180));
-//   }
-//   else {
-//     objMesh.beds[0].position.x = 500;
-//   }
-//   core.scene.add(objMesh.beds[0]);
-//   for (var i = 1; i < 10; i++) {
-//     objMesh.beds[i].scale.set(20, 20, 20);
-//     objMesh.beds[i].position.x = objMesh.beds[0].position.x;
-//     if (i % 3 == 0) {
-//       objMesh.beds[i].position.y = objMesh.beds[i - 1].position.y + 125;
+//   var positionX = 500;
+//   var positionY = -650;
+//   var positionZ = -130;
+//   for (var i = 0; i < 20; i++) {
+//     if (i % 5 == 0) {
+//       positionY += 250;
+//       positionZ = -130;
 //     }
 //     else
-//       objMesh.beds[i].position.y = objMesh.beds[i - 1].position.y;
-//     objMesh.beds[i].position.z = objMesh.beds[i - 1].position.z + 125;
-//     core.scene.add(objMesh.beds[i]);
+//       positionZ += 62;
+//     populateABed(i, positionX, positionY, positionZ, 180, 20);
 //   }
 // }
+
+function populateRowBeds(positionX, positionY, height) {
+
+  var positionZ = -130;
+  for (var i = 0; i < (9 * height); i++) {
+    if (i % height == 0) {
+      positionX += 100;
+      positionZ = -130;
+    }
+    else
+      positionZ += 47.5;
+    populateABed(i, positionX, positionY, positionZ, 270, 15);
+  }
+}
+
+function populateBeds() {
+
+  populateRowBeds(-500, -600, 3);
+  populateRowBeds(-500, -400, 2);
+}
 
 
 export function populateAssets() {
@@ -170,6 +167,6 @@ export function populateAssets() {
       populateSlide();
       break;
     default:
-    //populateBeds();
+      populateBeds();
   }
 }
