@@ -8,8 +8,10 @@ export class MatchmakingButtons {
 	constructor() {
 		this.matchsocket = new WebSocket("wss://localhost:4430/api/wsqueue/");
 		this.matchmakingsocketaction();
+		this.maindiv = document.createElement('div');
+		this.maindiv.classList.add('main-matchmaking-div');
 		this.status = null;
-		this.timer = null;
+		this.timer = 0;
 		this.game = null;
 	}
 
@@ -20,14 +22,22 @@ export class MatchmakingButtons {
 
 		this.matchsocket.onclose = (event) => {
 			console.log("Matchmaking socket closed.", event.data);
+			this.maindiv.remove();
 		}
 		
-		this.matchsocket.onmessage = (event) => {
+		this.matchsocket.onmessage = async (event) => {
 			console.log("Matchmaking socket message: ", event.data);
 			const data = JSON.parse(event.data);
 			this.status = data.status;
-			this.timer = data.timer;
+			this.timer = data.waitingTime;
 			this.game = data.game;
+			this.updateData();
+			const msg = {
+				"action": "queue_status",
+				"game": this.game,
+				"id": await Iuser.getID(),
+			}
+			this.matchsocket.send(JSON.stringify(msg));
 		}
 
 	}
@@ -108,24 +118,23 @@ export class MatchmakingButtons {
 		const matchmakingdiv = document.createElement('div');
 		matchmakingdiv.classList.add('matchmakingdiv');
 
+		const titleDiv = document.createElement('div');
+		titleDiv.classList.add('title-div');
+		titleDiv.appendChild(this.matchmakingTitle());
 
-			const titleDiv = document.createElement('div');
-			titleDiv.classList.add('title-div');
-			titleDiv.appendChild(this.matchmakingTitle());
+		const radioButtonsDiv = document.createElement('div');
+		radioButtonsDiv.classList.add('radio-buttons');
+		radioButtonsDiv.appendChild(this.multipongButton());
+		radioButtonsDiv.appendChild(this.tournapongButton());
+		radioButtonsDiv.appendChild(this.multipkmButton());
 
-			const radioButtonsDiv = document.createElement('div');
-			radioButtonsDiv.classList.add('radio-buttons');
-			radioButtonsDiv.appendChild(this.multipongButton());
-			radioButtonsDiv.appendChild(this.tournapongButton());
-			radioButtonsDiv.appendChild(this.multipkmButton());
+		const startButtonDiv = document.createElement('div');
+		startButtonDiv.classList.add('button-div');
+		startButtonDiv.appendChild(this.matchmakingStartButton());
 
-			const startButtonDiv = document.createElement('div');
-			startButtonDiv.classList.add('button-div');
-			startButtonDiv.appendChild(this.matchmakingStartButton());
-
-			matchmakingdiv.appendChild(titleDiv);
-			matchmakingdiv.appendChild(radioButtonsDiv);
-			matchmakingdiv.appendChild(startButtonDiv);
+		matchmakingdiv.appendChild(titleDiv);
+		matchmakingdiv.appendChild(radioButtonsDiv);
+		matchmakingdiv.appendChild(startButtonDiv);
 		
 
 		// document.body.appendChild(matchmakingdiv);
@@ -135,61 +144,6 @@ export class MatchmakingButtons {
 	removeButtons() {
 		const matchmakingdiv = document.querySelector('.matchmakingdiv');
 		matchmakingdiv.remove();
-	}
-
-	displayWaitingScreen(){
-		const waitingScreen = document.createElement('div');
-		waitingScreen.classList.add('waiting-screen');
-
-		let waitingText = document.createElement('p');
-		waitingText.classList.add('waiting-text');
-
-		let timertext = document.createElement('p');
-		timertext.classList.add('waiting-timer');
-
-		let gametext = document.createElement('p');
-		gametext.classList.add('waiting-game');
-
-		let cancelbutton = document.createElement('button');
-		cancelbutton.classList.add('cancel-button');
-		cancelbutton.innerText = 'CANCEL';
-
-
-		waitingScreen.appendChild(waitingText);
-		waitingScreen.appendChild(timertext);
-		waitingScreen.appendChild(gametext);
-		waitingScreen.appendChild(cancelbutton);
-		waitingScreen.appendChild(waitingText);
-
-		return {
-			waitingScreen: waitingScreen,
-			waitingText: waitingText,
-			timertext: timertext,
-			gametext: gametext,
-			cancelbutton: cancelbutton
-		};
-	}
-
-	timerCalculation(){
-		let time = new Date(this.timer);
-        let now = new Date(); // Date actuelle
-        let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
-        return (Math.floor(elapsedTimeMillis / 1000));
-	}
-
-	waitingScreen(){
-		const elements = this.displayWaitingScreen();
-		const waitingText = elements.waitingText;
-		if (this.status === 'found') {
-			waitingText.innerText = 'Match found!';
-		}
-		else if (this.status === 'waiting') {
-			waitingText.innerText = 'Waiting for players...';
-		}
-		const timertext = elements.timertext;
-		timertext.innerText = `Time remaining: ${this.timerCalculation()}`;
-		const gametext = elements.gametext;
-		gametext.innerText = `Game: ${this.game}`;
 	}
 
 	matchmakingStartButton(){
@@ -206,13 +160,90 @@ export class MatchmakingButtons {
 				}
 				this.matchsocket.send(JSON.stringify(msg));
 				this.removeButtons();
-				const waitingpage = this.displayWaitingScreen()
-				return waitingpage;
+				this.maindiv.appendChild(this.waitingPage());
+				// return waitingpage;
 				
 			}
 		}
 		return startbutton;
 	}
 	
+	timerCalculation(){
+
+		let time = new Date(this.timer);
+		if (isNaN(time.getTime())) {
+			// this.timer was not a valid date
+			console.error('Invalid date:', this.timer);
+			return;
+		}
+		let now = new Date(); // Date actuelle
+		let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+		return (Math.floor(elapsedTimeMillis / 1000));
+	}
+
+	waitingPage(){
+		const waitingpage = document.createElement('div');
+		waitingpage.classList.add('waiting-page');
+
+		const waitingtitle = document.createElement('p');
+		waitingtitle.classList.add('waiting-title');
+		waitingtitle.innerText = "status = " + this.status;
+
+		const timer = document.createElement('p');
+		timer.classList.add('timer');
+		timer.innerText = "timer : " + this.timerCalculation();
+
+		const game = document.createElement('p');
+		game.classList.add('game');
+		game.innerText = "game : " + this.game;
+
+		const cancelbutton = document.createElement('button');
+		cancelbutton.classList.add('cancel-button');
+		cancelbutton.innerText = 'Cancel';
+		cancelbutton.onclick = () => {
+			const msg = {
+				"action": "queue_remove",
+				"game": this.game,
+				"id": Iuser.getID(),
+			}
+			this.matchsocket.send(JSON.stringify(msg));
+			this.removeWaitingPage();
+		}
+
+		waitingpage.appendChild(waitingtitle);
+		waitingpage.appendChild(timer);
+		waitingpage.appendChild(game);
+		waitingpage.appendChild(cancelbutton);
 	
+		return waitingpage;
+	}
+
+	removeWaitingPage(){
+		const waitingpage = document.querySelector('.waiting-page');
+		waitingpage.remove();
+		this.maindiv.appendChild(this.buttonsCreation());
+	}
+
+	updateData(){
+		const waitingpage = document.querySelector('.waiting-page');
+		const waitingtitle = document.querySelector('.waiting-title');
+		const timer = document.querySelector('.timer');
+		const game = document.querySelector('.game');
+
+		waitingtitle.innerText = "status = " + this.status;
+		const time = this.timerCalculation();
+		if (time > 60){
+			timer.innerText = "timer : " + Math.floor(time/60) + "m " + time % 60 + "s";
+		}
+		else {
+			timer.innerText = "timer : " + time;
+		}
+		game.innerText = "game : " + this.game;
+	}
+
+	mainMatchmakingDiv(){
+		this.maindiv.appendChild(this.buttonsCreation());
+		return this.maindiv;
+	}	
 }
+

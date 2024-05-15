@@ -6,6 +6,7 @@ service postgresql start
 sleep 5
 
 redis-server &
+
 sleep 5
 
 python3 manage.py makemigrations classic
