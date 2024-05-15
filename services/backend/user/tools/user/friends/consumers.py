@@ -12,6 +12,8 @@ from django.shortcuts import get_object_or_404
 from urllib.parse import parse_qs
 import requests
 from asgiref.sync import sync_to_async
+from django.db import transaction
+
 
 import logging
 
@@ -62,6 +64,8 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 				await self.delete_request(content["friend_username"])
 			elif command == "get_requests":
 				await self.get_requests()
+			elif command == "delete_friend":
+				await self.delete_friend(content["friend_username"])
 		except CustomUser.DoesNotExist:
 			await self.send_json({"error": "User not found"})
 		except FriendRequest.DoesNotExist:
@@ -75,65 +79,118 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 		except CustomUser.DoesNotExist:
 			return None
 
-	@database_sync_to_async
-	def send_request(self, friend_username):
-		to_user = CustomUser.objects.get(username=friend_username)
-		friend_request, created = FriendRequest.objects.get_or_create(
-			from_user=self.user, to_user=to_user)
-		if created:
-			return {"success": True}
-		else:
-			return {"error": "Send request failed"}
+	# @database_sync_to_async
+	async def send_request(self, friend_username):
+		try:
+			to_user = await sync_to_async(CustomUser.objects.get)(username=friend_username)
+			friend_request, created = await sync_to_async(FriendRequest.objects.get_or_create)(
+				from_user=self.user, to_user=to_user)
+			if created:
+				await self.send(text_data=json.dumps({
+					'success': True,
+				}))
+			else:
+				await self.send(text_data=json.dumps({
+					'success': False,
+					'error': 'Friend request already sent'
+				}))
+		except CustomUser.DoesNotExist:
+			await self.send(text_data=json.dumps({
+				'success': False,
+				'error': 'User not found'
+			}))
+		except Exception as e:
+			await self.send(text_data=json.dumps({
+				'success': False,
+				'error': str(e)
+			}))
 
-	@database_sync_to_async
-	def accept_request(self, friend_username):
-		to_user = CustomUser.objects.get(username=friend_username)
-		friend_request = FriendRequest.objects.get(
-			from_user=to_user, to_user=self.user)
-		self.user.friends.add(to_user)
-		to_user.friends.add(self.user)
-		friend_request.delete()
-		return {"success": True}
 
-	@database_sync_to_async
-	def delete_request(self, friend_username):
-		to_user = CustomUser.objects.get(username=friend_username)
-		friend_request = FriendRequest.objects.get(
-			from_user=to_user, to_user=self.user)
-		friend_request.delete()
-		return {"success": True}
+	# @database_sync_to_async
+	async def accept_request(self, friend_username):
+		try:
+			to_user = await sync_to_async(CustomUser.objects.get)(username=friend_username)
+			friend_request = await sync_to_async(FriendRequest.objects.get)(
+				from_user=to_user, to_user=self.user)
+
+			# Définissez une fonction synchrone pour exécuter la transaction atomique
+			def execute_atomic_transaction():
+				with transaction.atomic():
+					# Ajoutez l'utilisateur ami des deux côtés
+					self.user.friends.add(to_user)
+					to_user.friends.add(self.user)
+					# Supprimez la demande d'ami
+					friend_request.delete()
+
+			# Exécutez la fonction synchrone dans un thread
+			await sync_to_async(execute_atomic_transaction)()
+
+			await self.send(text_data=json.dumps({
+					'success': True,
+				}))
+		except Exception as e:
+			await self.send(text_data=json.dumps({
+				'success': False,
+				'error': str(e)
+			}))
+
+
+	# @database_sync_to_async
+	async def delete_request(self, friend_username):
+		try:
+			to_user = await sync_to_async(CustomUser.objects.get)(username=friend_username)
+			friend_request =  await sync_to_async(FriendRequest.objects.get)(
+				from_user=to_user, to_user=self.user)
+
+			def execute_atomic_transaction():
+				with transaction.atomic():
+					friend_request.delete()
+
+			await self.send(text_data=json.dumps({
+				'success': True,
+			}))
+
+		except Exception as e:
+			await self.send(text_data=json.dumps({
+				'success': False,
+				'error': str(e)
+			}))
 
 	# @database_sync_to_async
 	async def get_requests(self):
 		try:
-			logger.debug("KK C MOA")
-
 			# Perform the database queries asynchronously
 			friend_requests = await sync_to_async(list)(FriendRequest.objects.filter(to_user=self.user))
-			logger.debug("FRIEND REQUESTS")
-
 			send_friend_requests = await sync_to_async(list)(FriendRequest.objects.filter(from_user=self.user))
-			logger.debug("SEND FRIEND REQUESTS")
-
 			# Serialize the data asynchronously and access the data attribute
 			received_requests_data = await sync_to_async(lambda: FriendRequestSerializer(friend_requests, many=True).data)()
-			logger.debug("RECEIVED FRIEND REQUESTS DATA")
-
 			sent_requests_data = await sync_to_async(lambda: FriendRequestSerializer(send_friend_requests, many=True).data)()
-			logger.debug("SENT REQUESTS DATA")
 
-			logger.info("TEST")
 			await self.send(text_data=json.dumps({
 				'success': True,
 				'received_requests': received_requests_data,
 				'sent_requests': sent_requests_data
 			}))
 		except Exception as e:
-			logger.debug("NUUUUUL")
 			await self.send(text_data=json.dumps({
 				'success': False,
 				'error': str(e)
 			}))
+
+	async def delete_friend(self, friend_username):
+		from_user = self.user  # Assumed self.user contains the current user
+		try:
+			friend = await sync_to_async(CustomUser.objects.get)(username=friend_username)
+			if friend in from_user.friends.all():
+				from_user.friends.remove(friend)
+				friend.friends.remove(from_user)
+				await self.send(text_data=json.dumps({'success': True}))
+			else:
+				await self.send(text_data=json.dumps({'error': 'Friend not found in friend list'}))
+		except CustomUser.DoesNotExist:
+			await self.send(text_data=json.dumps({'error': 'User not found'}))
+		except Exception as e:
+			await self.send(text_data=json.dumps({'error': str(e)}))
 
 
 	# @sync_to_async
