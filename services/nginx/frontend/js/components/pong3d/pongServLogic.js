@@ -1,4 +1,4 @@
-import { gameState, gameCustom, core, playMesh, pUpMesh, decMesh, objMesh, lights, pUpState, constants } from "./config.js"
+import { gameState, core, playMesh } from "./config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
 import { onKeyUp, onKeyDown } from './inputEvents.js'
@@ -26,7 +26,7 @@ function draw() {
 
 function setup() {
 
-  core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
+  core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/');
 
   core.gameSocket.onopen = function(e) {
     console.log('Connected');
@@ -41,7 +41,6 @@ function setup() {
   };
 
   core.gameSocket.onmessage = function(event) {
-    //console.log("Message du websocket: ", event.data);
     handleServerMessage(event.data);
   }
 }
@@ -49,7 +48,6 @@ function setup() {
 function handleServerMessage(message) {
 
   var map = new Map(Object.entries(JSON.parse(message)));
-  //console.log("Message du websocket: ", map);
 
   for (let [key, value] of map.entries()) {
     if (key == "party" && value == 'active') {

@@ -19,12 +19,21 @@ class GameSettingsAPI(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def put(self, request, pk):
-		customization_option = GameSettings.objects.get(pk=pk)
+		try:
+			customization_option = GameSettings.objects.get(pk=pk)
+		except GameSettings.DoesNotExist:
+			return Response({"error": "GameSettings not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		for field in ['scene', 'ball', 'paddle', 'table', 'score', 'powerups']:
+			if field in request.data:
+				setattr(customization_option, field, request.data[field])
+
 		serializer = GameSettingsSerializer(customization_option, data=request.data)
 		if serializer.is_valid():
 			serializer.save()
 			return Response(serializer.data)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def delete(self, request, pk):
 		customization_option = GameSettings.objects.get(pk=pk)

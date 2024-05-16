@@ -16,6 +16,7 @@ US_NAME = user
 VA_NAME = vault
 MA_NAME = matchmaking
 VA_VOL_NAME = secret_volume
+PM_NAME = pokemap
 
 NG_IMG = $(shell docker images | grep nginx | wc -l)
 G3_IMG = $(shell docker images | grep game3d | wc -l)
@@ -25,13 +26,15 @@ US_IMG = $(shell docker images | grep user | wc -l)
 VA_IMG = $(shell docker images | grep vault | wc -l)
 
 VA_PS = $(shell docker ps | grep vault | wc -l)
+PM_IMG = $(shell docker images | grep pokemap | wc -l)
+
 
 US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
 MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
 CH_VOL = $(shell docker volume ls | grep chat | wc -l)
-
+PM_VOL = $(shell docker volume ls | grep pokemap | wc -l)
 #######	COLORS #######
 
 WHITE = \033[97;4m
@@ -52,7 +55,7 @@ all: run_script up
 	@ echo -e "\n$(WHITE)	user set $(CEND)"
 	@ echo -e "\n$(WHITE)	chat set $(CEND)"
 
-	@ echo -e "\n$(GREEN)★ Everything is running smoothly at http://localhost:8080/ ★$(CEND)"
+	@ echo -e "\n$(GREEN)★ Everything is running smoothly at https://localhost:4430/ ★$(CEND)"
 	@ echo -e "\n$(GREEN)★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★$(CEND)"
 
 up:
@@ -114,6 +117,11 @@ re_ma: down	run_script
 	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
 
+re_pm: down	run_script
+	@ if [ $(PM_IMG) = "1" ]; then docker rmi $(PM_NAME); fi;
+	@ docker compose -f docker-compose.yml up -d --pull never
+	@ source ./scripts/starting_script.sh && key_remove
+
 
 clean : down
 	@ echo -e -e "\n$(YELLOW)★ Cleaning Images - Volumes ★$(CEND)"
@@ -138,6 +146,8 @@ clean : down
 	@ if [ $(MA_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(MA_NAME); \
 	else echo "	MATCHMAKING Volume already deleted"; fi;
 	@ if [ $(CH_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(CH_NAME); \
+	else echo "	user Volume already deleted"; fi;
+	@ if [ $(PM_VOL) = "1" ]; then docker volume rm services_$(PM_NAME); \
 	else echo "	CHAT Volume already deleted"; fi;
 
 # Weird volumes created somewhere using secret volume?

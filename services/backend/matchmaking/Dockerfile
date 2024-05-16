@@ -6,6 +6,7 @@ RUN apt install python3 python3-pip -y
 RUN apt install postgresql -y
 RUN apt install curl -y
 RUN apt-get install jq -y
+RUN apt-get install redis-server -y
 
 
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
@@ -29,8 +30,8 @@ COPY /conf/start.sh .
 RUN chmod 777 start.sh
 
 
-### Expose on port 8080
-EXPOSE 8080
+### Expose on port 4430
+EXPOSE 4430
 EXPOSE 5432
 
 ### Launch server/application

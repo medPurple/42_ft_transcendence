@@ -28,9 +28,7 @@ export class chat {
 
 		const roomName = 'myroom';
 		const chatSocket = new WebSocket(
-			'ws://'
-			+ window.location.host
-			+ '/api/wschat/'
+			'wss://localhost:4430/ws/chat/'
 			+ roomName
 			+ '/'
 		);
@@ -41,10 +39,17 @@ export class chat {
 			chatLog.value += (data.message + '\n');
 		};
 
+
+		window.addEventListener('beforeunload', function(event) {
+			// Fermez la connexion WebSocket si elle est ouverte.
+			if (chatSocket.readyState === WebSocket.OPEN) {
+				chatSocket.close();
+			}
+		});
 		// loosed connection with wbs
-		chatSocket.onclose = function(e) {
-			console.error('Chat socket closed unexpectedly');
-		};
+		// chatSocket.onclose = function(e) {
+		// 	console.error('Chat socket closed unexpectedly');
+		// };
 
 		chatMessageInput.focus(); // Sets the focus to the chat message input field.
 		chatMessageInput.onkeyup = function(e) {

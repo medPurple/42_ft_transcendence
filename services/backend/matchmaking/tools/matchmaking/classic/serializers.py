@@ -2,9 +2,11 @@ from rest_framework import serializers
 from .models import WaitingModel
 
 class WaitingModelSerializer(serializers.ModelSerializer):
-    position = serializers.IntegerField(read_only=True)
-    #userName = serializers.CharField(max_length=200, read_only=True)
+
     waitingTime = serializers.DateTimeField(read_only=True)
+    status = serializers.CharField(read_only=True)
+    player1 = serializers.IntegerField(read_only=True)
+    player2 = serializers.IntegerField(read_only=True)
     class Meta:
         model = WaitingModel
-        fields = ['userID', 'waitingTime', 'position', 'game', 'match_ready']
+        fields = ['userID', 'waitingTime', 'game', 'status', 'player1', 'player2']

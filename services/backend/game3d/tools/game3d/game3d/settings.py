@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from game3d.vault import VaultClient
+import os
 
 # Create a Vault link
 vault = VaultClient()
@@ -28,12 +29,6 @@ SECRET_KEY = 'django-insecure-nxmg6l(!@sc6x3zv2%+$c7d0!(4$#_5ke=awyfs+gd4=s)cr1r
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    'pongservice',
-]
 
 LOGGING = {
     'version': 1,
@@ -52,6 +47,53 @@ LOGGING = {
         },
     },
 }
+
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'queueservice',
+    'pokemapservice',
+    'tokenservice',
+    'userservice',
+    'chatservce',
+    'gameservice',
+    'pongservice'
+    '*',]
+
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ['https://localhost:4430',
+                        'https://127.0.0.1:4430',
+                        'https://userservice:4430',
+                        'https://chatservice:4430',
+                        'https://tokenservice:4430',
+                        'https://queueservice:4430',
+                        'https://pokemapservice:4430',
+                        'https://gameservice:4430',
+                        'https://pongservice:4430',]
+
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    'https://localhost:4430',
+    'https://127.0.0.1:4430',
+    'https://userservice:4430',
+    'https://chatservice:4430',
+    'https://tokenservice:4430',
+    'https://queueservice:4430',
+    'https://pokemapservice:4430',
+    'https://gameservice:4430',
+    'https://pongservice:4430', # Remplacez par les origines que vous voulez autoriser
+]
+
+# # Définition de l'attribut SameSite pour le cookie CSRF
+
+# # Définition de l'attribut SameSite pour le cookie de session
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 # Application definition
 INSTALLED_APPS = [

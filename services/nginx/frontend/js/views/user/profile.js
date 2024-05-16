@@ -10,3 +10,5 @@ export default () => `
 	<a href="/delete-account" data-link>Delete my account</a><br> -->
 
 	`;
+
+	// <a href="/friends" data-link>See my friends</a><br>

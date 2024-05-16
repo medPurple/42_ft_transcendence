@@ -38,8 +38,9 @@ RUN chmod 777 /home/start.sh
 
 #RUN redis-server --daemonize yes
 
-### Expose on port 8080 and 5432
-EXPOSE 8080
+
+### Expose on port 4430
+EXPOSE 4430
 EXPOSE 5432
 EXPOSE 6379
 

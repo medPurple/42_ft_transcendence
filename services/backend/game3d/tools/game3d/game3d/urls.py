@@ -4,5 +4,5 @@ from pongapp.views import GameSettingsAPI
 
 
 urlpatterns = [
-	path('api/game/settings/', GameSettingsAPI.as_view(), name='pongapp_settings_api'),
+	path('api/pong/', GameSettingsAPI.as_view(), name='pongapp_gamesettings'),
 ]

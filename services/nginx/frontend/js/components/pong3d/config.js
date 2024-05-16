@@ -26,7 +26,7 @@ export const gameCustom = {
   ownPaddle: 0,
   otherPaddle: 0,
   ball: 0,
-  map: 0,
+  map: 1,
   table: 0,
   powerup: 0,
   score_limit: 0
@@ -58,21 +58,23 @@ export var decMesh = {
   ground: 0,
   plane: 0,
   table: 0,
-  wall: 0
+  wall: 0,
 }
 
 export var objMesh = {
 
   refproperee: 0,
   firstAsset: 0,
-  secondAsset: 0
+  secondAsset: 0,
+  beds: []
 }
 
 export var lights = {
 
   pointLight: 0,
   pointLight2: 0,
-  spotLight: 0
+  spotLight: 0,
+  ambientLight: 0
 }
 
 export var pUpState = {

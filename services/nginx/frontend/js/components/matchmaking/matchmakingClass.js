@@ -1,105 +1,46 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
-import {WaitingScreen} from "./WaitingScreen.js"
 
 
-class Matchmaking {
-
-	async pongMatchmaking() {
-		let id = await Iuser.getID();
-		console.log("id is : " + id);
-		fetch('/api/queue/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': Icookies.getCookie('token'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-						"userID": id,
-						"game": "pong_multiplayer"
-					})
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.position) {
-				console.log("Added to queue for pong multiplayer");
-				return;
-			} else {
-				alert('No such user');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
-	}
-
-	async tournamentMatchmaking() {
-		let id = await Iuser.getID();
-		console.log("id is : " + id);
-		fetch('/api/queue/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': Icookies.getCookie('token'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-						"userID": id,
-						"game": "pong_tournament"
-					})
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.position) {
-				console.log("Added to queue for pong tournament");
-				return;
-			} else {
-				alert('No such user');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
-	}
-
-	async pkmMatchmaking() {
-		let id = await Iuser.getID();
-		console.log("id is : " + id);
-		fetch('/api/queue/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': Icookies.getCookie('csrftoken'),
-				'Authorization': Icookies.getCookie('token'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-						"userID": id,
-						"game": "pkm_multiplayer"
-					})
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.position) {
-				console.log("Added to queue for pokemon multiplayer");
-				new WaitingScreen('pkm_multiplayer');
-				return;
-			} else {
-				alert('No such user');
-			}
-		})
-		.catch(error => {
-			console.error('Error:', error);
-		});
-	}
-}
-
-// Pour utiliser cette classe, vous pouvez créer une nouvelle instance et appeler les méthodes appropriées
 export class MatchmakingButtons {
 
 
-	constructor(matchmaking) {
-		this.matchmaking = matchmaking;
+	constructor() {
+		this.matchsocket = new WebSocket("wss://localhost:4430/api/wsqueue/");
+		this.matchmakingsocketaction();
+		this.maindiv = document.createElement('div');
+		this.maindiv.classList.add('main-matchmaking-div');
+		this.status = null;
+		this.timer = 0;
+		this.game = null;
+	}
+
+	matchmakingsocketaction() {
+		this.matchsocket.onopen = (event) => {
+			console.log("Matchmaking socket opened.");
+		}
+
+		this.matchsocket.onclose = (event) => {
+			console.log("Matchmaking socket closed.", event.data);
+			this.maindiv.remove();
+		}
+		
+		this.matchsocket.onmessage = async (event) => {
+			// console.log("Matchmaking socket message: ", event.data);
+			const data = JSON.parse(event.data);
+			this.status = data.status;
+			this.timer = data.waitingTime;
+			this.game = data.game;
+			this.updateData();
+			this.checkstatus(data);
+			const msg = {
+				"action": "queue_status",
+				"game": this.game,
+				"id": await Iuser.getID(),
+			}
+			this.matchsocket.send(JSON.stringify(msg));
+		}
+
 	}
 
 	multipongButton(){
@@ -174,6 +115,36 @@ export class MatchmakingButtons {
 
 	}
 
+	buttonsCreation() {
+		const matchmakingdiv = document.createElement('div');
+		matchmakingdiv.classList.add('matchmakingdiv');
+
+		const titleDiv = document.createElement('div');
+		titleDiv.classList.add('title-div');
+		titleDiv.appendChild(this.matchmakingTitle());
+
+		const radioButtonsDiv = document.createElement('div');
+		radioButtonsDiv.classList.add('radio-buttons');
+		radioButtonsDiv.appendChild(this.multipongButton());
+		radioButtonsDiv.appendChild(this.tournapongButton());
+		radioButtonsDiv.appendChild(this.multipkmButton());
+
+		const startButtonDiv = document.createElement('div');
+		startButtonDiv.classList.add('button-div');
+		startButtonDiv.appendChild(this.matchmakingStartButton());
+
+		matchmakingdiv.appendChild(titleDiv);
+		matchmakingdiv.appendChild(radioButtonsDiv);
+		matchmakingdiv.appendChild(startButtonDiv);
+		
+		return matchmakingdiv;
+	}
+
+	removeButtons() {
+		const matchmakingdiv = document.querySelector('.matchmakingdiv');
+		matchmakingdiv.remove();
+	}
+
 	matchmakingStartButton(){
 		const startbutton = document.createElement('button');
 		startbutton.innerText = 'PLAY';
@@ -181,60 +152,105 @@ export class MatchmakingButtons {
 		startbutton.onclick = async () => {
 			const selectedGame = document.querySelector('input[name="game"]:checked');
 			if (selectedGame) {
-				this.removeButtons();
-				if (selectedGame.value == 'Pong Versus') {
-					// this.matchmaking.pongMatchmaking();
-					new WaitingScreen('pong_multiplayer');
-				} else if (selectedGame.value == 'Pong Tournament') {
-					// this.matchmaking.tournamentMatchmaking();
-					new WaitingScreen('pong_tournament');
-				} else if (selectedGame.value == 'Pokemon Versus') {
-					await this.matchmaking.pkmMatchmaking();
+				const msg = {
+					"action": "queue_add",
+					"game": selectedGame.value,
+					"id": await Iuser.getID(),
 				}
-
+				this.matchsocket.send(JSON.stringify(msg));
+				this.removeButtons();
+				this.maindiv.appendChild(this.waitingPage());
+				
 			}
 		}
 		return startbutton;
 	}
+	
+	timerCalculation(){
 
-	buttonsCreation() {
-		const matchmakingdiv = document.createElement('div');
-		matchmakingdiv.classList.add('matchmakingdiv');
-
-		if (Icookies.getCookie('token') != null) {
-			const titleDiv = document.createElement('div');
-			titleDiv.classList.add('title-div');
-			titleDiv.appendChild(this.matchmakingTitle());
-
-			const radioButtonsDiv = document.createElement('div');
-			radioButtonsDiv.classList.add('radio-buttons');
-			radioButtonsDiv.appendChild(this.multipongButton());
-			radioButtonsDiv.appendChild(this.tournapongButton());
-			radioButtonsDiv.appendChild(this.multipkmButton());
-
-			const startButtonDiv = document.createElement('div');
-			startButtonDiv.classList.add('button-div');
-			startButtonDiv.appendChild(this.matchmakingStartButton());
-
-			matchmakingdiv.appendChild(titleDiv);
-			matchmakingdiv.appendChild(radioButtonsDiv);
-			matchmakingdiv.appendChild(startButtonDiv);
-		} else {
-			const notLoggedDiv = document.createElement('div');
-			notLoggedDiv.classList.add('not-logged');
-			notLoggedDiv.innerText = 'You need to be logged in to play';
-			matchmakingdiv.appendChild(notLoggedDiv);
+		let time = new Date(this.timer);
+		if (isNaN(time.getTime())) {
+			// this.timer was not a valid date
+			console.error('Invalid date:', this.timer);
+			return;
 		}
-
-		document.body.appendChild(matchmakingdiv);
-		return matchmakingdiv;
+		let now = new Date(); // Date actuelle
+		let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+		return (Math.floor(elapsedTimeMillis / 1000));
 	}
 
-	removeButtons() {
-		const matchmakingdiv = document.querySelector('.matchmakingdiv');
-		matchmakingdiv.remove();
-    }
+	waitingPage(){
+		const waitingpage = document.createElement('div');
+		waitingpage.classList.add('waiting-page');
+
+		const waitingtitle = document.createElement('p');
+		waitingtitle.classList.add('waiting-title');
+		waitingtitle.innerText = "status = " + this.status;
+
+		const timer = document.createElement('p');
+		timer.classList.add('timer');
+		timer.innerText = "timer : " + this.timerCalculation();
+
+		const game = document.createElement('p');
+		game.classList.add('game');
+		game.innerText = "game : " + this.game;
+
+		const cancelbutton = document.createElement('button');
+		cancelbutton.classList.add('cancel-button');
+		cancelbutton.innerText = 'Cancel';
+		cancelbutton.onclick = () => {
+			const msg = {
+				"action": "queue_remove",
+				"game": this.game,
+				"id": Iuser.getID(),
+			}
+			this.matchsocket.send(JSON.stringify(msg));
+			this.removeWaitingPage();
+		}
+
+		waitingpage.appendChild(waitingtitle);
+		waitingpage.appendChild(timer);
+		waitingpage.appendChild(game);
+		waitingpage.appendChild(cancelbutton);
+	
+		return waitingpage;
+	}
+
+	removeWaitingPage(){
+		const waitingpage = document.querySelector('.waiting-page');
+		waitingpage.remove();
+		this.maindiv.appendChild(this.buttonsCreation());
+	}
+
+	updateData(){
+		const waitingpage = document.querySelector('.waiting-page');
+		const waitingtitle = document.querySelector('.waiting-title');
+		const timer = document.querySelector('.timer');
+		const game = document.querySelector('.game');
+
+		waitingtitle.innerText = "status = " + this.status;
+		const time = this.timerCalculation();
+		if (time > 60){
+			timer.innerText = "timer : " + Math.floor(time/60) + "m " + time % 60 + "s";
+		}
+		else {
+			timer.innerText = "timer : " + time;
+		}
+		game.innerText = "game : " + this.game;
+	}
+
+	checkstatus(data){
+		if (this.status === 'found') {
+			this.removeWaitingPage();
+			this.matchsocket.close();
+			console.log(data);
+			document.href = '/gameService';
+		}
+	}
+
+	mainMatchmakingDiv(){
+		this.maindiv.appendChild(this.buttonsCreation());
+		return this.maindiv;
+	}	
 }
 
-const matchmaking = new Matchmaking();
-export { matchmaking };
