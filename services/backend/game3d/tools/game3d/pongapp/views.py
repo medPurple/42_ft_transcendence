@@ -40,13 +40,3 @@ class GameSettingsAPI(APIView):
 		customization_option.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-
-
-		# def put(self, request, pk):
-		# customization_option = GameSettings.objects.get(pk=pk)
-		# serializer = GameSettingsSerializer(customization_option, data=request.data)
-		# if serializer.is_valid():
-		# 	serializer.save()
-		# 	return Response(serializer.data)
-		# return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

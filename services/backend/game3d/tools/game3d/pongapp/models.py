@@ -1,16 +1,12 @@
 from django.db import models
 
-
 # USER MODEL
 class UserHistory(models.Model):
-	userName = models.CharField(max_length=200, unique=True, default="NO_NAME")
-	userID = models.IntegerField(unique=True)
+	#userID = models.AutoField(primary_key=True)
 	gamesWon = models.IntegerField()
 	gamesLost = models.IntegerField()
 	gamesPlayed = models.IntegerField()
-
-	def __str__(self):
-		return f'{self.userName}'
+	# matchsPlayed, whith whom, score, date
 
 # GAME SETTINGS MODEL
 class GameSettings(models.Model):
@@ -32,7 +28,7 @@ class GameSettings(models.Model):
 		2: "2",
 	}
 
-	user = models.ForeignKey(UserHistory, on_delete=models.CASCADE)
+	# user = models.ForeignKey(UserHistory, on_delete=models.CASCADE)
 	
 	scene = models.CharField(max_length=100, choices=SCENE_CHOICES, default="Cornfield")
 	ball = models.IntegerField(choices=TYPE_CHOICES, default=0)
