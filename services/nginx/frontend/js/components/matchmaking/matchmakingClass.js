@@ -244,6 +244,7 @@ export class MatchmakingButtons {
 			this.removeWaitingPage();
 			this.matchsocket.close();
 			console.log(data);
+			document.href = '/gameService';
 		}
 	}
 
