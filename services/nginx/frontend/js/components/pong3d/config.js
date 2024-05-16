@@ -26,7 +26,7 @@ export const gameCustom = {
   ownPaddle: 0,
   otherPaddle: 0,
   ball: 0,
-  map: 3,
+  map: 1,
   table: 0,
   powerup: 0,
   score_limit: 0
