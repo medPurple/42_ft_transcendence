@@ -1,117 +1,122 @@
+// async sendFriendRequest(username) {
+// 	try {
+// 		const response = await fetch('api/friends/send-request/', {
+// 			method: 'POST',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+// 				'Authorization': Icookies.getCookie('token')
+				
+// 			},
+// 			body: JSON.stringify({friend_username: username})
+// 		});
+// 		const data = await response.json();
+// 		if (data.success) {
+// 			return 'Request sent';
+// 		} else {
+// 			alert('Failed to send request');
+// 		}
+// 	} catch (error) {
+// 		console.error('Error:', error);
+// 	}
+// }
+
+// async getFriendsRequest() {
+// 	try {
+// 		const response = await fetch('api/friends/friend-request/', {
+// 			method: 'GET',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+// 				'Authorization': Icookies.getCookie('token')
+// 			},
+// 		});
+// 		const data = await response.json();
+// 		if (data.success) {
+// 			return data;
+// 		} else {
+// 			alert('Failed to get friends');
+// 		}
+// 	} catch (error) {
+// 		console.error('Error:', error);
+// 	}
+// }
+
+// async acceptFriendRequest(username) {
+// 	try {
+// 		const response = await fetch('api/friends/friend-request/', {
+// 			method: 'POST',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+// 				'Authorization': Icookies.getCookie('token')
+// 			},
+// 			body: JSON.stringify({friend_username: username})
+// 		});
+// 		const data = await response.json();
+// 		if (data.success) {
+// 			return 'Request accepted';
+// 		} else {
+// 			alert('Failed to accept friend request');
+// 		}
+// 	} catch (error) {
+// 		console.error('Error:', error);
+// 	}
+// }
+
+// async rejectFriendRequest(username){
+// 	try {
+// 		const response = await fetch('api/friends/friend-request/', {
+// 			method: 'DELETE',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+// 				'Authorization': Icookies.getCookie('token')
+// 			},
+// 			body: JSON.stringify({friend_username: username})
+// 		});
+// 		const data = await response.json();
+// 		if (data.success) {
+// 			return 'Request rejected';
+// 		} else {
+// 			alert('Failed to reject friend request');
+// 		}
+// 	} catch (error) {
+// 		console.error('Error', error);
+// 	}
+// }
+
+// async deleteFriend(username) {
+// 	try {
+// 		const response = await fetch('api/friends/friends-list/', {
+// 			method: 'DELETE',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 				'X-CSRFToken': Icookies.getCookie('csrftoken'),
+// 				'Authorization': Icookies.getCookie('token')
+// 			},
+// 			body: JSON.stringify({friend_username: username})
+// 		});
+// 		const data = await response.json();
+// 		if(data.success){
+// 			return 'Friend deleted';
+// 		} else {
+// 			alert('Failed to delet friend');
+// 		}
+// 	} catch (error) {
+// 		console.error('Error', error);
+// 	}
+// }
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js"
 import Ifriends from "./friendsInfo.js";
 
 class Friends {
 	
-	async sendFriendRequest(username) {
-		try {
-			const response = await fetch('api/friends/send-request/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': Icookies.getCookie('csrftoken'),
-					'Authorization': Icookies.getCookie('token')
-					
-				},
-				body: JSON.stringify({friend_username: username})
-			});
-			const data = await response.json();
-			if (data.success) {
-				return 'Request sent';
-			} else {
-				alert('Failed to send request');
-			}
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
-	
-	async getFriendsRequest() {
-		try {
-			const response = await fetch('api/friends/friend-request/', {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': Icookies.getCookie('csrftoken'),
-					'Authorization': Icookies.getCookie('token')
-				},
-			});
-			const data = await response.json();
-			if (data.success) {
-				return data;
-			} else {
-				alert('Failed to get friends');
-			}
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
-	
-	async acceptFriendRequest(username) {
-		try {
-			const response = await fetch('api/friends/friend-request/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': Icookies.getCookie('csrftoken'),
-					'Authorization': Icookies.getCookie('token')
-				},
-				body: JSON.stringify({friend_username: username})
-			});
-			const data = await response.json();
-			if (data.success) {
-				return 'Request accepted';
-			} else {
-				alert('Failed to accept friend request');
-			}
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
-	
-	async rejectFriendRequest(username){
-		try {
-			const response = await fetch('api/friends/friend-request/', {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': Icookies.getCookie('csrftoken'),
-					'Authorization': Icookies.getCookie('token')
-				},
-				body: JSON.stringify({friend_username: username})
-			});
-			const data = await response.json();
-			if (data.success) {
-				return 'Request rejected';
-			} else {
-				alert('Failed to reject friend request');
-			}
-		} catch (error) {
-			console.error('Error', error);
-		}
-	}
-	
-	async deleteFriend(username) {
-		try {
-			const response = await fetch('api/friends/friends-list/', {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': Icookies.getCookie('csrftoken'),
-					'Authorization': Icookies.getCookie('token')
-				},
-				body: JSON.stringify({friend_username: username})
-			});
-			const data = await response.json();
-			if(data.success){
-				return 'Friend deleted';
-			} else {
-				alert('Failed to delet friend');
-			}
-		} catch (error) {
-			console.error('Error', error);
-		}
+	constructor() {
+		this.friendRequests = null;
+		this.friendRequestResponse = null;
+
 	}
 	async connect() {
 		let token = Icookies.getCookie('token'); 
@@ -200,6 +205,7 @@ export class FriendsButtons{
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.friends.getRequests(socket);
 		console.log(requestFriend);
+		console.log(requestFriend.success);
 		const friendsList = await Ifriends.getFriendsList();
 		
 		if (dataUsers.users.length > 1) {
