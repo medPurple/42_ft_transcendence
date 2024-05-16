@@ -28,7 +28,7 @@ RUN pip install --break-system-packages -r requirements.txt
 
 ### Copy django app files in container
 WORKDIR /app
-COPY  /tools/game3d/ /app/
+#COPY  /tools/game3d/ /app/
 
 ### Copy start script
 COPY /conf/start.sh /home/

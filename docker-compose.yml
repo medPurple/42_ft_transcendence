@@ -20,9 +20,21 @@ networks:
 volumes:
   secret_volume:
   user:
+  game3d:
+  frontend:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './services/nginx/frontend/'
+  pongapp:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './services/backend/game3d/tools/game3d/'
   matchmaking:
   chat:
-  game3d:
 
 
 services:
@@ -30,6 +42,8 @@ services:
     container_name: nginx
     networks:
     - microservices
+    volumes:
+      - frontend:/usr/share/nginx/html/
     build: services/nginx
     image: nginx
     ports:
@@ -64,6 +78,7 @@ services:
     user: root
     volumes:
     - game3d:/var/lib/postgresql
+    - pongapp:/app
     networks:
       - microservices
     build: services/backend/game3d

@@ -40,8 +40,8 @@ function setup() {
     console.log('Closed');
   };
 
+  //console.log("Message du websocket: ", event.data);
   core.gameSocket.onmessage = function(event) {
-    //console.log("Message du websocket: ", event.data);
     handleServerMessage(event.data);
   }
 }
