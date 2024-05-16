@@ -146,6 +146,7 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 				with transaction.atomic():
 					friend_request.delete()
 
+			await sync_to_async(execute_atomic_transaction)()
 			await self.send(text_data=json.dumps({
 				'success': True,
 			}))
@@ -181,9 +182,15 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 		from_user = self.user  # Assumed self.user contains the current user
 		try:
 			friend = await sync_to_async(CustomUser.objects.get)(username=friend_username)
-			if friend in from_user.friends.all():
-				from_user.friends.remove(friend)
-				friend.friends.remove(from_user)
+			# Check if friend is in from_user's friends list asynchronously
+			from_user_friends = await sync_to_async(lambda: list(from_user.friends.all()))()
+
+			if friend in from_user_friends:
+				def execute_atomic_transaction():
+					with transaction.atomic():
+						from_user.friends.remove(friend)
+						friend.friends.remove(from_user)
+				await sync_to_async(execute_atomic_transaction)()
 				await self.send(text_data=json.dumps({'success': True}))
 			else:
 				await self.send(text_data=json.dumps({'error': 'Friend not found in friend list'}))
@@ -196,4 +203,5 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 	# @sync_to_async
 	# def get_serialized_data(data):
 	# 	self.send_json(data)
+
 

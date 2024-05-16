@@ -136,7 +136,7 @@ class FriendsButton {
 
 	}
 
-	requestSent() {
+	requestSentButton() {
 		const buttonRequestSent = document.createElement('button');
 		buttonRequestSent.setAttribute('id', 'request-sent-button');
 		buttonRequestSent.textContent = 'Request Sent';
@@ -144,29 +144,51 @@ class FriendsButton {
 		return buttonRequestSent;
 	}
 
-	// deleteFriend(){
-		// 	const buttonDeleteFriend = document.createElement('button');
-		// 	buttonDeleteFriend.setAttribute('id', 'delete-friend-button');
-		// 	buttonDeleteFriend.textContent = 'Delete friend';
-		// 	return buttonDeleteFriend;
-		// }
 
+
+	deleteFriendButton(){
+			const buttonDeleteFriend = document.createElement('button');
+			buttonDeleteFriend.setAttribute('id', 'delete-friend-button');
+			buttonDeleteFriend.textContent = 'Delete friend';
+			return buttonDeleteFriend;
 	}
 
-	export class Friends {
+	seeFriend(username){
+		const linkToFriendsProfile = document.createElement('a');
+		linkToFriendsProfile.textContent = 'See profile';
+		linkToFriendsProfile.href = `/friend-profile/${username}`;
+		linkToFriendsProfile.setAttribute('data-link', '');
+		return linkToFriendsProfile;
+	}
 
-		constructor() {
-			this.friendsButton = new FriendsButton();
-		}
+}
 
-		async connect() {
-			let token = Icookies.getCookie('token');
-			const socket = new WebSocket(`wss://localhost:4430/ws/friends/?token=${token}`);
-			socket.onopen = function(e) {
-				console.log("[open] Connection established");
-			};
+export class Friends {
 
-		socket.onmessage = function(event) {
+	constructor() {
+		this.friendsButton = new FriendsButton();
+		this.socket = this.connect();
+		this.usersList = document.createElement('div');
+		this.usersList.id = 'users';
+		this.pUsers = document.createElement('p');
+		this.pUsers.id = 'users-title';
+		this.pUsers.textContent = 'Users';
+		this.usersList.appendChild(this.pUsers);
+		this.ulElement = document.createElement('ul');
+		this.ulElement.id = 'users-list';
+
+		this.variablesArray = [];
+		this.lastusernumber = 0;
+	}
+
+	connect() {
+		let token = Icookies.getCookie('token');
+		const socket = new WebSocket(`wss://localhost:4430/ws/friends/?token=${token}`);
+		socket.onopen = function(e) {
+			console.log("[open] Connection established");
+		};
+
+		socket.onmessage = async (event) => {
 			console.log(`[message] Data received from server: ${event.data}`);
 			let data = JSON.parse(event.data);
 			if (data.error) {
@@ -178,6 +200,7 @@ class FriendsButton {
 					socket.onmessagecallback = null;
 				}
 			}
+			await this.updateView();
 		};
 
 		socket.onclose = function(event) {
@@ -195,82 +218,127 @@ class FriendsButton {
 		return socket;
 	}
 
-	async sendRequest(socket, friend_username) {
+	async sendRequest(friend_username) {
 		let message = JSON.stringify({
 			command: "send_request",
 			friend_username: friend_username
 		});
-		socket.send(message);
+		this.socket.send(message);
 
 		return new Promise((resolve, reject) => {
-			socket.onmessagecallback = resolve;
+			this.socket.onmessagecallback = resolve;
 		});
 	}
 
-	async acceptRequest(socket, friend_username) {
+	async acceptRequest(friend_username) {
 		let message = JSON.stringify({
 			command: "accept_request",
 			friend_username: friend_username
 		});
-		socket.send(message);
+		this.socket.send(message);
 
 		return new Promise((resolve, reject) => {
-			socket.onmessagecallback = resolve;
+			this.socket.onmessagecallback = resolve;
 		});
 	}
 
-	async deleteRequest(socket, friend_username) {
+	async deleteRequest(friend_username) {
 		let message = JSON.stringify({
 			command: "delete_request",
 			friend_username: friend_username
 		});
-		socket.send(message);
+		this.socket.send(message);
 
 		return new Promise((resolve, reject) => {
-			socket.onmessagecallback = resolve;
+			this.socket.onmessagecallback = resolve;
 		});
 	}
 
-	async getRequests(socket) {
+	async getRequests() {
 		let message = JSON.stringify({
 			command: "get_requests"
 		});
-		socket.send(message);
+		this.socket.send(message);
 
 		return new Promise((resolve, reject) => {
-			socket.onmessagecallback = resolve;
+			this.socket.onmessagecallback = resolve;
 		});
 	}
 
-	async deleteFriend(socket, friend_username) {
+	async deleteFriendSoc(friend_username) {
 		let message = JSON.stringify({
 			command: "delete_friend",
 			friend_username: friend_username
 		});
-		socket.send(message);
+		this.socket.send(message);
 
-		return new Promise((resole, reject) => {
-			socket.onmessagecallback = resole;
+		return new Promise((resolve, reject) => {
+			this.socket.onmessagecallback = resolve;
 		});
 	}
 
-	async viewUsers(){
 
-		const socket = await this.connect();
-		const usersList = document.createElement('div');
-		usersList.id = 'users';
-		const pUsers = document.createElement('p');
-		pUsers.id = 'users-title';
-		pUsers.textContent = 'Users';
-		usersList.appendChild(pUsers);
-		const ulElement = document.createElement('ul');
-		ulElement.id = 'users-list';
-
+	async updateView(){
 		const dataUsers = await Iuser.getAllUsers();
 		console.log("Fetched users:", dataUsers);
 		const currentUser = await Iuser.getUsername();
 		console.log("Current user:", currentUser);
-		const requestFriend = await this.getRequests(socket);
+		const requestFriend = await this.getRequests();
+		console.log("Friend requests:", requestFriend);
+		const friendsList = await Ifriends.getFriendsList();
+		console.log("Friends list:", friendsList);
+
+		if (dataUsers.users.length != this.lastusernumber){
+			while (this.ulElement.firstChild) {
+				this.ulElement.removeChild(this.ulElement.firstChild);
+			}
+			await this.viewUsers();
+		}
+		else if (dataUsers.users.length > 1) {
+			dataUsers.users.forEach(async (users) => {
+				const variable = this.variablesArray.find(v => v.name === users.username);
+				console.log(variable);
+
+				if (currentUser != users.username) {
+					const hasFriendRequest = requestFriend.received_requests.some(request => {
+						return request.from_user === users.user_id || request.to_user === users.user_id;
+					});
+					const hasSendRequest = requestFriend.sent_requests.some(request => {
+						return request.from_user === users.user_id || request.to_user === users.user_id;
+					});
+					const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
+
+					console.log(variable.isFriends);
+					if (isFriends != variable.isFriends) {
+						await this.viewUsers();
+						// this.manageFriend(liElement, users.username);
+					} else if (hasFriendRequest != variable.hasFriendRequest) {
+						await this.viewUsers();
+						// this.manageFriendRequest(liElement, users.username);
+					} else if (hasSendRequest != variable.hasSendRequest) {
+						await this.viewUsers();}
+						// liElement.appendChild(this.friendsButton.requestSent());
+					// } else {
+					// 	// this.sendFriendRequest(liElement, users.username);
+					// }
+				}
+			});
+		}
+		this.lastusernumber = dataUsers.users.length;
+	}
+
+
+	async viewUsers(){
+
+
+
+		const dataUsers = await Iuser.getAllUsers();
+		this.lastusernumber = dataUsers.users.length;
+
+		console.log("Fetched users:", dataUsers);
+		const currentUser = await Iuser.getUsername();
+		console.log("Current user:", currentUser);
+		const requestFriend = await this.getRequests();
 		console.log("Friend requests:", requestFriend);
 		const friendsList = await Ifriends.getFriendsList();
 		console.log("Friends list:", friendsList);
@@ -281,46 +349,52 @@ class FriendsButton {
 					const liElement = document.createElement('li');
 					liElement.id = 'user';
 					liElement.textContent = users.username;
+
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
 						return request.from_user === users.user_id || request.to_user === users.user_id;
 					});
+					console.log("HAS FRIEND REQUEST : "+ hasFriendRequest);
 					const hasSendRequest = requestFriend.sent_requests.some(request => {
 						return request.from_user === users.user_id || request.to_user === users.user_id;
 					});
+					console.log("HAS SEND REQUEST : "+ hasSendRequest);
 					const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
+					console.log("IS FRIENDS : "+ isFriends);
 					if (isFriends) {
-						this.manageFriend(socket, liElement, users.username);
-						// this.seeFriend(socket,liElement, users.username);
-						// this.deleteFriend(socket, liElement, users.username);
+						this.manageFriend(liElement, users.username);
 					} else if (hasFriendRequest) {
-						this.manageFriendRequest(socket, liElement, users.username);
-						// this.acceptFriendRequest(socket,liElement, users.username);
-						// this.rejectFriendRequest(socket, liElement, users.username);
+						this.manageFriendRequest(liElement, users.username);
 					} else if (hasSendRequest) {
 						liElement.appendChild(this.friendsButton.requestSent());
 					} else {
-						this.sendFriendRequest(socket, liElement, users.username);
+						this.sendFriendRequest(liElement, users.username);
 					}
-					ulElement.appendChild(liElement);
+					this.variablesArray.push({
+						name: users.username,
+						hasFriendRequest: hasFriendRequest,
+						hasSendRequest: hasSendRequest,
+						isFriends:isFriends});
+
+					this.ulElement.appendChild(liElement);
 				}
 			});
 		} else {
 					const liElement = document.createElement('li');
 					liElement.textContent = 'There are no other users. You are alone.';
-					ulElement.appendChild(liElement);
+					this.ulElement.appendChild(liElement);
 		}
-		usersList.appendChild(ulElement);
-		document.body.appendChild(usersList);
-		return usersList;
+		this.usersList.appendChild(this.ulElement);
+		document.body.appendChild(this.usersList);
+		return this.usersList;
 	}
 
-	async sendFriendRequest(socket, liElement, username){
+	async sendFriendRequest(liElement, username){
 		const buttonSendRequest = this.friendsButton.sendRequestButton()
 		buttonSendRequest.onclick = async () => {
 			try {
-				const requestIsValid = await this.sendRequest(socket, username);
+				const requestIsValid = await this.sendRequest(username);
 				console.log(requestIsValid);
-				if (requestIsValid === true) {
+				if (requestIsValid.success === true) {
 					buttonSendRequest.textContent = 'Request Sent';
 					buttonSendRequest.disabled = true;
 				}
@@ -333,28 +407,52 @@ class FriendsButton {
 		return buttonSendRequest;
 	}
 
-	manageFriend(socket, liElement, username) {
-		this.seeFriend(liElement, username);
-		this.deleteFriendButton(socket, liElement, username);
-
+	manageFriend(liElement, username) {
+		const buttonDeleteFriend = this.friendsButton.deleteFriendButton();
+		const linkToFriendsProfile = this.friendsButton.seeFriend(username);
+		liElement.appendChild(buttonDeleteFriend);
+		liElement.appendChild(linkToFriendsProfile);
+		// this.seeFriend(liElement, username);
+		this.deleteFriend(liElement, username, buttonDeleteFriend, linkToFriendsProfile);
 	}
 
-	manageFriendRequest(socket, liElement, username) {
+
+	async deleteFriend(liElement, username, buttonDeleteFriend, linkToFriendsProfile) {
+
+		buttonDeleteFriend.onclick = async () => {
+			try {
+				const deleteIsValid = await this.deleteFriendSoc(username);
+				console.log(deleteIsValid);
+				if (deleteIsValid.success === true) {
+					buttonDeleteFriend.textContent = 'Friend deleted';
+					buttonDeleteFriend.style.display = 'none';
+					linkToFriendsProfile.style.display = 'none';
+					this.sendFriendRequest(liElement, username);
+
+				}
+			} catch (error) {
+				console.error('Error', error);
+			}
+		};
+		return buttonDeleteFriend;
+	}
+
+	manageFriendRequest(liElement, username) {
 		const buttonAcceptRequest = this.friendsButton.acceptRequestButton();
 		const buttonRejectRequest = this.friendsButton.rejectRequestButton()
 		liElement.appendChild(buttonAcceptRequest);
 		liElement.appendChild(buttonRejectRequest);
-		this.acceptFriendRequest(socket, liElement, username, buttonAcceptRequest);
-		this.rejectFriendRequest(socket, liElement, username, buttonRejectRequest);
+		this.acceptFriendRequest(liElement, username, buttonAcceptRequest);
+		this.rejectFriendRequest(liElement, username, buttonRejectRequest);
 
 	}
 
 
-	async acceptFriendRequest(socket, liElement, username, buttonAcceptRequest){
+	async acceptFriendRequest(liElement, username, buttonAcceptRequest){
 		buttonAcceptRequest.onclick = async () => {
 			try {
-				const acceptIsValid = await this.acceptRequest(socket, username);
-				if (acceptIsValid === true) {
+				const acceptIsValid = await this.acceptRequest(username);
+				if (acceptIsValid.success === true) {
 					buttonAcceptRequest.textContent = 'Request Accepted';
 					buttonAcceptRequest.style.display = 'none';
 					const test = document.querySelector('#reject-request-button');
@@ -369,11 +467,11 @@ class FriendsButton {
 
 	}
 
-	async rejectFriendRequest(socket, liElement, username, buttonRejectRequest){
+	async rejectFriendRequest(liElement, username, buttonRejectRequest){
 		buttonRejectRequest.onclick = async () => {
 			try {
-				const rejectIsValid = await this.deleteRequest(socket, username);
-				if (rejectIsValid === true){
+				const rejectIsValid = await this.deleteRequest(username);
+				if (rejectIsValid.success === true){
 					buttonRejectRequest.textContent = 'Request rejected';
 					const buttonAcceptRequest = document.querySelector('#accept-request-button');
 					buttonAcceptRequest.remove();
@@ -389,40 +487,6 @@ class FriendsButton {
 
 	}
 
-	seeFriend(liElement, username) {
-		const linkToFriendsProfile = document.createElement('a');
-		linkToFriendsProfile.textContent = 'See profile';
-		linkToFriendsProfile.href = `/friend-profile/${username}`;
-		linkToFriendsProfile.setAttribute('data-link', '');
-		liElement.appendChild(linkToFriendsProfile);
-		return linkToFriendsProfile;
-	}
-
-
-
-
-	async deleteFriendButton(socket, liElement, username) {
-
-		const buttonDeleteFriend = document.createElement('button');
-		buttonDeleteFriend.setAttribute('id', 'delete-friend-button');
-		buttonDeleteFriend.textContent = 'Delete friend';
-		buttonDeleteFriend.onclick = async () => {
-			try {
-				const deleteIsValid = await this.deleteFriend(socket, username);
-				if (deleteIsValid === true) {
-					buttonDeleteFriend.textContent = 'Friend deleted';
-					buttonDeleteFriend.style.display = 'none';
-					// linkToFriendsProfile.style.display = 'none';
-					// this.sendFriendRequestButton(liElement, username);
-
-				}
-			} catch (error) {
-				console.error('Error', error);
-			}
-		};
-		liElement.appendChild(buttonDeleteFriend);
-		return buttonDeleteFriend;
-	}
 }
 
 
