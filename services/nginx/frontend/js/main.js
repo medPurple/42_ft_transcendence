@@ -197,6 +197,10 @@ async function router() {
 		document.title = pageTitle + " | " + view.title;
 		let result = await view.render(view.params);
 
+		if (result.includes("pong-renderer")) {
+			setup();
+		}
+	
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
