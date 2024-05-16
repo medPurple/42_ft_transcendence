@@ -1,4 +1,4 @@
-import { objMesh, core, gameCustom, gameState } from './config.js'
+import { objMesh, core, gameCustom } from './config.js'
 
 function populateReferee() {
 
@@ -133,24 +133,24 @@ function populateABed(index, positionX, positionY, positionZ, rotation, scale) {
 //   }
 // }
 
-function populateRowBeds(positionX, positionY, height) {
+function populateRowBeds(bedCounter, positionX, positionY, height) {
 
   var positionZ = -130;
-  for (var i = 0; i < (9 * height); i++) {
+  for (var i = 0; i < (9 * height); i++, bedCounter++) {
     if (i % height == 0) {
       positionX += 100;
       positionZ = -130;
     }
     else
       positionZ += 47.5;
-    populateABed(i, positionX, positionY, positionZ, 270, 15);
+    populateABed(bedCounter, positionX, positionY, positionZ, 270, 15);
   }
 }
 
 function populateBeds() {
 
-  populateRowBeds(-500, -600, 3);
-  populateRowBeds(-500, -400, 2);
+  populateRowBeds(0, -500, -600, 3);
+  populateRowBeds(27, -500, -400, 2);
 }
 
 

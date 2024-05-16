@@ -1,4 +1,4 @@
-import { core, gameCustom, playMesh, pUpMesh, decMesh, objMesh, lights, constants } from "./config.js"
+import { core, playMesh, decMesh, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populatePaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
 import { populateAssets } from './populateAssets.js'
