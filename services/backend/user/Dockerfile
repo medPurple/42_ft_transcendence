@@ -8,6 +8,8 @@ RUN apt install curl -y
 #RUN apt install iputils-ping -y
 RUN apt-get install jq -y
 
+### Install Redis
+RUN apt-get install redis-server -y
 
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
 COPY /conf/.key /tmp/.key
@@ -30,8 +32,8 @@ COPY /conf/start.sh .
 RUN chmod 777 start.sh
 
 
-### Expose on port 8080
-EXPOSE 8080
+### Expose on port 4430
+EXPOSE 4430
 EXPOSE 5432
 
 ### Launch server/application

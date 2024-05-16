@@ -3,13 +3,15 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework import permissions, status
 from rest_framework.response import Response
+from rest_framework.authentication import BaseAuthentication
+from profiles.views import JWTAuthentication
 
 from profiles.models import CustomUser
 from friends.models import FriendRequest
 from friends.serializers import FriendRequestSerializer, FriendsSerializer
 
 class SendFriendRequestView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = [JWTAuthentication]
 	def post(self, request):
 		from_user = request.user
 		friend_username = request.data.get('friend_username')
@@ -28,8 +30,7 @@ class SendFriendRequestView(APIView):
 			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendRequestView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-	# accept friend's request
+	authentication_classes = [JWTAuthentication]
 	def post(self, request):
 		from_user = request.user
 		friend_username = request.data.get('friend_username')
@@ -72,8 +73,7 @@ class FriendRequestView(APIView):
 			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class FriendsView(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-	# get profile friend
+	authentication_classes = [JWTAuthentication]
 	def get(self, request, username=None):
 		if username:
 			friend = get_object_or_404(request.user.friends, username=username)

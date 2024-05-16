@@ -20,7 +20,6 @@ networks:
 volumes:
   secret_volume:
   user:
-  game3d:
   frontend:
     driver: local
     driver_opts:
@@ -35,6 +34,8 @@ volumes:
       device: './services/backend/game3d/tools/game3d/'
   matchmaking:
   chat:
+  game3d:
+  pokemap:
 
 
 services:
@@ -47,7 +48,7 @@ services:
     build: services/nginx
     image: nginx
     ports:
-      - "8080:80"
+      - "4430:4430"
     restart: on-failure
 
   user:
@@ -60,7 +61,7 @@ services:
     build: services/backend/user
     image: user
     expose :
-    - "8080"
+    - "4430"
     restart: on-failure
 
   token:
@@ -70,7 +71,7 @@ services:
     build: services/backend/JWToken
     image: jwtoken
     expose :
-      - "8080"
+      - "4430"
     restart: on-failure
 
   game3d:
@@ -84,7 +85,7 @@ services:
     build: services/backend/game3d
     image: game3d
     expose :
-      - "8080"
+      - "4430"
     restart: on-failure
 
   matchmaking:
@@ -97,7 +98,17 @@ services:
     build: services/backend/matchmaking
     image: matchmaking
     expose :
-    - "8080"
+    - "4430"
+    restart: on-failure
+
+  pokemap:
+    container_name: pokemap
+    networks:
+      - microservices
+    build: services/backend/pokemap
+    image: pokemap
+    expose :
+      - "4430"
     restart: on-failure
 
   chat:
@@ -110,5 +121,5 @@ services:
     build: services/backend/chat
     image: chat
     expose :
-    - "8080"
+    - "4430"
     restart: on-failure

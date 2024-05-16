@@ -1,21 +1,21 @@
 import Ifriends from "./friendsInfo.js";
 
 export class FriendsProfile {
-    
-    constructor(username) {
-        this.username = username;
-    }
 
-    async initFriendsInfo() {
-        try {
-            const data = await Ifriends.getFriend(this.username);
-            let profilePictureData = data.friends.profile_picture_data;
-            this.displayFriendsProfile(data, profilePictureData); 
-            
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
+	constructor(username) {
+		this.username = username;
+	}
+
+	async initFriendsInfo() {
+		try {
+			const data = await Ifriends.getFriend(this.username);
+			let profilePictureData = data.friends.profile_picture_data;
+			const profileContainer = this.displayFriendsProfile(data, profilePictureData);
+			return profileContainer;
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	}
 
     displayFriendsProfile(data, profilePictureData){
         let profileContainer = document.createElement('div');

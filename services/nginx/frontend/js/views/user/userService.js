@@ -8,8 +8,8 @@ export default async function userService() {
 
 	if (Icookies.getCookie('token')) {
 		try {
-			const username = await Iuser.getUsername();
-			welcomeMessage = `Welcome, ${username} !`;
+			const id = await Iuser.getID();
+			welcomeMessage = `Welcome, ${id} !`;
 			content = `
 				<h1>User Service</h1>
 				<p>${welcomeMessage}</p>

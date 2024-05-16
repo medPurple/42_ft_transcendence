@@ -26,7 +26,7 @@ function draw() {
 
 function setup() {
 
-  core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
+  core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/');
 
   core.gameSocket.onopen = function(e) {
     console.log('Connected');

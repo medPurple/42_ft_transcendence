@@ -1,5 +1,5 @@
 
-import {FriendsButtons, friends} from "../../components/friends/friendsRequestForm.js";
+import {Friends} from "../../components/friends/friendsRequestForm.js";
 
 export default () =>
-	new FriendsButtons(friends).viewUsers();
+	new Friends().viewUsers();
