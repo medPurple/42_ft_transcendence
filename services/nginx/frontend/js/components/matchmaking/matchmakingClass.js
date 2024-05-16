@@ -26,12 +26,13 @@ export class MatchmakingButtons {
 		}
 		
 		this.matchsocket.onmessage = async (event) => {
-			console.log("Matchmaking socket message: ", event.data);
+			// console.log("Matchmaking socket message: ", event.data);
 			const data = JSON.parse(event.data);
 			this.status = data.status;
 			this.timer = data.waitingTime;
 			this.game = data.game;
 			this.updateData();
+			this.checkstatus(data);
 			const msg = {
 				"action": "queue_status",
 				"game": this.game,
@@ -136,8 +137,6 @@ export class MatchmakingButtons {
 		matchmakingdiv.appendChild(radioButtonsDiv);
 		matchmakingdiv.appendChild(startButtonDiv);
 		
-
-		// document.body.appendChild(matchmakingdiv);
 		return matchmakingdiv;
 	}
 
@@ -161,7 +160,6 @@ export class MatchmakingButtons {
 				this.matchsocket.send(JSON.stringify(msg));
 				this.removeButtons();
 				this.maindiv.appendChild(this.waitingPage());
-				// return waitingpage;
 				
 			}
 		}
@@ -239,6 +237,14 @@ export class MatchmakingButtons {
 			timer.innerText = "timer : " + time;
 		}
 		game.innerText = "game : " + this.game;
+	}
+
+	checkstatus(data){
+		if (this.status === 'found') {
+			this.removeWaitingPage();
+			this.matchsocket.close();
+			console.log(data);
+		}
 	}
 
 	mainMatchmakingDiv(){

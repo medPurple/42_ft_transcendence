@@ -7,6 +7,7 @@ from .models import WaitingModel
 from .serializers import WaitingModelSerializer
 
 logger = logging.getLogger(__name__)
+
 pokemon_queue = []
 pong_queue = []
 pong_tournament_queue = []
@@ -39,6 +40,9 @@ class QueueConsumer(WebsocketConsumer):
             elif action == 'queue_remove':
                 logger.info('Queue remove')
                 self.leave(text_data_json)
+            elif action == 'delete_user':
+                logger.info('Delete user')
+                self.delete(text_data_json)
         except Exception:
             pass
 
@@ -53,18 +57,28 @@ class QueueConsumer(WebsocketConsumer):
             'userID': data['id'],
             'game': data['game'],
             'status': 'searching',
-            'waitingTime': 0,        
+            'waitingTime': 0,
+            'player1': 0,
+            'player2': 0   
         }
+        try:
+            userexist = get_object_or_404(WaitingModel, userID=data['id'])
+            if userexist:
+                logger.info('User exists')
+                self.leave(new_data)
+        except Exception as e:
+            logger.info(e)
+            pass
         try:
             serializer = self.serializer_class(data=new_data)
             if serializer.is_valid():
                 logger.info('Valid')
                 instance = serializer.save()
-                if instance.game == 'pkm_multiplayer' and instance not in pokemon_queue:
+                if instance.game == 'pkm_multiplayer':
                     pokemon_queue.append(instance)
-                elif instance.game == 'pong_multiplayer' and instance not in pong_queue:
+                elif instance.game == 'pong_multiplayer':
                     pong_queue.append(instance)
-                elif instance.game == 'pong_tournament' and instance not in pong_tournament_queue:
+                elif instance.game == 'pong_tournament':
                     pong_tournament_queue.append(instance)
                 serializer = self.serializer_class(instance)
                 json_data = json.dumps(serializer.data)
@@ -110,7 +124,18 @@ class QueueConsumer(WebsocketConsumer):
     def match(self, queue):
         player1 = queue.pop(0)
         player2 = queue.pop(0)
+
         player1.status = 'found'
+        player1.player1 = player1.userID
+        player1.player2 = player2.userID
+
         player2.status = 'found'
+        player2.player1 = player1.userID
+        player2.player2 = player2.userID
+
         player1.save()
         player2.save()
+
+    def delete(self, data):
+        instance = get_object_or_404(WaitingModel, userID=data['id'])
+        instance.delete()

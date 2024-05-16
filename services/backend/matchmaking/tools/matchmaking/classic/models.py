@@ -11,3 +11,5 @@ class WaitingModel(models.Model):
     waitingTime = models.DateTimeField(auto_now_add=True)
     game = models.CharField(choices=GameChoice, max_length=200)
     status = models.CharField(max_length=200, default='searching')
+    player1 = models.IntegerField(default=0)
+    player2 = models.IntegerField(default=0)
