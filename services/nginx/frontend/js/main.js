@@ -23,6 +23,7 @@ import play from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
 import { setup } from "./components/pong3d/pongServLogic.js";
+import "./components/user/logoutForm.js";
 
 // Define the routes
 const routes = {
@@ -138,16 +139,17 @@ function updateNavbarDropdown() {
 			<li><a class="dropdown-item" href="/chat">chat</a></li>
 			<li><a class="dropdown-item" href="/play">play</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/logout">log out</a></li>
+			<li><logout-form></logout-form></li>
             <li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
-        `;
-    } else {
-        dropdownMenu.innerHTML = `
+			`;
+		} else {
+			dropdownMenu.innerHTML = `
             <li><a class="dropdown-item" href="/login">log in</a></li>
             <li><a class="dropdown-item" href="/register">register</a></li>
-        `;
-    }
-}
+			`;
+		}
+	}
+	// <li><a class="dropdown-item" href="/logout">log out</a></li>
 
 function checkConnected() {
 
