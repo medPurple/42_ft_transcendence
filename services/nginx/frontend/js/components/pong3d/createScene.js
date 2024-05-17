@@ -1,4 +1,4 @@
-import { core, playMesh, decMesh, lights, constants } from "./config.js"
+import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populatePaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
 import { populateAssets } from './populateAssets.js'
@@ -36,16 +36,17 @@ export function createScene() {
 
   // AmbientLight setup
 
-  //lights.ambientLight = new THREE.AmbientLight(0xF8d898);
+  //  lights.ambientLight = new THREE.AmbientLight(0xF8d898, 0.5);
 
   // PointLight setup
 
-  lights.pointLight = populatePointLight(0xF8D898, -1000, 0, 1000, 1.5, 10000);
-  lights.pointLight2 = populatePointLight(0xF8D898, 1000, 0, 1000, 1.5, 10000);
+  lights.pointLight = populatePointLight(0xffffff, 0, 0, 500, 1.5, 10000);
+  //  lights.pointLight2 = populatePointLight(0xffffff, 0, -500, 1000, 0.75, 10000);
+  //lights.pointLight2 = populatePointLight(0xffffff, 1000, 0, 1000, 1, 8000);
 
   //Spotlight setup
 
-  lights.spotLight = populateSpotLight(0xF8D898, 0, 0, 460, 1)
+  //lights.spotLight = populateSpotLight(0xffffff, 0, 0, 460, 0.25)
 
   //Plane setup
 
@@ -58,7 +59,8 @@ export function createScene() {
 
   //Table Setup
 
-  decMesh.table = populateTable(0x111111, 0, 0, -7);
+  if (gameCustom.table != 4)
+    decMesh.table = populateTable(0x111111, 0, 0, -7);
 
   //Ground setup
 

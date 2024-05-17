@@ -1,11 +1,13 @@
 import { constants, gameCustom } from "./config.js"
 
-function setPhysicalMaterial(color, metalness, roughness, iridescence, iridescenceIOR) {
+function setPhysicalMaterial(color, metalness, roughness, iridescence, iridescenceIOR, transmission) {
 
   var physMaterial = new THREE.MeshPhysicalMaterial({
     color: color, roughness: roughness,
-    metalness: metalness, iridescence: iridescence, iridescenceIOR: iridescenceIOR
+    metalness: metalness, iridescence: iridescence,
+    iridescenceIOR: iridescenceIOR
   })
+  physMaterial.transmission = transmission;
   return physMaterial;
 }
 
@@ -29,7 +31,7 @@ function setLambertMaterial(color) {
 export function populatePaddle(color, posX, posY) {
 
   //var paddleMaterial = setLambertMaterial(color);
-  var paddleMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 0);
+  var paddleMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 1);
   //var paddleMaterial = setStandardMaterial(color);
 
   var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
@@ -65,7 +67,37 @@ export function populateBall(color, posX, posY) {
 
 export function populatePlane(color, posX, posY) {
 
-  var planeMaterial = new THREE.MeshLambertMaterial({ color: color });
+  var planeMaterial;
+
+  switch (gameCustom.table) {
+    case 0:
+      planeMaterial = setPhysicalMaterial(0x9f8574, 1, 0.7, 0, 0, 0);
+      //planeMaterial = setLambertMaterial(0x9f8574);
+      break;
+    case 1:
+      planeMaterial = setPhysicalMaterial(0x3d8b97, 1, 0.7, 0, 0, 0);
+      //     planeMaterial = setLambertMaterial(0x3d8b97);
+      break;
+    case 2:
+      planeMaterial = setPhysicalMaterial(0xb32c6f, 1, 0.7, 0, 0, 0);
+      //    planeMaterial = setLambertMaterial(0xb32c6f);
+      break;
+    case 3:
+      planeMaterial = setPhysicalMaterial(0x161616, 1, 0.4, 0, 0, 0);
+      //   planeMaterial = setLambertMaterial(0xffd700);
+      break;
+    case 4:
+      planeMaterial = setPhysicalMaterial(0xf8f8ff, 0, 0, 0, 0, 1);
+      //  planeMaterial = setLambertMaterial(0x000000);
+      break;
+    default:
+      planeMaterial = setPhysicalMaterial(0x7b8787, 1, 0.7, 0, 0, 0);
+      // planeMaterial = setLambertMaterial(0x7b8787);
+      break;
+
+  }
+  //  var planeMaterial = new THREE.MeshLambertMaterial({ color: color });
+
   //var planeMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 0);
 
   var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight, constants.planeQuality, constants.planeQuality), planeMaterial);

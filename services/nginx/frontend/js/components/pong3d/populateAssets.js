@@ -26,11 +26,11 @@ function populateDoll() {
     objMesh.firstAsset.rotateX(Math.PI / 2);
     if (core.player_id == 2) {
       objMesh.firstAsset.position.x = -200;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(135));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(135));
     }
     else {
       objMesh.firstAsset.position.x = 200;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(225));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(225));
     }
     core.scene.add(objMesh.firstAsset);
   })
@@ -48,11 +48,11 @@ function populateTree() {
     objMesh.secondAsset.rotateX(Math.PI / 2);
     if (core.player_id == 2) {
       objMesh.secondAsset.position.x = -400;
-      objMesh.secondAsset.rotateY(THREE.Math.degToRad(135));
+      objMesh.secondAsset.rotateY(THREE.MathUtils.degToRad(135));
     }
     else {
       objMesh.secondAsset.position.x = 400;
-      objMesh.secondAsset.rotateY(THREE.Math.degToRad(250));
+      objMesh.secondAsset.rotateY(THREE.MathUtils.degToRad(250));
 
     }
     core.scene.add(objMesh.secondAsset);
@@ -71,11 +71,11 @@ function populateSlide() {
     objMesh.firstAsset.rotateX(Math.PI / 2);
     if (core.player_id == 2) {
       objMesh.firstAsset.position.x = -350;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(340));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(340));
     }
     else {
       objMesh.firstAsset.position.x = 350;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(30));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(30));
 
     }
     core.scene.add(objMesh.firstAsset);
@@ -91,7 +91,7 @@ function populateSlide() {
 //     objMesh.beds[index].rotateX(Math.PI / 2);
 //     if (core.player_id == 2) {
 //       objMesh.beds[index].position.x = -positionX;
-//       objMesh.beds[index].rotateY(THREE.Math.degToRad(rotation));
+//       objMesh.beds[index].rotateY(THREE.MathUtils.degToRad(rotation));
 //     }
 //     else {
 //       objMesh.beds[index].position.x = positionX;
@@ -109,7 +109,7 @@ function populateABed(index, positionX, positionY, positionZ, rotation, scale) {
     objMesh.beds[index] = gltf.scene;
     objMesh.beds[index].scale.set(scale, scale, scale);
     objMesh.beds[index].rotateX(Math.PI / 2);
-    objMesh.beds[index].rotateY(THREE.Math.degToRad(rotation));
+    objMesh.beds[index].rotateY(THREE.MathUtils.degToRad(rotation));
     objMesh.beds[index].position.x = positionX;
     objMesh.beds[index].position.y = positionY;
     objMesh.beds[index].position.z = positionZ;
