@@ -77,6 +77,7 @@ class CustomUserRegister(APIView):
 					return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 				else:
 					return Response({'error': 'Error creating pokemap user'}, status=status.HTTP_400_BAD_REQUEST)
+				#POST here the creation of user in game3d (transform into a function)
 			else:
 				return Response({'error': 'Error creating token'}, status=status.HTTP_400_BAD_REQUEST)
 		else:
