@@ -1,60 +1,54 @@
 import Icookies from "../cookie/cookie.js"
 
 export default class LogoutForm extends HTMLElement {
-	constructor() {
-		super();
-		this.attachShadow({ mode: 'open' });
-		const button = document.createElement('button');
-        button.setAttribute('id', 'logout-button');
-        button.setAttribute('class', 'btn btn-dark');
-        button.textContent = 'Log out';
-        // Attacher le bouton à l'ombre de l'élément
-        this.shadowRoot.appendChild(button);
+    constructor() {
+        super();
+        const link = document.createElement('a');
+        link.setAttribute('id', 'logout-link');
+        link.setAttribute('class', 'dropdown-item');
+        link.textContent = 'log out';
+        link.href = '#'; 
+        this.appendChild(link);
     }
 
-	connectedCallback() {
-		const logoutButton = this.shadowRoot.getElementById('logout-button');
-		logoutButton.addEventListener('click', function(event) {
-			event.preventDefault();
+    connectedCallback() {
+        const logoutLink = this.querySelector('#logout-link');
+        logoutLink.addEventListener('click', function(event) {
+            event.preventDefault();
 
-			// Get the CSRF token from the cookie
-			let jwtToken = Icookies.getCookie('token');
-			let csrfToken = Icookies.getCookie('csrftoken');
+            // Get the CSRF token from the cookie
+            let jwtToken = Icookies.getCookie('token');
+            let csrfToken = Icookies.getCookie('csrftoken');
 
-			// Send the logout request to the Django API
-			fetch('/api/profiles/logout/', {
-				method: 'POST',
-				//credentials: 'same-origin',
-				headers: {
-					'Authorization': jwtToken,
-					'Content-Type': 'application/json',
-					'X-CSRFToken': csrfToken
-				}
-			})
-			.then(response => {
-				if (response.ok) {
-					Icookies.clearAllCookies();
-					window.location.href = '/'; // Change the URL to your home page URL
-
+            // Send the logout request to the Django API
+            fetch('/api/profiles/logout/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': jwtToken,
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response =>response.json())
+            .then(data => {
+				if (data.success) {
+                	console.log(data);
+                	Icookies.clearAllCookies();
+                	window.location.href = '/home'; // Change the URL to your home page URL
 				} else {
-					throw new Error('Logout failed');
+					alert('An error occurred. Please try again.');
+
 				}
 			})
-			.then(data => {
-				console.log(data);
-				Icookies.clearAllCookies();
-				window.location.href = '/home'; // Change the URL to your home page URL
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				// Handle API errors
-			});
-		});
-	}
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle API errors
+            });
+        });
+    }
 }
 
 customElements.define('logout-form', LogoutForm);
-
 
 
 

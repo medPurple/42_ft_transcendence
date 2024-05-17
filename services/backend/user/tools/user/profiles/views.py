@@ -102,9 +102,13 @@ class CustomUserLogout(APIView):
 	def post(self, request):
 		logger.debug(request)
 		user = request.user
-		user.is_online = False
-		user.save()
-		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
+		try:
+			user.is_online = False
+			user.save()
+		except CustomUser.DoesNotExist:
+			return Response({'error': 'User not found'}, status=satuts.HTTP_404_NOT_FOUND)
+		logout(request)
+		return Response({'success': True, 'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 
 class CustomUsernameView(APIView):
 	authentication_classes = [JWTAuthentication]
@@ -149,7 +153,7 @@ class CustomUserDeleteView(APIView):
 		try:
 			user.delete()
 		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 		logout(request)
 		return Response({'success': True}, status=status.HTTP_200_OK)
 
