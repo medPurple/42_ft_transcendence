@@ -2,7 +2,7 @@ from django.db import models
 
 # USER MODEL
 class UserHistory(models.Model):
-	#userID = models.AutoField(primary_key=True)
+	userID = models.IntegerField(primary_key=True, unique=True)
 	gamesWon = models.IntegerField()
 	gamesLost = models.IntegerField()
 	gamesPlayed = models.IntegerField()
@@ -28,14 +28,10 @@ class GameSettings(models.Model):
 		2: "2",
 	}
 
-	# user = models.ForeignKey(UserHistory, on_delete=models.CASCADE)
-	
+	userID = models.IntegerField(primary_key=True, unique=True)
 	scene = models.CharField(max_length=100, choices=SCENE_CHOICES, default="Cornfield")
-	ball = models.IntegerField(choices=TYPE_CHOICES, default=0)
-	paddle = models.IntegerField(choices=TYPE_CHOICES, default=0)
-	table = models.IntegerField(choices=TYPE_CHOICES, default=0)
-	score = models.IntegerField(choices=SCORE_CHOICES, default=7)
+	ball = models.IntegerField(choices=TYPE_CHOICES, default=1)
+	paddle = models.IntegerField(choices=TYPE_CHOICES, default=1)
+	table = models.IntegerField(choices=TYPE_CHOICES, default=1)
+	score = models.IntegerField(choices=SCORE_CHOICES, default=11)
 	powerups = models.BooleanField(default=False)
-
-	def __str__(self):
-		return f'{self.user}'

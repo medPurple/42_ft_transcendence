@@ -30,6 +30,31 @@ def user_token(request, user_id):
 		print(f"Error token : {e}")
 		return None
 
+# def create_userID_gamelink(request, user_id):
+# 	end_pokemap = "https://pokemap:4430/api/pokemap/"
+# 	end_settings = "https://game3d:4430/api/pong/settings/"
+# 	end_history = "https://game3d:4430/api/pong/history/"
+
+# 	headers = {'Content-Type': 'application/json'}
+# 	data = {"userID": user_id}
+	
+# 	response_pokemap = requests.post(end_pokemap, headers=headers, data=json.dumps(data), verify=False)
+# 	response_pongSettings = requests.post(end_settings, headers=headers, data=json.dumps(data), verify=False)
+# 	response_pongHistory = requests.post(end_history, headers=headers, data=json.dumps(data), verify=False)
+
+# 	logger.info(response_pokemap)
+# 	logger.info(response_pongSettings)
+# 	logger.info(response_pongHistory)
+
+# 	if response_pokemap.ok and response_pongSettings.ok and response_pongHistory.ok:
+# 		login(response_pokemap, user)
+# 		login(response_pongSettings, user)
+# 		login(response_pongHistory, user)
+# 		return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
+# 	else:
+# 		return Response({'error': 'Error creating user link'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class JWTAuthentication(BaseAuthentication):
 	def authenticate(self, request):
 		auth_header = request.headers.get('Authorization')
@@ -67,17 +92,17 @@ class CustomUserRegister(APIView):
 			token = user_token(request, user.user_id)
 			if token is not None:
 				logger.info('Token created')
-				url = "https://pokemap:4430/api/pokemap/"
 				headers = {'Content-Type': 'application/json'}
 				data = {"userID": user.user_id}
-				response = requests.post(url, headers=headers, data=json.dumps(data), verify=False)
+				# response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
+				response = requests.post("https://pongservice:4430/api/pong/settings/", headers=headers, data=json.dumps(data), verify=False)
+				# response = requests.post("https://game3d:4430/api/pong/history/", headers=headers, data=json.dumps(data), verify=False)
 				logger.info(response)
 				if response.ok:
 					login(request, user)
 					return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 				else:
 					return Response({'error': 'Error creating pokemap user'}, status=status.HTTP_400_BAD_REQUEST)
-				#POST here the creation of user in game3d (transform into a function)
 			else:
 				return Response({'error': 'Error creating token'}, status=status.HTTP_400_BAD_REQUEST)
 		else:
@@ -103,13 +128,9 @@ class CustomUserLogout(APIView):
 	def post(self, request):
 		logger.debug(request)
 		user = request.user
-		try:
-			user.is_online = False
-			user.save()
-		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=satuts.HTTP_404_NOT_FOUND)
-		logout(request)
-		return Response({'success': True, 'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
+		user.is_online = False
+		user.save()
+		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 
 class CustomUsernameView(APIView):
 	authentication_classes = [JWTAuthentication]
@@ -154,7 +175,7 @@ class CustomUserDeleteView(APIView):
 		try:
 			user.delete()
 		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 		logout(request)
 		return Response({'success': True}, status=status.HTTP_200_OK)
 

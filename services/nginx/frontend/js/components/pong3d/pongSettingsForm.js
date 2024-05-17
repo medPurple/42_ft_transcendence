@@ -109,7 +109,7 @@ export default class pongSettingsForm extends HTMLElement {
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
 			const formData = new FormData(editSettings);
-			fetch('/api/pong/', {
+			fetch('/api/pong/settings/', {
 				method: 'POST',
 				body: formData,
 				headers: {
