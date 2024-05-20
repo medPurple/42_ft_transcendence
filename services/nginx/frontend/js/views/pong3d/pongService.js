@@ -9,12 +9,12 @@ export default () => `
 	</a>
   </div>
   <div class="col-sm-4 g-4">
-	<a href="/gameService" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Remote">
+	<a href="/play_pr" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Remote">
 	  <img src="../images/Site/Play-Remote.jpg" class="img-fluid" alt="Remote">
 	</a>
   </div>
   <div class="col-sm-4 g-4">
-	<a href="/gameService" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Tournament">
+	<a href="/play_pt" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Tournament">
 	  <img src="../images/Site/Play-Tournament.jpg" class="img-fluid" alt="Tournament">
 	</a>
   </div>

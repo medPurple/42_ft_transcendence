@@ -8,7 +8,8 @@ import contact from "./views/contact.js";
 import pongService from "./views/pong3d/pongService.js";
 import gameService from "./views/pong3d/gameService.js";
 import pongSettings from "./views/pong3d/pongSettings.js";
-import metaService from "./views/metaService.js";
+import metaService from "./views/pokemon/metaService.js";
+import pokemap from "./views/pokemon/pokemap.js";
 import userService from "./views/user/userService.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
@@ -19,7 +20,7 @@ import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
-import play from "./views/play.js";
+import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pkm_tournamentplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
 import { setup } from "./components/pong3d/pongServLogic.js";
@@ -99,9 +100,25 @@ const routes = {
             return await friendsProfile(username);
         }
 	},
-	'/play': {
-		title: "Play",
-		render: play
+	'/play_pr': {
+		title: "Pong Remote Play",
+		render: pong_remoteplay
+	},
+	'/play_pt': {
+		title: "Pong Tournament Play",
+		render: pong_tournamentplay
+	},
+	'/play_pkr': {
+		title: "Pokemon Remote Play",
+		render: pkm_remoteplay
+	},
+	'/play_pkt': {
+		title: "Pokemon Tournament Play",
+		render: pkm_tournamentplay
+	},
+	'/pokemap': {
+		title: "Pokemon Map",
+		render: pokemap_interactive
 	},
 	'/chat': {
 		title: "Chat",
@@ -203,7 +220,7 @@ async function router() {
 
 				// console.log('route', result);
 
-		if (result.includes("pong-renderer")) {
+		if (typeof result === 'string' && result.includes("pong-renderer")) {
 			setup();
 		}
 	

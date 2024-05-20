@@ -6,13 +6,15 @@ class PlayerModelSerializer(serializers.ModelSerializer):
     posY = serializers.IntegerField(read_only=True)
     orientation = serializers.CharField(read_only=True)
     active = serializers.BooleanField(read_only=True)
+    event = serializers.CharField(read_only=True, default=None)
+    target = serializers.CharField(read_only=True, default=None)
     class Meta:
         model = player
-        fields = ['userID', 'posX', 'posY', 'orientation', 'active']
+        fields = ['userID', 'posX', 'posY', 'orientation', 'active', 'event', 'target']
 
 
 class editplayerModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = player
-        fields = ['userID', 'posX', 'posY', 'orientation', 'active']
+        fields = ['userID', 'posX', 'posY', 'orientation', 'active', 'event', 'target']
         read_only_fields = ['userID']

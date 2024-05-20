@@ -6,6 +6,7 @@ from urllib.parse import parse_qs
 
 from .models import player, map
 from .serializers import PlayerModelSerializer, editplayerModelSerializer
+import random
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,9 @@ class PlayerConsumer(WebsocketConsumer):
                     "posX": playerobj.posX,
                     "posY": playerobj.posY,
                     "orientation": playerobj.orientation,
-                    "active": True
+                    "active": True,
+                    "event": None,
+                    "target": None,
                 }
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
@@ -42,7 +45,9 @@ class PlayerConsumer(WebsocketConsumer):
                 "posX": playerobj.posX,
                 "posY": playerobj.posY,
                 "orientation": playerobj.orientation,
-                "active": False
+                "active": False,
+                "event": None,
+                "target": None,
             }
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
@@ -62,7 +67,9 @@ class PlayerConsumer(WebsocketConsumer):
                     "posX": playerobj.posX,
                     "posY": playerobj.posY,
                     "orientation": playerobj.orientation,
-                    "active": playerobj.active
+                    "active": playerobj.active,
+                    "event": playerobj.event,
+                    "target": playerobj.target,
                 }
                 match data:
                     case "y+":
@@ -70,6 +77,16 @@ class PlayerConsumer(WebsocketConsumer):
                             if (map[playerobj.posY + 1][playerobj.posX] == 0):
                                 basejson["posY"] += 1
                                 basejson["orientation"] = "S"
+                            elif (map[playerobj.posY + 1][playerobj.posX] == 2):
+                                if is_entering_combat():
+                                    basejson = add_event(basejson, "combat")
+                                else:
+                                    basejson["posY"] += 1
+                                    basejson["orientation"] = "S"
+                            elif (map[playerobj.posY + 1][playerobj.posX] == 3):
+                                basejson = add_event(basejson, "door")
+                            elif (map[playerobj.posY + 1][playerobj.posX] == 4):
+                                basejson = add_event(basejson, "people")
                             else:
                                 logger.info("match y+ failed")
                         else:
@@ -79,6 +96,16 @@ class PlayerConsumer(WebsocketConsumer):
                             if (map[playerobj.posY - 1 ][playerobj.posX] == 0):
                                 basejson["posY"] -= 1
                                 basejson["orientation"] = "N"
+                            elif (map[playerobj.posY - 1 ][playerobj.posX] == 2):
+                                if is_entering_combat():
+                                    basejson = add_event(basejson, "combat")
+                                else:
+                                    basejson["posY"] -= 1
+                                    basejson["orientation"] = "N"
+                            elif (map[playerobj.posY - 1 ][playerobj.posX] == 3):
+                                basejson = add_event(basejson, "door")
+                            elif (map[playerobj.posY - 1 ][playerobj.posX] == 4):
+                                basejson = add_event(basejson, "people")
                             else:
                                 logger.info("match y- failed")
                         else:
@@ -88,6 +115,16 @@ class PlayerConsumer(WebsocketConsumer):
                             if (map[playerobj.posY][playerobj.posX + 1] == 0):
                                 basejson["posX"] += 1
                                 basejson["orientation"] = "E"
+                            elif (map[playerobj.posY][playerobj.posX + 1] == 2):
+                                if is_entering_combat():
+                                    basejson = add_event(basejson, "combat")
+                                else:
+                                    basejson["posX"] += 1
+                                    basejson["orientation"] = "E"
+                            elif (map[playerobj.posY][playerobj.posX + 1] == 3):
+                                basejson = add_event(basejson, "door")
+                            elif (map[playerobj.posY][playerobj.posX + 1] == 4):
+                                basejson = add_event(basejson, "people")
                             else:
                                 logger.info("match x+ failed")
                         else:
@@ -97,6 +134,16 @@ class PlayerConsumer(WebsocketConsumer):
                             if (map[playerobj.posY][playerobj.posX - 1] == 0):
                                 basejson["posX"] -= 1
                                 basejson["orientation"] = "W"
+                            elif (map[playerobj.posY][playerobj.posX - 1] == 2):
+                                if is_entering_combat():
+                                    basejson = add_event(basejson, "combat")
+                                else:
+                                    basejson["posX"] -= 1
+                                    basejson["orientation"] = "W"
+                            elif (map[playerobj.posY][playerobj.posX - 1] == 3):
+                                basejson = add_event(basejson, "door")
+                            elif (map[playerobj.posY][playerobj.posX - 1] == 4):
+                                basejson = add_event(basejson, "people")
                             else:
                                 logger.info("match x- failed")
                         else:
@@ -111,3 +158,13 @@ class PlayerConsumer(WebsocketConsumer):
                     self.send(json_data)
         except Exception as e:
             logger.error("error", e)
+
+
+
+def is_entering_combat():
+    return random.randint(1, 5) == 1
+
+def add_event(basejson, event):
+    basejson["event"] = event
+    
+    return basejson
