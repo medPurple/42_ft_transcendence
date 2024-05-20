@@ -1,107 +1,91 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import GameSettings, UserHistory
-from .serializers import GameSettingsSerializer, UserHistorySerializer
+from .models import GameUser, GameSettings, GameMatch
+from .serializers import GameUserSerializer, GameSettingsSerializer, GameMatchSerializer
 
 
 class GameSettingsAPI(APIView):
-	def get(self, request, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+	def post(self, request):
+		user_id = request.data.get('userID')
+		if not user_id:
+			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-		settings = GameSettings.objects.filter(user_id=user_id)
-		serializer = GameSettingsSerializer(settings, many=True)
-		return Response(serializer.data)
-
-	def post(self, request, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-		data = request.data
-		data['user_id'] = user_id
-		serializer = GameSettingsSerializer(data=data)
-
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	def put(self, request, pk, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-		
 		try:
-			settings = GameSettings.objects.get(pk=pk, user_id=user_id)
+			user, _ = GameUser.objects.get_or_create(userID=user_id)
+		except GameUser.DoesNotExist:
+			return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+		game_settings, created = GameSettings.objects.get_or_create(
+			user=user,
+			defaults={
+				"scene": "Cornfield",
+				"ball": 1,
+				"paddle": 1,
+				"table": 1,
+				"score": 11,
+				"powerups": False
+			}
+		)
+
+		settings_serializer = GameSettingsSerializer(game_settings)
+		return Response(settings_serializer.data, status=status.HTTP_201_CREATED)
+
+	def get(self, request, user_id=None):
+		if not user_id:
+			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+		try:
+			user = GameUser.objects.get(userID=user_id)
+		except GameUser.DoesNotExist:
+			return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		try:
+			game_settings = GameSettings.objects.get(user=user)
 		except GameSettings.DoesNotExist:
-			return Response ({"error" : "Game Settings not found for this user"}, status=status.HTTP_404_NOT_FOUND)
+			return Response({"error": "Settings not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		settings_serializer = GameSettingsSerializer(game_settings)
+		return Response(settings_serializer.data, status=status.HTTP_200_OK)
+
+	def put(self, request, user_id=None):
+		if not user_id:
+			return Restponse({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 		
-		serializer = GameSettingsSerializer(settings, data=request.data)
-
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	def delete(self, request, pk, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+		try:
+			user = GameUser.objects.get(userID=user_id)
+		except GameUser.DoesNotExist:
+			return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 		try:
-			settings = GameSettings.objects.get(pk=pk, user_id=user_id)
+			game_settings = GameSettings.objects.get(user=user)
 		except GameSettings.DoesNotExist:
-			return Response ({"error" : "Game Settings not found for this user"}, status=status.HTTP_404_NOT_FOUND)
-		
-		settings.delete()
-		return Response(status=status.HTTP_204_NO_CONTENT)
+			return Response({"error": "Settings not found"}, status=status.HTTP_404_NOT_FOUND)
 
-class UserHistoryAPI(APIView):
-	def get(self, request, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+		settings_serializer = GameSettingsSerializer(game_settings, data=request.data, partial=True)
+		if settings_serializer.is_valid():
+			settings_serializer.save()
+			return Response(settings_serializer.data, status=status.HTTP_200_OK)
+		return Response(settings_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-		history = UserHistory.objects.filter(user_id=user_id)
-		serializer = UserHistorySerializer(history, many=True)
-		return Response(serializer.data)
+class GameMatchAPI(APIView):
+	def post(self, request):
+		match_serializer = GameMatchSerializer(data=request.data)
+		if match_serializer.is_valid():
+			match_serializer.save()
+			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def post(self, request, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+	def get(self, request, match_id=None):
+		if match_id:
+			try:
+				game_match = GameMatch.objects.get(id=match_id)
+				match_serializer = GameMatchSerializer(game_match)
+				return Response(match_serializer.data, status=status.HTTP_200_OK)
+			except GameMatch.DoesNotExist:
+				return Response({"error": "Match not found"}, status=status.HTTP_404_NOT_FOUND)
 
-		data = request.data
-		data['user_id'] = user_id
-		serializer = UserHistorySerializer(data=data)
-
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	def put(self, request, pk, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-		
-		try:
-			history = UserHistory.objects.get(pk=pk, user_id=user_id)
-		except UserHistory.DoesNotExist:
-			return Response ({"error" : "User History not found for this user"}, status=status.HTTP_404_NOT_FOUND)
-		
-		serializer = UserHistorySerializer(history, data=request.data)
-
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	def delete(self, request, pk, user_id):
-		if user_id is None:
-			return Response ({"error" : "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-		try:
-			history = UserHistory.objects.get(pk=pk, user_id=user_id)
-		except UserHistory.DoesNotExist:
-			return Response ({"error" : "User History not found for this user"}, status=status.HTTP_404_NOT_FOUND)
-		
-		history.delete()
-		return Response(status=status.HTTP_204_NO_CONTENT)
-
+		else:
+			game_matches = GameMatch.objects.all()
+			match_serializer = GameMatchSerializer(game_matches, many=True)
+			return Response(match_serializer.data, status=status.HTTP_200_OK)

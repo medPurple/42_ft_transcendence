@@ -94,15 +94,17 @@ class CustomUserRegister(APIView):
 				logger.info('Token created')
 				headers = {'Content-Type': 'application/json'}
 				data = {"userID": user.user_id}
-				# response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
-				response = requests.post("https://pongservice:4430/api/pong/settings/", headers=headers, data=json.dumps(data), verify=False)
-				# response = requests.post("https://game3d:4430/api/pong/history/", headers=headers, data=json.dumps(data), verify=False)
+				print(data)
+
+				#response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
+				response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
+				#APIPONG does not get the userID!!!
 				logger.info(response)
 				if response.ok:
 					login(request, user)
 					return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 				else:
-					return Response({'error': 'Error creating pokemap user'}, status=status.HTTP_400_BAD_REQUEST)
+					return Response({'error': 'Error creating user'}, status=status.HTTP_400_BAD_REQUEST)
 			else:
 				return Response({'error': 'Error creating token'}, status=status.HTTP_400_BAD_REQUEST)
 		else:

@@ -46,7 +46,7 @@ export default class pongSettingsForm extends HTMLElement {
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="first_name">Scene</label>
-			<select class="form-control" id="scene" name="scene">
+			<select class="form-control" id="scene" name="scene" value="${settings.scene}">
 				<option value="P">Playground</option>
 				<option value="C">Cornfield</option>
 				<option value="D">Dorm</option>
@@ -54,7 +54,7 @@ export default class pongSettingsForm extends HTMLElement {
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Ball</label>
-			<select class="form-control" id="ball" name="ball">
+			<select class="form-control" id="ball" name="ball" value="${settings.ball}">
 				<option value="0">Type 0</option>
 				<option value="1">Type 1</option>
 				<option value="2">Type 2</option>
@@ -62,7 +62,7 @@ export default class pongSettingsForm extends HTMLElement {
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Paddle</label>
-			<select class="form-control" id="paddle" name="paddle">
+			<select class="form-control" id="paddle" name="paddle" value="${settings.paddle}">
 				<option value="0">Type 0</option>
 				<option value="1">Type 1</option>
 				<option value="2">Type 2</option>
@@ -70,7 +70,7 @@ export default class pongSettingsForm extends HTMLElement {
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Table</label>
-			<select class="form-control" id="table" name="table">
+			<select class="form-control" id="table" name="table" value="${settings.table}">
 				<option value="0">Type 0</option>
 				<option value="1">Type 1</option>
 				<option value="2">Type 2</option>
@@ -78,7 +78,7 @@ export default class pongSettingsForm extends HTMLElement {
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Score</label>
-			<select class="form-control" id="score" name="score">
+			<select class="form-control" id="score" name="score" value="${settings.score}">
 				<option value="7">7</option>
 				<option value="11">11</option>
 				<option value="17">17</option>
@@ -86,7 +86,7 @@ export default class pongSettingsForm extends HTMLElement {
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">PowerUps Enabled</label>
-			<select class="form-control" id="powerups" name="powerups">
+			<select class="form-control" id="powerups" name="powerups" value="${settings.powerups}">
 				<option value="True">Yes</option>
 				<option value="False">No</option>
 			</select>
@@ -104,12 +104,16 @@ export default class pongSettingsForm extends HTMLElement {
 
 	initFormSubmit() {
 		const editSettings = this.shadowRoot.getElementById('settings-form'); // Use getElementById to find the form within the component
+		if (!editSettings) {
+			console.error('Could not find the settings form');
+			return;
+		}
 		editSettings.addEventListener('submit', function(event) {
 			event.preventDefault();
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
 			const formData = new FormData(editSettings);
-			fetch('/api/pong/settings/', {
+			fetch('/api/pong/', {
 				method: 'POST',
 				body: formData,
 				headers: {
