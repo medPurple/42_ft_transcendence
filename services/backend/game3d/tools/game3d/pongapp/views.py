@@ -50,7 +50,7 @@ class GameSettingsAPI(APIView):
 
 	def put(self, request, user_id=None):
 		if not user_id:
-			return Restponse({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 		
 		try:
 			user = GameUser.objects.get(userID=user_id)
@@ -89,3 +89,51 @@ class GameMatchAPI(APIView):
 			game_matches = GameMatch.objects.all()
 			match_serializer = GameMatchSerializer(game_matches, many=True)
 			return Response(match_serializer.data, status=status.HTTP_200_OK)
+
+class GameUserAPI(APIView):
+	def get(self, request, user_id=None):
+		if user_id:
+			try:
+				game_user = GameUser.objects.get(userID=user_id)
+				user_serializer = GameUserSerializer(game_user)
+				return Response(user_serializer.data, status=status.HTTP_200_OK)
+			except GameUser.DoesNotExist:
+				return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+		else:
+			game_users = GameUser.objects.all()
+			user_serializer = GameUserSerializer(game_users, many=True)
+			return Response(user_serializer.data, status=status.HTTP_200_OK)
+
+	def post(self, request):
+		user_serializer = GameUserSerializer(data=request.data)
+		if user_serializer.is_valid():
+			user_serializer.save()
+			return Response(user_serializer.data, status=status.HTTP_201_CREATED)
+		return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def put(self, request, user_id=None):
+		if not user_id:
+			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+		try:
+			game_user = GameUser.objects.get(userID=user_id)
+		except GameUser.DoesNotExist:
+			return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		user_serializer = GameUserSerializer(game_user, data=request.data, partial=True)
+		if user_serializer.is_valid():
+			user_serializer.save()
+			return Response(user_serializer.data, status=status.HTTP_200_OK)
+		return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def delete(self, request, user_id=None):
+		if not user_id:
+			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+		try:
+			game_user = GameUser.objects.get(userID=user_id)
+		except GameUser.DoesNotExist:
+			return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		game_user.delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)

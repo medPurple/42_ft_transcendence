@@ -1,5 +1,7 @@
-import Iuser from "../user/userInfo.js";
+import gamer from "./gamerInfo.js"
 import Icookies from "../cookie/cookie.js";
+import Iuser from "../user/userInfo.js";
+
 
 export default class pongSettingsForm extends HTMLElement {
 	constructor(){
@@ -11,17 +13,17 @@ export default class pongSettingsForm extends HTMLElement {
 		const editSettings = document.createElement('div');
 		editSettings.id = 'pong-settings';
 		this.shadowRoot.appendChild(editSettings);
-		await this.initUserInfo();
+		await this.initGamerInfo();
 		this.initFormSubmit();
 
 	}
 
-	async initUserInfo() {
+	async initGamerInfo() {
 		try {
-			const data = await Iuser.getAllUserInfo();
+			const data = await gamer.getGamerSettings();
 			this.displaypongSettingsForm(data);
 		} catch (error) {
-			console.error('Error: initUserInfo', error)
+			console.error('Error: initGamerInfo', error)
 			alert('You should be logged in to change the settings');
 			window.location.href = '/pongService';
 		}
@@ -37,58 +39,58 @@ export default class pongSettingsForm extends HTMLElement {
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
-		<form id="settings-form" method="post" action="" class="container">
+		<form id="settings-form" method="put" action="" class="container">
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="username">User</label>
 			<div class="col-sm-3">
-				<input type="text" class="form-control" placeholder="${data.user.username}" disabled readonly>
+				<input type="text" class="form-control" placeholder="${data.user.userName}" disabled readonly>
 			</div>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="first_name">Scene</label>
-			<select class="form-control" id="scene" name="scene" value="${settings.scene}">
-				<option value="P">Playground</option>
-				<option value="C">Cornfield</option>
-				<option value="D">Dorm</option>
+			<select class="form-control" id="scene" name="scene">
+				<option value="P" ${data.scene === 'Playground' ? 'selected' : ''}>Playground</option>
+				<option value="C" ${data.scene === 'Cornfield' ? 'selected' : ''}>Cornfield</option>
+				<option value="D" ${data.scene === 'Dorm' ? 'selected' : ''}>Dorm</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Ball</label>
-			<select class="form-control" id="ball" name="ball" value="${settings.ball}">
-				<option value="0">Type 0</option>
-				<option value="1">Type 1</option>
-				<option value="2">Type 2</option>
+			<select class="form-control" id="ball" name="ball">
+				<option value="0" ${data.ball === 0 ? 'selected' : ''}>Type 0</option>
+				<option value="1" ${data.ball === 1 ? 'selected' : ''}>Type 1</option>
+				<option value="2" ${data.ball === 2 ? 'selected' : ''}>Type 2</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Paddle</label>
-			<select class="form-control" id="paddle" name="paddle" value="${settings.paddle}">
-				<option value="0">Type 0</option>
-				<option value="1">Type 1</option>
-				<option value="2">Type 2</option>
+			<select class="form-control" id="paddle" name="paddle">
+				<option value="0" ${data.paddle === 0 ? 'selected' : ''}>Type 0</option>
+				<option value="1" ${data.paddle === 1 ? 'selected' : ''}>Type 1</option>
+				<option value="2" ${data.paddle === 2 ? 'selected' : ''}>Type 2</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Table</label>
-			<select class="form-control" id="table" name="table" value="${settings.table}">
-				<option value="0">Type 0</option>
-				<option value="1">Type 1</option>
-				<option value="2">Type 2</option>
+			<select class="form-control" id="table" name="table">
+				<option value="0" ${data.table === 0 ? 'selected' : ''}>Type 0</option>
+				<option value="1" ${data.table === 1 ? 'selected' : ''}>Type 1</option>
+				<option value="2" ${data.table === 2 ? 'selected' : ''}>Type 2</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Score</label>
-			<select class="form-control" id="score" name="score" value="${settings.score}">
-				<option value="7">7</option>
-				<option value="11">11</option>
-				<option value="17">17</option>
+			<select class="form-control" id="score" name="score">
+				<option value="0" ${data.score === 7 ? 'selected' : ''}>7</option>
+				<option value="1" ${data.score === 11 ? 'selected' : ''}>11</option>
+				<option value="2" ${data.score === 17 ? 'selected' : ''}>17</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">PowerUps Enabled</label>
-			<select class="form-control" id="powerups" name="powerups" value="${settings.powerups}">
-				<option value="True">Yes</option>
-				<option value="False">No</option>
+			<select class="form-control" id="powerups" name="powerups">
+				<option value="True" ${data.powerups === true ? 'selected' : ''}>Yes</option>
+				<option value="False" ${data.powerups === false ? 'selected' : ''}>No</option>
 			</select>
 		</div>
 
@@ -112,9 +114,11 @@ export default class pongSettingsForm extends HTMLElement {
 			event.preventDefault();
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
+			// let userId = await Iuser.getID(); I NEED TO GET THE USER ID HERE!
+
 			const formData = new FormData(editSettings);
 			fetch('/api/pong/', {
-				method: 'POST',
+				method: 'PUT',
 				body: formData,
 				headers: {
 					'Authorization': jwtToken,
