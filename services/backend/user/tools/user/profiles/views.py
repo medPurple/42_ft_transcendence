@@ -30,30 +30,19 @@ def user_token(request, user_id):
 		print(f"Error token : {e}")
 		return None
 
-# def create_userID_gamelink(request, user_id):
-# 	end_pokemap = "https://pokemap:4430/api/pokemap/"
-# 	end_settings = "https://game3d:4430/api/pong/settings/"
-# 	end_history = "https://game3d:4430/api/pong/history/"
+def link_userID_microservices(request, user_id):
 
-# 	headers = {'Content-Type': 'application/json'}
-# 	data = {"userID": user_id}
-	
-# 	response_pokemap = requests.post(end_pokemap, headers=headers, data=json.dumps(data), verify=False)
-# 	response_pongSettings = requests.post(end_settings, headers=headers, data=json.dumps(data), verify=False)
-# 	response_pongHistory = requests.post(end_history, headers=headers, data=json.dumps(data), verify=False)
+	headers = {'Content-Type': 'application/json'}
+	data = {"userID": user_id}
 
-# 	logger.info(response_pokemap)
-# 	logger.info(response_pongSettings)
-# 	logger.info(response_pongHistory)
-
-# 	if response_pokemap.ok and response_pongSettings.ok and response_pongHistory.ok:
-# 		login(response_pokemap, user)
-# 		login(response_pongSettings, user)
-# 		login(response_pongHistory, user)
-# 		return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
-# 	else:
-# 		return Response({'error': 'Error creating user link'}, status=status.HTTP_400_BAD_REQUEST)
-
+	try:
+		response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
+		response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
+		#response = ADD OTHER MICROSERVICES LINKS HERE IF NEEDED
+		return response
+	except requests.exceptions.RequestException as e:
+		print(f"Error linking user ID : {e}")
+		return None
 
 class JWTAuthentication(BaseAuthentication):
 	def authenticate(self, request):
@@ -92,19 +81,14 @@ class CustomUserRegister(APIView):
 			token = user_token(request, user.user_id)
 			if token is not None:
 				logger.info('Token created')
-				headers = {'Content-Type': 'application/json'}
-				data = {"userID": user.user_id}
-				print(data)
 
-				#response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
-				response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
-				#APIPONG does not get the userID!!!
-				logger.info(response)
-				if response.ok:
+				user_link = link_userID_microservices(request, user.user_id)
+
+				if user_link is not None:
 					login(request, user)
 					return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 				else:
-					return Response({'error': 'Error creating user'}, status=status.HTTP_400_BAD_REQUEST)
+					return Response({'error': 'API Error'}, status=status.HTTP_400_BAD_REQUEST)
 			else:
 				return Response({'error': 'Error creating token'}, status=status.HTTP_400_BAD_REQUEST)
 		else:
