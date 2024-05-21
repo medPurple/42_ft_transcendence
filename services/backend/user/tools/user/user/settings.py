@@ -60,7 +60,7 @@ CORS_ORIGIN_WHITELIST = [
     'https://chatservice:4430',
     'https://tokenservice:4430',
     'https://queueservice:4430',
-    'https://pokemapservice:4430', # Remplacez par les origines que vous voulez autoriser
+    'https://pokemapservice:4430',
 ]
 
 # # Assurez-vous également d'utiliser HTTPS et de définir CSRF_COOKIE_SECURE et SESSION_COOKIE_SECURE sur True

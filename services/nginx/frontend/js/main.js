@@ -20,7 +20,7 @@ import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
-import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pkm_tournamentplay, pokemap_interactive} from "./views/play.js";
+import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
 import "./components/user/logoutForm.js";
@@ -111,10 +111,10 @@ const routes = {
 		title: "Pokemon Remote Play",
 		render: pkm_remoteplay
 	},
-	'/play_pkt': {
-		title: "Pokemon Tournament Play",
-		render: pkm_tournamentplay
-	},
+	// '/play_pkt': {
+	// 	title: "Pokemon Tournament Play",
+	// 	render: pkm_tournamentplay
+	// },
 	'/pokemap': {
 		title: "Pokemon Map",
 		render: pokemap_interactive

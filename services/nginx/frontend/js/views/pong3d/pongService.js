@@ -4,8 +4,7 @@ export default () => `
 <div class="container">
 <div class="row mb-4 g-4">
   <div class="col-sm-4">
-	<a href="/    <div id="pong-renderer"></div>
-    <div id="pong-score"></div>" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Local">
+	<a href="/play_pl" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Local">
 	  <img src="../images/Site/Play-Local.jpg" class="img-fluid" alt="Local">
 	</a>
   </div>
