@@ -39,3 +39,7 @@ class GameSettings(models.Model):
 
 	def __str__(self):
 		return f'{self.user}'
+
+class group(models.Model):
+	player1 = models.IntegerField()
+	player2 = models.IntegerField()

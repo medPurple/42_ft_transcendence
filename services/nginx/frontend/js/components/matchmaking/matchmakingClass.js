@@ -119,8 +119,9 @@ class MatchmakingButtons {
 	checkstatus(data) {
 		if (this.status === 'found') {
 			this.removeWaitingPage();
-			this.matchsocket.close();
+			// this.matchsocket.close();
 			console.log(data);
+			window.location.href = "/gameService"
 		}
 	}
 

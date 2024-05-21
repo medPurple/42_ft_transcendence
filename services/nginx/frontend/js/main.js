@@ -6,10 +6,10 @@ import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
 import pongService from "./views/pong3d/pongService.js";
-import gameService from "./views/pong3d/gameService.js";
+import game from "./views/game.js";
 import pongSettings from "./views/pong3d/pongSettings.js";
 import metaService from "./views/pokemon/metaService.js";
-import pokemap from "./views/pokemon/pokemap.js";
+// import pokemap from "./views/pokemon/pokemap.js";
 import userService from "./views/user/userService.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
@@ -23,7 +23,6 @@ import friendsProfile from "./views/friends/friendsProfile.js";
 import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pkm_tournamentplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
-import { setup } from "./components/pong3d/pongServLogic.js";
 import "./components/user/logoutForm.js";
 
 // Define the routes
@@ -54,7 +53,7 @@ const routes = {
 	},
 	'/gameService': {
 		title: "Game Service",
-		render: gameService
+		render: game
 	},
 	'/pongSettings': {
 		title: "Pong Settings",
@@ -216,14 +215,7 @@ async function router() {
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
-		let result = await view.render(view.params);
-
-				// console.log('route', result);
-
-		if (typeof result === 'string' && result.includes("pong-renderer")) {
-			setup();
-		}
-	
+		let result = await view.render(view.params);	
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
