@@ -1,6 +1,7 @@
 import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populatePaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
+import { onKeyUp, onKeyDown } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
 
@@ -21,6 +22,9 @@ export function createScene() {
   }
   c.appendChild(core.renderer.domElement);
 
+  window.addEventListener('keydown', onKeyDown, false);
+  window.addEventListener('keyup', onKeyUp, false);
+
   //Scene setup
 
   core.scene = new THREE.Scene();
@@ -40,13 +44,16 @@ export function createScene() {
 
   // PointLight setup
 
-  lights.pointLight = populatePointLight(0xffffff, 0, 0, 500, 1.5, 10000);
-  //  lights.pointLight2 = populatePointLight(0xffffff, 0, -500, 1000, 0.75, 10000);
+  //lights.pointLight = populatePointLight(0xffffff, 0, 0, 500, 1.5, 10000);
+  lights.pointLight = populatePointLight(0xffffff, 1000, 0, 500, 0.75, 10000);
+  lights.pointLight2 = populatePointLight(0xffffff, -1000, 0, 500, 0.75, 10000);
+  lights.pointLight3 = populatePointLight(0xffffff, 0, 0, 500, 0.75, 10000);
+  //lights.pointLight4 = populatePointLight(0xffffff, 0, -200, 500, 0.5, 10000);
   //lights.pointLight2 = populatePointLight(0xffffff, 1000, 0, 1000, 1, 8000);
 
   //Spotlight setup
 
-  //lights.spotLight = populateSpotLight(0xffffff, 0, 0, 460, 0.25)
+  //lights.spotLight = populateSpotLight(0xffffff, 0, 0, 700, 0.7)
 
   //Plane setup
 
@@ -80,9 +87,11 @@ export function createScene() {
 
   //Add all to the scene
 
-  core.scene.add(lights.ambientLight);
+  //core.scene.add(lights.ambientLight);
   core.scene.add(lights.pointLight);
   core.scene.add(lights.pointLight2);
+  core.scene.add(lights.pointLight3);
+  //core.scene.add(lights.pointLight4);
   core.scene.add(lights.spotLight);
   core.scene.add(playMesh.paddle1);
   core.scene.add(playMesh.paddle2);
@@ -93,6 +102,6 @@ export function createScene() {
   core.scene.add(decMesh.ground);
   core.scene.add(core.camera);
 
-  //renderer.shadowMapEnabled = true;
+  //core.renderer.shadowMapEnabled = true;
 
 }

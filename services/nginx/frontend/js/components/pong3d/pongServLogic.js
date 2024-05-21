@@ -5,8 +5,9 @@ import { onKeyUp, onKeyDown } from './inputEvents.js'
 import { displayScore } from './scoreDisplay.js'
 import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
-window.addEventListener('keydown', onKeyDown, false);
-window.addEventListener('keyup', onKeyUp, false);
+// window.addEventListener('keydown', onKeyDown, false);
+// window.addEventListener('keyup', onKeyUp, false);
+//
 
 function draw() {
 

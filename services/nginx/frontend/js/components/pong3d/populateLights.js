@@ -7,6 +7,7 @@ export function populatePointLight(color, posX, posY, posZ, intensity, distance)
   pointLight.position.z = posZ;
   pointLight.intensity = intensity;
   pointLight.distance = distance;
+  pointLight.castShadow = true;
 
   return pointLight;
 }
