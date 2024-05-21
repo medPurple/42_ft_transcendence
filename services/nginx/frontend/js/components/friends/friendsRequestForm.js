@@ -295,32 +295,84 @@ export class Friends {
 			await this.viewUsers();
 		}
 		else if (dataUsers.users.length > 1) {
+			console.log("array Updateview", this.variablesArray);
 			dataUsers.users.forEach(async (users) => {
-				const variable = this.variablesArray.find(v => v.name === users.username);
-				console.log(variable);
-
 				if (currentUser != users.username) {
+					const bob = this.variablesArray.find(user => user.name === users.username)
+					const liElement = document.querySelector('#user_' + users.username);
+
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
 						return request.from_user === users.user_id || request.to_user === users.user_id;
 					});
+
 					const hasSendRequest = requestFriend.sent_requests.some(request => {
 						return request.from_user === users.user_id || request.to_user === users.user_id;
 					});
-					const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
 
-					console.log(variable.isFriends);
-					if (isFriends != variable.isFriends) {
-						await this.viewUsers();
-						// this.manageFriend(liElement, users.username);
-					} else if (hasFriendRequest != variable.hasFriendRequest) {
-						await this.viewUsers();
-						// this.manageFriendRequest(liElement, users.username);
-					} else if (hasSendRequest != variable.hasSendRequest) {
-						await this.viewUsers();}
-						// liElement.appendChild(this.friendsButton.requestSent());
-					// } else {
-					// 	// this.sendFriendRequest(liElement, users.username);
-					// }
+					const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
+					console.warn("request friend ", requestFriend);
+					console.warn("friend list", friendsList);
+					console.warn("previous ", bob);
+					console.warn("friends now", isFriends)
+					console.warn("hasFriendRequest now", hasFriendRequest)
+					console.warn("hasSendRequest now", hasSendRequest)
+
+					if (isFriends != bob.isFriends) {
+						console.log(liElement)
+						if (isFriends){
+							while (liElement.firstChild) {
+								liElement.removeChild(liElement.firstChild);
+							}
+							liElement.id = 'user_' + users.username;
+							liElement.textContent = users.username;
+							this.manageFriend(liElement, users.username);
+						}
+						bob.isFriends = isFriends;
+						bob.addFriend = false;
+
+					} else if (hasFriendRequest != bob.hasFriendRequest) {
+						console.log(liElement)
+
+						if (hasFriendRequest){
+							while (liElement.firstChild) {
+								liElement.removeChild(liElement.firstChild);
+							}
+							liElement.id = 'user_' + users.username;
+							liElement.textContent = users.username;
+							this.manageFriendRequest(liElement, users.username);
+						}
+						bob.hasFriendRequest = hasFriendRequest;
+						bob.addFriend = false;
+
+					} else if (hasSendRequest != bob.hasSendRequest) {
+						console.log(liElement)
+						if (hasSendRequest){
+							while (liElement.firstChild) {
+								liElement.removeChild(liElement.firstChild);
+							}
+							liElement.id = 'user_' + users.username;
+							liElement.textContent = users.username;
+							liElement.appendChild(this.friendsButton.requestSentButton());
+						}
+						bob.hasSendRequest = hasSendRequest;
+						bob.addFriend = false;
+
+					} else {
+						if (!bob.addFriend &&
+							!hasSendRequest &&
+							!hasFriendRequest &&
+							!isFriends
+							){
+							while (liElement.firstChild) {
+								liElement.removeChild(liElement.firstChild);
+							}
+							liElement.id = 'user_' + users.username;
+							liElement.textContent = users.username;
+							this.sendFriendRequest(liElement, users.username);
+							bob.addFriend = true
+						}
+
+					}
 				}
 			});
 		}
@@ -347,7 +399,7 @@ export class Friends {
 			dataUsers.users.forEach(users => {
 				if (currentUser != users.username) {
 					const liElement = document.createElement('li');
-					liElement.id = 'user';
+					liElement.id = 'user_' + users.username;
 					liElement.textContent = users.username;
 
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
@@ -365,7 +417,7 @@ export class Friends {
 					} else if (hasFriendRequest) {
 						this.manageFriendRequest(liElement, users.username);
 					} else if (hasSendRequest) {
-						liElement.appendChild(this.friendsButton.requestSent());
+						liElement.appendChild(this.friendsButton.requestSentButton());
 					} else {
 						this.sendFriendRequest(liElement, users.username);
 					}
@@ -373,9 +425,12 @@ export class Friends {
 						name: users.username,
 						hasFriendRequest: hasFriendRequest,
 						hasSendRequest: hasSendRequest,
-						isFriends:isFriends});
+						isFriends:isFriends,
+						addFriend:true
+					});
 
 					this.ulElement.appendChild(liElement);
+					console.log(this.variablesArray);
 				}
 			});
 		} else {
@@ -425,9 +480,9 @@ export class Friends {
 				console.log(deleteIsValid);
 				if (deleteIsValid.success === true) {
 					buttonDeleteFriend.textContent = 'Friend deleted';
-					buttonDeleteFriend.style.display = 'none';
-					linkToFriendsProfile.style.display = 'none';
-					this.sendFriendRequest(liElement, username);
+					// buttonDeleteFriend.style.display = 'none';
+					// linkToFriendsProfile.style.display = 'none';
+					// this.sendFriendRequest(liElement, username);
 
 				}
 			} catch (error) {
@@ -494,4 +549,3 @@ export class Friends {
 // const socket = await friends.connect();
 // friends.viewUsers(socket);
 // export { Friends };
-
