@@ -53,8 +53,8 @@ function handleServerMessage(message) {
   for (let [key, value] of map.entries()) {
     if (key == "party" && value == 'active') {
       core.party = true;
-      displayScore();
       createScene();
+      displayScore();
       draw();
       return;
     }

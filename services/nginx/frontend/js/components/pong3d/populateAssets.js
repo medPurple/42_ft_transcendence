@@ -82,72 +82,38 @@ function populateSlide() {
   })
 }
 
-function populateABed(index, positionX, positionY, positionZ, rotation, scale) {
+function populateRowBed(count, positionX, positionY, height) {
 
-  var objLoader = new THREE.GLTFLoader();
-  objLoader.load('../../../images/3D/Lightweight/bed.glb', function(gltf) {
-    objMesh.beds[index] = gltf.scene;
-    objMesh.beds[index].scale.set(scale, scale, scale);
-    objMesh.beds[index].rotateX(Math.PI / 2);
-    objMesh.beds[index].rotateY(THREE.MathUtils.degToRad(rotation));
-    objMesh.beds[index].position.x = positionX;
-    objMesh.beds[index].position.y = positionY;
-    objMesh.beds[index].position.z = positionZ;
-    core.scene.add(objMesh.beds[index]);
-  });
-}
-
-function populateRowBeds(bedCounter, positionX, positionY, height) {
-
+  var dummy = new THREE.Object3D();
   var positionZ = -130;
-  for (var i = 0; i < (9 * height); i++, bedCounter++) {
+  for (var i = 0; i < 9 * height; i++, count++) {
     if (i % height == 0) {
       positionX += 100;
       positionZ = -130;
     }
     else
       positionZ += 47.5;
-    populateABed(bedCounter, positionX, positionY, positionZ, 270, 15);
+    dummy.scale.set(15, 15, 15);
+    dummy.position.set(positionX, positionY, positionZ);
+    dummy.rotation.set(THREE.MathUtils.degToRad(180), 0, THREE.MathUtils.degToRad(90));
+    dummy.updateMatrix();
+    objMesh.instancedBed.setMatrixAt(count, dummy.matrix);
   }
 }
 
 function populateBeds() {
 
-  populateRowBeds(0, -500, -600, 3);
-  populateRowBeds(27, -500, -400, 2);
-}
-
-function populateBeds2() {
-
   var objLoader = new THREE.GLTFLoader();
   objLoader.load('../../../images/3D/Lightweight/bed.glb', function(gltf) {
-    objMesh.loadedBed = gltf.scene;
-    objMesh.loadedBed.scale.set(15, 15, 15);
-    objMesh.loadedBed.rotateX(Math.PI / 2);
-    objMesh.loadedBed.rotateY(THREE.MathUtils.degToRad(270));
+    const loadedBed = gltf.scene;
+    //
+    const bedGeometry2 = loadedBed.children[0].children[1].geometry;
+    const bedMaterial2 = loadedBed.children[0].children[1].material;
 
-    const bedGeometry = objMesh.loadedBed.geometry;
-    const bedMaterial = objMesh.loadedBed.material;
-
-    const count = 27;
-    objMesh.instancedBed = new THREE.InstancedMesh(bedGeometry, bedMaterial, count);
-
-    var positionX = -500;
-    var positionY = -600;
-    var positionZ = -130;
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < count; i++) {
-
-      if (i % 3 == 0) {
-        positionX += 100;
-        positionZ = -130;
-      }
-      else
-        positionZ += 47.5;
-      dummy.position.set(positionX, positionY, positionZ);
-      dummy.updateMatrix();
-      objMesh.instancedBed.setMatrixAt(i, dummy.matrix);
-    }
+    const count = 45;
+    objMesh.instancedBed = new THREE.InstancedMesh(bedGeometry2, bedMaterial2, count);
+    populateRowBed(0, -500, -600, 3);
+    populateRowBed(27, -500, -400, 2);
     core.scene.add(objMesh.instancedBed);
   });
 }
@@ -166,6 +132,6 @@ export function populateAssets() {
       populateSlide();
       break;
     default:
-      populateBeds2();
+      populateBeds();
   }
 }

@@ -66,8 +66,7 @@ export function createScene() {
 
   //Table Setup
 
-  if (gameCustom.table != 4)
-    decMesh.table = populateTable(0x111111, 0, 0, -7);
+  decMesh.table = populateTable(0x111111, 0, 0, -7);
 
   //Ground setup
 
@@ -92,7 +91,7 @@ export function createScene() {
   core.scene.add(lights.pointLight2);
   core.scene.add(lights.pointLight3);
   //core.scene.add(lights.pointLight4);
-  core.scene.add(lights.spotLight);
+  //core.scene.add(lights.spotLight);
   core.scene.add(playMesh.paddle1);
   core.scene.add(playMesh.paddle2);
   core.scene.add(playMesh.ball);

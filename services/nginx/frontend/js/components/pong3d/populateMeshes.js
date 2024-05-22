@@ -72,27 +72,18 @@ export function populatePlane(color, posX, posY) {
   switch (gameCustom.table) {
     case 0:
       planeMaterial = setPhysicalMaterial(0x9f8574, 1, 0.7, 0, 0, 0);
-      //planeMaterial = setLambertMaterial(0x9f8574);
       break;
     case 1:
       planeMaterial = setPhysicalMaterial(0x3d8b97, 1, 0.7, 0, 0, 0);
-      //     planeMaterial = setLambertMaterial(0x3d8b97);
       break;
     case 2:
       planeMaterial = setPhysicalMaterial(0xb32c6f, 1, 0.7, 0, 0, 0);
-      //    planeMaterial = setLambertMaterial(0xb32c6f);
       break;
     case 3:
-      planeMaterial = setPhysicalMaterial(0x161616, 1, 0.4, 0, 0, 0);
-      //   planeMaterial = setLambertMaterial(0xffd700);
-      break;
-    case 4:
-      planeMaterial = setPhysicalMaterial(0xf8f8ff, 0, 0, 0, 0, 1);
-      //  planeMaterial = setLambertMaterial(0x000000);
+      planeMaterial = setPhysicalMaterial(0x161616, 1, 0.6, 0, 0, 0);
       break;
     default:
-      planeMaterial = setPhysicalMaterial(0x7b8787, 1, 0.7, 0, 0, 0);
-      // planeMaterial = setLambertMaterial(0x7b8787);
+      planeMaterial = setPhysicalMaterial(0x7b8787, 1, 0.7, 1, 1.25, 0);
       break;
 
   }
