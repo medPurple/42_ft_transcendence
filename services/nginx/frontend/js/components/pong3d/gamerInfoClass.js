@@ -16,13 +16,9 @@ export default class gamerInfo {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': csrfToken,
 					'Authorization': jwtToken,
-				},
-				credentials: 'include',
+				}
 			});
-
 			const data = await response.json();
-
-			console.log(data); ///TEST
 	
 			if (response.ok){
 				return data
@@ -36,45 +32,52 @@ export default class gamerInfo {
 		}
 	}
 
-	// async getGamerInfo() {
-	// 	try {
-	// 		let jwtToken = Icookies.getCookie('token');
-	// 		let csrfToken = Icookies.getCookie('csrftoken');
-	// 		const response = await fetch('api/pong/gamer/', {
-	// 			method: 'GET',
-	// 			headers: {
-	// 				'Content-Type': 'application/json',
-	// 				'X-CSRFToken': csrfToken,
-	// 				'Authorization': jwtToken,
-	// 			},
-	// 			credentials: 'include',
-	// 		});
-	// 		const data = await response.json();
-	// 		if (data.success){
-	// 			return data
-	// 		} else {
-	// 			throw new Error('Failed to get gamer info');
-	// 		}
-	// 	} catch (error) {
-	// 		console.error('Error', error);
-	// 		throw error;
-	// 	}
-	// }
-
-	async getMatchInfo() {
+	async getGamerInfo() {
 		try {
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
-			const response = await fetch('api/pong/match/', {
+			let userId = await Iuser.getID();
+
+			const response = await fetch(`api/pong/gamer/${userId}/`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': csrfToken,
 					'Authorization': jwtToken,
-				},
-				credentials: 'include',
+				}
 			});
 			const data = await response.json();
+
+			if (data.success){
+				return data
+			} else {
+				throw new Error('Failed to get gamer info');
+			}
+		} catch (error) {
+			console.error('Error', error);
+			throw error;
+		}
+	
+	}
+
+
+	async getMatchInfo() {
+		try {
+			let jwtToken = Icookies.getCookie('token');
+			let csrfToken = Icookies.getCookie('csrftoken');
+			let userId = await Iuser.getID();
+
+			const response = await fetch(`api/pong/match/${userId}/`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': csrfToken,
+					'Authorization': jwtToken,
+				}
+			});
+			const data = await response.json();
+			console.log(data); ///TEST
+
 			if (data.success){
 				return data
 			} else {
@@ -86,6 +89,9 @@ export default class gamerInfo {
 		}
 	}
 
+	async getGamerID() {
+		
+	}
 }
 
 

@@ -5,14 +5,16 @@ class GameUserSerializer(ModelSerializer):
 	class Meta:
 		model = GameUser
 		fields = '__all__'
- 
-class GameSettingsSerializer(ModelSerializer):
-	class Meta:
-		model = GameSettings
-		fields = '__all__'
-		read_only_fields = ['user']
 
 class GameMatchSerializer(ModelSerializer):
+	player1 = GameUserSerializer()
+	player2 = GameUserSerializer()
 	class Meta:
 		model = GameMatch
+		fields = '__all__'
+
+class GameSettingsSerializer(ModelSerializer):
+	user = GameUserSerializer()
+	class Meta:
+		model = GameSettings
 		fields = '__all__'

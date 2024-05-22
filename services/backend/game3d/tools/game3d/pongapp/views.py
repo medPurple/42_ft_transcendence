@@ -3,16 +3,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import GameUser, GameSettings, GameMatch
 from .serializers import GameUserSerializer, GameSettingsSerializer, GameMatchSerializer
+import logging
 
+logger = logging.getLogger(__name__)
 
 class GameSettingsAPI(APIView):
 	def post(self, request):
 		user_id = request.data.get('userID')
+		user_name = request.data.get('userName')
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
 		try:
-			user, _ = GameUser.objects.get_or_create(userID=user_id)
+			user, _ = GameUser.objects.get_or_create(userID=user_id, userName=user_name)
 		except GameUser.DoesNotExist:
 			return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -65,7 +68,7 @@ class GameSettingsAPI(APIView):
 		settings_serializer = GameSettingsSerializer(game_settings, data=request.data, partial=True)
 		if settings_serializer.is_valid():
 			settings_serializer.save()
-			return Response(settings_serializer.data, status=status.HTTP_200_OK)
+			return Response({'success' : True}, status=status.HTTP_200_OK)
 		return Response(settings_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GameMatchAPI(APIView):
@@ -89,6 +92,8 @@ class GameMatchAPI(APIView):
 			game_matches = GameMatch.objects.all()
 			match_serializer = GameMatchSerializer(game_matches, many=True)
 			return Response(match_serializer.data, status=status.HTTP_200_OK)
+
+	# def put(self, request, match_id=None): do a put request to update a match
 
 class GameUserAPI(APIView):
 	def get(self, request, user_id=None):

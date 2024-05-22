@@ -10,5 +10,5 @@ urlpatterns = [
 	path('api/pong/gamer/', GameUserAPI.as_view(), name='pongapp_gameuser'),
 	path('api/pong/gamer/<int:user_id>/', GameUserAPI.as_view(), name='pongapp_gameuser_byID'),
 	path('api/pong/match/', GameMatchAPI.as_view(), name='pongapp_gamematch'),
-	path('api/pong/match/<int:match_id>/', GameMatchAPI.as_view(), name='pongapp_gamematch_byID'),
+	path('api/pong/match/<int:user_id>/', GameMatchAPI.as_view(), name='pongapp_gamematch_byID'),
 ]

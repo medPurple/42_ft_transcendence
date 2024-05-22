@@ -14,7 +14,7 @@ export default class pongSettingsForm extends HTMLElement {
 		editSettings.id = 'pong-settings';
 		this.shadowRoot.appendChild(editSettings);
 		await this.initGamerInfo();
-		this.initFormSubmit();
+		await this.initFormSubmit();
 
 	}
 
@@ -81,9 +81,9 @@ export default class pongSettingsForm extends HTMLElement {
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Score</label>
 			<select class="form-control" id="score" name="score">
-				<option value="0" ${data.score === 7 ? 'selected' : ''}>7</option>
-				<option value="1" ${data.score === 11 ? 'selected' : ''}>11</option>
-				<option value="2" ${data.score === 17 ? 'selected' : ''}>17</option>
+				<option value="7" ${data.score === 7 ? 'selected' : ''}>7</option>
+				<option value="11" ${data.score === 11 ? 'selected' : ''}>11</option>
+				<option value="17" ${data.score === 17 ? 'selected' : ''}>17</option>
 			</select>
 		</div>
 		<div class="row mb-4">
@@ -104,8 +104,11 @@ export default class pongSettingsForm extends HTMLElement {
 	`;
 	}
 
-	initFormSubmit() {
+	async initFormSubmit() {
 		const editSettings = this.shadowRoot.getElementById('settings-form'); // Use getElementById to find the form within the component
+		const userId = await Iuser.getID();
+		console.log(userId);
+
 		if (!editSettings) {
 			console.error('Could not find the settings form');
 			return;
@@ -114,10 +117,9 @@ export default class pongSettingsForm extends HTMLElement {
 			event.preventDefault();
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
-			// let userId = await Iuser.getID(); I NEED TO GET THE USER ID HERE!
 
 			const formData = new FormData(editSettings);
-			fetch('/api/pong/', {
+			fetch(`api/pong/${userId}/`, {
 				method: 'PUT',
 				body: formData,
 				headers: {
@@ -129,9 +131,9 @@ export default class pongSettingsForm extends HTMLElement {
 			.then(data => {
 				if (data.success) {
 					console.log('Settings updated successfully');
-						window.location.href = '/pongService';
-
+					window.location.href = '/pongService';
 				} else {
+					console.log('Something went wrong updating the settings');
 					alert('An error occurred submitting the settings. Please try again.');
 				}
 			})

@@ -30,10 +30,10 @@ def user_token(request, user_id):
 		print(f"Error token : {e}")
 		return None
 
-def link_userID_microservices(request, user_id):
+def link_userID_microservices(request, user_id, user_name):
 
 	headers = {'Content-Type': 'application/json'}
-	data = {"userID": user_id}
+	data = {"userID": user_id, "userName": user_name}
 
 	try:
 		response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
@@ -82,7 +82,7 @@ class CustomUserRegister(APIView):
 			if token is not None:
 				logger.info('Token created')
 
-				user_link = link_userID_microservices(request, user.user_id)
+				user_link = link_userID_microservices(request, user.user_id, user.username)
 
 				if user_link is not None:
 					login(request, user)
