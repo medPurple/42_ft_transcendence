@@ -45,7 +45,7 @@ export default class editProfileForm extends HTMLElement {
 					<input type="file" class="form-control" name="profile_picture" accept="images/*" />
 				</div>
 			</div>
-			<div class="row mb-4">    
+			<div class="row mb-4">
 				<label class="col-sm-3 col-form-label text-start" for="username">Username</label>
 				<div class="col-sm-9">
 					<input type="text" class="form-control" id="username" name="username" value="${data.user.username}">
@@ -69,6 +69,13 @@ export default class editProfileForm extends HTMLElement {
 					<input type="email" class="form-control" id="email" name="email" value="${data.user.email}">
 				</div>
 			</div>
+			<div class="row mb-4">
+				<label class="col-sm-3 col-form-label text-start" for="is_2fa">Enable 2FA</label>
+				<div class="col-sm-9">
+					<input type="checkbox" class="form-check-input" id="is_2fa" name="is_2fa" ${data.user.is_2fa ? 'checked' : ''}>
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="col-sm-3"></div>
 				<div class="col-sm-9">

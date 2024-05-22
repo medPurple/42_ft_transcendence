@@ -56,6 +56,9 @@ export default class LoginForm extends HTMLElement{
 			})
 			.then(response => response.json())
 			.then(data => {
+				if (data.two_fa) {
+					window.location.href = '/code2FA';
+				}
 				if (data.success) {
 
 					Icookies.setCookie('token', data.token, 90);

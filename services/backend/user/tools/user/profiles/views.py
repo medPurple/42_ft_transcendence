@@ -17,7 +17,15 @@ from .forms import CustomUserCreationForm, CustomUserEditForm, CustomUserPasswor
 from .models import CustomUser
 from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer, CustomUserSerializer
 
+from datetime import timedelta
+from django.utils import timezone
+from django.core.mail import send_mail
+import random
+
 logger = logging.getLogger(__name__)
+
+def generate_random_digits(n=6):
+	return "".join(map(str, random.sample(range(0, 10), n)))
 
 def user_token(request, user_id):
 	token_service_url = 'https://JWToken:4430/api/token/'
@@ -35,7 +43,7 @@ class JWTAuthentication(BaseAuthentication):
 		auth_header = request.headers.get('Authorization')
 		if not auth_header:
 			return None
-		
+
 		token = auth_header.split(' ')[1]
 		token_service_url = 'https://JWToken:4430/api/token/'
 		try:
@@ -46,8 +54,6 @@ class JWTAuthentication(BaseAuthentication):
 			return (user, token)
 		except (requests.exceptions.RequestException, CustomUser.DoesNotExist):
 			raise exceptions.AuthenticationFailed('Invalid token')
-			
-
 
 class AllCustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]
@@ -89,13 +95,52 @@ class CustomUserLogin(APIView):
 		if form.is_valid():
 			user = form.get_user()
 			token = user_token(request, user.user_id)
-			user.is_online = True
-			user.save()
-			login(request, user)
-			return Response({'success': True, 'token' : token},
-				status=201)
+			if user.is_2fa is True:
+				verification_code = generate_random_digits()
+				logger.debug(verification_code)
+				user.otp = verification_code
+				user.otp_expiry_time = timezone.now() + timedelta(hours=1)
+				user.save()
+				send_mail(
+					'Verification Code',
+					f'Your verification code is: {user.otp}',
+					'wilbanablo@gmail.com',
+					[user.email],
+					fail_silently=False,
+				)
+				login(request, user)
+				return Response({'succes:': True, 'token' : token, 'two_fa': True}, status=status.HTTP_200_OK)
+			else:
+				user.is_online = True
+				user.save()
+				login(request, user)
+				return Response({'success': True, 'token' : token, 'two_fa': False},
+					status=201)
 		else:
-			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
+			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomUserVerify(APIView):
+	permission_classes = (permissions.AllowAny,)
+	def post(self, request):
+		otp = request.data.get('otp')
+		try:
+			user = CustomUser.objects.get(otp=otp)
+			if (
+				user.otp == otp and
+				user.otp_expiry_time is not None and
+				user.otp_expiry_time > timezone.now()
+			):
+				user.is_online = True
+				user.otp = ''
+				user.otp_expiry_time = None
+				user.save()
+				return Response({'success': True},
+						status=201)
+			else:
+				return Response({'success': False, 'detail': 'Wrong code.'}, status=status.HTTP_404_NOT_FOUND)
+		except CustomUser.DoesNotExist:
+			return Response({'success': False}, status=status.HTTP_404_NOT_FOUND)
+
 
 class CustomUserLogout(APIView):
 	authentication_classes = [JWTAuthentication]
