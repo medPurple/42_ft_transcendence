@@ -106,7 +106,7 @@ class CustomUserLogout(APIView):
 			user.is_online = False
 			user.save()
 		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=satuts.HTTP_404_NOT_FOUND)
+			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 		logout(request)
 		return Response({'success': True, 'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 

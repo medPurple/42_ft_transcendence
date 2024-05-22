@@ -111,10 +111,6 @@ const routes = {
 		title: "Pokemon Remote Play",
 		render: pkm_remoteplay
 	},
-	// '/play_pkt': {
-	// 	title: "Pokemon Tournament Play",
-	// 	render: pkm_tournamentplay
-	// },
 	'/pokemap': {
 		title: "Pokemon Map",
 		render: pokemap_interactive

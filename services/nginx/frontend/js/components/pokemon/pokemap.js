@@ -138,10 +138,6 @@ export class pokeMap{
         socket.onmessage = (e) => {
             var parsed_data = JSON.parse(e.data)
             this.drawplayer(parsed_data.posX, parsed_data.posY, parsed_data.orientation);
-            if (parsed_data.event === "combat"){
-                console.log("combat against: ", parsed_data.target);}
-            if (parsed_data.event === "interaction"){
-                console.log("interaction with: ", parsed_data.target);}
             console.log(parsed_data);
         }
 

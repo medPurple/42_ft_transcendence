@@ -24,8 +24,6 @@ class PlayerConsumer(WebsocketConsumer):
                     "posY": playerobj.posY,
                     "orientation": playerobj.orientation,
                     "active": True,
-                    "event": None,
-                    "target": None,
                 }
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
@@ -46,8 +44,6 @@ class PlayerConsumer(WebsocketConsumer):
                 "posY": playerobj.posY,
                 "orientation": playerobj.orientation,
                 "active": False,
-                "event": None,
-                "target": None,
             }
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
@@ -68,103 +64,251 @@ class PlayerConsumer(WebsocketConsumer):
                     "posY": playerobj.posY,
                     "orientation": playerobj.orientation,
                     "active": playerobj.active,
-                    "event": playerobj.event,
-                    "target": playerobj.target,
                 }
                 match data:
                     case "y+":
-                        if (basejson["orientation"] == "S"):
-                            if (map[playerobj.posY + 1][playerobj.posX] == 0):
-                                basejson["posY"] += 1
-                                basejson["orientation"] = "S"
-                            elif (map[playerobj.posY + 1][playerobj.posX] == 2):
-                                if is_entering_combat():
-                                    basejson = add_event(basejson, "combat")
-                                else:
-                                    basejson["posY"] += 1
-                                    basejson["orientation"] = "S"
-                            elif (map[playerobj.posY + 1][playerobj.posX] == 3):
-                                basejson = add_event(basejson, "door")
-                            elif (map[playerobj.posY + 1][playerobj.posX] == 4):
-                                basejson = add_event(basejson, "people")
-                            else:
-                                logger.info("match y+ failed")
-                        else:
-                            basejson["orientation"] = "S"
+                        json_data = modify_json_ymore(basejson, playerobj)                        
                     case "y-":
-                        if (basejson["orientation"] == "N"):
-                            if (map[playerobj.posY - 1 ][playerobj.posX] == 0):
-                                basejson["posY"] -= 1
-                                basejson["orientation"] = "N"
-                            elif (map[playerobj.posY - 1 ][playerobj.posX] == 2):
-                                if is_entering_combat():
-                                    basejson = add_event(basejson, "combat")
-                                else:
-                                    basejson["posY"] -= 1
-                                    basejson["orientation"] = "N"
-                            elif (map[playerobj.posY - 1 ][playerobj.posX] == 3):
-                                basejson = add_event(basejson, "door")
-                            elif (map[playerobj.posY - 1 ][playerobj.posX] == 4):
-                                basejson = add_event(basejson, "people")
-                            else:
-                                logger.info("match y- failed")
-                        else:
-                            basejson["orientation"] = "N"
+                        json_data = modify_json_yless(basejson, playerobj)
                     case "x+":
-                        if (basejson["orientation"] == "E"):
-                            if (map[playerobj.posY][playerobj.posX + 1] == 0):
-                                basejson["posX"] += 1
-                                basejson["orientation"] = "E"
-                            elif (map[playerobj.posY][playerobj.posX + 1] == 2):
-                                if is_entering_combat():
-                                    basejson = add_event(basejson, "combat")
-                                else:
-                                    basejson["posX"] += 1
-                                    basejson["orientation"] = "E"
-                            elif (map[playerobj.posY][playerobj.posX + 1] == 3):
-                                basejson = add_event(basejson, "door")
-                            elif (map[playerobj.posY][playerobj.posX + 1] == 4):
-                                basejson = add_event(basejson, "people")
-                            else:
-                                logger.info("match x+ failed")
-                        else:
-                            basejson["orientation"] = "E"
+                        json_data = modify_json_xmore(basejson, playerobj)
                     case "x-":
-                        if (basejson["orientation"] == "W"):
-                            if (map[playerobj.posY][playerobj.posX - 1] == 0):
-                                basejson["posX"] -= 1
-                                basejson["orientation"] = "W"
-                            elif (map[playerobj.posY][playerobj.posX - 1] == 2):
-                                if is_entering_combat():
-                                    basejson = add_event(basejson, "combat")
-                                else:
-                                    basejson["posX"] -= 1
-                                    basejson["orientation"] = "W"
-                            elif (map[playerobj.posY][playerobj.posX - 1] == 3):
-                                basejson = add_event(basejson, "door")
-                            elif (map[playerobj.posY][playerobj.posX - 1] == 4):
-                                basejson = add_event(basejson, "people")
-                            else:
-                                logger.info("match x- failed")
-                        else:
-                            basejson["orientation"] = "W"
+                        json_data = modify_json_xless(basejson, playerobj)
                     case _:
                         logger.info("data not found")
-                # logger.info(basejson)
-                instance = editplayerModelSerializer(playerobj, data=basejson)
-                if instance.is_valid():
-                    instance.save()
-                    json_data = json.dumps(instance.data)
+                
+                if json_data:
+                    logger.info(json_data)
                     self.send(json_data)
         except Exception as e:
             logger.error("error", e)
 
 
+def modify_json_xless(basejson, playerobj):
+    if (basejson["orientation"] == "W"):
+
+        if (map[playerobj.posY][playerobj.posX - 1] == 0):
+            basejson["posX"] -= 1
+            basejson["orientation"] = "W"
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                json_data = json.dumps(instance.data)
+                return json_data
+
+        elif (map[playerobj.posY][playerobj.posX - 1] == 2):
+            logger.info("plant")
+            if is_entering_combat():
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    data_with_event = add_event(instance.data, "combat")
+                    json_data = json.dumps(data_with_event)
+                    return json_data
+            else:
+                basejson["posX"] -= 1
+                basejson["orientation"] = "W"
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    json_data = json.dumps(instance.data)
+                    return json_data
+
+        elif (map[playerobj.posY][playerobj.posX - 1] == 3):
+            logger.info("door")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "door")
+                json_data = json.dumps(data_with_event)
+                return json_data
+
+        elif (map[playerobj.posY][playerobj.posX - 1] == 4):
+            logger.info("people")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "people")
+                json_data = json.dumps(data_with_event)
+                return json_data
+
+        else:
+            logger.info("match x- failed")
+    else:
+        basejson["orientation"] = "W"
+        instance = editplayerModelSerializer(playerobj, data=basejson)
+        if instance.is_valid():
+            instance.save()
+            json_data = json.dumps(instance.data)
+            return json_data
+
+def modify_json_xmore(basejson, playerobj):
+    if (basejson["orientation"] == "E"):
+
+        if (map[playerobj.posY][playerobj.posX + 1] == 0):
+            basejson["posX"] += 1
+            basejson["orientation"] = "E"
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                json_data = json.dumps(instance.data)
+                return json_data
+
+        elif (map[playerobj.posY][playerobj.posX + 1] == 2):
+            logger.info("plant")
+            if is_entering_combat():
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    data_with_event = add_event(instance.data, "combat")
+                    json_data = json.dumps(data_with_event)
+                    return json_data
+            else:
+                basejson["posX"] += 1
+                basejson["orientation"] = "E"
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    json_data = json.dumps(instance.data)
+                    return json_data
+
+        elif (map[playerobj.posY][playerobj.posX + 1] == 3):
+            logger.info("door")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "door")
+                json_data = json.dumps(data_with_event)
+                return json_data
+
+        elif (map[playerobj.posY][playerobj.posX + 1] == 4):
+            logger.info("people")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "peolpe")
+                json_data = json.dumps(data_with_event)
+                return json_data
+
+        else:
+            logger.info("match x+ failed")
+    else:
+        basejson["orientation"] = "E"
+        instance = editplayerModelSerializer(playerobj, data=basejson)
+        if instance.is_valid():
+            instance.save()
+            json_data = json.dumps(instance.data)
+            return json_data
+
+def modify_json_yless(basejson, playerobj):
+    if (basejson["orientation"] == "N"):
+        if (map[playerobj.posY - 1 ][playerobj.posX] == 0):
+            basejson["posY"] -= 1
+            basejson["orientation"] = "N"
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                json_data = json.dumps(instance.data)
+                return json_data
+        elif (map[playerobj.posY - 1 ][playerobj.posX] == 2):
+            logger.info("plant")
+            if is_entering_combat():
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    data_with_event = add_event(instance.data, "combat")
+                    json_data = json.dumps(data_with_event)
+                    return json_data
+            else:
+                basejson["posY"] -= 1
+                basejson["orientation"] = "N"
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    json_data = json.dumps(instance.data)
+                    return json_data
+        elif (map[playerobj.posY - 1 ][playerobj.posX] == 3):
+            logger.info("door")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "door")
+                json_data = json.dumps(data_with_event)
+                return json_data
+        elif (map[playerobj.posY - 1 ][playerobj.posX] == 4):
+            logger.info("people")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "people")
+                json_data = json.dumps(data_with_event)
+                return json_data
+        else:
+            logger.info("match y- failed")
+    else:
+        basejson["orientation"] = "N"
+        instance = editplayerModelSerializer(playerobj, data=basejson)
+        if instance.is_valid():
+            instance.save()
+            json_data = json.dumps(instance.data)
+            return json_data
+
+def modify_json_ymore(basejson, playerobj):
+    if (basejson["orientation"] == "S"):
+        if (map[playerobj.posY + 1][playerobj.posX] == 0):
+            basejson["posY"] += 1
+            basejson["orientation"] = "S"
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                json_data = json.dumps(instance.data)
+                return json_data
+        elif (map[playerobj.posY + 1][playerobj.posX] == 2):
+            logger.info("plant")
+            if is_entering_combat():
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    data_with_event = add_event(instance.data, "combat")
+                    json_data = json.dumps(data_with_event)
+                    return json_data
+            else:
+                basejson["posY"] += 1
+                basejson["orientation"] = "S"
+                instance = editplayerModelSerializer(playerobj, data=basejson)
+                if instance.is_valid():
+                    instance.save()
+                    json_data = json.dumps(instance.data)
+                    return json_data
+        elif (map[playerobj.posY + 1][playerobj.posX] == 3):
+            logger.info("door")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "door")
+                json_data = json.dumps(data_with_event)
+                return json_data
+        elif (map[playerobj.posY + 1][playerobj.posX] == 4):
+            logger.info("people")
+            instance = editplayerModelSerializer(playerobj, data=basejson)
+            if instance.is_valid():
+                instance.save()
+                data_with_event = add_event(instance.data, "people")
+                json_data = json.dumps(data_with_event)
+                return json_data
+        else:
+            logger.info("match y+ failed")
+    else:
+        basejson["orientation"] = "S"
+        instance = editplayerModelSerializer(playerobj, data=basejson)
+        if instance.is_valid():
+            instance.save()
+            json_data = json.dumps(instance.data)
+            return json_data
 
 def is_entering_combat():
     return random.randint(1, 5) == 1
 
-def add_event(basejson, event):
-    basejson["event"] = event
-    
-    return basejson
+def add_event(json_data, event):
+    json_data["event"] = event
+    return json_data
