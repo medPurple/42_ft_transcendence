@@ -4,6 +4,13 @@ html {
 	text-align: center;
 }
 
+body {
+	background-image: url('../images/Site/BG.jpg');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+}
+
 p {
 	font-family: 'Avenir';
 	text-align: justify;

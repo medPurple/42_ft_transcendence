@@ -8,9 +8,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 class GameSettingsAPI(APIView):
-	def post(self, request):
+	def post(self, request, user_id=None):
 		user_id = request.data.get('userID')
 		user_name = request.data.get('userName')
+
+		logger.info(f'User ID: {user_id}')
+
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -52,6 +55,8 @@ class GameSettingsAPI(APIView):
 		return Response(settings_serializer.data, status=status.HTTP_200_OK)
 
 	def put(self, request, user_id=None):
+		logger.info(f'User ID: {user_id}')
+
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 		
@@ -70,30 +75,34 @@ class GameSettingsAPI(APIView):
 			settings_serializer.save()
 			return Response({'success' : True}, status=status.HTTP_200_OK)
 		return Response(settings_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	
+	def delete(self, request, user_id=None):
+		logger.info(user_id)
+		user_id = request.data.get('userID')
+	
+		if not user_id:
+			logger.error('User ID is required')
+			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-class GameMatchAPI(APIView):
-	def post(self, request):
-		match_serializer = GameMatchSerializer(data=request.data)
-		if match_serializer.is_valid():
-			match_serializer.save()
-			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
-		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		try:
+			logger.info(f'User ID: {user_id}')
+			user = GameUser.objects.get(userID=user_id)
+			logger.info(f'User: {user}')
+		except GameUser.DoesNotExist:
+			logger.error('User not found')
+			return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-	def get(self, request, match_id=None):
-		if match_id:
-			try:
-				game_match = GameMatch.objects.get(id=match_id)
-				match_serializer = GameMatchSerializer(game_match)
-				return Response(match_serializer.data, status=status.HTTP_200_OK)
-			except GameMatch.DoesNotExist:
-				return Response({"error": "Match not found"}, status=status.HTTP_404_NOT_FOUND)
+		try:
+			logger.info(f'User: {user}')
+			game_settings = GameSettings.objects.get(user=user)
+			logger.info(f'Game settings: {game_settings}')
+		except GameSettings.DoesNotExist:
+			logger.error('Settings not found')
+			return Response({"error": "Settings not found"}, status=status.HTTP_404_NOT_FOUND)
 
-		else:
-			game_matches = GameMatch.objects.all()
-			match_serializer = GameMatchSerializer(game_matches, many=True)
-			return Response(match_serializer.data, status=status.HTTP_200_OK)
-
-	# def put(self, request, match_id=None): do a put request to update a match
+		game_settings.delete()
+		user.delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)
 
 class GameUserAPI(APIView):
 	def get(self, request, user_id=None):
@@ -131,14 +140,51 @@ class GameUserAPI(APIView):
 			return Response(user_serializer.data, status=status.HTTP_200_OK)
 		return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def delete(self, request, user_id=None):
-		if not user_id:
-			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+class GameMatchAPI(APIView):
+	def post(self, request):
+		match_serializer = GameMatchSerializer(data=request.data)
+		if match_serializer.is_valid():
+			match_serializer.save()
+			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	def get(self, request, match_id=None):
+		if match_id:
+			try:
+				game_match = GameMatch.objects.get(id=match_id)
+				match_serializer = GameMatchSerializer(game_match)
+				return Response(match_serializer.data, status=status.HTTP_200_OK)
+			except GameMatch.DoesNotExist:
+				return Response({"error": "Match not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		else:
+			game_matches = GameMatch.objects.all()
+			match_serializer = GameMatchSerializer(game_matches, many=True)
+			return Response(match_serializer.data, status=status.HTTP_200_OK)
+
+	def put(self, request, match_id=None):
+		if not match_id:
+			return Response({"error: Match ID not found"}, status=status.HTTP_400_BAD_REQUEST)
 
 		try:
-			game_user = GameUser.objects.get(userID=user_id)
-		except GameUser.DoesNotExist:
-			return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+			game_match = GameMatch.objects.get(id=match_id)
+		except GameMatch.DoesNotExist:
+			return Response({"error": "Match not found"}, status=status.HTTP_404_NOT_FOUND)
+		
+		match_serializer = GameMatchSerializer(game_match, data=request.data, partial=True)
+		if match_serializer.is_valid():
+			match_serializer.save()
+			return Response(match_serializer.data, status=status.HTTP_200_OK)
+		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	
+	def delete(self, request, match_id=None):
+		if not match_id:
+			return Response({"error": "Match ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-		game_user.delete()
+		try:
+			game_match = GameMatch.objects.get(id=match_id)
+		except GameMatch.DoesNotExist:
+			return Response({"error": "Match not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		game_match.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
