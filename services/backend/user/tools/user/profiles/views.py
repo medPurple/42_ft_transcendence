@@ -94,10 +94,8 @@ class CustomUserLogin(APIView):
 		form = AuthenticationForm(request, request.POST)
 		if form.is_valid():
 			user = form.get_user()
-			token = user_token(request, user.user_id)
 			if user.is_2fa is True:
 				verification_code = generate_random_digits()
-				logger.debug(verification_code)
 				user.otp = verification_code
 				user.otp_expiry_time = timezone.now() + timedelta(hours=1)
 				user.save()
@@ -108,9 +106,9 @@ class CustomUserLogin(APIView):
 					[user.email],
 					fail_silently=False,
 				)
-				login(request, user)
-				return Response({'succes:': True, 'token' : token, 'two_fa': True}, status=status.HTTP_200_OK)
+				return Response({'succes:': True, 'two_fa': True}, status=status.HTTP_200_OK)
 			else:
+				token = user_token(request, user.user_id)
 				user.is_online = True
 				user.save()
 				login(request, user)
@@ -133,8 +131,10 @@ class CustomUserVerify(APIView):
 				user.is_online = True
 				user.otp = ''
 				user.otp_expiry_time = None
+				token = user_token(request, user.user_id)
 				user.save()
-				return Response({'success': True},
+				login(request, user)
+				return Response({'success': True, 'token' : token},
 						status=201)
 			else:
 				return Response({'success': False, 'detail': 'Wrong code.'}, status=status.HTTP_404_NOT_FOUND)
