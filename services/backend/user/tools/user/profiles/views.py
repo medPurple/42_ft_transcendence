@@ -151,6 +151,7 @@ class CustomUserDeleteView(APIView):
 	def delete(self, request):
 		user = request.user
 		try:
+			# delete user from pokemap
 			user.delete()
 		except CustomUser.DoesNotExist:
 			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)

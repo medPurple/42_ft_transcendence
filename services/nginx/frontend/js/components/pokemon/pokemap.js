@@ -5,8 +5,10 @@ import Iuser from "../user/userInfo.js";
 export class pokeMap{
     
     constructor(){
+        this.userID = null;
         this.ctxMAP = null;
         this.ctxCharacter = null;
+        this.ctxAllCharacters = null;
         this.lastX = 0;
         this.lastY = 0;
     }
@@ -36,11 +38,21 @@ export class pokeMap{
         divmap.appendChild(pokecanva);
         
         // CHARACTER CANVAS
-        
+        const multicharacterCanvas = document.createElement('canvas');
+        multicharacterCanvas.width = 800;
+        multicharacterCanvas.height = 400;
+        multicharacterCanvas.style.zIndex = '2';
+        multicharacterCanvas.style.position = 'absolute';
+        multicharacterCanvas.style.top = '0';
+        multicharacterCanvas.style.left = '0';
+
+        this.ctxAllCharacters = multicharacterCanvas.getContext('2d');
+        divmap.appendChild(multicharacterCanvas);
+
         const characterCanvas = document.createElement('canvas');
         characterCanvas.width = 800;
         characterCanvas.height = 400;
-        characterCanvas.style.zIndex = '2';
+        characterCanvas.style.zIndex = '3';
         characterCanvas.style.position = 'absolute';
         characterCanvas.style.top = '0';
         characterCanvas.style.left = '0';
@@ -60,18 +72,37 @@ export class pokeMap{
         return divmap;
     }
 
-    // function updateCharacterPosition() {
-    //     const divmapRect = divmap.getBoundingClientRect();        
-    //     // Calculate the responsive position of the characterCanvas
-    //     characterCanvas.style.top = (divmapRect.top + divmapRect.height / 2 - characterCanvas.height / 2) + 'px';
-    //     characterCanvas.style.left = (divmapRect.left + divmapRect.width / 2 - characterCanvas.width / 2) + 'px';
-    // }
+    draw_all_players(data){
+        data.forEach(player => {
+            this.ctxAllCharacters.clearRect(0, 0, this.ctxAllCharacters.canvas.width, this.ctxAllCharacters.canvas.height);
+            if (player.userID != this.userID && player.active){
+                const img = new Image();
+                switch(player.orientation){
+                    case "N":
+                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_03.png';
+                        break;
+                    case "S":
+                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_05.png';
+                        break;
+                    case "E":
+                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_09.png';
+                        break;
+                    case "W":
+                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_07.png';
+                        break;
+                    }
+                    img.onload = () => {
+                        this.ctxAllCharacters.drawImage(img, player.posX * 16, (player.posY * 16) - 16,  16, 32);
+                    }
+                }
+        });
+    }
 
-    // updateCharacterPosition();
-    // window.addEventListener('resize', updateCharacterPosition);
-    drawplayer(x, y, orientation){
+
+    drawplayer(data){
+        let player = data.find(player => player.userID == this.userID);
         const img = new Image();
-        switch(orientation){
+        switch(player.orientation){
             case "N":
                 img.src = './images/player_n.png';
                 break;
@@ -87,9 +118,9 @@ export class pokeMap{
         }
         img.onload = () => {
             this.ctxCharacter.clearRect(this.lastX * 16, (this.lastY * 16) - 16, 16, 32);
-            this.ctxCharacter.drawImage(img, x * 16, (y * 16) - 16,  16, 32);
-            this.lastX = x;
-            this.lastY = y;
+            this.ctxCharacter.drawImage(img, player.posX * 16, (player.posY * 16) - 16,  16, 32);
+            this.lastX = player.posX;
+            this.lastY = player.posY;
         }
     }
     
@@ -102,31 +133,16 @@ export class pokeMap{
     
     async connection(){
         let id = await Iuser.getID();
-        const socket = new WebSocket("wss://localhost:4430/ws/pokemap/");
-
+        const socket = new WebSocket("wss://" + window.location.host + "/ws/pokemap/");
+        this.userID = id;
         
         socket.onopen = async (e) => {
             console.log("WebSocket connection opened.");
-            try{
-                const response = await fetch(`/api/pokemap/?userID=${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRFToken': Icookies.getCookie('csrftoken'),
-                        'Authorization': Icookies.getCookie('token'),
-                        'Content-Type': 'application/json'
-                    },
-                })
-                .then(response => response.json())
-                .then(data => {
-                        console.log("Data: ", data);
-                        this.lastX = data.posX;
-                        this.lastY = data.posY;
-                        this.drawplayer(data.posX, data.posY, data.orientation);
-                        return;
-                    })
-                } catch (error){
-                    console.error('Error:', error);
-                };
+            socket.send(JSON.stringify({
+                action: "connect",
+                userID: id,
+            }));
+            
         }
 
 
@@ -136,39 +152,41 @@ export class pokeMap{
         }
 
         socket.onmessage = (e) => {
-            var parsed_data = JSON.parse(e.data)
-            this.drawplayer(parsed_data.posX, parsed_data.posY, parsed_data.orientation);
-            console.log(parsed_data);
+            let parsed_data = JSON.parse(e.data);
+            this.draw_all_players(parsed_data);
+            this.drawplayer(parsed_data)
+            socket.send(JSON.stringify({
+                action: "get_players"}));
         }
 
         document.onkeydown = (event) => {
             event.preventDefault();
             if (event.key == 'ArrowUp')
             {
-                console.log("up");
                 socket.send(JSON.stringify({
+                    action: "move",
                     new: "y-",
                     userID: id,
                 }));
                 
             }
             if (event.key == 'ArrowDown'){
-                console.log("down");
                 socket.send(JSON.stringify({
+                    action: "move",
                     new: "y+",
                     userID: id,
                 }));
             }
             if (event.key == 'ArrowRight'){
-                console.log("right");
                 socket.send(JSON.stringify({
+                    action: "move",
                     new: "x+",
                     userID: id,
                 }));
             }
             if (event.key == 'ArrowLeft'){
-                console.log("left");
                 socket.send(JSON.stringify({
+                    action: "move",
                     new: "x-",
                     userID: id,
                 }));
