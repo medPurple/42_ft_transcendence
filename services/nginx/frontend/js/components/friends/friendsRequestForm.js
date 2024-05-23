@@ -183,7 +183,7 @@ export class Friends {
 
 	connect() {
 		let token = Icookies.getCookie('token');
-		const socket = new WebSocket(`wss://localhost:4430/ws/friends/?token=${token}`);
+		const socket = new WebSocket(`wss://` + window.location.host +`:4430/ws/friends/?token=${token}`);
 		socket.onopen = function(e) {
 			console.log("[open] Connection established");
 		};

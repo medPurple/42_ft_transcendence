@@ -19,10 +19,12 @@ export default class editProfileForm extends HTMLElement {
 	async initUserInfo() {
 		try {
 			const data = await Iuser.getAllUserInfo();
-			// Access other properties from data here
-			let profilePictureData = data.user.profile_picture_data;
-			console.log(data.user.profile_picture);
-			this.displayEditProfileForm(data);
+			console.log("2_fa", data.user.is_2fa);
+			if (data && data.user) {
+                this.displayEditProfileForm(data);
+            } else {
+                console.error('Données utilisateur manquantes ou incorrectes');
+            }
 		} catch (error) {
 			console.error('Error:', error)
 		}

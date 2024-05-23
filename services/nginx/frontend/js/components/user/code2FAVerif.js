@@ -5,10 +5,16 @@ export default class code2FA extends HTMLElement {
 	super(); // Always call super first in constructor
 	this.innerHTML = `
 	<div id="alert-container"></div>
-	<div class="mb-4">
-		<input type="text" id="otp-input" placeholder="Enter OTP" class="form-control">
-	</div>
-	<button type="submit" id="submit-btn" class="btn btn-dark">Confirm</button>
+	<form method="post" action="" class="container">
+		<div class="mb-4">
+			<h5>Two Factor Authentication</h5>
+			<h6>A verification code has been sent to your email.</h6>
+		</div>
+		<div class="mb-4">
+			<input type="text" id="otp-input" class="form-control" placeholder="Enter code confirmation">
+		</div>
+		<button type="submit" id="submit-btn" class="btn btn-dark">Confirm</button>
+	</form>
 	`;
 	}
 
