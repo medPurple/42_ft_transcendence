@@ -28,11 +28,31 @@ function setLambertMaterial(color) {
   return lambMaterial;
 }
 
-export function populatePaddle(color, posX, posY) {
+export function populateSelfPaddle(color, posX, posY) {
 
   //var paddleMaterial = setLambertMaterial(color);
-  var paddleMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 1);
+  // var paddleMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 1);
   //var paddleMaterial = setStandardMaterial(color);
+
+  var paddleMaterial;
+
+  switch (gameCustom.ownPaddle) {
+    case 0:
+      paddleMaterial = setPhysicalMaterial(0x620436, 1, 0.5, 0, 0, 0);
+      break;
+    case 1:
+      paddleMaterial = setPhysicalMaterial(0x07434e, 1, 0.5, 0, 0, 0);
+      break;
+    case 2:
+      paddleMaterial = setPhysicalMaterial(0xffd700, 1, 0.2, 0, 0, 0);
+      break;
+    case 3:
+      paddleMaterial = setPhysicalMaterial(0x7b8787, 1, 0.5, 1, 1.7, 0);
+      break;
+    default:
+      paddleMaterial = setStandardMaterial(0x620436, 1, 0.7);
+      break;
+  }
 
   var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
 
@@ -45,14 +65,72 @@ export function populatePaddle(color, posX, posY) {
   return paddle;
 }
 
+export function populateOtherPaddle(color, posX, posY) {
+
+  //var paddleMaterial = setLambertMaterial(color);
+  // var paddleMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 1);
+  //var paddleMaterial = setStandardMaterial(color);
+
+  var paddleMaterial;
+
+  if (gameCustom.otherPaddle == gameCustom.ownPaddle) {
+    if (gameCustom.ownPaddle == 0)
+      gameCustom.otherPaddle = 1;
+    else
+      gameCustom.otherPaddle = 0;
+  }
+
+  switch (gameCustom.otherPaddle) {
+    case 0:
+      paddleMaterial = setPhysicalMaterial(0x620436, 1, 0.5, 0, 0, 0);
+      break;
+    case 1:
+      paddleMaterial = setPhysicalMaterial(0x07434e, 1, 0.5, 0, 0, 0);
+      break;
+    case 2:
+      paddleMaterial = setPhysicalMaterial(0xffd700, 1, 0.2, 0, 0, 0);
+      break;
+    case 3:
+      paddleMaterial = setPhysicalMaterial(0x7b8787, 1, 0.5, 1, 1.7, 0);
+      break;
+    default:
+      paddleMaterial = setStandardMaterial(0x620436, 1, 0.7);
+      break;
+  }
+
+
+  var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
+
+  paddle.position.x = posX;
+  paddle.position.y = posY;
+  paddle.position.z = constants.paddleDepth;
+  paddle.receiveShadow = true;
+  paddle.castShadow = true;
+
+  return paddle;
+}
+
+
 export function populateBall(color, posX, posY) {
 
   var radius = 5, segments = 6, rings = 6;
 
-  // switch (gameCustom.ball) {
-  //   case 0
-  // }
-  var ballMaterial = new THREE.MeshLambertMaterial({ color: color });
+  var ballMaterial;
+
+  switch (gameCustom.ball) {
+    case 0:
+      ballMaterial = setLambertMaterial(0xff0000);
+      break;
+    case 1:
+      ballMaterial = setLambertMaterial(0x22ff00);
+      break;
+    case 2:
+      ballMaterial = setLambertMaterial(0x004ff);
+      break;
+    default:
+      ballMaterial = setLambertMaterial(0xfbff00);
+      break;
+  }
 
   var ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), ballMaterial);
 
@@ -82,14 +160,13 @@ export function populatePlane(color, posX, posY) {
     case 3:
       planeMaterial = setPhysicalMaterial(0x161616, 1, 0.6, 0, 0, 0);
       break;
-    default:
-      planeMaterial = setPhysicalMaterial(0x7b8787, 1, 0.7, 1, 1.25, 0);
+    case 4:
+      planeMaterial = setPhysicalMaterial(0x7b8787, 1, 0.7, 1, 1.3, 0);
       break;
-
+    default:
+      planeMaterial = setPhysicalMaterial(0x7b8787, 1, 0.7, 1, 1.7, 0);
+      break;
   }
-  //  var planeMaterial = new THREE.MeshLambertMaterial({ color: color });
-
-  //var planeMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 0);
 
   var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight, constants.planeQuality, constants.planeQuality), planeMaterial);
   plane.position.x = posX;
@@ -108,6 +185,7 @@ export function populateTable(color, posX, posY, posZ) {
   table.position.y = posY;
   table.position.z = posZ;
   table.receiveShadow = true;
+  //table.castShadow = true;
 
   return table;
 }
@@ -166,14 +244,9 @@ export function populateWall(player_id) {
     case 1:
       path = '../../../images/Walls/final/W-Playground.jpg';
       break;
-    case 2:
-      path = '../../../images/Walls/final/W-Dorm.jpg';
-      break;
-    case 3:
+    default:
       path = '../../../images/Walls/final/W-Tiled.png';
       break;
-    default:
-      path = '../../../images/Walls/final/W-Tiled2.png'
   }
 
   var wallMaterial = new THREE.MeshLambertMaterial({

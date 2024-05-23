@@ -1,6 +1,6 @@
 import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
-import { populateBall, populatePaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
+import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
 import { onKeyUp, onKeyDown } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
@@ -53,7 +53,7 @@ export function createScene() {
 
   //Spotlight setup
 
-  //lights.spotLight = populateSpotLight(0xffffff, 0, 0, 700, 0.7)
+  lights.spotLight = populateSpotLight(0xffffff, 0, 0, 700, 0.7);
 
   //Plane setup
 
@@ -61,8 +61,8 @@ export function createScene() {
 
   //Paddle Setup
 
-  playMesh.paddle1 = populatePaddle(0x1B32C0, -constants.fieldWidth / 2 + constants.paddleWidth, 0);
-  playMesh.paddle2 = populatePaddle(0xFF4045, constants.fieldWidth / 2 + constants.paddleWidth, 0);
+  playMesh.paddle1 = populateSelfPaddle(0x1B32C0, -constants.fieldWidth / 2 + constants.paddleWidth, 0);
+  playMesh.paddle2 = populateOtherPaddle(0xFF4045, constants.fieldWidth / 2 + constants.paddleWidth, 0);
 
   //Table Setup
 
@@ -101,6 +101,6 @@ export function createScene() {
   core.scene.add(decMesh.ground);
   core.scene.add(core.camera);
 
-  //core.renderer.shadowMapEnabled = true;
+  core.renderer.shadowMapEnabled = true;
 
 }

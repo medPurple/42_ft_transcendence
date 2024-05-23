@@ -22,6 +22,7 @@ function draw() {
     cameraLogic2d();
   }
 
+  //cameraLogic2d();
   core.renderer.render(core.scene, core.camera);
 }
 
