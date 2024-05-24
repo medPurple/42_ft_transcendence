@@ -38,6 +38,8 @@ ALLOWED_HOSTS = [
     'tokenservice',
     'userservice',
     'chatservice',
+    'pongservice',
+    'gameservice',
     '*',]
 
 CSRF_COOKIE_SAMESITE = 'None'
@@ -48,7 +50,9 @@ CSRF_TRUSTED_ORIGINS = ['https://localhost:4430',
                         'https://chatservice:4430',
                         'https://tokenservice:4430',
                         'https://queueservice:4430',
-                        'https://pokemapservice:4430',]
+                        'https://pokemapservice:4430',
+                        'https://gameservice:4430',
+                        'https://pongservice:4430',]
 
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -60,7 +64,9 @@ CORS_ORIGIN_WHITELIST = [
     'https://chatservice:4430',
     'https://tokenservice:4430',
     'https://queueservice:4430',
-    'https://pokemapservice:4430', # Remplacez par les origines que vous voulez autoriser
+    'https://pokemapservice:4430',
+    'https://gameservice:4430',
+    'https://pongservice:4430', # Remplacez par les origines que vous voulez autoriser
 ]
 
 # # Assurez-vous également d'utiliser HTTPS et de définir CSRF_COOKIE_SECURE et SESSION_COOKIE_SECURE sur True
