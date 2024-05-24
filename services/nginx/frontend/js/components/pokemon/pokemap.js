@@ -6,12 +6,14 @@ export class pokeMap{
     
     constructor(){
         this.userID = null;
+        this.map = 0;
         this.ctxMAP = null;
         this.ctxCharacter = null;
         this.ctxAllCharacters = null;
         this.lastX = 0;
         this.lastY = 0;
     }
+
     divmapCreation(){
 
         // MAP DIV
@@ -72,25 +74,50 @@ export class pokeMap{
         return divmap;
     }
 
+    asset_selection(orientation, skin){
+        switch(skin){
+            case 0:
+                switch(orientation){
+                    case "N":
+                        return './images/Persos/Guards-Tileset/Guards-Planche_03.png';
+                    case "S":
+                        return './images/Persos/Guards-Tileset/Guards-Planche_05.png';
+                    case "E":
+                        return './images/Persos/Guards-Tileset/Guards-Planche_09.png';
+                    case "W":
+                        return './images/Persos/Guards-Tileset/Guards-Planche_07.png';
+                }
+            case 2:
+                switch(orientation){
+                    case "N":
+                        return './images/Persos/James-Tileset/James-Planche_00.png.png';
+                    case "S":
+                        return './images/Persos/James-Tileset/James-Planche_03.png';
+                    case "E":
+                        return './images/Persos/James-Tileset/James-Planche_09.png';
+                    case "W":
+                        return './images/Persos/James-Tileset/James-Planche_06.png';
+                }
+            case 1:
+                switch(orientation){
+                    case "N":
+                        return './images/Persos/Jessie-Tileset/Jessie-Planche_03.png';
+                    case "S":
+                        return './images/Persos/Jessie-Tileset/Jessie-Planche_05.png';
+                    case "E":
+                        return './images/Persos/Jessie-Tileset/Jessie-Planche_09.png';
+                    case "W":
+                        return './images/Persos/Jessie-Tileset/Jessie-Planche_07.png';
+                }
+            }
+    }
+
     draw_all_players(data){
         data.forEach(player => {
             this.ctxAllCharacters.clearRect(0, 0, this.ctxAllCharacters.canvas.width, this.ctxAllCharacters.canvas.height);
-            if (player.userID != this.userID && player.active){
+            if (player.userID != this.userID && player.active && player.player_map == this.map){
                 const img = new Image();
-                switch(player.orientation){
-                    case "N":
-                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_03.png';
-                        break;
-                    case "S":
-                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_05.png';
-                        break;
-                    case "E":
-                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_09.png';
-                        break;
-                    case "W":
-                        img.src = './images/Persos/Guards-Tileset/Guards-Planche_07.png';
-                        break;
-                    }
+                    img.src = this.asset_selection(player.orientation, player.player_skin);
                     img.onload = () => {
                         this.ctxAllCharacters.drawImage(img, player.posX * 16, (player.posY * 16) - 16,  16, 32);
                     }
@@ -101,26 +128,21 @@ export class pokeMap{
 
     drawplayer(data){
         let player = data.find(player => player.userID == this.userID);
+        console.log(player);
+        if (player.player_status === 1)
+            console.warn("combat");
+        if (player.player_status === 2)
+            console.warn("talk");
+        if (player.player_map != 0)
+            console.warn("map");
         const img = new Image();
-        switch(player.orientation){
-            case "N":
-                img.src = './images/player_n.png';
-                break;
-            case "S":
-                img.src = './images/player_s.png';
-                break;
-            case "E":
-                img.src = './images/player_e.png';
-                break;
-            case "W":
-                img.src = './images/player_w.png';
-                break;
-        }
+        img.src = this.asset_selection(player.orientation, player.player_skin);
         img.onload = () => {
             this.ctxCharacter.clearRect(this.lastX * 16, (this.lastY * 16) - 16, 16, 32);
             this.ctxCharacter.drawImage(img, player.posX * 16, (player.posY * 16) - 16,  16, 32);
             this.lastX = player.posX;
             this.lastY = player.posY;
+            this.map = player.player_map;
         }
     }
     

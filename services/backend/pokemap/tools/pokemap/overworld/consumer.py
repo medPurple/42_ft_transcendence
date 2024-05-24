@@ -6,7 +6,7 @@ from asgiref.sync import sync_to_async
 from django.shortcuts import get_object_or_404
 from urllib.parse import parse_qs
 
-from .models import player, map
+from .models import player, default_map
 from .serializers import PlayerModelSerializer, editplayerModelSerializer
 import random
 
@@ -37,7 +37,11 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                     "posX": playerobj.posX,
                     "posY": playerobj.posY,
                     "orientation": playerobj.orientation,
+                    "player_skin": playerobj.player_skin,
+                    "player_map": playerobj.player_map,
+                    "player_status": playerobj.player_status,
                     "active": True,
+
                 }
                 instance = editplayerModelSerializer(playerobj, data=basejson)
                 if instance.is_valid():
@@ -51,7 +55,11 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                     "posY": playerobj.posY,
                     "orientation": playerobj.orientation,
                     "active": playerobj.active,
+                    "player_skin": playerobj.player_skin,
+                    "player_map": playerobj.player_map,
+                    "player_status": playerobj.player_status,
                 }
+                logger.info("before match")
                 match data:
                     case "y+":
                         json_data = await modify_json_ymore(basejson, playerobj)
@@ -63,10 +71,16 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                         json_data = await modify_json_xless(basejson, playerobj)
                     case _:
                         logger.info("data not found")
+                logger.info("before event")
+                data_json_load = json.loads(json_data)
+                if data_json_load.get("event") is not None:
+                    await change_status(playerobj, data_json_load)
+                else:
+                    await reset_status(playerobj)
+                logger.info("after event")
+                
             all_players = await sync_to_async(player.objects.all, thread_sensitive=True)()
             all_players_json = await sync_to_async(PlayerModelSerializer, thread_sensitive=True)(all_players, many=True)
-            # if "event" in json_data:
-            #     all_players_json["event"] = json_data["event"]            logger.info("all players data done")
             all_players_data = await sync_to_async(lambda: all_players_json.data, thread_sensitive=True)()
             self.all_players_data = await sync_to_async(json.dumps, thread_sensitive=True)(all_players_data)
 
@@ -92,7 +106,7 @@ class PlayerConsumer(AsyncWebsocketConsumer):
 async def modify_json_xless(basejson, playerobj):
     if (basejson["orientation"] == "W"):
 
-        if (map[playerobj.posY][playerobj.posX - 1] == 0):
+        if (default_map[playerobj.posY][playerobj.posX - 1] == 0):
             basejson["posX"] -= 1
             basejson["orientation"] = "W"
             instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -102,7 +116,7 @@ async def modify_json_xless(basejson, playerobj):
                 json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
                 return json_data
 
-        elif (map[playerobj.posY][playerobj.posX - 1] == 2):
+        elif (default_map[playerobj.posY][playerobj.posX - 1] == 2):
             if is_entering_combat():
                 instance = editplayerModelSerializer(playerobj, data=basejson)
                 if instance.is_valid():
@@ -118,10 +132,11 @@ async def modify_json_xless(basejson, playerobj):
                 if instance.is_valid():
                     await sync_to_async(instance.save,)()
                     instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+                    data_with_event = await add_event(instance_data, None)
+                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
 
-        elif (map[playerobj.posY][playerobj.posX - 1] == 3):
+        elif (default_map[playerobj.posY][playerobj.posX - 1] == 3):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -130,7 +145,7 @@ async def modify_json_xless(basejson, playerobj):
                 json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                 return json_data
 
-        elif (map[playerobj.posY][playerobj.posX - 1] == 4):
+        elif (default_map[playerobj.posY][playerobj.posX - 1] == 4):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -147,23 +162,25 @@ async def modify_json_xless(basejson, playerobj):
         if instance.is_valid():
             await sync_to_async(instance.save,)()
             instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+            data_with_event = await add_event(instance_data, None)
+            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
             return json_data
 
 async def modify_json_xmore(basejson, playerobj):
     if (basejson["orientation"] == "E"):
 
-        if (map[playerobj.posY][playerobj.posX + 1] == 0):
+        if (default_map[playerobj.posY][playerobj.posX + 1] == 0):
             basejson["posX"] += 1
             basejson["orientation"] = "E"
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
                 instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-                json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+                data_with_event = await add_event(instance_data, None)
+                json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                 return json_data
 
-        elif (map[playerobj.posY][playerobj.posX + 1] == 2):
+        elif (default_map[playerobj.posY][playerobj.posX + 1] == 2):
             if is_entering_combat():
                 instance = editplayerModelSerializer(playerobj, data=basejson)
                 if instance.is_valid():
@@ -179,10 +196,11 @@ async def modify_json_xmore(basejson, playerobj):
                 if instance.is_valid():
                     await sync_to_async(instance.save,)()
                     instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+                    data_with_event = await add_event(instance_data, None)
+                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
 
-        elif (map[playerobj.posY][playerobj.posX + 1] == 3):
+        elif (default_map[playerobj.posY][playerobj.posX + 1] == 3):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -191,7 +209,7 @@ async def modify_json_xmore(basejson, playerobj):
                 json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                 return json_data
 
-        elif (map[playerobj.posY][playerobj.posX + 1] == 4):
+        elif (default_map[playerobj.posY][playerobj.posX + 1] == 4):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -208,22 +226,24 @@ async def modify_json_xmore(basejson, playerobj):
         if instance.is_valid():
             await sync_to_async(instance.save,)()
             instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+            data_with_event = await add_event(instance_data, None)
+            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
             return json_data
 
 async def modify_json_yless(basejson, playerobj):
     if (basejson["orientation"] == "N"):
-        if (map[playerobj.posY - 1 ][playerobj.posX] == 0):
+        if (default_map[playerobj.posY - 1 ][playerobj.posX] == 0):
             basejson["posY"] -= 1
             basejson["orientation"] = "N"
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
                 instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-                json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+                data_with_event = await add_event(instance_data, None)
+                json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                 return json_data
             
-        elif (map[playerobj.posY - 1 ][playerobj.posX] == 2):
+        elif (default_map[playerobj.posY - 1 ][playerobj.posX] == 2):
             if is_entering_combat():
                 instance = editplayerModelSerializer(playerobj, data=basejson)
                 if instance.is_valid():
@@ -239,9 +259,10 @@ async def modify_json_yless(basejson, playerobj):
                 if instance.is_valid():
                     await sync_to_async(instance.save,)()
                     instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+                    data_with_event = await add_event(instance_data, None)
+                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
-        elif (map[playerobj.posY - 1 ][playerobj.posX] == 3):
+        elif (default_map[playerobj.posY - 1 ][playerobj.posX] == 3):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -249,7 +270,7 @@ async def modify_json_yless(basejson, playerobj):
                 data_with_event = await add_event(instance_data, "door")
                 json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                 return json_data
-        elif (map[playerobj.posY - 1 ][playerobj.posX] == 4):
+        elif (default_map[playerobj.posY - 1 ][playerobj.posX] == 4):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -265,21 +286,23 @@ async def modify_json_yless(basejson, playerobj):
         if instance.is_valid():
             await sync_to_async(instance.save,)()
             instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+            data_with_event = await add_event(instance_data, None)
+            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
             return json_data
 
 async def modify_json_ymore(basejson, playerobj):
     if (basejson["orientation"] == "S"):
-        if (map[playerobj.posY + 1][playerobj.posX] == 0):
+        if (default_map[playerobj.posY + 1][playerobj.posX] == 0):
             basejson["posY"] += 1
             basejson["orientation"] = "S"
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
                 instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-                json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+                data_with_event = await add_event(instance_data, None)
+                json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                 return json_data
-        elif (map[playerobj.posY + 1][playerobj.posX] == 2):
+        elif (default_map[playerobj.posY + 1][playerobj.posX] == 2):
             if is_entering_combat():
                 instance = editplayerModelSerializer(playerobj, data=basejson)
                 if instance.is_valid():
@@ -295,9 +318,10 @@ async def modify_json_ymore(basejson, playerobj):
                 if instance.is_valid():
                     await sync_to_async(instance.save,)()
                     instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+                    data_with_event = await add_event(instance_data, None)
+                    json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
-        elif (map[playerobj.posY + 1][playerobj.posX] == 3):
+        elif (default_map[playerobj.posY + 1][playerobj.posX] == 3):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -305,7 +329,7 @@ async def modify_json_ymore(basejson, playerobj):
                 data_with_event = await add_event(instance_data, "door")
                 json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                 return json_data
-        elif (map[playerobj.posY + 1][playerobj.posX] == 4):
+        elif (default_map[playerobj.posY + 1][playerobj.posX] == 4):
             instance = editplayerModelSerializer(playerobj, data=basejson)
             if instance.is_valid():
                 await sync_to_async(instance.save,)()
@@ -321,7 +345,8 @@ async def modify_json_ymore(basejson, playerobj):
         if instance.is_valid():
             await sync_to_async(instance.save,)()
             instance_data = await sync_to_async(lambda: instance.data, thread_sensitive=True)()
-            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(instance_data)
+            data_with_event = await add_event(instance_data, None)
+            json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
             return json_data
 
 def is_entering_combat():
@@ -331,3 +356,63 @@ async def add_event(json_data, event):
     json_data["event"] = event
     return json_data
 
+
+async def change_status(playerobj, json_data):
+
+    basejson = {
+        "userID": playerobj.userID,
+        "posX": playerobj.posX,
+        "posY": playerobj.posY,
+        "orientation": playerobj.orientation,
+        "player_skin": playerobj.player_skin,
+        "player_map": playerobj.player_map,
+        "player_status": playerobj.player_status,
+        "active": playerobj.active,
+    }
+    logger.info(json_data)
+    if json_data.get("event") == "combat":
+        basejson["player_status"] = player.StatusChoices.FIGHT
+    elif json_data.get("event") == "people":
+        basejson["player_status"] = player.StatusChoices.TALK
+    elif json_data.get("event") == "door":
+        if basejson["player_map"] == player.MapChoices.DEFAULT:
+            basejson = await change_default_map(basejson)
+    instance = editplayerModelSerializer(playerobj, data=basejson)
+    if instance.is_valid():
+        await sync_to_async(instance.save,)()
+
+async def reset_status(playerobj):
+    basejson = {
+        "userID": playerobj.userID,
+        "posX": playerobj.posX,
+        "posY": playerobj.posY,
+        "orientation": playerobj.orientation,
+        "player_skin": playerobj.player_skin,
+        "player_map": playerobj.player_map,
+        "player_status": playerobj.player_status,
+        "active": playerobj.active,
+    }
+    basejson["player_status"] = player.StatusChoices.DEFAULT
+    basejson["player_map"] = player.MapChoices.DEFAULT
+    instance = editplayerModelSerializer(playerobj, data=basejson)
+    if instance.is_valid():
+        await sync_to_async(instance.save,)()
+
+async def change_default_map(basejson):
+    if (basejson["posX"] == 14 and basejson["posY"] == 7):
+        basejson["player_map"] = player.MapChoices.BATIMENT_1
+        # basejson["posX"] = 1
+        # basejson["posY"] = 1
+    elif ((basejson["posX"] == 24 or basejson["posX"] == 25) and basejson["posY"] == 7):
+        basejson["player_map"] = player.MapChoices.BATIMENT_2
+        # basejson["posX"] = 1
+        # basejson["posY"] = 1
+    elif (basejson["posX"] == 8 and basejson["posY"] == 16):
+        basejson["player_map"] = player.MapChoices.BATIMENT_3
+        # basejson["posX"] = 1
+        # basejson["posY"] = 1
+    elif (basejson["posX"] == 25 and basejson["posY"] == 21):
+        basejson["player_map"] = player.MapChoices.BATIMENT_4
+        # basejson["posX"] = 1
+        # basejson["posY"] = 1
+    return basejson
