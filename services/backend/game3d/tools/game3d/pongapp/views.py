@@ -8,12 +8,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class GameSettingsAPI(APIView):
-	def post(self, request, user_id=None):
+	def post(self, request):
+		# logger.info(f'User ID: {user_id}')
 		user_id = request.data.get('userID')
 		user_name = request.data.get('userName')
-
-		logger.info(f'User ID: {user_id}')
-
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -38,6 +36,7 @@ class GameSettingsAPI(APIView):
 		return Response(settings_serializer.data, status=status.HTTP_201_CREATED)
 
 	def get(self, request, user_id=None):
+		# logger.info(f'User ID: {user_id}')
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -55,8 +54,7 @@ class GameSettingsAPI(APIView):
 		return Response(settings_serializer.data, status=status.HTTP_200_OK)
 
 	def put(self, request, user_id=None):
-		logger.info(f'User ID: {user_id}')
-
+		# logger.info(f'User ID: {user_id}')
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 		
@@ -76,28 +74,20 @@ class GameSettingsAPI(APIView):
 			return Response({'success' : True}, status=status.HTTP_200_OK)
 		return Response(settings_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
-	def delete(self, request, user_id=None):
-		logger.info(user_id)
+	def delete(self, request):
+		# logger.info(f'User ID: {user_id}')
 		user_id = request.data.get('userID')
-	
 		if not user_id:
-			logger.error('User ID is required')
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
 		try:
-			logger.info(f'User ID: {user_id}')
 			user = GameUser.objects.get(userID=user_id)
-			logger.info(f'User: {user}')
 		except GameUser.DoesNotExist:
-			logger.error('User not found')
 			return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 		try:
-			logger.info(f'User: {user}')
 			game_settings = GameSettings.objects.get(user=user)
-			logger.info(f'Game settings: {game_settings}')
 		except GameSettings.DoesNotExist:
-			logger.error('Settings not found')
 			return Response({"error": "Settings not found"}, status=status.HTTP_404_NOT_FOUND)
 
 		game_settings.delete()
@@ -106,6 +96,7 @@ class GameSettingsAPI(APIView):
 
 class GameUserAPI(APIView):
 	def get(self, request, user_id=None):
+		# logger.info(f'User ID: {user_id}')
 		if user_id:
 			try:
 				game_user = GameUser.objects.get(userID=user_id)
@@ -119,6 +110,7 @@ class GameUserAPI(APIView):
 			return Response(user_serializer.data, status=status.HTTP_200_OK)
 
 	def post(self, request):
+		# logger.info(f'User ID: {user_id}')
 		user_serializer = GameUserSerializer(data=request.data)
 		if user_serializer.is_valid():
 			user_serializer.save()
@@ -126,6 +118,7 @@ class GameUserAPI(APIView):
 		return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def put(self, request, user_id=None):
+		# logger.info(f'User ID: {user_id}')
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -142,6 +135,7 @@ class GameUserAPI(APIView):
 
 class GameMatchAPI(APIView):
 	def post(self, request):
+		# logger.info(f'Match ID: {match_id}')
 		match_serializer = GameMatchSerializer(data=request.data)
 		if match_serializer.is_valid():
 			match_serializer.save()
@@ -149,6 +143,7 @@ class GameMatchAPI(APIView):
 		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def get(self, request, match_id=None):
+		# logger.info(f'Match ID: {match_id}')
 		if match_id:
 			try:
 				game_match = GameMatch.objects.get(id=match_id)
@@ -163,6 +158,7 @@ class GameMatchAPI(APIView):
 			return Response(match_serializer.data, status=status.HTTP_200_OK)
 
 	def put(self, request, match_id=None):
+		# logger.info(f'Match ID: {match_id}')
 		if not match_id:
 			return Response({"error: Match ID not found"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -178,6 +174,7 @@ class GameMatchAPI(APIView):
 		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
 	def delete(self, request, match_id=None):
+		# logger.info(f'Match ID: {match_id}')
 		if not match_id:
 			return Response({"error": "Match ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
