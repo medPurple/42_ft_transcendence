@@ -2,9 +2,9 @@ import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
 
 
-export class pokeMap{
-    
-    constructor(){
+export class pokeMap {
+
+    constructor() {
         this.userID = null;
         this.map = 0;
         this.ctxMAP = null;
@@ -14,35 +14,35 @@ export class pokeMap{
         this.lastY = 0;
     }
 
-    divmapCreation(){
+    divmapCreation() {
 
         // MAP DIV
         const divmap = document.createElement('div');
         divmap.style.textAlign = 'center';
         divmap.style.position = 'relative';
-        divmap.style.width = '800px';
-        divmap.style.height = '400px';
+        divmap.style.width = '1600px';
+        divmap.style.height = '1600px';
         divmap.style.marginLeft = '28%';
         divmap.style.marginTop = '5%';
         // divmap.style.marginRight = 'auto';
-        
-        
+
+
         // MAP CANVAS
-        
+
         const pokecanva = document.createElement('canvas');
-        pokecanva.width = 800;
-        pokecanva.height = 400;
+        pokecanva.width = 1600;
+        pokecanva.height = 1600;
         pokecanva.style.zIndex = '1';
         pokecanva.style.position = 'absolute';
         pokecanva.style.top = '0';
         pokecanva.style.left = '0';
         this.ctxMAP = pokecanva.getContext('2d');
         divmap.appendChild(pokecanva);
-        
+
         // CHARACTER CANVAS
         const multicharacterCanvas = document.createElement('canvas');
-        multicharacterCanvas.width = 800;
-        multicharacterCanvas.height = 400;
+        multicharacterCanvas.width = 1600;
+        multicharacterCanvas.height = 1600;
         multicharacterCanvas.style.zIndex = '2';
         multicharacterCanvas.style.position = 'absolute';
         multicharacterCanvas.style.top = '0';
@@ -52,8 +52,8 @@ export class pokeMap{
         divmap.appendChild(multicharacterCanvas);
 
         const characterCanvas = document.createElement('canvas');
-        characterCanvas.width = 800;
-        characterCanvas.height = 400;
+        characterCanvas.width = 1600;
+        characterCanvas.height = 1600;
         characterCanvas.style.zIndex = '3';
         characterCanvas.style.position = 'absolute';
         characterCanvas.style.top = '0';
@@ -63,10 +63,10 @@ export class pokeMap{
         divmap.appendChild(characterCanvas);
 
         // LOAD IMAGE
-        const mapimage = new Image(800, 400);
-        mapimage.src = './images/image_with_grid.png';
+        const mapimage = new Image(1600, 1600);
+        mapimage.src = './images/Maps/ext_grid.png';
         mapimage.onload = () => {
-            this.ctxMAP.drawImage(mapimage, 0 , 0);
+            this.ctxMAP.drawImage(mapimage, 0, 0);
         }
 
 
@@ -74,10 +74,10 @@ export class pokeMap{
         return divmap;
     }
 
-    asset_selection(orientation, skin){
-        switch(skin){
+    asset_selection(orientation, skin) {
+        switch (skin) {
             case 0:
-                switch(orientation){
+                switch (orientation) {
                     case "N":
                         return './images/Persos/Guards-Tileset/Guards-Planche_03.png';
                     case "S":
@@ -88,7 +88,7 @@ export class pokeMap{
                         return './images/Persos/Guards-Tileset/Guards-Planche_07.png';
                 }
             case 2:
-                switch(orientation){
+                switch (orientation) {
                     case "N":
                         return './images/Persos/James-Tileset/James-Planche_00.png.png';
                     case "S":
@@ -99,7 +99,7 @@ export class pokeMap{
                         return './images/Persos/James-Tileset/James-Planche_06.png';
                 }
             case 1:
-                switch(orientation){
+                switch (orientation) {
                     case "N":
                         return './images/Persos/Jessie-Tileset/Jessie-Planche_03.png';
                     case "S":
@@ -109,24 +109,24 @@ export class pokeMap{
                     case "W":
                         return './images/Persos/Jessie-Tileset/Jessie-Planche_07.png';
                 }
-            }
+        }
     }
 
-    draw_all_players(data){
+    draw_all_players(data) {
         data.forEach(player => {
             this.ctxAllCharacters.clearRect(0, 0, this.ctxAllCharacters.canvas.width, this.ctxAllCharacters.canvas.height);
-            if (player.userID != this.userID && player.active && player.player_map == this.map){
+            if (player.userID != this.userID && player.active && player.player_map == this.map) {
                 const img = new Image();
-                    img.src = this.asset_selection(player.orientation, player.player_skin);
-                    img.onload = () => {
-                        this.ctxAllCharacters.drawImage(img, player.posX * 16, (player.posY * 16) - 16,  16, 32);
-                    }
+                img.src = this.asset_selection(player.orientation, player.player_skin);
+                img.onload = () => {
+                    this.ctxAllCharacters.drawImage(img, player.posX * 16, (player.posY * 16) - 16, 16, 32);
                 }
+            }
         });
     }
 
 
-    drawplayer(data){
+    drawplayer(data) {
         let player = data.find(player => player.userID == this.userID);
         console.log(player);
         if (player.player_status === 1)
@@ -139,38 +139,38 @@ export class pokeMap{
         img.src = this.asset_selection(player.orientation, player.player_skin);
         img.onload = () => {
             this.ctxCharacter.clearRect(this.lastX * 16, (this.lastY * 16) - 16, 16, 32);
-            this.ctxCharacter.drawImage(img, player.posX * 16, (player.posY * 16) - 16,  16, 32);
+            this.ctxCharacter.drawImage(img, player.posX * 16, (player.posY * 16) - 16, 16, 32);
             this.lastX = player.posX;
             this.lastY = player.posY;
             this.map = player.player_map;
         }
     }
-    
-    startingPokeverse(){
-        const pokemondiv = document.createElement('div'); 
+
+    startingPokeverse() {
+        const pokemondiv = document.createElement('div');
         pokemondiv.appendChild(this.divmapCreation());
         this.connection();
         return pokemondiv;
     }
-    
-    async connection(){
+
+    async connection() {
         let id = await Iuser.getID();
         const socket = new WebSocket("wss://" + window.location.host + "/ws/pokemap/");
         this.userID = id;
-        
+
         socket.onopen = async (e) => {
             console.log("WebSocket connection opened.");
             socket.send(JSON.stringify({
                 action: "connect",
                 userID: id,
             }));
-            
+
         }
 
 
-        socket.onclose = function(event){
+        socket.onclose = function (event) {
             console.log("Websocket connection closed.");
-            
+
         }
 
         socket.onmessage = (e) => {
@@ -178,35 +178,35 @@ export class pokeMap{
             this.draw_all_players(parsed_data);
             this.drawplayer(parsed_data)
             socket.send(JSON.stringify({
-                action: "get_players"}));
+                action: "get_players"
+            }));
         }
 
         document.onkeydown = (event) => {
             event.preventDefault();
-            if (event.key == 'ArrowUp')
-            {
+            if (event.key == 'ArrowUp') {
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "y-",
                     userID: id,
                 }));
-                
+
             }
-            if (event.key == 'ArrowDown'){
+            if (event.key == 'ArrowDown') {
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "y+",
                     userID: id,
                 }));
             }
-            if (event.key == 'ArrowRight'){
+            if (event.key == 'ArrowRight') {
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "x+",
                     userID: id,
                 }));
             }
-            if (event.key == 'ArrowLeft'){
+            if (event.key == 'ArrowLeft') {
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "x-",
