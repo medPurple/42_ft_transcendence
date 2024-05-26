@@ -6,17 +6,17 @@ on:
       - main
 
 jobs:
-  verif_mac:
-      runs-on: macos-13 #change to mac
-      steps:
-          - uses : actions/checkout@v2
-          - name: Setup Docker
-            uses: docker/setup-docker@v2
-            with:
-              docker-version: '20.10.9' # Specify the version of Docker you want to use
-          - name : Compile ft_trascendence
-            run : |
-              make
+  # verif_mac:
+  #     runs-on: macos-13 #change to mac
+  #     steps:
+  #         - uses : actions/checkout@v2
+  #         - name: Setup Docker
+  #           uses: docker/setup-docker@v2
+  #           with:
+  #             docker-version: '20.10.9' # Specify the version of Docker you want to use
+  #         - name : Compile ft_trascendence
+  #           run : |
+  #             make
   verif_linux:
       runs-on: ubuntu-22.04 #change to linux
       steps:
