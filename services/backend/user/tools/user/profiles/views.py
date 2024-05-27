@@ -57,9 +57,13 @@ class JWTAuthentication(BaseAuthentication):
 
 class AllCustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]
-	def get(self, request):
-		users = CustomUser.objects.all()
-		serializer = CustomUserSerializer(users, many=True)
+	def get(self, request, user_id=None):
+		if user_id:
+			user = get_object_or_404(CustomUser, user_id=user_id)
+			serializer = CustomUserSerializer(user)
+		else:
+			users = CustomUser.objects.all()
+			serializer = CustomUserSerializer(users, many=True)
 		return (Response({'success': True, 'users': serializer.data}, status=status.HTTP_200_OK))
 
 class CustomUserRegister(APIView):

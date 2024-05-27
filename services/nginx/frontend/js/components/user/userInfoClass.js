@@ -8,7 +8,7 @@ export default class userInfo {
 
 	async getUsername() {
 		try {
-			const response = await fetch('api/profiles/username/', {
+			const response = await fetch('/api/profiles/username/', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -30,10 +30,7 @@ export default class userInfo {
 
 	async getAllUserInfo() {
 		try {
-			console.log('getting user info')
-			console.log(this.csrfToken)
-			console.log(this.jwtToken)
-			const response = await fetch('api/profiles/user-info/', {
+			const response = await fetch('/api/profiles/user-info/', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -79,7 +76,7 @@ export default class userInfo {
 
 	async getAllUsers(){
 		try {
-			const response = await fetch('api/profiles/all-users/', {
+			const response = await fetch('/api/profiles/all-users/', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',

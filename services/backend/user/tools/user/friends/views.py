@@ -83,21 +83,21 @@ class FriendsView(APIView):
 			serializer = FriendsSerializer(friends, many=True)
 		return Response({'success': True, 'friends': serializer.data}, status=status.HTTP_200_OK)
 	# delete friend
-	def delete(self, request):
-		from_user = request.user
-		friend_username = request.data.get('friend_username')
-		try:
-			friend = CustomUser.objects.get(username=friend_username)
-			if friend in from_user.friends.all():
-				from_user.friends.remove(friend)
-				friend.friends.remove(from_user)
-				return Response({'success': True}, status=status.HTTP_200_OK)
-			else:
-				return Response({'error': 'Friend not found in friend list'}, status=status.HTTP_404_NOT_FOUND)
-		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-		except Exception as e:
-			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+	# def delete(self, request):
+	# 	from_user = request.user
+	# 	friend_username = request.data.get('friend_username')
+	# 	try:
+	# 		friend = CustomUser.objects.get(username=friend_username)
+	# 		if friend in from_user.friends.all():
+	# 			from_user.friends.remove(friend)
+	# 			friend.friends.remove(from_user)
+	# 			return Response({'success': True}, status=status.HTTP_200_OK)
+	# 		else:
+	# 			return Response({'error': 'Friend not found in friend list'}, status=status.HTTP_404_NOT_FOUND)
+	# 	except CustomUser.DoesNotExist:
+	# 		return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+	# 	except Exception as e:
+	# 		return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
