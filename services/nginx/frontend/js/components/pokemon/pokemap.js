@@ -23,10 +23,6 @@ export class pokeMap {
         divmap.style.height = '500px';
         divmap.style.marginLeft = '28%';
         divmap.style.marginTop = '5%';
-        // divmap.style.marginRight = 'auto';
-
-
-        // MAP CANVAS
 
         
         const pokecanva = document.createElement('canvas');
@@ -38,20 +34,6 @@ export class pokeMap {
         pokecanva.style.left = '0';
         this.ctxMAP = pokecanva.getContext('2d');
         divmap.appendChild(pokecanva);
-
-        // CHARACTER CANVAS
-        const multicharacterCanvas = document.createElement('canvas');
-        multicharacterCanvas.width = 600;
-        multicharacterCanvas.height = 500;
-        multicharacterCanvas.style.zIndex = '2';
-        multicharacterCanvas.style.position = 'absolute';
-        multicharacterCanvas.style.top = '0';
-        multicharacterCanvas.style.left = '0';
-
-        this.ctxAllCharacters = multicharacterCanvas.getContext('2d');
-        divmap.appendChild(multicharacterCanvas);
-
-        // LOAD IMAGE
 
         document.body.appendChild(divmap);
         return divmap;
@@ -86,9 +68,7 @@ export class pokeMap {
             this.ctxMAP.drawImage(mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 500, 500);
             data.forEach(player => {
                 if (player.userID != this.userID && player.active && player.player_map == this.map) {
-
                         if (player.posX < pmainx + 10 && player.posX > pmainx - 10 && player.posY < pmainy + 10 && player.posY > pmainy - 10) {
-                            console.log("PLAYER IN VIEW");
                             let playerX = this.getx(player.posX, pmainx);
                             let playerY = this.gety(player.posY, pmainy);
                             const otherimg = new Image();
@@ -96,9 +76,6 @@ export class pokeMap {
                             otherimg.onload = () => {
                                 this.ctxMAP.drawImage(otherimg, playerX, playerY, 25, 50);
                             }
-                        }
-                        else{
-                            console.log("PLAYER OUT OF VIEW");
                         }
                 }
             });
@@ -147,19 +124,6 @@ export class pokeMap {
                         return './images/Persos/Jessie-Tileset/Jessie-Planche_07.png';
                 }
         }
-    }
-
-    draw_all_players(data) {
-        data.forEach(player => {
-            this.ctxAllCharacters.clearRect(0, 0, this.ctxAllCharacters.canvas.width, this.ctxAllCharacters.canvas.height);
-            if (player.userID != this.userID && player.active && player.player_map == this.map) {
-                const img = new Image();
-                img.src = this.asset_selection(player.orientation, player.player_skin);
-                img.onload = () => {
-                    this.ctxAllCharacters.drawImage(img, player.posX * 16, (player.posY * 16) - 16, 16, 32);
-                }
-            }
-        });
     }
 
     startingPokeverse() {
