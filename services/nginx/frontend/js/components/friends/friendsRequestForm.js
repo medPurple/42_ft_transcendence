@@ -6,7 +6,7 @@ class FriendsButton {
 	sendRequestButton() {
 		const buttonSendRequest = document.createElement('button');
 		buttonSendRequest.setAttribute('id', 'send-request-button');
-		buttonSendRequest.classList.add('btn', 'btn-primary');
+		buttonSendRequest.classList.add('btn', 'btn-dark');
 		buttonSendRequest.textContent = 'Add Friend';
 		return buttonSendRequest;
 	}
@@ -14,7 +14,7 @@ class FriendsButton {
 	acceptRequestButton() {
 		const buttonAcceptRequest = document.createElement('button');
 		buttonAcceptRequest.setAttribute('id', 'accept-request-button');
-		buttonAcceptRequest.classList.add('btn', 'btn-success');
+		buttonAcceptRequest.classList.add('btn', 'btn-dark');
 		buttonAcceptRequest.textContent = 'Accept Request';
 		return buttonAcceptRequest;
 	}
@@ -22,7 +22,7 @@ class FriendsButton {
 	rejectRequestButton() {
 		const buttonRejectRequest = document.createElement('button');
 		buttonRejectRequest.setAttribute('id', 'reject-request-button');
-		buttonRejectRequest.classList.add('btn', 'btn-danger');
+		buttonRejectRequest.classList.add('btn', 'btn-light');
 		buttonRejectRequest.textContent = 'Reject Request';
 		return buttonRejectRequest;
 	}
@@ -30,7 +30,7 @@ class FriendsButton {
 	requestSentButton() {
 		const buttonRequestSent = document.createElement('button');
 		buttonRequestSent.setAttribute('id', 'request-sent-button');
-		buttonRequestSent.classList.add('btn', 'btn-secondary');
+		buttonRequestSent.classList.add('btn', 'btn-light');
 		buttonRequestSent.textContent = 'Request Sent';
 		buttonRequestSent.disabled = true;
 		return buttonRequestSent;
@@ -39,7 +39,7 @@ class FriendsButton {
 	deleteFriendButton() {
 		const buttonDeleteFriend = document.createElement('button');
 		buttonDeleteFriend.setAttribute('id', 'delete-friend-button');
-		buttonDeleteFriend.classList.add('btn', 'btn-danger');
+		buttonDeleteFriend.classList.add('btn', 'btn-dark');
 		buttonDeleteFriend.textContent = 'Delete friend';
 		return buttonDeleteFriend;
 	}
@@ -52,16 +52,16 @@ export class Friends {
 		this.usersList = document.createElement('div');
 		this.usersList.id = 'users';
 		this.usersList.classList.add('container'); // Ajouter la classe Bootstrap pour créer un conteneur
-		
+
 		this.pUsers = document.createElement('p');
 		this.pUsers.id = 'users-title';
 		this.pUsers.classList.add('h3'); // Utiliser la classe Bootstrap pour définir la taille de la police
-		this.pUsers.textContent = 'Users';
+		// this.pUsers.textContent = 'Users';
 		this.usersList.appendChild(this.pUsers);
-		
+
 		this.ulElement = document.createElement('div');
 		this.ulElement.id = 'users-list';
-		this.ulElement.classList.add('row'); 
+		this.ulElement.classList.add('row');
 
 		this.variablesArray = [];
 		this.lastusernumber = 0;
@@ -126,7 +126,7 @@ export class Friends {
 		if (this.socket) {
 			this.socket.close();
 			console.log("[close] WebSocket connection closed");
-		}
+		}const cardBody = this.createCardBody(user, isFriends);
 	}
 
 	async sendRequest(friend_username) {
@@ -193,32 +193,31 @@ export class Friends {
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
-	
+
 		if (dataUsers.users.length != this.lastusernumber) {
 			this.ulElement.innerHTML = ''; // Clear the list before populating it
 			await this.viewUsers();
 		} else if (dataUsers.users.length > 1) {
-			console.log("array Updateview", this.variablesArray);
 			dataUsers.users.forEach(async (user) => {
 				if (currentUser != user.username) {
 					const bob = this.variablesArray.find(u => u.name === user.username);
 					const cardElement = document.querySelector('#user_' + user.username);
-	
+
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
 						return request.from_user === user.user_id || request.to_user === user.user_id;
 					});
-	
+
 					const hasSendRequest = requestFriend.sent_requests.some(request => {
 						return request.from_user === user.user_id || request.to_user === user.user_id;
 					});
-	
+
 					const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
-	
+
 					if (isFriends != bob.isFriends) {
 						if (isFriends) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
-							this.manageFriend(cardBody.querySelector('.card-body'), user.username);
+							this.manageFriend(cardBody.querySelector('.card-footer'), user.username);
 							cardElement.appendChild(cardBody);
 						}
 						bob.isFriends = isFriends;
@@ -227,7 +226,7 @@ export class Friends {
 						if (hasFriendRequest) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
-							this.manageFriendRequest(cardBody.querySelector('.card-body'), user.username);
+							this.manageFriendRequest(cardBody.querySelector('.card-footer'), user.username);
 							cardElement.appendChild(cardBody);
 						}
 						bob.hasFriendRequest = hasFriendRequest;
@@ -236,7 +235,7 @@ export class Friends {
 						if (hasSendRequest) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
-							cardBody.querySelector('.card-body').appendChild(this.friendsButton.requestSentButton());
+							cardBody.querySelector('.card-footer').appendChild(this.friendsButton.requestSentButton());
 							cardElement.appendChild(cardBody);
 						}
 						bob.hasSendRequest = hasSendRequest;
@@ -245,7 +244,7 @@ export class Friends {
 						if (!bob.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
-							this.sendFriendRequest(cardBody.querySelector('.card-body'), user.username);
+							this.sendFriendRequest(cardBody.querySelector('.card-footer'), user.username);
 							cardElement.appendChild(cardBody);
 							bob.addFriend = true;
 						}
@@ -255,7 +254,74 @@ export class Friends {
 		}
 		this.lastusernumber = dataUsers.users.length;
 	}
-	
+
+
+	async viewUsers() {
+		const dataUsers = await Iuser.getAllUsers();
+		this.lastusernumber = dataUsers.users.length;
+		const currentUser = await Iuser.getUsername();
+		const requestFriend = await this.getRequests();
+		const friendsList = await Ifriends.getFriendsList();
+		console.error(dataUsers);
+
+		this.ulElement.innerHTML = ''; // Clear the list before populating it
+
+		if (dataUsers.users.length > 1) {
+			dataUsers.users.forEach(users => {
+				if (currentUser != users.username) {
+
+					// Add buttons based on friend status
+					const hasFriendRequest = requestFriend.received_requests.some(request => {
+						return request.from_user === users.user_id || request.to_user === users.user_id;
+					});
+
+					const hasSendRequest = requestFriend.sent_requests.some(request => {
+						return request.from_user === users.user_id || request.to_user === users.user_id;
+					});
+
+					const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
+					const cardElement = this.createCardBody(users, isFriends);
+					const cardFooter = cardElement.querySelector('.card-footer');
+
+					if (isFriends) {
+						this.manageFriend(cardFooter, users.username);
+					} else if (hasFriendRequest) {
+						this.manageFriendRequest(cardFooter, users.username);
+					} else if (hasSendRequest) {
+						cardFooter.appendChild(this.friendsButton.requestSentButton());
+					} else {
+						this.sendFriendRequest(cardFooter, users.username);
+					}
+
+					this.ulElement.appendChild(cardElement);
+
+					const column = document.createElement('div');
+					column.classList.add('col-md-4'); // Définir la taille de la colonne Bootstrap
+					column.appendChild(cardElement);
+
+					this.ulElement.appendChild(column);
+
+					this.variablesArray.push({
+						name: users.username,
+						hasFriendRequest: hasFriendRequest,
+						hasSendRequest: hasSendRequest,
+						isFriends: isFriends,
+						addFriend: true
+					});
+
+					console.log(this.variablesArray);
+				}
+			});
+		} else {
+			const liElement = document.createElement('li');
+			liElement.textContent = 'There are no other users. You are alone.';
+			this.ulElement.appendChild(liElement);
+		}
+		this.usersList.appendChild(this.ulElement);
+		document.body.appendChild(this.usersList);
+		return this.usersList;
+	}
+
 	createCardBody(user, isFriend) {
 		const cardElement = document.createElement('div');
 		cardElement.className = 'card mb-3';
@@ -279,88 +345,23 @@ export class Friends {
 		cardBody.appendChild(userName);
 
 		cardElement.appendChild(cardBody);
-		
-		
+
+
 		const cardFooter = document.createElement('div');
 		cardFooter.className = 'card-footer';
 
 		if (isFriend) {
 			const linkToProfile = this.seeFriend(user.username);
-            cardBody.appendChild(linkToProfile);
+			cardBody.appendChild(linkToProfile);
+		} else {
+			const message = this.createMessage();
+			cardBody.appendChild(message);
 		}
 
 		cardElement.appendChild(cardFooter);
 
 		return cardElement;
 	}
-
-	async viewUsers() {
-		const dataUsers = await Iuser.getAllUsers();
-		this.lastusernumber = dataUsers.users.length;
-		const currentUser = await Iuser.getUsername();
-		const requestFriend = await this.getRequests();
-		const friendsList = await Ifriends.getFriendsList();
-		console.error(dataUsers);
-	
-		this.ulElement.innerHTML = ''; // Clear the list before populating it
-	
-		if (dataUsers.users.length > 1) {
-			dataUsers.users.forEach(users => {
-				if (currentUser != users.username) {
-					
-					
-					// Add buttons based on friend status
-					const hasFriendRequest = requestFriend.received_requests.some(request => {
-						return request.from_user === users.user_id || request.to_user === users.user_id;
-					});
-					
-					const hasSendRequest = requestFriend.sent_requests.some(request => {
-						return request.from_user === users.user_id || request.to_user === users.user_id;
-					});
-					
-					const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
-					const cardElement = this.createCardBody(users, isFriends);
-					const cardFooter = cardElement.querySelector('.card-footer');
-	
-					if (isFriends) {
-						this.manageFriend(cardFooter, users.username);
-					} else if (hasFriendRequest) {
-						this.manageFriendRequest(cardFooter, users.username);
-					} else if (hasSendRequest) {
-						cardFooter.appendChild(this.friendsButton.requestSentButton());
-					} else {
-						this.sendFriendRequest(cardFooter, users.username);
-					}
-	
-					this.ulElement.appendChild(cardElement);
-
-					const column = document.createElement('div');
-					column.classList.add('col-md-4'); // Définir la taille de la colonne Bootstrap
-					column.appendChild(cardElement);
-			
-					this.ulElement.appendChild(column);
-	
-					this.variablesArray.push({
-						name: users.username,
-						hasFriendRequest: hasFriendRequest,
-						hasSendRequest: hasSendRequest,
-						isFriends: isFriends,
-						addFriend: true
-					});
-	
-					console.log(this.variablesArray);
-				}
-			});
-		} else {
-			const liElement = document.createElement('li');
-			liElement.textContent = 'There are no other users. You are alone.';
-			this.ulElement.appendChild(liElement);
-		}
-		this.usersList.appendChild(this.ulElement);
-		document.body.appendChild(this.usersList);
-		return this.usersList;
-	}
-	
 
 	async sendFriendRequest(cardFooter, username) {
 		const buttonSendRequest = this.friendsButton.sendRequestButton();
@@ -410,6 +411,44 @@ export class Friends {
 		});
 		return linkToFriendsProfile;
 	}
+
+
+	getRandomSquidGamePhrase() {
+		const phrases = [
+			"Red Light, Green Light",
+			"Deadly children's games",
+			"Fight for survival",
+			"Trust is rare",
+			"Desperate for money",
+			"Masked game masters",
+			"High stakes competition",
+			"Terrifying playground games",
+			"Ultimate moral test",
+			"Dangerous alliances form",
+			"Debt-driven desperation",
+			"Brutal elimination rounds",
+			"Haunting, eerie masks",
+			"Unexpected betrayals unfold",
+			"Mind and strength tested"
+		];
+
+		const randomIndex = Math.floor(Math.random() * phrases.length);
+		return phrases[randomIndex];
+	}
+
+
+	createMessage() {
+		const messageLink = document.createElement('a');
+		messageLink.textContent = this.getRandomSquidGamePhrase();
+		messageLink.href = '#';
+		messageLink.className = 'card-link';
+		messageLink.setAttribute('data-link', '');
+		messageLink.addEventListener('click', (event) => {
+			event.preventDefault();
+		});
+		return messageLink;
+	}
+
 
 	async manageFriendRequest(cardFooter, username) {
 		const buttonAcceptRequest = this.friendsButton.acceptRequestButton();
