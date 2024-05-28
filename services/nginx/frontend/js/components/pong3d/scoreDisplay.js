@@ -1,5 +1,6 @@
 import { gameState } from './config.js'
 
+/// CHNAGEr AFICHAGE SCORE
 export function displayScore() {
 
   var scoreDiv = document.getElementById("pong-score");

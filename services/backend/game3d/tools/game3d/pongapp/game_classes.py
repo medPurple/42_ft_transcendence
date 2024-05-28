@@ -68,6 +68,7 @@ class   gameStateC:
         self.players_nb = 0
         self.player1Score = iv.PADDLE1_SCORE
         self.player2Score = iv.PADDLE2_SCORE
+		######## HERE recuperer score max de la partie
         self.limitScore = iv.SMALL_LIMIT_SCORE
         self.paddle1 = 0
         self.paddle2 = 0

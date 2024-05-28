@@ -1,4 +1,4 @@
-import { gameState, core, playMesh } from "./config.js"
+import { gameState, core, playMesh, gameCustom } from "./config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
 import { onKeyUp, onKeyDown } from './inputEvents.js'
@@ -24,6 +24,7 @@ function draw() {
 
   //cameraLogic2d();
   core.renderer.render(core.scene, core.camera);
+  
 }
 
 function setup() {
@@ -32,6 +33,7 @@ function setup() {
 
   core.gameSocket.onopen = function(e) {
     console.log('Connected');
+	///////////// HERE!! function to fetch settings and change gameCustom
   };
 
   core.gameSocket.onerror = function(e) {
@@ -102,6 +104,7 @@ function handleServerMessage(message) {
   }
   handlePowerUp();
   displayScore();
+///////// displayend() or draw()
   draw();
 }
 

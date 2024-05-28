@@ -21,8 +21,8 @@ export var gameState = {
   active: 0
 }
 
+///////////////// Change assets HERE DEFAULT
 export const gameCustom = {
-
   ownPaddle: 3,
   otherPaddle: 2,
   ball: 0,
