@@ -51,12 +51,11 @@ export class Friends {
 		this.socket = this.connect();
 		this.usersList = document.createElement('div');
 		this.usersList.id = 'users';
-		this.usersList.classList.add('container'); // Ajouter la classe Bootstrap pour créer un conteneur
+		this.usersList.classList.add('container');
 
 		this.pUsers = document.createElement('p');
 		this.pUsers.id = 'users-title';
-		this.pUsers.classList.add('h3'); // Utiliser la classe Bootstrap pour définir la taille de la police
-		// this.pUsers.textContent = 'Users';
+		this.pUsers.classList.add('h3');
 		this.usersList.appendChild(this.pUsers);
 
 		this.ulElement = document.createElement('div');
@@ -270,7 +269,6 @@ export class Friends {
 			dataUsers.users.forEach(users => {
 				if (currentUser != users.username) {
 
-					// Add buttons based on friend status
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
 						return request.from_user === users.user_id || request.to_user === users.user_id;
 					});
@@ -460,7 +458,6 @@ export class Friends {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.manageFriend(cardFooter, username);
 				}
-				console.log('Accept request: ' + username);
 			} catch (error) {
 				console.error('Error:', error);
 			}
@@ -475,7 +472,6 @@ export class Friends {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.sendFriendRequest(cardFooter, username);
 				}
-				console.log('Reject request: ' + username);
 			} catch (error) {
 				console.error('Error:', error);
 			}
