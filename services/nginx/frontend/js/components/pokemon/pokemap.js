@@ -58,21 +58,11 @@ export class pokeMap {
     }
 
     getx(x, mainx) {
-        if (x > mainx && x < mainx + 10)
-            return (((500 / 2) + ((x - mainx) * 16)) - 16 / 2);
-        else if (x < mainx && x > mainx - 10)
-            return (((500 / 2) - ((mainx - x) * 16)) - 16 / 2);
-        else if (x == mainx)
-            return (500 / 2 - 16 / 2);
+        return 254 + (x - mainx) * 26;
     }
 
     gety(y, mainy) {
-        if (y > mainy && y < mainy + 10)
-            return ((500  / 2 + ((y - mainy) * 16)) - 32 / 2);
-        else if (y < mainy && y > mainy - 10)
-            return ((500  / 2 - ((mainy - y) * 16)) - 32 / 2);
-        else if (y == mainy)
-            return (500 / 2 - 32 / 2);
+        return 230 + (y - mainy) * 26;
     }
 
 
@@ -112,7 +102,7 @@ export class pokeMap {
                         }
                 }
             });
-            this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 32/2, 25, 50);
+            this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 24, 25, 50);
         }
         this.map = player.player_map;
     }
