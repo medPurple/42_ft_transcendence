@@ -120,18 +120,18 @@ function populateBeds() {
 
 
 export function populateAssets() {
+	populateReferee();
 
-  // switch to popAssets according to map 
-  populateReferee();
-  switch (gameCustom.map) {
-    case 0:
-      populateDoll();
-      populateTree();
-      break;
-    case 1:
-      populateSlide();
-      break;
-    default:
-      populateBeds();
-  }
+	switch (gameCustom.map) {
+		case 0:
+			populateSlide();
+			break;
+		case 1:
+			populateDoll();
+			populateTree();
+			break;
+		default:
+			populateBeds();
+			break;
+	}
 }

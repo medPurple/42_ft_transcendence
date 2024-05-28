@@ -51,7 +51,7 @@ function depopPowerUpFromScene() {
   pUpState.pUpIsDisplayed = false;
 }
 
-export function handlePowerUp() {
+export async function handlePowerUp() {
   if (gameState.powerup_status == 1 && !pUpState.pUpIsDisplayed) {
     popPowerUpOnScene();
   }

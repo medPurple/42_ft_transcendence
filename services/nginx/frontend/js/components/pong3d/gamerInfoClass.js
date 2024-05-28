@@ -76,7 +76,7 @@ export default class gamerInfo {
 				}
 			});
 			const data = await response.json();
-			console.log(data); ///TEST
+			console.log(data);
 
 			if (data.success){
 				return data
@@ -89,9 +89,6 @@ export default class gamerInfo {
 		}
 	}
 
-	async getGamerID() {
-		
-	}
 }
 
 

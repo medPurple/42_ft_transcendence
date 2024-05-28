@@ -5,9 +5,34 @@ import { onKeyUp, onKeyDown } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
 
-export function createScene() {
+import gamer from "./gamerInfo.js"
 
-  //Render setup
+async function setupSettings() {
+	console.log('We are in setupSettings');
+
+	try {
+		const data = await gamer.getGamerSettings();
+		console.log('DATA: ', data);
+
+		gameCustom.ownPaddle = data.paddle;
+		gameCustom.otherPaddle = 1;
+		gameCustom.ball = data.ball;
+		gameCustom.map = data.scene;
+		gameCustom.table = data.table;
+		gameCustom.powerup = data.powerups;
+		gameCustom.score_limit = data.score;
+
+		console.log('GAMECUSTOM filled: ', gameCustom);
+	} catch (error) {
+		console.error('Error: setupSettings', error)
+		alert('You should be logged to play');
+		window.location.href = '/pongService';
+	}
+}
+
+export async function createScene() {
+
+  await setupSettings();
 
   console.log("Scene is created");
   core.renderer = new THREE.WebGLRenderer();
@@ -36,7 +61,7 @@ export function createScene() {
 
   //Ball setup
 
-  playMesh.ball = populateBall(0xD43001, 0, 0);
+  playMesh.ball = populateBall(0, 0);
 
   // AmbientLight setup
 
@@ -57,16 +82,16 @@ export function createScene() {
 
   //Plane setup
 
-  decMesh.plane = populatePlane(0x4BD121, 0, 0);
+  decMesh.plane = populatePlane(0, 0);
 
   //Paddle Setup
 
-  playMesh.paddle1 = populateSelfPaddle(0x1B32C0, -constants.fieldWidth / 2 + constants.paddleWidth, 0);
-  playMesh.paddle2 = populateOtherPaddle(0xFF4045, constants.fieldWidth / 2 + constants.paddleWidth, 0);
+  playMesh.paddle1 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
+  playMesh.paddle2 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
 
   //Table Setup
 
-  decMesh.table = populateTable(0x111111, 0, 0, -7);
+  decMesh.table = populateTable(0x3e2f2f, 0, 0, -7);
 
   //Ground setup
 

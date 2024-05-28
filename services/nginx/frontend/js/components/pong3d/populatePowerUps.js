@@ -1,4 +1,4 @@
-import { pUpMesh } from './config.js'
+import { pUpMesh, palette } from './config.js'
 
 function populateCircleShape(color) {
 
@@ -103,8 +103,8 @@ function populateSquareShape(color) {
 
 export function populatePowerUps() {
 
-  pUpMesh.triangle = populateTriangleShape(0xff0000);
-  pUpMesh.circle = populateCircleShape(0x22ff00);
-  pUpMesh.square = populateSquareShape(0x004ff);
-  pUpMesh.star = populateStarShape(0xfbff00);
+  pUpMesh.triangle = populateTriangleShape(palette.pu_red);
+  pUpMesh.circle = populateCircleShape(palette.pu_green);
+  pUpMesh.square = populateSquareShape(palette.pu_blue);
+  pUpMesh.star = populateStarShape(palette.pu_yellow);
 }
