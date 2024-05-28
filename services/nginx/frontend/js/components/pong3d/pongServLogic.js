@@ -1,7 +1,6 @@
 import { gameState, core, playMesh } from "./config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
-import { onKeyUp, onKeyDown } from './inputEvents.js'
 import { displayScore } from './scoreDisplay.js'
 import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
@@ -18,17 +17,30 @@ function draw() {
   else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
     cameraLogic2();
   }
+  else if (gameState.game_mode != "remote") {
+    cameraLogic2d();
+  }
   else {
     cameraLogic2d();
   }
-
   //cameraLogic2d();
   core.renderer.render(core.scene, core.camera);
 }
 
-function setup() {
+function setup(gameMode) {
 
-  core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/');
+  gameState.game_mode = gameMode;
+  switch (gameState.game_mode) {
+    case "remote":
+      core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/remote');
+      break;
+    case "local":
+      core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/local');
+      break;
+    default:
+      core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/tournament');
+      break;
+  }
 
   core.gameSocket.onopen = function(e) {
     console.log('Connected');

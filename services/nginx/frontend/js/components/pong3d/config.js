@@ -18,6 +18,7 @@ export var gameState = {
   powerup_positionY: 0,
   powerup_status: 0,
   powerup_type: 0,
+  game_mode: 0,
   active: 0
 }
 
@@ -26,7 +27,7 @@ export const gameCustom = {
   ownPaddle: 3,
   otherPaddle: 2,
   ball: 0,
-  map: 1,
+  map: 2,
   table: 0,
   powerup: 0,
   score_limit: 0

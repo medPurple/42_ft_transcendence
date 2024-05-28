@@ -64,6 +64,7 @@ class   gameStateC:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.game_mode = 0
         self.group_name = 0
         self.players_nb = 0
         self.player1Score = iv.PADDLE1_SCORE
@@ -271,7 +272,7 @@ class   gameStateC:
                 }
             }
         )
-        
+            
     def logObject(self):
 
         logbuff = self

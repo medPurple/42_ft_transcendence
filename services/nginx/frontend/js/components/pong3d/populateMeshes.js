@@ -267,7 +267,7 @@ export function populateWall(player_id) {
   else {
     wall.position.x = -500;
   }
-  if (gameCustom.map == 3) {
+  if (gameCustom.map == 2) {
     wall.position.z = 100;
   }
   else

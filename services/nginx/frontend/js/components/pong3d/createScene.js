@@ -1,7 +1,7 @@
-import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
+import { core, playMesh, decMesh, gameState, gameCustom, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
-import { onKeyUp, onKeyDown } from './inputEvents.js'
+import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
 
@@ -22,8 +22,14 @@ export function createScene() {
   }
   c.appendChild(core.renderer.domElement);
 
-  window.addEventListener('keydown', onKeyDown, false);
-  window.addEventListener('keyup', onKeyUp, false);
+  if (gameState.game_mode == "remote") {
+    window.addEventListener('keydown', onKeyDownRemote, false);
+    window.addEventListener('keyup', onKeyUpRemote, false);
+  }
+  else {
+    window.addEventListener('keydown', onKeyDownLocal, false);
+    window.addEventListener('keyup', onKeyUpLocal, false);
+  }
 
   //Scene setup
 
@@ -78,7 +84,8 @@ export function createScene() {
 
   // Props setup
 
-  populateAssets();
+  if (gameState.game_mode == "remote")
+    populateAssets();
 
   // Powerups setup
 
