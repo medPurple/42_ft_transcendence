@@ -50,7 +50,7 @@ class player(models.Model) :
     posX = models.IntegerField(default=50)
     posY = models.IntegerField(default=50)
     orientation = models.CharField(default='S')
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
     player_skin = models.IntegerField(choices=SkinChoices.choices, default=SkinChoices.DEFAULT)
     player_map = models.IntegerField(choices=MapChoices.choices, default=MapChoices.DEFAULT)
     player_status = models.IntegerField(choices=StatusChoices.choices, default=StatusChoices.DEFAULT)

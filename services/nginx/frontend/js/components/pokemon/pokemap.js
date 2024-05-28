@@ -57,6 +57,25 @@ export class pokeMap {
         return divmap;
     }
 
+    getx(x, mainx) {
+        if (x > mainx && x < mainx + 10)
+            return (((500 / 2) + ((x - mainx) * 16)) - 16 / 2);
+        else if (x < mainx && x > mainx - 10)
+            return (((500 / 2) - ((mainx - x) * 16)) - 16 / 2);
+        else if (x == mainx)
+            return (500 / 2 - 16 / 2);
+    }
+
+    gety(y, mainy) {
+        if (y > mainy && y < mainy + 10)
+            return ((500  / 2 + ((y - mainy) * 16)) - 32 / 2);
+        else if (y < mainy && y > mainy - 10)
+            return ((500  / 2 - ((mainy - y) * 16)) - 32 / 2);
+        else if (y == mainy)
+            return (500 / 2 - 32 / 2);
+    }
+
+
     drawmap(data){
         let player = data.find(player => player.userID == this.userID);
         if (player.player_status === 1)
@@ -72,21 +91,28 @@ export class pokeMap {
         mapimage.onload = () => {
             let mainx = (player.posX - (19/2)) * 16;
             let mainy = (player.posY - (19/2)) * 16;
-            let pmainx = player.posX * 16;
-            let pmainy = player.posY * 16;
+            let pmainx = player.posX;
+            let pmainy = player.posY;
             this.ctxMAP.drawImage(mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 500, 500);
             data.forEach(player => {
                 if (player.userID != this.userID && player.active && player.player_map == this.map) {
 
-                        const otherimg = new Image();
-                        otherimg.src = this.asset_selection(player.orientation, player.player_skin);
-                        console.warn(playerX, playerY, mainx, mainy, otherimg.src);
-                        otherimg.onload = () => {
-                            this.ctxMAP.drawImage(otherimg, playerX, playerY, 16, 32);
+                        if (player.posX < pmainx + 10 && player.posX > pmainx - 10 && player.posY < pmainy + 10 && player.posY > pmainy - 10) {
+                            console.log("PLAYER IN VIEW");
+                            let playerX = this.getx(player.posX, pmainx);
+                            let playerY = this.gety(player.posY, pmainy);
+                            const otherimg = new Image();
+                            otherimg.src = this.asset_selection(player.orientation, player.player_skin);
+                            otherimg.onload = () => {
+                                this.ctxMAP.drawImage(otherimg, playerX, playerY, 25, 50);
+                            }
                         }
-                    }
+                        else{
+                            console.log("PLAYER OUT OF VIEW");
+                        }
+                }
             });
-            this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 32/2, 25, 40);
+            this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 32/2, 25, 50);
         }
         this.map = player.player_map;
     }
