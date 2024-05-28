@@ -64,25 +64,8 @@ export class Friends {
 
 		this.variablesArray = [];
 		this.lastusernumber = 0;
-
-		this.addEventListeners();
 	}
 
-	addEventListeners() {
-		window.addEventListener('beforeunload', () => {
-			this.disconnect();
-		});
-
-		window.addEventListener('popstate', () => {
-			this.disconnect();
-		});
-
-		document.querySelectorAll('a').forEach(link => {
-			link.addEventListener('click', () => {
-				this.disconnect();
-			});
-		});
-	}
 
 	connect() {
 		let token = Icookies.getCookie('token');
@@ -94,6 +77,8 @@ export class Friends {
 		socket.onmessage = async (event) => {
 			console.log(`[message] Data received from server: ${event.data}`);
 			let data = JSON.parse(event.data);
+			// console.error(data
+			// );
 			if (data.error) {
 				console.error(data.error);
 			} else if (data.success) {
@@ -103,7 +88,8 @@ export class Friends {
 					socket.onmessagecallback = null;
 				}
 			}
-			await this.updateView();
+			if (this.socket.readyState === WebSocket.OPEN)
+				await this.updateView();
 		};
 
 		socket.onclose = function(event) {
@@ -119,13 +105,6 @@ export class Friends {
 		};
 
 		return socket;
-	}
-
-	disconnect() {
-		if (this.socket) {
-			this.socket.close();
-			console.log("[close] WebSocket connection closed");
-		}const cardBody = this.createCardBody(user, isFriends);
 	}
 
 	async sendRequest(friend_username) {
@@ -261,7 +240,7 @@ export class Friends {
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
-		console.error(dataUsers);
+		// console.error(dataUsers);
 
 		this.ulElement.innerHTML = ''; // Clear the list before populating it
 
@@ -404,9 +383,9 @@ export class Friends {
 		linkToFriendsProfile.textContent = 'See profile';
 		linkToFriendsProfile.href = `/friend-profile/${username}`;
 		linkToFriendsProfile.setAttribute('data-link', '');
-		linkToFriendsProfile.addEventListener('click', () => {
-			this.disconnect();
-		});
+		// linkToFriendsProfile.addEventListener('click', () => {
+		// 	this.disconnect();
+		// });
 		return linkToFriendsProfile;
 	}
 
@@ -438,7 +417,7 @@ export class Friends {
 	createMessage() {
 		const messageLink = document.createElement('a');
 		messageLink.textContent = this.getRandomSquidGamePhrase();
-		messageLink.href = '#';
+		messageLink.href = '';
 		messageLink.className = 'card-link';
 		messageLink.setAttribute('data-link', '');
 		messageLink.addEventListener('click', (event) => {
