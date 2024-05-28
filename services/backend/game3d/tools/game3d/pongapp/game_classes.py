@@ -203,7 +203,7 @@ class   gameStateC:
                 if (ball.dirX < 0):
                     ball.dirX = -ball.dirX
                     ball.dirY -= paddle1.dirY * 0.7
-        if (ball.positionX <= paddle2.positionX + paddle2.width and ball.positionX >= paddle2.positionX):
+        if (ball.positionX <= paddle2.positionX and ball.positionX >= paddle2.positionX - paddle2.width):
             if (ball.positionY <= paddle2.positionY + paddle2.height / 2 and ball.positionY >= paddle2.positionY - paddle2.height / 2):
                 if (ball.dirX > 0):
                     ball.dirX = -ball.dirX
