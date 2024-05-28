@@ -5,8 +5,9 @@ import { onKeyUp, onKeyDown } from './inputEvents.js'
 import { displayScore } from './scoreDisplay.js'
 import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
-window.addEventListener('keydown', onKeyDown, false);
-window.addEventListener('keyup', onKeyUp, false);
+// window.addEventListener('keydown', onKeyDown, false);
+// window.addEventListener('keyup', onKeyUp, false);
+//
 
 function draw() {
 
@@ -21,6 +22,7 @@ function draw() {
     cameraLogic2d();
   }
 
+  //cameraLogic2d();
   core.renderer.render(core.scene, core.camera);
 }
 
@@ -52,8 +54,8 @@ function handleServerMessage(message) {
   for (let [key, value] of map.entries()) {
     if (key == "party" && value == 'active') {
       core.party = true;
-      displayScore();
       createScene();
+      displayScore();
       draw();
       return;
     }

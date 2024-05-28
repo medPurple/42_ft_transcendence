@@ -1,6 +1,7 @@
-import { core, playMesh, decMesh, lights, constants } from "./config.js"
+import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
-import { populateBall, populatePaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
+import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
+import { onKeyUp, onKeyDown } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
 
@@ -21,6 +22,9 @@ export function createScene() {
   }
   c.appendChild(core.renderer.domElement);
 
+  window.addEventListener('keydown', onKeyDown, false);
+  window.addEventListener('keyup', onKeyUp, false);
+
   //Scene setup
 
   core.scene = new THREE.Scene();
@@ -36,16 +40,20 @@ export function createScene() {
 
   // AmbientLight setup
 
-  //lights.ambientLight = new THREE.AmbientLight(0xF8d898);
+  //  lights.ambientLight = new THREE.AmbientLight(0xF8d898, 0.5);
 
   // PointLight setup
 
-  lights.pointLight = populatePointLight(0xF8D898, -1000, 0, 1000, 1.5, 10000);
-  lights.pointLight2 = populatePointLight(0xF8D898, 1000, 0, 1000, 1.5, 10000);
+  //lights.pointLight = populatePointLight(0xffffff, 0, 0, 500, 1.5, 10000);
+  lights.pointLight = populatePointLight(0xffffff, 1000, 0, 500, 0.75, 10000);
+  lights.pointLight2 = populatePointLight(0xffffff, -1000, 0, 500, 0.75, 10000);
+  lights.pointLight3 = populatePointLight(0xffffff, 0, 0, 500, 0.75, 10000);
+  //lights.pointLight4 = populatePointLight(0xffffff, 0, -200, 500, 0.5, 10000);
+  //lights.pointLight2 = populatePointLight(0xffffff, 1000, 0, 1000, 1, 8000);
 
   //Spotlight setup
 
-  lights.spotLight = populateSpotLight(0xF8D898, 0, 0, 460, 1)
+  lights.spotLight = populateSpotLight(0xffffff, 0, 0, 700, 0.7);
 
   //Plane setup
 
@@ -53,8 +61,8 @@ export function createScene() {
 
   //Paddle Setup
 
-  playMesh.paddle1 = populatePaddle(0x1B32C0, -constants.fieldWidth / 2 + constants.paddleWidth, 0);
-  playMesh.paddle2 = populatePaddle(0xFF4045, constants.fieldWidth / 2 + constants.paddleWidth, 0);
+  playMesh.paddle1 = populateSelfPaddle(0x1B32C0, -constants.fieldWidth / 2 + constants.paddleWidth, 0);
+  playMesh.paddle2 = populateOtherPaddle(0xFF4045, constants.fieldWidth / 2 + constants.paddleWidth, 0);
 
   //Table Setup
 
@@ -78,10 +86,12 @@ export function createScene() {
 
   //Add all to the scene
 
-  core.scene.add(lights.ambientLight);
+  //core.scene.add(lights.ambientLight);
   core.scene.add(lights.pointLight);
   core.scene.add(lights.pointLight2);
-  core.scene.add(lights.spotLight);
+  core.scene.add(lights.pointLight3);
+  //core.scene.add(lights.pointLight4);
+  //core.scene.add(lights.spotLight);
   core.scene.add(playMesh.paddle1);
   core.scene.add(playMesh.paddle2);
   core.scene.add(playMesh.ball);
@@ -91,6 +101,6 @@ export function createScene() {
   core.scene.add(decMesh.ground);
   core.scene.add(core.camera);
 
-  //renderer.shadowMapEnabled = true;
+  core.renderer.shadowMapEnabled = true;
 
 }

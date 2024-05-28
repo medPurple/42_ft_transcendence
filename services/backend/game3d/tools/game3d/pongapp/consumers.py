@@ -11,8 +11,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from pongapp.game_classes import paddleC, ballC, gameStateC
 
 logger = logging.getLogger(__name__)
-parties = [];
-group_names = [];
+parties = []
+group_names = []
 group_members = 0
 
 class PongConsumer(AsyncWebsocketConsumer):

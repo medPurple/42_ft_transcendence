@@ -23,8 +23,8 @@ export var gameState = {
 
 export const gameCustom = {
 
-  ownPaddle: 0,
-  otherPaddle: 0,
+  ownPaddle: 3,
+  otherPaddle: 2,
   ball: 0,
   map: 1,
   table: 0,
@@ -63,16 +63,20 @@ export var decMesh = {
 
 export var objMesh = {
 
-  refproperee: 0,
+  referee: 0,
   firstAsset: 0,
   secondAsset: 0,
-  beds: []
+  beds: [],
+  loadedBed: 0,
+  instancedBed: 0
 }
 
 export var lights = {
 
   pointLight: 0,
   pointLight2: 0,
+  pointLight3: 0,
+  //pointLight4: 0,
   spotLight: 0,
   ambientLight: 0
 }
