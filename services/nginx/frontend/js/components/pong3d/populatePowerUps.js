@@ -22,9 +22,10 @@ function populateCircleShape(color) {
 
   var circleMesh = new THREE.LineLoop(geometry, material);
 
-  if (gameState.game_mode == "remote")
+  if (gameState.game_mode == "remote") {
     circleMesh.rotateX(Math.PI / 2);
-  circleMesh.rotateY(Math.PI / 2);
+    circleMesh.rotateY(Math.PI / 2);
+  }
   circleMesh.position.z = 20;
   return circleMesh;
 }
@@ -44,9 +45,10 @@ function populateTriangleShape(color) {
 
   var triangleMesh = new THREE.LineLoop(geometry, material);
 
-  if (gameState.game_mode == "remote")
+  if (gameState.game_mode == "remote") {
     triangleMesh.rotateX(Math.PI / 2);
-  triangleMesh.rotateY(Math.PI / 2);
+    triangleMesh.rotateY(Math.PI / 2);
+  }
   triangleMesh.position.z = 20;
   return triangleMesh;
 }
@@ -73,10 +75,11 @@ function populateStarShape(color) {
 
   var starMesh = new THREE.LineLoop(geometry, material);
 
-  if (gameState.game_mode == "remote")
+  if (gameState.game_mode == "remote") {
     starMesh.rotateX(Math.PI / 2);
-  starMesh.rotateY(Math.PI / 2);
-  starMesh.rotateZ(Math.PI / 10);
+    starMesh.rotateY(Math.PI / 2);
+    starMesh.rotateZ(Math.PI / 10);
+  }
   starMesh.position.z = 20;
   return starMesh;
 }
@@ -99,9 +102,10 @@ function populateSquareShape(color) {
 
   var squareMesh = new THREE.LineLoop(geometry, material);
 
-  if (gameState.game_mode == "remote")
+  if (gameState.game_mode == "remote") {
     squareMesh.rotateX(Math.PI / 2);
-  squareMesh.rotateY(Math.PI / 2);
+    squareMesh.rotateY(Math.PI / 2);
+  }
   squareMesh.position.z = 20;
   return squareMesh;
 }

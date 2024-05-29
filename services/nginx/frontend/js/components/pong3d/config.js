@@ -60,6 +60,7 @@ export var decMesh = {
   plane: 0,
   table: 0,
   wall: 0,
+  wall2: 0
 }
 
 export var objMesh = {

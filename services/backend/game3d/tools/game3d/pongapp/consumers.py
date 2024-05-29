@@ -11,7 +11,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from pongapp.game_classes import paddleC, ballC, gameStateC
 
 logger = logging.getLogger(__name__)
-rempte_parties = []
+remote_parties = []
 local_partie = []
 group_names = []
 group_members = 0
@@ -45,12 +45,14 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
-        if (text_data_json["paddleMov1"]):
-            with self.gameState._lock:
-                self.gameState.paddle1.move = text_data_json["paddleMov1"];
-        else:
-            with self.gameState._lock:
-                self.gameState.paddle2.move = text_data_json["paddleMov2"];
+        for key in text_data_json:
+            if (key == "paddleMov1"):
+                with self.gameState._lock:
+                    self.gameState.paddle1.move = text_data_json["paddleMov1"];
+
+            if (key == "paddleMov2"):
+                with self.gameState._lock:
+                    self.gameState.paddle2.move = text_data_json["paddleMov2"];
 
     async def game_state(self,event):
         await self.send(text_data=json.dumps(event["game_state"]))

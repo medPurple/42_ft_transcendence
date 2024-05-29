@@ -81,11 +81,14 @@ export function createScene() {
   // Wall setup
 
   decMesh.wall = populateWall(core.player_id);
+  if (gameState.game_mode == "local")
+    decMesh.wall2 = populateWall(2);
+
 
   // Props setup
 
-  if (gameState.game_mode == "remote")
-    populateAssets();
+  //if (gameState.game_mode == "remote")
+  populateAssets();
 
   // Powerups setup
 
@@ -105,6 +108,8 @@ export function createScene() {
   core.scene.add(decMesh.table);
   core.scene.add(decMesh.plane);
   core.scene.add(decMesh.wall);
+  if (gameState.game_mode == "local")
+    core.scene.add(decMesh.wall2);
   core.scene.add(decMesh.ground);
   core.scene.add(core.camera);
 

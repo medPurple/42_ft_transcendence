@@ -4,26 +4,27 @@ import { handlePowerUp } from "./handlePowerUps.js"
 import { displayScore } from './scoreDisplay.js'
 import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
-// window.addEventListener('keydown', onKeyDown, false);
-// window.addEventListener('keyup', onKeyUp, false);
-//
-
 function draw() {
 
   console.log("Frame is drawn")
-  if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
-    cameraLogic();
-  }
-  else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
-    cameraLogic2();
-  }
-  else if (gameState.game_mode != "remote") {
-    cameraLogic2d();
-  }
-  else {
-    cameraLogic2d();
-  }
-  //cameraLogic2d();
+  // if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
+  //   cameraLogic();
+  // }
+  // else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
+  //   cameraLogic2();
+  // }
+  // else if (gameState.game_mode != "remote") {
+  //   if (gameState.paddle1_powerup == 3)
+  //     cameraLogic();
+  //   else if (gameState.paddle2_powerup == 3)
+  //     cameraLogic2();
+  //   else
+  //     cameraLogic2d();
+  // }
+  // else {
+  //   cameraLogic2d();
+  // }
+  cameraLogic();
   core.renderer.render(core.scene, core.camera);
 }
 
