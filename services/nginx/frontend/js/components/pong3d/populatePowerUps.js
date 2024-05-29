@@ -1,110 +1,98 @@
 import { pUpMesh, palette } from './config.js'
 
 function populateCircleShape(color) {
+	var radius = 10;
+	var segments = 64;
+	var vertices = [];
+	var angleIncrement = (Math.PI * 2) / segments;
 
-  var radius = 10;
-  var segments = 64;
+	for (var i = 0; i <= segments; i++) {
+		var angle = angleIncrement * i;
+		var x = radius * Math.cos(angle);
+		var y = radius * Math.sin(angle);
+		vertices.push(new THREE.Vector3(x, y, 0));
+	}
 
-  var vertices = [];
+	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+	var material = new THREE.LineBasicMaterial({ color: color });
+	var circleMesh = new THREE.LineLoop(geometry, material);
 
-  var angleIncrement = (Math.PI * 2) / segments;
+	circleMesh.rotateX(Math.PI / 2);
+	circleMesh.rotateY(Math.PI / 2);
+	circleMesh.position.z = 20;
 
-  for (var i = 0; i <= segments; i++) {
-    var angle = angleIncrement * i;
-    var x = radius * Math.cos(angle);
-    var y = radius * Math.sin(angle);
-    vertices.push(new THREE.Vector3(x, y, 0));
-  }
-
-  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-
-  var material = new THREE.LineBasicMaterial({ color: color });
-
-  var circleMesh = new THREE.LineLoop(geometry, material);
-  circleMesh.rotateX(Math.PI / 2);
-  circleMesh.rotateY(Math.PI / 2);
-  circleMesh.position.z = 20;
-  return circleMesh;
+	return circleMesh;
 }
 
 function populateTriangleShape(color) {
 
-  var size = 15;
-  var vertices = [
-    new THREE.Vector3(0, size / Math.sqrt(3), 0),
-    new THREE.Vector3(-size / 2, -size / (2 * Math.sqrt(3)), 0),
-    new THREE.Vector3(size / 2, -size / (2 * Math.sqrt(3)), 0)
-  ];
+	var size = 15;
+	var vertices = [
+		new THREE.Vector3(0, size / Math.sqrt(3), 0),
+		new THREE.Vector3(-size / 2, -size / (2 * Math.sqrt(3)), 0),
+		new THREE.Vector3(size / 2, -size / (2 * Math.sqrt(3)), 0)
+	];
+	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+	var material = new THREE.LineBasicMaterial({ color: color });
+	var triangleMesh = new THREE.LineLoop(geometry, material);
 
-  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+	triangleMesh.rotateX(Math.PI / 2);
+	triangleMesh.rotateY(Math.PI / 2);
+	triangleMesh.position.z = 20;
 
-  var material = new THREE.LineBasicMaterial({ color: color });
-
-  var triangleMesh = new THREE.LineLoop(geometry, material);
-
-  triangleMesh.rotateX(Math.PI / 2);
-  triangleMesh.rotateY(Math.PI / 2);
-  triangleMesh.position.z = 20;
-  return triangleMesh;
+	return triangleMesh;
 }
 
 function populateStarShape(color) {
 
-  var size = 10;
+	var size = 10;
+	var numPoints = 5;
+	var vertices = [];
 
-  var numPoints = 5;
+	for (var i = 0; i < numPoints * 2; i++) {
+		var angle = (i / numPoints) * Math.PI;
+		var r = (i % 2 === 0) ? size : size / 2;
+		var x = r * Math.cos(angle);
+		var y = r * Math.sin(angle);
+		vertices.push(new THREE.Vector3(x, y, 0));
+	}
 
-  var vertices = [];
+	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+	var material = new THREE.LineBasicMaterial({ color: color });
+	var starMesh = new THREE.LineLoop(geometry, material);
 
-  for (var i = 0; i < numPoints * 2; i++) {
-    var angle = (i / numPoints) * Math.PI;
-    var r = (i % 2 === 0) ? size : size / 2;
-    var x = r * Math.cos(angle);
-    var y = r * Math.sin(angle);
-    vertices.push(new THREE.Vector3(x, y, 0));
-  }
+	starMesh.rotateX(Math.PI / 2);
+	starMesh.rotateY(Math.PI / 2);
+	starMesh.rotateZ(Math.PI / 10);
+	starMesh.position.z = 20;
 
-  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-
-  var material = new THREE.LineBasicMaterial({ color: color });
-
-  var starMesh = new THREE.LineLoop(geometry, material);
-
-  starMesh.rotateX(Math.PI / 2);
-  starMesh.rotateY(Math.PI / 2);
-  starMesh.rotateZ(Math.PI / 10);
-  starMesh.position.z = 20;
-  return starMesh;
+	return starMesh;
 }
 
 function populateSquareShape(color) {
 
-  var size = 15;
+	var size = 15;
+	var vertices = [
+		new THREE.Vector3(-size / 2, size / 2, 0),
+		new THREE.Vector3(size / 2, size / 2, 0),
+		new THREE.Vector3(size / 2, -size / 2, 0),
+		new THREE.Vector3(-size / 2, -size / 2, 0),
+		new THREE.Vector3(-size / 2, size / 2, 0)
+	];
+	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+	var material = new THREE.LineBasicMaterial({ color: color });
+	var squareMesh = new THREE.LineLoop(geometry, material);
 
-  var vertices = [
-    new THREE.Vector3(-size / 2, size / 2, 0),
-    new THREE.Vector3(size / 2, size / 2, 0),
-    new THREE.Vector3(size / 2, -size / 2, 0),
-    new THREE.Vector3(-size / 2, -size / 2, 0),
-    new THREE.Vector3(-size / 2, size / 2, 0)
-  ];
+	squareMesh.rotateX(Math.PI / 2);
+	squareMesh.rotateY(Math.PI / 2);
+	squareMesh.position.z = 20;
 
-  var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-
-  var material = new THREE.LineBasicMaterial({ color: color });
-
-  var squareMesh = new THREE.LineLoop(geometry, material);
-
-  squareMesh.rotateX(Math.PI / 2);
-  squareMesh.rotateY(Math.PI / 2);
-  squareMesh.position.z = 20;
-  return squareMesh;
+	return squareMesh;
 }
 
 export function populatePowerUps() {
-
-  pUpMesh.triangle = populateTriangleShape(palette.pu_red);
-  pUpMesh.circle = populateCircleShape(palette.pu_green);
-  pUpMesh.square = populateSquareShape(palette.pu_blue);
-  pUpMesh.star = populateStarShape(palette.pu_yellow);
+	pUpMesh.triangle = populateTriangleShape(palette.pu_red);
+	pUpMesh.circle = populateCircleShape(palette.pu_green);
+	pUpMesh.square = populateSquareShape(palette.pu_blue);
+	pUpMesh.star = populateStarShape(palette.pu_yellow);
 }

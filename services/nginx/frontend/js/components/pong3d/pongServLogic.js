@@ -9,7 +9,7 @@ import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
 async function draw() {
 
-	console.log("Frame is drawn");/////////
+	// console.log("Frame is drawn");
 
 	if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
 		await cameraLogic();
@@ -100,7 +100,7 @@ async function handleServerMessage(message) {
 			gameState.active = value;
 	}
 
-	await handlePowerUp();
+	await handlePowerUp(); // A lancer seulement si power up actif
 	await displayScore();
 	///////// displayend() or draw()
 	await draw();

@@ -20,11 +20,11 @@ class PongConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.player_id = 0
-        self.gameState = 0;
+        self.gameState = 0
 
     async def connect(self):
         await self.accept()
-        self.gameState =  await self.findParty();
+        self.gameState =  await self.findParty()
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
@@ -80,9 +80,6 @@ class PongConsumer(AsyncWebsocketConsumer):
         paddle2.positionY += paddle2.dirY
 
 
-
-        
-
     # async def paddle_message(self, event):
     #     if(self.player_id == 1 and "paddleMov2" in event):
     #         paddleMov = event["paddleMov2"];
@@ -101,7 +98,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         if (listLen == 0 or parties[listLen - 1].players_nb == 2):
             newPart = gameStateC()
             parties.append(newPart)
-            parties[listLen].paddle1 = paddleC(1);
+            parties[listLen].paddle1 = paddleC(1)
             self.player_id = 1
             await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = newPart
@@ -110,7 +107,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             return newPart
         else:
-            parties[listLen - 1].paddle2 = paddleC(2);
+            parties[listLen - 1].paddle2 = paddleC(2)
             self.player_id = 2 
             await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = parties[listLen - 1]

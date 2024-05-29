@@ -21,20 +21,6 @@ export var gameState = {
 	active: 0
 }
 
-// export default async function setupSettings() {
-// 	const data = await gamer.getGamerSettings();
-
-// 	return {
-// 		ownPaddle: data.paddle || 1,
-// 		otherPaddle: 1,
-// 		ball: data.ball || 1,
-// 		map: data.scene || 1,
-// 		table: data.table || 1,
-// 		powerup: data.powerups || 1,
-// 		score_limit: data.score || 1
-// 	};
-// }
-
 export const gameCustom = {
 	ownPaddle: 3,
 	otherPaddle: 1,
@@ -100,10 +86,13 @@ export var pUpState = {
 }
 
 export const constants = {
-	WIDTH: 640,
-	HEIGHT: 426,
+	// WIDTH: 640,
+	// HEIGHT: 426,
+	// ASPECT: 640 / 426,
+	WIDTH: 800, 
+	HEIGHT: 600,
+	ASPECT: 800 / 600,
 	VIEW_ANGLE: 75,
-	ASPECT: 640 / 426,
 	NEAR: 0.1,
 	FAR: 10000,
 	fieldWidth: 400,

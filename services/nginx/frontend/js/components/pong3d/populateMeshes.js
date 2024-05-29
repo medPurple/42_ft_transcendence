@@ -32,7 +32,7 @@ export function populateSelfPaddle(posX, posY) {
 
 	var paddleMaterial;
 
-	console.log('PADDLE SELF in populate my paddle: ',gameCustom.ownPaddle);/////////
+	// console.log('PADDLE SELF in populate my paddle: ',gameCustom.ownPaddle);/////////
 
 	switch (gameCustom.ownPaddle) {
 		case 0:
@@ -67,14 +67,14 @@ export function populateOtherPaddle(posX, posY) {
 
 	var paddleMaterial;
 
-	// if (gameCustom.otherPaddle == gameCustom.ownPaddle) {
-	// 	if (gameCustom.ownPaddle == 0)
-	// 		gameCustom.otherPaddle = 1;
-	// 	else
-	// 		gameCustom.otherPaddle = 0;
-	// }
+	if (gameCustom.otherPaddle == gameCustom.ownPaddle) {
+		if (gameCustom.ownPaddle == 4)
+			gameCustom.otherPaddle = 1;
+		else
+			gameCustom.otherPaddle = 4;
+	}
 
-	console.log('PADDLE ENEMY in populate other paddle: ', gameCustom.otherPaddle);/////////
+	// console.log('PADDLE ENEMY in populate other paddle: ', gameCustom.otherPaddle);/////////
 
 	switch (gameCustom.otherPaddle) {
 		case 0:
@@ -111,7 +111,7 @@ export function populateBall(posX, posY) {
 	var radius = 5, segments = 6, rings = 6;
 	var ballMaterial;
 
-	console.log('BALL in populate ball: ',gameCustom.ball);///////////////
+	// console.log('BALL in populate ball: ',gameCustom.ball);///////////////
 
 	switch (gameCustom.ball) {
 		case 0:
@@ -140,7 +140,7 @@ export function populatePlane(posX, posY) {
 
 	var planeMaterial;
 
-	console.log('TABLE in populate plane: ',gameCustom.table);///////////
+	// console.log('TABLE in populate plane: ',gameCustom.table);///////////
 
 	switch (gameCustom.table) {
 		case 0:
@@ -183,7 +183,7 @@ export function populateFloor() {
 
 	var path;
 
-	console.log('SCENE in populate floor: ',gameCustom.map);///////////
+	// console.log('SCENE in populate floor: ',gameCustom.map);///////////
 
 	switch (gameCustom.map) {
 		case 0:
@@ -226,7 +226,7 @@ export function populateWall(player_id) {
 
 	var path;
 
-	console.log('SCENE in populate wall :', gameCustom.map);///////////
+	// console.log('SCENE in populate wall :', gameCustom.map);///////////
 
 	switch (gameCustom.map) {
 		case 0:

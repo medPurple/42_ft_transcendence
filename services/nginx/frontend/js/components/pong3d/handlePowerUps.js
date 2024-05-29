@@ -2,19 +2,19 @@ import { gameState, pUpMesh, pUpState, playMesh, constants, core } from './confi
 
 function popPowerUpOnScene() {
 
-  switch (gameState.powerup_type) {
-    case 0:
-      pUpState.powerUp = pUpMesh.circle;
-      break;
-    case 1:
-      pUpState.powerUp = pUpMesh.triangle;
-      break;
-    case 2:
-      pUpState.powerUp = pUpMesh.star;
-      break;
-    default:
-      pUpState.powerUp = pUpMesh.square;
-  }
+	switch (gameState.powerup_type) {
+		case 0:
+			pUpState.powerUp = pUpMesh.circle;
+			break;
+		case 1:
+			pUpState.powerUp = pUpMesh.triangle;
+			break;
+		case 2:
+			pUpState.powerUp = pUpMesh.star;
+			break;
+		default:
+			pUpState.powerUp = pUpMesh.square;
+	}
 
   pUpState.powerUp.position.x = gameState.powerup_positionX;
   pUpState.powerUp.position.y = gameState.powerup_positionY;
@@ -51,6 +51,7 @@ function depopPowerUpFromScene() {
   pUpState.pUpIsDisplayed = false;
 }
 
+////HANDLEPOWERUPS IN FRONT Here
 export async function handlePowerUp() {
   if (gameState.powerup_status == 1 && !pUpState.pUpIsDisplayed) {
     popPowerUpOnScene();
