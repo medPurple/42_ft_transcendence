@@ -233,3 +233,10 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Remplacez par l'hôte SMTP de votre fournisseur de messagerie
+EMAIL_PORT = 587  # Remplacez par le port SMTP de votre fournisseur de messagerie
+EMAIL_USE_TLS = True  # Active le TLS (Transport Layer Security) pour le chiffrement des communications SMTP
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'wilbanablo@gmail.com'  # Remplacez par votre adresse e-mail
+EMAIL_HOST_PASSWORD = 'xguf lgoy hdfo pzzw'  #

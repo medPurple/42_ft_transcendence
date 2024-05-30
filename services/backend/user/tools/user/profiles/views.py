@@ -17,7 +17,15 @@ from .forms import CustomUserCreationForm, CustomUserEditForm, CustomUserPasswor
 from .models import CustomUser
 from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer, CustomUserSerializer
 
+from datetime import timedelta
+from django.utils import timezone
+from django.core.mail import send_mail
+import random
+
 logger = logging.getLogger(__name__)
+
+def generate_random_digits(n=6):
+	return "".join(map(str, random.sample(range(0, 10), n)))
 
 def user_token(request, user_id):
 	token_service_url = 'https://JWToken:4430/api/token/'
@@ -69,7 +77,7 @@ class JWTAuthentication(BaseAuthentication):
 		auth_header = request.headers.get('Authorization')
 		if not auth_header:
 			return None
-		
+
 		token = auth_header.split(' ')[1]
 		token_service_url = 'https://JWToken:4430/api/token/'
 		try:
@@ -84,9 +92,13 @@ class JWTAuthentication(BaseAuthentication):
 
 class AllCustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]
-	def get(self, request):
-		users = CustomUser.objects.all()
-		serializer = CustomUserSerializer(users, many=True)
+	def get(self, request, user_id=None):
+		if user_id:
+			user = get_object_or_404(CustomUser, user_id=user_id)
+			serializer = CustomUserSerializer(user)
+		else:
+			users = CustomUser.objects.all()
+			serializer = CustomUserSerializer(users, many=True)
 		return (Response({'success': True, 'users': serializer.data}, status=status.HTTP_200_OK))
 
 class CustomUserRegister(APIView):
@@ -119,23 +131,66 @@ class CustomUserLogin(APIView):
 		form = AuthenticationForm(request, request.POST)
 		if form.is_valid():
 			user = form.get_user()
-			token = user_token(request, user.user_id)
-			user.is_online = True
-			user.save()
-			login(request, user)
-			return Response({'success': True, 'token' : token},
-				status=201)
+			if user.is_2fa is True:
+				verification_code = generate_random_digits()
+				user.otp = verification_code
+				user.otp_expiry_time = timezone.now() + timedelta(hours=1)
+				user.save()
+				send_mail(
+					'Verification Code',
+					f'Your verification code is: {user.otp}',
+					'wilbanablo@gmail.com',
+					[user.email],
+					fail_silently=False,
+				)
+				return Response({'succes:': True, 'two_fa': True}, status=status.HTTP_200_OK)
+			else:
+				token = user_token(request, user.user_id)
+				user.is_online = True
+				user.save()
+				login(request, user)
+				return Response({'success': True, 'token' : token, 'two_fa': False},
+					status=201)
 		else:
-			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)  # Si le formulaire n'est pas valide, renvoyez les erreurs de validation avec le code de statut 400
+			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomUserVerify(APIView):
+	permission_classes = (permissions.AllowAny,)
+	def post(self, request):
+		otp = request.data.get('otp')
+		try:
+			user = CustomUser.objects.get(otp=otp)
+			if (
+				user.otp == otp and
+				user.otp_expiry_time is not None and
+				user.otp_expiry_time > timezone.now()
+			):
+				user.is_online = True
+				user.otp = ''
+				user.otp_expiry_time = None
+				token = user_token(request, user.user_id)
+				user.save()
+				login(request, user)
+				return Response({'success': True, 'token' : token},
+						status=201)
+			else:
+				return Response({'success': False, 'detail': 'Wrong code.'}, status=status.HTTP_404_NOT_FOUND)
+		except CustomUser.DoesNotExist:
+			return Response({'success': False}, status=status.HTTP_404_NOT_FOUND)
+
 
 class CustomUserLogout(APIView):
 	authentication_classes = [JWTAuthentication]
 	def post(self, request):
 		logger.debug(request)
 		user = request.user
-		user.is_online = False
-		user.save()
-		return Response({'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
+		try:
+			user.is_online = False
+			user.save()
+		except CustomUser.DoesNotExist:
+			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+		logout(request)
+		return Response({'success': True, 'message': 'User logged out successfully'}, status=status.HTTP_200_OK)
 
 class CustomUsernameView(APIView):
 	authentication_classes = [JWTAuthentication]

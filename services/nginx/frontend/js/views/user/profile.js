@@ -1,14 +1,19 @@
 import "../../components/user/profileForm.js";
 
-export default () => `
+import Icookies from "../../components/cookie/cookie.js"
 
-	<profile-form></profile-form>
+export default () => {
+	let content = '';
+	if (Icookies.getCookie('token')) {
+		content = '<profile-form></profile-form>'
+	} else {
+		const logdiv = document.createElement('div');
+		logdiv.classList.add('not-logged');
+		logdiv.innerText =  'You need to be logged in to see your profile';
+		document.body.appendChild(logdiv);
+		return logdiv;
+	}
+	return content;
+}
 
-	<!-- <a href="/edit-profile" data-link>Edit Profile</a><br>
-	<a href="/update-password" data-link>Update password</a><br>
-	<a href="/friends" data-link>See my friends</a><br>
-	<a href="/delete-account" data-link>Delete my account</a><br> -->
 
-	`;
-
-	// <a href="/friends" data-link>See my friends</a><br>

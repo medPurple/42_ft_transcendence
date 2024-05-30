@@ -6,10 +6,12 @@ import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
 import pongService from "./views/pong3d/pongService.js";
-import gameService from "./views/pong3d/gameService.js";
+import game from "./views/game.js";
 import pongSettings from "./views/pong3d/pongSettings.js";
-import metaService from "./views/metaService.js";
+import metaService from "./views/pokemon/metaService.js";
+// import pokemap from "./views/pokemon/pokemap.js";
 import userService from "./views/user/userService.js";
+import code2FA from "./views/user/code2FA.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
@@ -19,10 +21,9 @@ import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
-import play from "./views/play.js";
+import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
-import { setup } from "./components/pong3d/pongServLogic.js";
 import "./components/user/logoutForm.js";
 
 // Define the routes
@@ -53,7 +54,7 @@ const routes = {
 	},
 	'/gameService': {
 		title: "Game Service",
-		render: gameService
+		render: game
 	},
 	'/pongSettings': {
 		title: "Pong Settings",
@@ -70,6 +71,10 @@ const routes = {
 	'/login': {
 		title: "Log In",
 		render: login
+	},
+	'/code2FA': {
+		title: "2FA",
+		render: code2FA
 	},
 	'/profile': {
 		title: "Profile",
@@ -99,9 +104,21 @@ const routes = {
             return await friendsProfile(username);
         }
 	},
-	'/play': {
-		title: "Play",
-		render: play
+	'/play_pr': {
+		title: "Pong Remote Play",
+		render: pong_remoteplay
+	},
+	'/play_pt': {
+		title: "Pong Tournament Play",
+		render: pong_tournamentplay
+	},
+	'/play_pkr': {
+		title: "Pokemon Remote Play",
+		render: pkm_remoteplay
+	},
+	'/pokemap': {
+		title: "Pokemon Map",
+		render: pokemap_interactive
 	},
 	'/chat': {
 		title: "Chat",
@@ -118,45 +135,44 @@ function NavbarFooterVisibility() {
 	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService'];
 	const showNavbarFooter = showInRoute.includes(path);
 
-  const footer = document.getElementById('custom-footer');
-  const navbar = document.getElementById('navbar');
+	const footer = document.getElementById('custom-footer');
+	const navbar = document.getElementById('navbar');
 
-  if (showNavbarFooter) {
-    footer.classList.remove('hidden');
-    navbar.classList.remove('hidden');
-  }
+	if (showNavbarFooter) {
+		footer.classList.remove('hidden');
+		navbar.classList.remove('hidden');
+	}
 }
 
 function updateNavbarDropdown() {
-  var dropdownMenu = document.getElementById("navbar-dropdown-menu");
+	var dropdownMenu = document.getElementById("navbar-dropdown-menu");
 
-  var condition = checkConnected();
+	var condition = checkConnected();
 
-  if (condition) {
-    dropdownMenu.innerHTML = `
-            <li><a class="dropdown-item" href="/profile">settings</a></li>
-            <li><a class="dropdown-item" href="/friends">friends</a></li>
+	if (condition) {
+		dropdownMenu.innerHTML = `
+			<li><a class="dropdown-item" href="/profile">settings</a></li>
+			<li><a class="dropdown-item" href="/friends">friends</a></li>
 			<li><a class="dropdown-item" href="/chat">chat</a></li>
 			<li><a class="dropdown-item" href="/play">play</a></li>
-            <li><hr class="dropdown-divider"></li>
+			<li><hr class="dropdown-divider"></li>
 			<li><logout-form></logout-form></li>
-            <li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
+			<li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
 			`;
-		} else {
-			dropdownMenu.innerHTML = `
-            <li><a class="dropdown-item" href="/login">log in</a></li>
-            <li><a class="dropdown-item" href="/register">register</a></li>
+	} else {
+		dropdownMenu.innerHTML = `
+			<li><a class="dropdown-item" href="/login">log in</a></li>
+			<li><a class="dropdown-item" href="/register">register</a></li>
 			`;
-		}
 	}
-	// <li><a class="dropdown-item" href="/logout">log out</a></li>
+}
+		// <li><a class="dropdown-item" href="/logout">log out</a></li>
 
 function checkConnected() {
-
-  if (Icookies.getCookie('token')) {
-    return true;
-  }
-  return false;
+	if (Icookies.getCookie('token')) {
+		return true;
+	}
+	return false;
 }
 
 
@@ -197,29 +213,22 @@ async function router() {
   NavbarFooterVisibility();
   updateNavbarDropdown();
 
-  if (view) {
-    document.title = pageTitle + " | " + view.title;
-    let result = await view.render(view.params);
-
-    // console.log('route', result);
-
-    if (result.includes("pong-renderer")) {
-      await setup("remote");
-    }
-
-    //Clear the app content
-    app.innerHTML = '';
-    if (typeof result === 'string') {
-      // If it's a string, user innerHTML
-      app.innerHTML = result;
-    } else if (result instanceof Node) {
-      // If it's a Node, use appendChild
-      app.appendChild(result);
-    } else {
-      // If it's neither, create a text node and append it
-      let textNode = document.createTextNode(String(result));
-      app.appendChild(textNode);
-    }
+	if (view) {
+		document.title = pageTitle + " | " + view.title;
+		let result = await view.render(view.params);	
+		//Clear the app content
+		app.innerHTML = '';
+		if (typeof result === 'string') {
+			// If it's a string, user innerHTML
+			app.innerHTML = result;
+		} else if (result instanceof Node) {
+			// If it's a Node, use appendChild
+			app.appendChild(result);
+		} else {
+			// If it's neither, create a text node and append it
+			let textNode = document.createTextNode(String(result));
+			app.appendChild(textNode);
+		}
 
   } else {
     history.replaceState("", "", "/404");
