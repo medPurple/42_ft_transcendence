@@ -262,9 +262,9 @@ export function populateWall(player_id) {
 	}
 	else
 		wall.position.z = 380;
-		wall.rotateY(Math.PI / 2);
-		wall.rotateZ(Math.PI / 2);
-		wall.receiveShadow = true;
+	wall.rotateY(Math.PI / 2);
+	wall.rotateZ(Math.PI / 2);
+	wall.receiveShadow = true;
 
 	return wall;
 }

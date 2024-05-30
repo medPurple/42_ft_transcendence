@@ -2,7 +2,7 @@ import gamer from "./gamerInfo.js"
 import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
-import { onKeyUp, onKeyDown } from './inputEvents.js'
+import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
 
@@ -42,8 +42,14 @@ export async function createScene() {
 	}
 	c.appendChild(core.renderer.domElement);
 
-	window.addEventListener('keydown', onKeyDown, false);
-	window.addEventListener('keyup', onKeyUp, false);
+	if (gameState.game_mode == "remote") {
+		window.addEventListener('keydown', onKeyDownRemote, false);
+		window.addEventListener('keyup', onKeyUpRemote, false);
+	}
+	else {
+		window.addEventListener('keydown', onKeyDownLocal, false);
+		window.addEventListener('keyup', onKeyUpLocal, false);
+	}
 
   //Scene setup
 
@@ -99,9 +105,13 @@ export async function createScene() {
   // Wall setup
 
 	decMesh.wall = populateWall(core.player_id);
+	if (gameState.game_mode == "local")
+		decMesh.wall2 = populateWall(1);
+
 
   // Props setup
 
+  //if (gameState.game_mode == "remote")
 	populateAssets();
 
   // Powerups setup
@@ -122,6 +132,8 @@ export async function createScene() {
 	core.scene.add(decMesh.table);
 	core.scene.add(decMesh.plane);
 	core.scene.add(decMesh.wall);
+	if (gameState.game_mode == "local")
+		core.scene.add(decMesh.wall2);
 	core.scene.add(decMesh.ground);
 	core.scene.add(core.camera);
 

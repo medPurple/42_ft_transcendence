@@ -203,23 +203,23 @@ async function router() {
 
     // console.log('route', result);
 
-		if (result.includes("pong-renderer")) {
-			setup();
-		}
-	
-		//Clear the app content
-		app.innerHTML = '';
-		if (typeof result === 'string') {
-			// If it's a string, user innerHTML
-			app.innerHTML = result;
-		} else if (result instanceof Node) {
-			// If it's a Node, use appendChild
-			app.appendChild(result);
-		} else {
-			// If it's neither, create a text node and append it
-			let textNode = document.createTextNode(String(result));
-			app.appendChild(textNode);
-		}
+    if (result.includes("pong-renderer")) {
+      await setup("remote");
+    }
+
+    //Clear the app content
+    app.innerHTML = '';
+    if (typeof result === 'string') {
+      // If it's a string, user innerHTML
+      app.innerHTML = result;
+    } else if (result instanceof Node) {
+      // If it's a Node, use appendChild
+      app.appendChild(result);
+    } else {
+      // If it's neither, create a text node and append it
+      let textNode = document.createTextNode(String(result));
+      app.appendChild(textNode);
+    }
 
   } else {
     history.replaceState("", "", "/404");

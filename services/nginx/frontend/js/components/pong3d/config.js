@@ -18,6 +18,7 @@ export var gameState = {
 	powerup_positionY: 0,
 	powerup_status: 0,
 	powerup_type: 0,
+	game_mode: 0,
 	active: 0
 }
 
@@ -59,6 +60,7 @@ export var decMesh = {
 	plane: 0,
 	table: 0,
 	wall: 0,
+	wall2: 0
 }
 
 export var objMesh = {
