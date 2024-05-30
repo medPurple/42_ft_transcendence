@@ -45,15 +45,15 @@ async function setup(gameMode) {
 			break;
 	}
 
-	core.gameSocket.onopen = function(e) {
+	core.gameSocket.onopen = async function(e) {
 		console.log('Connected');
 	};
 
-	core.gameSocket.onerror = function(e) {
+	core.gameSocket.onerror = async function(e) {
 		console.log('Error');
 	};
 
-	core.gameSocket.onclose = function(e) {
+	core.gameSocket.onclose = async function(e) {
 		console.log('Closed');
 	};
 
@@ -95,7 +95,7 @@ async function handleServerMessage(message) {
 		if (key == "paddle2.positionX")
 			playMesh.paddle2.position.x = value;
 		if (key == "paddle2.positionY")
-		playMesh.paddle2.position.y = value;
+			playMesh.paddle2.position.y = value;
 		if (key == "paddle2.width")
 			gameState.paddle2_width = value;
 		if (key == "paddle2.powerup")

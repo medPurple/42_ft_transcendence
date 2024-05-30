@@ -1,6 +1,8 @@
 import {pongRemoteMatchmaking, pongTournamentMatchmaking, pkmRemoteMatchmaking, pkmTournamentMatchmaking} from "../components/matchmaking/matchmakingClass.js";
 import {pokeMap} from "../components/pokemon/pokemap.js";
 import Icookies from "../components/cookie/cookie.js"
+import { setup } from "../components/pong3d/pongServLogic.js";
+
 
 export async function pong_localplay() {
     const generaldiv = document.createElement('div');
@@ -9,7 +11,7 @@ export async function pong_localplay() {
     const scorediv = document.createElement('div');
     scorediv.id = "pong-score"
     if (Icookies.getCookie('token') != null) {
-        setup("local");
+		await setup("local");
     } else {
         generaldiv.classList.add('not-logged');
         generaldiv.innerText = 'You need to be logged in to play';
