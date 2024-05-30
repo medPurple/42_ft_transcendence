@@ -60,13 +60,13 @@ const routes = {
 		title: "Pong Settings",
 		render: pongSettings
 	},
-	'/pongEnd/:player': {
-		title: "Pong End",
-		render: async (params) => {
-			let winner = params.player;
-			return await pongEnd(winner);
-		}
-	},
+	// '/pongEnd/:player': {
+	// 	title: "Pong End",
+	// 	render: async (params) => {
+	// 		let winner = params.player;
+	// 		return await pongEnd(winner);
+	// 	}
+	// },
 	'/metaService': {
 		title: "Meta Service",
 		render: metaService
