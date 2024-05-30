@@ -45,15 +45,15 @@ async function setup(gameMode) {
 			break;
 	}
 
-	core.gameSocket.onopen = async function(e) {
+	core.gameSocket.onopen = function(e) {
 		console.log('Connected');
 	};
 
-	core.gameSocket.onerror = async function(e) {
+	core.gameSocket.onerror = function(e) {
 		console.log('Error');
 	};
 
-	core.gameSocket.onclose = async function(e) {
+	core.gameSocket.onclose = function(e) {
 		console.log('Closed');
 	};
 
