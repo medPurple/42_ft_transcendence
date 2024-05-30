@@ -86,12 +86,9 @@ export var pUpState = {
 }
 
 export const constants = {
-	// WIDTH: 640,
-	// HEIGHT: 426,
-	// ASPECT: 640 / 426,
-	WIDTH: 800, 
+	WIDTH: 1280, 
 	HEIGHT: 600,
-	ASPECT: 800 / 600,
+	ASPECT: 1280 / 600,
 	VIEW_ANGLE: 75,
 	NEAR: 0.1,
 	FAR: 10000,
