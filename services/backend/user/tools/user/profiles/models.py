@@ -16,6 +16,9 @@ class	CustomUser(AbstractUser):
 	last_name = models.CharField(max_length=200, null=True)
 	is_online = models.BooleanField(default=False)
 	friends = models.ManyToManyField("CustomUser", blank=True)
+	is_2fa = models.BooleanField(default=False)
+	otp = models.CharField(max_length=10, blank=True)
+	otp_expiry_time = models.DateTimeField(blank=True, null=True)
 
 @receiver(pre_save, sender=CustomUser)
 def set_default_pp(sender, instance, **kwargs):

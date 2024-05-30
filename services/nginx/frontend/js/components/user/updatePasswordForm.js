@@ -18,7 +18,7 @@ export default class updatePasswordForm extends HTMLElement {
 				<input type="password" name="new_password1" label="New Password" placeholder="New Password">
 			</div>
 			<div class="mb-4">
-				<input type="password" name="new_password2 label="Confirm Password" placeholder="Confirm Password">
+				<input type="password" name="new_password2" label="Confirm Password" placeholder="Confirm Password">
 			</div>
 			<div class="mb-4">
 				<button type="submit" class="btn btn-dark">Save changes</button>

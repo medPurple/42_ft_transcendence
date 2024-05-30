@@ -17,7 +17,7 @@ class CustomUserEditForm(forms.ModelForm):
 
 	class Meta:
 		model = CustomUser
-		fields = ['profile_picture', 'username', 'email', 'first_name', 'last_name']
+		fields = ['profile_picture', 'username', 'email', 'first_name', 'last_name', 'is_2fa']
 
 
 class CustomUserPasswordForm(SetPasswordForm):

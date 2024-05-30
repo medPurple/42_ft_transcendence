@@ -12,6 +12,8 @@ export default class LoginForm extends HTMLElement{
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
+		<div id="alert-container"></div>
+
 		<form id="login-form" method="post" action="" class="container">
 		<div class="mb-4">
 			<input type="text" name="username" placeholder="Username">
@@ -26,8 +28,18 @@ export default class LoginForm extends HTMLElement{
 		`;
 	}
 
+	showAlert(message, type = 'danger') {
+		const alertContainer = this.shadowRoot.getElementById('alert-container');
+		alertContainer.innerHTML = `
+			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+				${message}
+			</div>`;
+
+	}
+
 	connectedCallback() {
 		const signupForm = this.shadowRoot.getElementById('login-form'); // Use getElementById to find the form within the component
+		const showAlert = this.showAlert.bind(this);
 		signupForm.addEventListener('submit', function(event) {
 			event.preventDefault();
 
@@ -44,15 +56,16 @@ export default class LoginForm extends HTMLElement{
 			})
 			.then(response => response.json())
 			.then(data => {
+				if (data.two_fa) {
+					window.location.href = '/code2FA';
+				}
 				if (data.success) {
-					
 					Icookies.setCookie('token', data.token, 90);
-                     // Redirect to the home page
-					 window.location.href = '/home'; // Change the URL to your home page URL
+					window.location.href = '/home'; // Change the URL to your home page URL
 
 				} else {
                     // Display validation errors or any other error message
-					alert('Login failed. Please check the form and try again.');
+					showAlert('Login failed. Please check the form and try again.')
 				}
 			})
 			.catch(error => {

@@ -11,6 +11,7 @@ import pongSettings from "./views/pong3d/pongSettings.js";
 import metaService from "./views/pokemon/metaService.js";
 // import pokemap from "./views/pokemon/pokemap.js";
 import userService from "./views/user/userService.js";
+import code2FA from "./views/user/code2FA.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
@@ -70,6 +71,10 @@ const routes = {
 	'/login': {
 		title: "Log In",
 		render: login
+	},
+	'/code2FA': {
+		title: "2FA",
+		render: code2FA
 	},
 	'/profile': {
 		title: "Profile",

@@ -146,9 +146,9 @@ clean : down
 	@ if [ $(MA_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(MA_NAME); \
 	else echo "	MATCHMAKING Volume already deleted"; fi;
 	@ if [ $(CH_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(CH_NAME); \
-	else echo "	user Volume already deleted"; fi;
-	@ if [ $(PM_VOL) = "1" ]; then docker volume rm services_$(PM_NAME); \
 	else echo "	CHAT Volume already deleted"; fi;
+	@ if [ $(PM_VOL) = "1" ]; then docker volume rm services_$(PM_NAME); \
+	else echo "	POKEMAP Volume already deleted"; fi;
 
 # Weird volumes created somewhere using secret volume?
 	@ docker system prune -af
