@@ -240,7 +240,6 @@ export class Friends {
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
-		// console.error(dataUsers);
 
 		this.ulElement.innerHTML = ''; // Clear the list before populating it
 
