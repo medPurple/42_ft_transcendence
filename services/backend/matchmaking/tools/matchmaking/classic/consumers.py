@@ -19,6 +19,7 @@ class QueueConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
         logger.info('Connected')
+        self.send(json.dumps({'connected': True}))
 
 
     def disconnect(self, close_code):
@@ -101,14 +102,17 @@ class QueueConsumer(WebsocketConsumer):
         self.send(json_data)
 
     def leave(self, data):
-        instance = get_object_or_404(WaitingModel, userID=data['id'])
-        if instance.game == 'pkm_multiplayer' and instance in pokemon_queue:
-            pokemon_queue.remove(instance)
-        elif instance.game == 'pong_multiplayer' and instance in pong_queue:
-            pong_queue.remove(instance)
-        elif instance.game == 'pong_tournament' and instance in pong_tournament_queue:
-            pong_tournament_queue.remove(instance)
-        instance.delete()
+        try :
+            instance = get_object_or_404(WaitingModel, userID=data['id'])
+            if instance.game == 'pkm_multiplayer' and instance in pokemon_queue:
+                pokemon_queue.remove(instance)
+            elif instance.game == 'pong_multiplayer' and instance in pong_queue:
+                pong_queue.remove(instance)
+            elif instance.game == 'pong_tournament' and instance in pong_tournament_queue:
+                pong_tournament_queue.remove(instance)
+            instance.delete()
+        except Exception as e:
+            pass
 
     def check_queue(self):
         logger.info('Checking pokemon queue')
@@ -137,5 +141,8 @@ class QueueConsumer(WebsocketConsumer):
         player2.save()
 
     def delete(self, data):
-        instance = get_object_or_404(WaitingModel, userID=data['id'])
-        instance.delete()
+        try:    
+            instance = get_object_or_404(WaitingModel, userID=data['id'])
+            instance.delete()
+        except Exception as e:
+            pass

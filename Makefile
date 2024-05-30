@@ -146,18 +146,14 @@ clean : down
 	@ if [ $(MA_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(MA_NAME); \
 	else echo "	MATCHMAKING Volume already deleted"; fi;
 	@ if [ $(CH_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(CH_NAME); \
-	else echo "	user Volume already deleted"; fi;
-	@ if [ $(PM_VOL) = "1" ]; then docker volume rm services_$(PM_NAME); \
 	else echo "	CHAT Volume already deleted"; fi;
+	@ if [ $(PM_VOL) = "1" ]; then docker volume rm services_$(PM_NAME); \
+	else echo "	POKEMAP Volume already deleted"; fi;
 
 # Weird volumes created somewhere using secret volume?
 	@ docker system prune -af
 	@ docker volume prune -f
 # after prune, the secret volume is still there!
-
-	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL_NAME); \
-	else echo "	VAULT Volume already deleted"; fi;
-
 
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 

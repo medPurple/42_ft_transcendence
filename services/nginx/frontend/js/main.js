@@ -6,10 +6,12 @@ import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
 import pongService from "./views/pong3d/pongService.js";
-import gameService from "./views/pong3d/gameService.js";
+import game from "./views/game.js";
 import pongSettings from "./views/pong3d/pongSettings.js";
-import metaService from "./views/metaService.js";
+import metaService from "./views/pokemon/metaService.js";
+// import pokemap from "./views/pokemon/pokemap.js";
 import userService from "./views/user/userService.js";
+import code2FA from "./views/user/code2FA.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
 import login from "./views/user/login.js";
@@ -19,10 +21,9 @@ import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
-import play from "./views/play.js";
+import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
-import { setup } from "./components/pong3d/pongServLogic.js";
 import "./components/user/logoutForm.js";
 
 // Define the routes
@@ -53,7 +54,7 @@ const routes = {
 	},
 	'/gameService': {
 		title: "Game Service",
-		render: gameService
+		render: game
 	},
 	'/pongSettings': {
 		title: "Pong Settings",
@@ -70,6 +71,10 @@ const routes = {
 	'/login': {
 		title: "Log In",
 		render: login
+	},
+	'/code2FA': {
+		title: "2FA",
+		render: code2FA
 	},
 	'/profile': {
 		title: "Profile",
@@ -99,9 +104,21 @@ const routes = {
             return await friendsProfile(username);
         }
 	},
-	'/play': {
-		title: "Play",
-		render: play
+	'/play_pr': {
+		title: "Pong Remote Play",
+		render: pong_remoteplay
+	},
+	'/play_pt': {
+		title: "Pong Tournament Play",
+		render: pong_tournamentplay
+	},
+	'/play_pkr': {
+		title: "Pokemon Remote Play",
+		render: pkm_remoteplay
+	},
+	'/pokemap': {
+		title: "Pokemon Map",
+		render: pokemap_interactive
 	},
 	'/chat': {
 		title: "Chat",
@@ -118,22 +135,22 @@ function NavbarFooterVisibility() {
 	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService'];
 	const showNavbarFooter = showInRoute.includes(path);
 
-	const footer = document.getElementById('custom-footer');
-	const navbar = document.getElementById('navbar');
+  const footer = document.getElementById('custom-footer');
+  const navbar = document.getElementById('navbar');
 
-	if (showNavbarFooter) {
-		footer.classList.remove('hidden');
-		navbar.classList.remove('hidden');
-	}
+  if (showNavbarFooter) {
+    footer.classList.remove('hidden');
+    navbar.classList.remove('hidden');
+  }
 }
 
 function updateNavbarDropdown() {
-    var dropdownMenu = document.getElementById("navbar-dropdown-menu");
+  var dropdownMenu = document.getElementById("navbar-dropdown-menu");
 
-    var condition = checkConnected();
+  var condition = checkConnected();
 
-    if (condition) {
-        dropdownMenu.innerHTML = `
+  if (condition) {
+    dropdownMenu.innerHTML = `
             <li><a class="dropdown-item" href="/profile">settings</a></li>
             <li><a class="dropdown-item" href="/friends">friends</a></li>
 			<li><a class="dropdown-item" href="/chat">chat</a></li>
@@ -153,60 +170,53 @@ function updateNavbarDropdown() {
 
 function checkConnected() {
 
-	if (Icookies.getCookie('token')){
-		return true;
-	}
-	return false;
+  if (Icookies.getCookie('token')) {
+    return true;
+  }
+  return false;
 }
 
 
 async function router() {
-	let path = location.pathname;
-	let view = null;
+  let path = location.pathname;
+  let view = null;
 
-	for (let route in routes) {
-		let params = {}
-		if (route.includes(':')) {
-			let routeParts = route.split('/');
-			let pathParts = path.split('/');
-			if (routeParts.length === pathParts.length) {
-				let match = true;
-				for (let i = 0; i < routeParts.length; i++) {
-					if (routeParts[i].startsWith(':')) {
-						params[routeParts[i].substring(1)] = pathParts[i];
-					} else if (routeParts[i] !== pathParts[i]) {
-						match = false;
-						break;
-					}
-				}
-				if (match) {
-					view = routes[route];
-					view.params = params;
-					break;
-				}
-			}
-		} else if (route === path) {
-			view = routes[route];
-			view.params = params;
-			break;
-		}
-	}
+  for (let route in routes) {
+    let params = {}
+    if (route.includes(':')) {
+      let routeParts = route.split('/');
+      let pathParts = path.split('/');
+      if (routeParts.length === pathParts.length) {
+        let match = true;
+        for (let i = 0; i < routeParts.length; i++) {
+          if (routeParts[i].startsWith(':')) {
+            params[routeParts[i].substring(1)] = pathParts[i];
+          } else if (routeParts[i] !== pathParts[i]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          view = routes[route];
+          view.params = params;
+          break;
+        }
+      }
+    } else if (route === path) {
+      view = routes[route];
+      view.params = params;
+      break;
+    }
+  }
 
-	const pageTitle = "Transcendence";
+  const pageTitle = "Transcendence";
 
-	NavbarFooterVisibility();
-	updateNavbarDropdown();
+  NavbarFooterVisibility();
+  updateNavbarDropdown();
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
-		let result = await view.render(view.params);
-
-				// console.log('route', result);
-
-		if (result.includes("pong-renderer")) {
-			setup();
-		}
-	
+		let result = await view.render(view.params);	
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
@@ -221,18 +231,18 @@ async function router() {
 			app.appendChild(textNode);
 		}
 
-	} else {
-		history.replaceState("", "", "/404");
-		router();
-	}
+  } else {
+    history.replaceState("", "", "/404");
+    router();
+  }
 }
 // Handle navigation
 window.addEventListener("click", (e) => {
-	if (e.target.matches("[data-link]")) {
-		e.preventDefault();
-		history.pushState("", "", e.target.href);
-		router();
-	}
+  if (e.target.matches("[data-link]")) {
+    e.preventDefault();
+    history.pushState("", "", e.target.href);
+    router();
+  }
 });
 
 // Update router

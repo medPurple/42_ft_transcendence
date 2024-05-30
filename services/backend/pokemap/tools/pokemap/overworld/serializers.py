@@ -8,11 +8,11 @@ class PlayerModelSerializer(serializers.ModelSerializer):
     active = serializers.BooleanField(read_only=True)
     class Meta:
         model = player
-        fields = ['userID', 'posX', 'posY', 'orientation', 'active']
+        fields = ['userID', 'posX', 'posY', 'orientation', 'active', 'player_skin', 'player_map', 'player_status']
 
 
 class editplayerModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = player
-        fields = ['userID', 'posX', 'posY', 'orientation', 'active']
+        fields = ['userID', 'posX', 'posY', 'orientation', 'active', 'player_skin', 'player_map', 'player_status']
         read_only_fields = ['userID']

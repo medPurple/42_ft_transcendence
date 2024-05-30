@@ -23,7 +23,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
 				'email',
 				'first_name',
 				'last_name',
-				'is_online')
+				'is_online',
+				'is_2fa')
 
 	def get_profile_picture_data(self, obj):
 		# get binary data of image

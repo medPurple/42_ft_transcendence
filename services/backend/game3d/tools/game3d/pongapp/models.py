@@ -14,30 +14,44 @@ class GameUser(models.Model):
 
 # GAME SETTINGS MODEL
 class GameSettings(models.Model):
-	SCENE_CHOICES = {
-		"P": "Playground",
-		"C": "Cornfield",
-		"D": "Dorm",
+	SCENES = {
+		0: "Playground",
+		1: "Cornfield",
+		2: "Dorm",
 	}
 
-	SCORE_CHOICES = {
+	BALLS = {
+		0: "Gold",
+		1: "Silver",
+		2: "Diamond",
+	}
+
+	PADDLES = {
+		0: "Guard A",
+		1: "Guard B",
+		2: "Player A",
+		3: "Player B",
+		4: "Boss",
+	}
+
+	TABLES = {
+		0: "Metal",
+		1: "Concrete",
+		2: "Wooden",
+	}
+
+	SCORES = {
 		7: "7",
 		11: "11",
 		17: "17",
 	}
 
-	TYPE_CHOICES = {
-		0: "0",
-		1: "1",
-		2: "2",
-	}
-
 	user = models.ForeignKey(GameUser, on_delete=models.CASCADE)
-	scene = models.CharField(max_length=100, choices=SCENE_CHOICES, default="Cornfield")
-	ball = models.IntegerField(choices=TYPE_CHOICES, default=1)
-	paddle = models.IntegerField(choices=TYPE_CHOICES, default=1)
-	table = models.IntegerField(choices=TYPE_CHOICES, default=1)
-	score = models.IntegerField(choices=SCORE_CHOICES, default=11)
+	scene = models.IntegerField(choices=SCENES, default="Playground")
+	ball = models.IntegerField(choices=BALLS, default=1)
+	paddle = models.IntegerField(choices=PADDLES, default=3)
+	table = models.IntegerField(choices=TABLES, default=1)
+	score = models.IntegerField(choices=SCORES, default=7)
 	powerups = models.BooleanField(default=False)
 
 	def __str__(self):
@@ -45,9 +59,9 @@ class GameSettings(models.Model):
 
 class GameMatch(models.Model):
 	GAME = {
-		0: "not_started",
-		1: "playing",
-		2: "finished",
+		0: "Not_Started",
+		1: "Playing",
+		2: "Finished",
 	}
 
 	player1 = models.ForeignKey(GameUser, on_delete=models.PROTECT, related_name='matches_as_player1')

@@ -1,184 +1,270 @@
-import { constants, gameCustom } from "./config.js"
+import { constants, gameCustom, palette } from "./config.js"
 
-function setPhysicalMaterial(color, metalness, roughness, iridescence, iridescenceIOR) {
+function setPhysicalMaterial(color, metalness, roughness, iridescence, iridescenceIOR, transmission) {
 
-  var physMaterial = new THREE.MeshPhysicalMaterial({
-    color: color, roughness: roughness,
-    metalness: metalness, iridescence: iridescence, iridescenceIOR: iridescenceIOR
-  })
-  return physMaterial;
+	var physMaterial = new THREE.MeshPhysicalMaterial({
+		color: color, roughness: roughness,
+		metalness: metalness, iridescence: iridescence,
+		iridescenceIOR: iridescenceIOR
+	})
+	physMaterial.transmission = transmission;
+	return physMaterial;
 }
 
 function setStandardMaterial(color, metalness, roughness) {
 
-  var stanMaterial = new THREE.MeshStandardMaterial({
-    color: color, roughness: roughness,
-    metalness: metalness
-  })
-  return stanMaterial;
+	var stanMaterial = new THREE.MeshStandardMaterial({
+		color: color, roughness: roughness,
+		metalness: metalness
+	})
+	return stanMaterial;
 }
 
 function setLambertMaterial(color) {
 
-  var lambMaterial = new THREE.MeshLambertMaterial({
-    color: color
-  })
-  return lambMaterial;
+	var lambMaterial = new THREE.MeshLambertMaterial({
+		color: color
+	})
+	return lambMaterial;
 }
 
-export function populatePaddle(color, posX, posY) {
+export function populateSelfPaddle(posX, posY) {
 
-  //var paddleMaterial = setLambertMaterial(color);
-  var paddleMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 0);
-  //var paddleMaterial = setStandardMaterial(color);
+	var paddleMaterial;
 
-  var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
+	// console.log('PADDLE SELF in populate my paddle: ',gameCustom.ownPaddle);/////////
 
-  paddle.position.x = posX;
-  paddle.position.y = posY;
-  paddle.position.z = constants.paddleDepth;
-  paddle.receiveShadow = true;
-  paddle.castShadow = true;
+	switch (gameCustom.ownPaddle) {
+		case 0:
+			paddleMaterial = setPhysicalMaterial(palette.rose01, 1, 0.5, 0, 0, 0);
+			break;
+		case 1:
+			paddleMaterial = setPhysicalMaterial(palette.rose02, 1, 0.5, 0, 0, 0);
+			break;
+		case 2:
+			paddleMaterial = setPhysicalMaterial(palette.blue03, 1, 0.2, 0, 0, 0);
+			break;
+		case 3:
+			paddleMaterial = setPhysicalMaterial(palette.blue04, 1, 0.5, 1, 1.7, 0);
+			break;
+		default:
+			paddleMaterial = setStandardMaterial(palette.black, 1, 0.7);
+			break;
+	}
 
-  return paddle;
+	var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
+
+	paddle.position.x = posX;
+	paddle.position.y = posY;
+	paddle.position.z = constants.paddleDepth;
+	paddle.receiveShadow = true;
+	paddle.castShadow = true;
+
+	return paddle;
 }
 
-export function populateBall(color, posX, posY) {
+export function populateOtherPaddle(posX, posY) {
 
-  var radius = 5, segments = 6, rings = 6;
+	var paddleMaterial;
 
-  // switch (gameCustom.ball) {
-  //   case 0
-  // }
-  var ballMaterial = new THREE.MeshLambertMaterial({ color: color });
+	if (gameCustom.otherPaddle == gameCustom.ownPaddle) {
+		if (gameCustom.ownPaddle == 4)
+			gameCustom.otherPaddle = 1;
+		else
+			gameCustom.otherPaddle = 4;
+	}
 
-  var ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), ballMaterial);
+	// console.log('PADDLE ENEMY in populate other paddle: ', gameCustom.otherPaddle);/////////
 
-  ball.position.x = posX;
-  ball.position.y = posY;
-  ball.position.z = radius;
-  ball.receiveShadow = true;
-  ball.castShadow = true;
+	switch (gameCustom.otherPaddle) {
+		case 0:
+			paddleMaterial = setPhysicalMaterial(palette.rose01, 1, 0.5, 0, 0, 0);
+			break;
+		case 1:
+			paddleMaterial = setPhysicalMaterial(palette.rose02, 1, 0.5, 0, 0, 0);
+			break;
+		case 2:
+			paddleMaterial = setPhysicalMaterial(palette.blue03, 1, 0.2, 0, 0, 0);
+			break;
+		case 3:
+			paddleMaterial = setPhysicalMaterial(palette.blue04, 1, 0.5, 1, 1.7, 0);
+			break;
+		default:
+			paddleMaterial = setStandardMaterial(palette.black, 1, 0.7);
+			break;
+	}
 
-  return ball;
+	var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
+
+	paddle.position.x = posX;
+	paddle.position.y = posY;
+	paddle.position.z = constants.paddleDepth;
+	paddle.receiveShadow = true;
+	paddle.castShadow = true;
+
+	return paddle;
 }
 
-export function populatePlane(color, posX, posY) {
 
-  var planeMaterial = new THREE.MeshLambertMaterial({ color: color });
-  //var planeMaterial = setPhysicalMaterial(color, 1, 0.2, 0, 0);
+export function populateBall(posX, posY) {
 
-  var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight, constants.planeQuality, constants.planeQuality), planeMaterial);
-  plane.position.x = posX;
-  plane.position.y = posY;
-  plane.receiveShadow = true;
+	var radius = 5, segments = 6, rings = 6;
+	var ballMaterial;
 
-  return plane;
+	// console.log('BALL in populate ball: ',gameCustom.ball);///////////////
+
+	switch (gameCustom.ball) {
+		case 0:
+			ballMaterial = setLambertMaterial(palette.yellow);
+			break;
+		case 1:
+			ballMaterial = setLambertMaterial(palette.white);
+			break;
+		default:
+			ballMaterial = setLambertMaterial(palette.blue01);
+			break;
+	}
+
+	var ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), ballMaterial);
+
+	ball.position.x = posX;
+	ball.position.y = posY;
+	ball.position.z = radius;
+	ball.receiveShadow = true;
+	ball.castShadow = true;
+
+	return ball;
+}
+
+export function populatePlane(posX, posY) {
+
+	var planeMaterial;
+
+	// console.log('TABLE in populate plane: ',gameCustom.table);///////////
+
+	switch (gameCustom.table) {
+		case 0:
+			planeMaterial = setPhysicalMaterial(palette.kaki, 1, 0.7, 0, 0, 0);
+			break;
+		case 1:
+			planeMaterial = setPhysicalMaterial(palette.grey, 1, 0.7, 0, 0, 0);
+			break;
+		default:
+			planeMaterial = setPhysicalMaterial(palette.brown, 1, 0.7, 1, 1.7, 0);
+			break;
+	}
+
+	var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight, constants.planeQuality, constants.planeQuality), planeMaterial);
+
+	plane.position.x = posX;
+	plane.position.y = posY;
+	plane.receiveShadow = true;
+
+	return plane;
 }
 
 export function populateTable(color, posX, posY, posZ) {
 
-  var tableMaterial = new THREE.MeshLambertMaterial({ color: color });
+	var tableMaterial = new THREE.MeshLambertMaterial({ color: color });
 
-  var table = new THREE.Mesh(new THREE.BoxGeometry(constants.tableWidth, constants.tableHeight, constants.tableQuality, constants.tableQuality, 1), tableMaterial);
-  table.position.x = posX;
-  table.position.y = posY;
-  table.position.z = posZ;
-  table.receiveShadow = true;
+	var table = new THREE.Mesh(new THREE.BoxGeometry(constants.tableWidth, constants.tableHeight, constants.tableQuality, constants.tableQuality, 1), tableMaterial);
+	table.position.x = posX;
+	table.position.y = posY;
+	table.position.z = posZ;
+	table.receiveShadow = true;
+	//table.castShadow = true;
 
-  return table;
+	return table;
 }
 
 export function populateFloor() {
 
-  const groundTexLoader = new THREE.TextureLoader();
+	const groundTexLoader = new THREE.TextureLoader();
 
-  var path = '../../../images/Floor/FL_RedCarpet.png';
+	var path;
 
-  switch (gameCustom.map) {
-    case 0:
-      path = '../../../images/Floor/F-Cornfield.jpg';
-      break;
-    case 1:
-      path = '../../../images/Floor/F-Playground.jpg';
-      break;
-    default:
-      path = '../../../images/Floor/F-Concrete.jpg';
-  }
+	// console.log('SCENE in populate floor: ',gameCustom.map);///////////
 
+	switch (gameCustom.map) {
+		case 0:
+			path = '../../../images/Floor/F-Playground.jpg';
+			break;
+		case 1:
+			path = '../../../images/Floor/F-Cornfield.jpg';
+			break;
+		default:
+			path = '../../../images/Floor/F-Concrete.jpg';
+			break;
+	}
 
-  var groundMaterial = new THREE.MeshLambertMaterial({
-    map: groundTexLoader.load(path,
-      function(texture) {
-        texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.ClampToEdgeWrapping;
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        // const repeatX = 2200 / 512;
-        // const repeatY = 2200 / 512;
-        // texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        // texture.repeat.set(repeatX, repeatY);
-        // texture.minFilter = THREE.LinearFilter;
-        // texture.magFilter = THREE.LinearFilter;
-      })
-  });
+	var groundMaterial = new THREE.MeshLambertMaterial({
+		map: groundTexLoader.load(path,
+		function(texture) {
+			texture.wrapS = THREE.ClampToEdgeWrapping;
+			texture.wrapT = THREE.ClampToEdgeWrapping;
+			texture.minFilter = THREE.LinearFilter;
+			texture.magFilter = THREE.LinearFilter;
+			// const repeatX = 2200 / 512;
+			// const repeatY = 2200 / 512;
+			// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+			// texture.repeat.set(repeatX, repeatY);
+			// texture.minFilter = THREE.LinearFilter;
+			// texture.magFilter = THREE.LinearFilter;
+		})
+	});
 
-  var ground = new THREE.Mesh(new THREE.BoxGeometry(constants.groundWidth, constants.groundHeight, constants.groundQuality, 1, 1, 1), groundMaterial);
-  ground.position.z = -132;
-  ground.receiveShadow = true;
+	var ground = new THREE.Mesh(new THREE.BoxGeometry(constants.groundWidth, constants.groundHeight, constants.groundQuality, 1, 1, 1), groundMaterial);
+	ground.position.z = -132;
+	ground.receiveShadow = true;
 
-  return ground;
+	return ground;
 }
 
 export function populateWall(player_id) {
 
-  const wallTexLoader = new THREE.TextureLoader();
+	const wallTexLoader = new THREE.TextureLoader();
 
-  var path;
+	var path;
 
-  switch (gameCustom.map) {
-    case 0:
-      path = '../../../images/Walls/final/W-Cornfield.jpg';
-      break;
-    case 1:
-      path = '../../../images/Walls/final/W-Playground.jpg';
-      break;
-    case 2:
-      path = '../../../images/Walls/final/W-Dorm.jpg';
-      break;
-    case 3:
-      path = '../../../images/Walls/final/W-Tiled.png';
-      break;
-    default:
-      path = '../../../images/Walls/final/W-Tiled2.png'
-  }
+	// console.log('SCENE in populate wall :', gameCustom.map);///////////
 
-  var wallMaterial = new THREE.MeshLambertMaterial({
-    map: wallTexLoader.load(path,
-      function(texture) {
-        texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.ClampToEdgeWrapping;
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-      })
-  });
+	switch (gameCustom.map) {
+		case 0:
+			path = '../../../images/Walls/final/W-Playground.jpg';
+			break;
+		case 1:
+			path = '../../../images/Walls/final/W-Cornfield.jpg';
+			break;
+		default:
+			path = '../../../images/Walls/final/W-Tiled.png';
+			break;
+	}
 
-  var wall = new THREE.Mesh(new THREE.BoxGeometry(constants.wallWidth, constants.wallHeight, constants.wallQuality, 1, 1, 1), wallMaterial);
+	var wallMaterial = new THREE.MeshLambertMaterial({
+		map: wallTexLoader.load(path, function(texture) {
+			texture.wrapS = THREE.ClampToEdgeWrapping;
+			texture.wrapT = THREE.ClampToEdgeWrapping;
+			texture.minFilter = THREE.LinearFilter;
+			texture.magFilter = THREE.LinearFilter;
+		})
+	});
 
-  if (player_id == 1) {
-    wall.position.x = 500;
-  }
-  else {
-    wall.position.x = -500;
-  }
-  if (gameCustom.map == 3) {
-    wall.position.z = 100;
-  }
-  else
-    wall.position.z = 380;
-  wall.rotateY(Math.PI / 2);
-  wall.rotateZ(Math.PI / 2);
-  wall.receiveShadow = true;
+	var wall = new THREE.Mesh(new THREE.BoxGeometry(constants.wallWidth, constants.wallHeight, constants.wallQuality, 1, 1, 1), wallMaterial);
 
-  return wall;
+	if (player_id == 1) {
+		wall.position.x = 500;
+	}
+	else {
+		wall.position.x = -500;
+	}
+	if (gameCustom.map == 2) {
+		wall.position.z = 100;
+	}
+	else
+		wall.position.z = 380;
+		wall.rotateY(Math.PI / 2);
+		wall.rotateZ(Math.PI / 2);
+		wall.receiveShadow = true;
+
+	return wall;
 }

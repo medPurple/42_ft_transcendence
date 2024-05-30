@@ -23,11 +23,11 @@ class GameSettingsAPI(APIView):
 		game_settings, created = GameSettings.objects.get_or_create(
 			user=user,
 			defaults={
-				"scene": "Cornfield",
+				"scene": 0,
 				"ball": 1,
-				"paddle": 1,
+				"paddle": 3,
 				"table": 1,
-				"score": 11,
+				"score": 7,
 				"powerups": False
 			}
 		)

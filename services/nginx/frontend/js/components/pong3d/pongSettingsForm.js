@@ -49,37 +49,39 @@ export default class pongSettingsForm extends HTMLElement {
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="first_name">Scene</label>
 			<select class="form-control" id="scene" name="scene">
-				<option value="P" ${data.scene === 'Playground' ? 'selected' : ''}>Playground</option>
-				<option value="C" ${data.scene === 'Cornfield' ? 'selected' : ''}>Cornfield</option>
-				<option value="D" ${data.scene === 'Dorm' ? 'selected' : ''}>Dorm</option>
+				<option value="0" ${data.scene === 0 ? 'selected' : ''}>Playground</option>
+				<option value="1" ${data.scene === 1 ? 'selected' : ''}>Cornfield</option>
+				<option value="2" ${data.scene === 2 ? 'selected' : ''}>Dormitory</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Ball</label>
 			<select class="form-control" id="ball" name="ball">
-				<option value="0" ${data.ball === 0 ? 'selected' : ''}>Type 0</option>
-				<option value="1" ${data.ball === 1 ? 'selected' : ''}>Type 1</option>
-				<option value="2" ${data.ball === 2 ? 'selected' : ''}>Type 2</option>
+				<option value="0" ${data.ball === 0 ? 'selected' : ''}>Gold</option>
+				<option value="1" ${data.ball === 1 ? 'selected' : ''}>Silver</option>
+				<option value="2" ${data.ball === 2 ? 'selected' : ''}>Diamond</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Paddle</label>
 			<select class="form-control" id="paddle" name="paddle">
-				<option value="0" ${data.paddle === 0 ? 'selected' : ''}>Type 0</option>
-				<option value="1" ${data.paddle === 1 ? 'selected' : ''}>Type 1</option>
-				<option value="2" ${data.paddle === 2 ? 'selected' : ''}>Type 2</option>
+				<option value="0" ${data.paddle === 0 ? 'selected' : ''}>Guard A</option>
+				<option value="1" ${data.paddle === 1 ? 'selected' : ''}>Guard B</option>
+				<option value="2" ${data.paddle === 2 ? 'selected' : ''}>Player A</option>
+				<option value="3" ${data.paddle === 3 ? 'selected' : ''}>Player B</option>
+				<option value="4" ${data.paddle === 4 ? 'selected' : ''}>Boss</option>
 			</select>
 		</div>
 		<div class="row mb-4">
 			<label class="col-sm-3 col-form-label text-start" for="last_name">Table</label>
 			<select class="form-control" id="table" name="table">
-				<option value="0" ${data.table === 0 ? 'selected' : ''}>Type 0</option>
-				<option value="1" ${data.table === 1 ? 'selected' : ''}>Type 1</option>
-				<option value="2" ${data.table === 2 ? 'selected' : ''}>Type 2</option>
+				<option value="0" ${data.table === 0 ? 'selected' : ''}>Metal</option>
+				<option value="1" ${data.table === 1 ? 'selected' : ''}>Concrete</option>
+				<option value="2" ${data.table === 2 ? 'selected' : ''}>Wooden</option>
 			</select>
 		</div>
 		<div class="row mb-4">
-			<label class="col-sm-3 col-form-label text-start" for="last_name">Score</label>
+			<label class="col-sm-3 col-form-label text-start" for="last_name">Points</label>
 			<select class="form-control" id="score" name="score">
 				<option value="7" ${data.score === 7 ? 'selected' : ''}>7</option>
 				<option value="11" ${data.score === 11 ? 'selected' : ''}>11</option>
