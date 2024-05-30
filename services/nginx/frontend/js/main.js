@@ -132,7 +132,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
 	const showNavbarFooter = showInRoute.includes(path);
 
   const footer = document.getElementById('custom-footer');
@@ -170,79 +170,79 @@ function updateNavbarDropdown() {
 
 function checkConnected() {
 
-  if (Icookies.getCookie('token')) {
-    return true;
-  }
-  return false;
+	if (Icookies.getCookie('token')) {
+		return true;
+	}
+	return false;
 }
 
 
 async function router() {
-  let path = location.pathname;
-  let view = null;
+	let path = location.pathname;
+	let view = null;
 
-  for (let route in routes) {
-    let params = {}
-    if (route.includes(':')) {
-      let routeParts = route.split('/');
-      let pathParts = path.split('/');
-      if (routeParts.length === pathParts.length) {
-        let match = true;
-        for (let i = 0; i < routeParts.length; i++) {
-          if (routeParts[i].startsWith(':')) {
-            params[routeParts[i].substring(1)] = pathParts[i];
-          } else if (routeParts[i] !== pathParts[i]) {
-            match = false;
-            break;
-          }
-        }
-        if (match) {
-          view = routes[route];
-          view.params = params;
-          break;
-        }
-      }
-    } else if (route === path) {
-      view = routes[route];
-      view.params = params;
-      break;
-    }
-  }
-
-  const pageTitle = "Transcendence";
-
-  NavbarFooterVisibility();
-  updateNavbarDropdown();
-
-	if (view) {
-		document.title = pageTitle + " | " + view.title;
-		let result = await view.render(view.params);	
-		//Clear the app content
-		app.innerHTML = '';
-		if (typeof result === 'string') {
-			// If it's a string, user innerHTML
-			app.innerHTML = result;
-		} else if (result instanceof Node) {
-			// If it's a Node, use appendChild
-			app.appendChild(result);
-		} else {
-			// If it's neither, create a text node and append it
-			let textNode = document.createTextNode(String(result));
-			app.appendChild(textNode);
+	for (let route in routes) {
+		let params = {}
+		if (route.includes(':')) {
+		let routeParts = route.split('/');
+		let pathParts = path.split('/');
+		if (routeParts.length === pathParts.length) {
+			let match = true;
+			for (let i = 0; i < routeParts.length; i++) {
+			if (routeParts[i].startsWith(':')) {
+				params[routeParts[i].substring(1)] = pathParts[i];
+			} else if (routeParts[i] !== pathParts[i]) {
+				match = false;
+				break;
+			}
+			}
+			if (match) {
+			view = routes[route];
+			view.params = params;
+			break;
+			}
 		}
+		} else if (route === path) {
+		view = routes[route];
+		view.params = params;
+		break;
+		}
+	}
 
-  } else {
-    history.replaceState("", "", "/404");
-    router();
-  }
-}
-// Handle navigation
-window.addEventListener("click", (e) => {
-  if (e.target.matches("[data-link]")) {
-    e.preventDefault();
-    history.pushState("", "", e.target.href);
-    router();
-  }
+	const pageTitle = "Transcendence";
+
+	NavbarFooterVisibility();
+	updateNavbarDropdown();
+
+		if (view) {
+			document.title = pageTitle + " | " + view.title;
+			let result = await view.render(view.params);	
+			//Clear the app content
+			app.innerHTML = '';
+			if (typeof result === 'string') {
+				// If it's a string, user innerHTML
+				app.innerHTML = result;
+			} else if (result instanceof Node) {
+				// If it's a Node, use appendChild
+				app.appendChild(result);
+			} else {
+				// If it's neither, create a text node and append it
+				let textNode = document.createTextNode(String(result));
+				app.appendChild(textNode);
+			}
+
+	} else {
+		history.replaceState("", "", "/404");
+		router();
+	}
+	}
+	// Handle navigation
+	window.addEventListener("click", (e) => {
+	if (e.target.matches("[data-link]")) {
+		e.preventDefault();
+		history.pushState("", "", e.target.href);
+		router();
+	}
 });
 
 // Update router
