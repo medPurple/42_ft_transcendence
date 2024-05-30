@@ -24,16 +24,16 @@ export function onKeyUpRemote(event) {
 
 export function onKeyDownLocal(event) {
   switch (event.keyCode) {
-    case 65:
+    case 87:
       core.gameSocket.send(JSON.stringify({ 'paddleMov1': "left" }))
       break;
-    case 68:
+    case 83:
       core.gameSocket.send(JSON.stringify({ 'paddleMov1': "right" }))
       break;
-    case 37:
+    case 40:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "left" }))
       break;
-    case 39:
+    case 38:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "right" }))
       break;
   }
@@ -41,16 +41,16 @@ export function onKeyDownLocal(event) {
 
 export function onKeyUpLocal(event) {
   switch (event.keyCode) {
-    case 65:
+    case 87:
       core.gameSocket.send(JSON.stringify({ 'paddleMov1': "false" }))
       break;
-    case 68:
+    case 83:
       core.gameSocket.send(JSON.stringify({ 'paddleMov1': "false" }))
       break;
-    case 37:
+    case 40:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "false" }))
       break;
-    case 39:
+    case 38:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "false" }))
       break;
 

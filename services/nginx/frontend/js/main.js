@@ -195,7 +195,7 @@ async function router() {
     // console.log('route', result);
 
     if (result.includes("pong-renderer")) {
-      await setup("local");
+      await setup("remote");
     }
 
     //Clear the app content

@@ -26,3 +26,12 @@ export function cameraLogic2d() {
   core.camera.rotation.z = 0;
   core.camera.rotation.y = 0;
 }
+
+export function cameraLogicLocal() {
+
+  core.camera.position.x = 0;
+  core.camera.position.y = -100;
+  core.camera.position.z = 230;
+  core.camera.rotation.z = -90 * Math.PI / 180;
+  core.camera.rotation.y = -60 * Math.PI / 180;
+}

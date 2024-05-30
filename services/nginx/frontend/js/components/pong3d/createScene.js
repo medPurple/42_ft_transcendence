@@ -82,7 +82,7 @@ export function createScene() {
 
   decMesh.wall = populateWall(core.player_id);
   if (gameState.game_mode == "local")
-    decMesh.wall2 = populateWall(2);
+    decMesh.wall2 = populateWall(1);
 
 
   // Props setup
