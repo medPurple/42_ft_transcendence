@@ -26,11 +26,11 @@ function populateDoll() {
     objMesh.firstAsset.rotateX(Math.PI / 2);
     if (core.player_id == 2) {
       objMesh.firstAsset.position.x = -200;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(135));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(135));
     }
     else {
       objMesh.firstAsset.position.x = 200;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(225));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(225));
     }
     core.scene.add(objMesh.firstAsset);
   })
@@ -48,11 +48,11 @@ function populateTree() {
     objMesh.secondAsset.rotateX(Math.PI / 2);
     if (core.player_id == 2) {
       objMesh.secondAsset.position.x = -400;
-      objMesh.secondAsset.rotateY(THREE.Math.degToRad(135));
+      objMesh.secondAsset.rotateY(THREE.MathUtils.degToRad(135));
     }
     else {
       objMesh.secondAsset.position.x = 400;
-      objMesh.secondAsset.rotateY(THREE.Math.degToRad(250));
+      objMesh.secondAsset.rotateY(THREE.MathUtils.degToRad(250));
 
     }
     core.scene.add(objMesh.secondAsset);
@@ -71,102 +71,67 @@ function populateSlide() {
     objMesh.firstAsset.rotateX(Math.PI / 2);
     if (core.player_id == 2) {
       objMesh.firstAsset.position.x = -350;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(340));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(340));
     }
     else {
       objMesh.firstAsset.position.x = 350;
-      objMesh.firstAsset.rotateY(THREE.Math.degToRad(30));
+      objMesh.firstAsset.rotateY(THREE.MathUtils.degToRad(30));
 
     }
     core.scene.add(objMesh.firstAsset);
   })
 }
 
-// function populateABed(index, positionX, positionY, positionZ, rotation) {
-//
-//   var objLoader = new THREE.GLTFLoader();
-//   objLoader.load('../../../images/3D/Original/bed_squid_game_multiple_slots.glb', function(gltf) {
-//     objMesh.beds[index] = gltf.scene;
-//     objMesh.beds[index].scale.set(20, 20, 20);
-//     objMesh.beds[index].rotateX(Math.PI / 2);
-//     if (core.player_id == 2) {
-//       objMesh.beds[index].position.x = -positionX;
-//       objMesh.beds[index].rotateY(THREE.Math.degToRad(rotation));
-//     }
-//     else {
-//       objMesh.beds[index].position.x = positionX;
-//     }
-//     objMesh.beds[index].position.y = positionY;
-//     objMesh.beds[index].position.z = positionZ;
-//     core.scene.add(objMesh.beds[index]);
-//   });
-// }
+function populateRowBed(count, positionX, positionY, height) {
 
-function populateABed(index, positionX, positionY, positionZ, rotation, scale) {
-
-  var objLoader = new THREE.GLTFLoader();
-  objLoader.load('../../../images/3D/Original/bed_squid_game_multiple_slots.glb', function(gltf) {
-    objMesh.beds[index] = gltf.scene;
-    objMesh.beds[index].scale.set(scale, scale, scale);
-    objMesh.beds[index].rotateX(Math.PI / 2);
-    objMesh.beds[index].rotateY(THREE.Math.degToRad(rotation));
-    objMesh.beds[index].position.x = positionX;
-    objMesh.beds[index].position.y = positionY;
-    objMesh.beds[index].position.z = positionZ;
-    core.scene.add(objMesh.beds[index]);
-  });
-}
-
-// function populateBeds() {
-//
-//   var positionX = 500;
-//   var positionY = -650;
-//   var positionZ = -130;
-//   for (var i = 0; i < 20; i++) {
-//     if (i % 5 == 0) {
-//       positionY += 250;
-//       positionZ = -130;
-//     }
-//     else
-//       positionZ += 62;
-//     populateABed(i, positionX, positionY, positionZ, 180, 20);
-//   }
-// }
-
-function populateRowBeds(bedCounter, positionX, positionY, height) {
-
+  var dummy = new THREE.Object3D();
   var positionZ = -130;
-  for (var i = 0; i < (9 * height); i++, bedCounter++) {
+  for (var i = 0; i < 9 * height; i++, count++) {
     if (i % height == 0) {
       positionX += 100;
       positionZ = -130;
     }
     else
       positionZ += 47.5;
-    populateABed(bedCounter, positionX, positionY, positionZ, 270, 15);
+    dummy.scale.set(15, 15, 15);
+    dummy.position.set(positionX, positionY, positionZ);
+    dummy.rotation.set(THREE.MathUtils.degToRad(180), 0, THREE.MathUtils.degToRad(90));
+    dummy.updateMatrix();
+    objMesh.instancedBed.setMatrixAt(count, dummy.matrix);
   }
 }
 
 function populateBeds() {
 
-  populateRowBeds(0, -500, -600, 3);
-  populateRowBeds(27, -500, -400, 2);
+  var objLoader = new THREE.GLTFLoader();
+  objLoader.load('../../../images/3D/Lightweight/bed.glb', function(gltf) {
+    const loadedBed = gltf.scene;
+    //
+    const bedGeometry2 = loadedBed.children[0].children[1].geometry;
+    const bedMaterial2 = loadedBed.children[0].children[1].material;
+
+    const count = 45;
+    objMesh.instancedBed = new THREE.InstancedMesh(bedGeometry2, bedMaterial2, count);
+    populateRowBed(0, -500, -600, 3);
+    populateRowBed(27, -500, -400, 2);
+    core.scene.add(objMesh.instancedBed);
+  });
 }
 
 
 export function populateAssets() {
+	populateReferee();
 
-  // switch to popAssets according to map 
-  populateReferee();
-  switch (gameCustom.map) {
-    case 0:
-      populateDoll();
-      populateTree();
-      break;
-    case 1:
-      populateSlide();
-      break;
-    default:
-      populateBeds();
-  }
+	switch (gameCustom.map) {
+		case 0:
+			populateSlide();
+			break;
+		case 1:
+			populateDoll();
+			populateTree();
+			break;
+		default:
+			populateBeds();
+			break;
+	}
 }

@@ -43,7 +43,7 @@ export default class profileForm extends HTMLElement {
 				<img src="data:image/jpeg;base64,${profilePictureData}" class="card-img-top profile-pic" alt="Profile Picture">
 				<div class="card-body">
 					<h5 class="card-title">${data.user.username}</h5>
-					<p class="card-text">Description text here to do, something funny about the student</p>
+					<p class="card-text">He is evaluating la Pat Patrouille</p>
 				</div>
 				<ul id="profile-content" class="list-group list-group-flush">
 					<li class="list-group-item">${data.user.first_name}</li>
@@ -60,7 +60,7 @@ export default class profileForm extends HTMLElement {
 					<a href="/delete-account" class="btn btn-light">Delete Profile</a>
 				</div>
 				<div class="card-footer text-body-secondary">
-					2 days ago
+					42 School
 				</div>
 			</div>
 		</div>

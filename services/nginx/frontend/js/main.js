@@ -135,22 +135,22 @@ function NavbarFooterVisibility() {
 	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService'];
 	const showNavbarFooter = showInRoute.includes(path);
 
-	const footer = document.getElementById('custom-footer');
-	const navbar = document.getElementById('navbar');
+  const footer = document.getElementById('custom-footer');
+  const navbar = document.getElementById('navbar');
 
-	if (showNavbarFooter) {
-		footer.classList.remove('hidden');
-		navbar.classList.remove('hidden');
-	}
+  if (showNavbarFooter) {
+    footer.classList.remove('hidden');
+    navbar.classList.remove('hidden');
+  }
 }
 
 function updateNavbarDropdown() {
-    var dropdownMenu = document.getElementById("navbar-dropdown-menu");
+  var dropdownMenu = document.getElementById("navbar-dropdown-menu");
 
-    var condition = checkConnected();
+  var condition = checkConnected();
 
-    if (condition) {
-        dropdownMenu.innerHTML = `
+  if (condition) {
+    dropdownMenu.innerHTML = `
             <li><a class="dropdown-item" href="/profile">settings</a></li>
             <li><a class="dropdown-item" href="/friends">friends</a></li>
 			<li><a class="dropdown-item" href="/chat">chat</a></li>
@@ -170,49 +170,49 @@ function updateNavbarDropdown() {
 
 function checkConnected() {
 
-	if (Icookies.getCookie('token')){
-		return true;
-	}
-	return false;
+  if (Icookies.getCookie('token')) {
+    return true;
+  }
+  return false;
 }
 
 
 async function router() {
-	let path = location.pathname;
-	let view = null;
+  let path = location.pathname;
+  let view = null;
 
-	for (let route in routes) {
-		let params = {}
-		if (route.includes(':')) {
-			let routeParts = route.split('/');
-			let pathParts = path.split('/');
-			if (routeParts.length === pathParts.length) {
-				let match = true;
-				for (let i = 0; i < routeParts.length; i++) {
-					if (routeParts[i].startsWith(':')) {
-						params[routeParts[i].substring(1)] = pathParts[i];
-					} else if (routeParts[i] !== pathParts[i]) {
-						match = false;
-						break;
-					}
-				}
-				if (match) {
-					view = routes[route];
-					view.params = params;
-					break;
-				}
-			}
-		} else if (route === path) {
-			view = routes[route];
-			view.params = params;
-			break;
-		}
-	}
+  for (let route in routes) {
+    let params = {}
+    if (route.includes(':')) {
+      let routeParts = route.split('/');
+      let pathParts = path.split('/');
+      if (routeParts.length === pathParts.length) {
+        let match = true;
+        for (let i = 0; i < routeParts.length; i++) {
+          if (routeParts[i].startsWith(':')) {
+            params[routeParts[i].substring(1)] = pathParts[i];
+          } else if (routeParts[i] !== pathParts[i]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          view = routes[route];
+          view.params = params;
+          break;
+        }
+      }
+    } else if (route === path) {
+      view = routes[route];
+      view.params = params;
+      break;
+    }
+  }
 
-	const pageTitle = "Transcendence";
+  const pageTitle = "Transcendence";
 
-	NavbarFooterVisibility();
-	updateNavbarDropdown();
+  NavbarFooterVisibility();
+  updateNavbarDropdown();
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
@@ -231,18 +231,18 @@ async function router() {
 			app.appendChild(textNode);
 		}
 
-	} else {
-		history.replaceState("", "", "/404");
-		router();
-	}
+  } else {
+    history.replaceState("", "", "/404");
+    router();
+  }
 }
 // Handle navigation
 window.addEventListener("click", (e) => {
-	if (e.target.matches("[data-link]")) {
-		e.preventDefault();
-		history.pushState("", "", e.target.href);
-		router();
-	}
+  if (e.target.matches("[data-link]")) {
+    e.preventDefault();
+    history.pushState("", "", e.target.href);
+    router();
+  }
 });
 
 // Update router

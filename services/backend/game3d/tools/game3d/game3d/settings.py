@@ -55,9 +55,9 @@ ALLOWED_HOSTS = [
     'pokemapservice',
     'tokenservice',
     'userservice',
-    'chatservce',
+    'chatservice',
+    'pongservice',
     'gameservice',
-    'pongservice'
     '*',]
 
 CSRF_COOKIE_SAMESITE = 'None'

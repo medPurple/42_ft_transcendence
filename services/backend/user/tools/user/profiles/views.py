@@ -38,6 +38,40 @@ def user_token(request, user_id):
 		print(f"Error token : {e}")
 		return None
 
+def create_userID_microservices(request, user_id, user_name):
+	headers = {'Content-Type': 'application/json'}
+	data = {"userID": user_id, "userName": user_name}
+
+	logger.info('Creating user ID in microservices:')
+	logger.info(data)
+	logger.info(user_id)
+
+	try:
+		response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
+		response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
+		#response = ADD OTHER MICROSERVICES LINKS HERE IF NEEDED
+		return response
+	except requests.exceptions.RequestException as e:
+		print(f"Error creating user ID in microservices: {e}")
+		return None
+
+def delete_userID_microservices(request, user_id):
+	headers = {'Content-Type': 'application/json'}
+	data = {"userID": user_id}
+
+	logger.info('Deleting user ID in microservices:')
+	logger.info(data)
+	logger.info(user_id)
+
+	try:
+		response = requests.delete("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
+		response = requests.delete("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
+		#response = ADD OTHER MICROSERVICES LINKS HERE IF NEEDED
+		return response
+	except requests.exceptions.RequestException as e:
+		print(f"Error deleting user ID in microservices: {e}")
+		return None
+
 class JWTAuthentication(BaseAuthentication):
 	def authenticate(self, request):
 		auth_header = request.headers.get('Authorization')
@@ -54,6 +88,7 @@ class JWTAuthentication(BaseAuthentication):
 			return (user, token)
 		except (requests.exceptions.RequestException, CustomUser.DoesNotExist):
 			raise exceptions.AuthenticationFailed('Invalid token')
+			
 
 class AllCustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]
@@ -77,16 +112,14 @@ class CustomUserRegister(APIView):
 			token = user_token(request, user.user_id)
 			if token is not None:
 				logger.info('Token created')
-				url = "https://pokemap:4430/api/pokemap/"
-				headers = {'Content-Type': 'application/json'}
-				data = {"userID": user.user_id}
-				response = requests.post(url, headers=headers, data=json.dumps(data), verify=False)
-				logger.info(response)
-				if response.ok:
+
+				user_creation = create_userID_microservices(request, user.user_id, user.username)
+
+				if user_creation is not None:
 					login(request, user)
 					return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 				else:
-					return Response({'error': 'Error creating pokemap user'}, status=status.HTTP_400_BAD_REQUEST)
+					return Response({'error': 'API Error'}, status=status.HTTP_400_BAD_REQUEST)
 			else:
 				return Response({'error': 'Error creating token'}, status=status.HTTP_400_BAD_REQUEST)
 		else:
@@ -170,6 +203,7 @@ class CustomUserView(APIView):
 	def get(self, request):
 		logger.info('User info')
 		logger.info(request)
+		logger.info(request.user)
 		serializer = CustomUserSerializer(request.user)
 		return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
 
@@ -199,11 +233,13 @@ class CustomUserDeleteView(APIView):
 	authentication_classes = [JWTAuthentication]
 	def delete(self, request):
 		user = request.user
+		logger.info('Deleting user:')
+		logger.info(user.user_id)
 		try:
-			# delete user from pokemap
+			delete_userID_microservices(request, user.user_id)
 			user.delete()
 		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 		logout(request)
 		return Response({'success': True}, status=status.HTTP_200_OK)
 
