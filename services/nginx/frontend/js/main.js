@@ -24,6 +24,7 @@ import friendsProfile from "./views/friends/friendsProfile.js";
 import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
+import history from "./views/user/history.js";
 import "./components/user/logoutForm.js";
 
 // Define the routes
@@ -91,6 +92,10 @@ const routes = {
 	'/delete-account': {
 		title: "Delete account",
 		render: deleteAccount
+	},
+	'/history': {
+		title: "Game history",
+		render: history
 	},
 	'/friends': {
 		title: "Friends",
@@ -216,7 +221,7 @@ async function router() {
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
-		let result = await view.render(view.params);	
+		let result = await view.render(view.params);
 		//Clear the app content
 		app.innerHTML = '';
 		if (typeof result === 'string') {
