@@ -21,7 +21,7 @@ import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
-import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
+import { pong_remoteplay, pong_localplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
 import "./components/user/logoutForm.js";
@@ -59,6 +59,13 @@ const routes = {
 	'/pongSettings': {
 		title: "Pong Settings",
 		render: pongSettings
+	},
+	'/pongEnd/:player': {
+		title: "Pong End",
+		render: async (params) => {
+			let winner = params.player;
+			return await pongEnd(winner);
+		}
 	},
 	'/metaService': {
 		title: "Meta Service",
@@ -103,6 +110,10 @@ const routes = {
             let username = params.username;
             return await friendsProfile(username);
         }
+	},
+	'/play_pl': {
+		title: "Pong Local Play",
+		render: pong_localplay
 	},
 	'/play_pr': {
 		title: "Pong Remote Play",

@@ -35,13 +35,13 @@ async function setup(gameMode) {
 	gameState.game_mode = gameMode;
 	switch (gameState.game_mode) {
 		case "remote":
-			core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/remote');
+			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote');
 			break;
 		case "local":
-			core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/local');
+			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local');
 			break;
 		default:
-			core.gameSocket = new WebSocket('ws://' + window.location.host + '/ws/pong/tournament');
+			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament');
 			break;
 	}
 

@@ -30,8 +30,8 @@ export async function displayScore() {
 
 	if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
 		if (gameState.player1Score == gameState.score_limit)
-			window.location.href = '/P1Wins';
+			window.location.href = '/pongEnd/1';
 		else
-			window.location.href = '/P2Wins';
+			window.location.href = '/pongEnd/2';
 	}
 }
