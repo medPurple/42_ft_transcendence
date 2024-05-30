@@ -1,4 +1,4 @@
-import { pUpMesh, palette } from './config.js'
+import { gameState, pUpMesh, palette } from './config.js'
 
 function populateCircleShape(color) {
 	var radius = 10;
@@ -14,13 +14,16 @@ function populateCircleShape(color) {
 	}
 
 	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+
 	var material = new THREE.LineBasicMaterial({ color: color });
+
 	var circleMesh = new THREE.LineLoop(geometry, material);
 
-	circleMesh.rotateX(Math.PI / 2);
-	circleMesh.rotateY(Math.PI / 2);
+	if (gameState.game_mode == "remote") {
+		circleMesh.rotateX(Math.PI / 2);
+		circleMesh.rotateY(Math.PI / 2);
+	}
 	circleMesh.position.z = 20;
-
 	return circleMesh;
 }
 
@@ -36,10 +39,11 @@ function populateTriangleShape(color) {
 	var material = new THREE.LineBasicMaterial({ color: color });
 	var triangleMesh = new THREE.LineLoop(geometry, material);
 
-	triangleMesh.rotateX(Math.PI / 2);
-	triangleMesh.rotateY(Math.PI / 2);
+	if (gameState.game_mode == "remote") {
+		triangleMesh.rotateX(Math.PI / 2);
+		triangleMesh.rotateY(Math.PI / 2);
+	}
 	triangleMesh.position.z = 20;
-
 	return triangleMesh;
 }
 
@@ -61,11 +65,12 @@ function populateStarShape(color) {
 	var material = new THREE.LineBasicMaterial({ color: color });
 	var starMesh = new THREE.LineLoop(geometry, material);
 
-	starMesh.rotateX(Math.PI / 2);
-	starMesh.rotateY(Math.PI / 2);
-	starMesh.rotateZ(Math.PI / 10);
+	if (gameState.game_mode == "remote") {
+		starMesh.rotateX(Math.PI / 2);
+		starMesh.rotateY(Math.PI / 2);
+		starMesh.rotateZ(Math.PI / 10);
+	}
 	starMesh.position.z = 20;
-
 	return starMesh;
 }
 
@@ -83,10 +88,11 @@ function populateSquareShape(color) {
 	var material = new THREE.LineBasicMaterial({ color: color });
 	var squareMesh = new THREE.LineLoop(geometry, material);
 
-	squareMesh.rotateX(Math.PI / 2);
-	squareMesh.rotateY(Math.PI / 2);
+	if (gameState.game_mode == "remote") {
+		squareMesh.rotateX(Math.PI / 2);
+		squareMesh.rotateY(Math.PI / 2);
+	}
 	squareMesh.position.z = 20;
-
 	return squareMesh;
 }
 

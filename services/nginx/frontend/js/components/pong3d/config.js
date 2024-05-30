@@ -18,6 +18,7 @@ export var gameState = {
 	powerup_positionY: 0,
 	powerup_status: 0,
 	powerup_type: 0,
+	game_mode: 0,
 	active: 0
 }
 
@@ -59,6 +60,7 @@ export var decMesh = {
 	plane: 0,
 	table: 0,
 	wall: 0,
+	wall2: 0
 }
 
 export var objMesh = {
@@ -86,12 +88,9 @@ export var pUpState = {
 }
 
 export const constants = {
-	// WIDTH: 640,
-	// HEIGHT: 426,
-	// ASPECT: 640 / 426,
-	WIDTH: 800, 
+	WIDTH: 1280, 
 	HEIGHT: 600,
-	ASPECT: 800 / 600,
+	ASPECT: 1280 / 600,
 	VIEW_ANGLE: 75,
 	NEAR: 0.1,
 	FAR: 10000,
@@ -133,5 +132,4 @@ export const palette = {
 	pu_red: 0xb4352e,
 	pu_blue: 0x025fac,
 	pu_yellow: 0xe6a700,
-
 }
