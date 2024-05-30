@@ -1,6 +1,6 @@
 import { gameState } from './config.js'
 
-export async function displayScore() {
+export function displayScore() {
 
 	var scoreDiv = document.getElementById("pong-score");
 	var endgame = document.getElementById("pong-renderer");

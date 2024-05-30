@@ -1,5 +1,5 @@
 import gamer from "./gamerInfo.js"
-import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
+import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
 import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
@@ -88,11 +88,13 @@ export async function createScene() {
   //Paddle Setup
 	if (core.player_id == 1) {
 		playMesh.paddle1 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
+		console.log("Je cree le paddle 1");
 		playMesh.paddle2 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
 	}
 	else {
 		playMesh.paddle2 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
 		playMesh.paddle1 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
+		console.log("Je cree le paddle 1");
 	}
   //Table Setup
 

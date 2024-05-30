@@ -4,14 +4,14 @@ import Icookies from "../components/cookie/cookie.js"
 import { setup } from "../components/pong3d/pongServLogic.js";
 
 
-export async function pong_localplay() {
+export function pong_localplay() {
     const generaldiv = document.createElement('div');
     const gamediv = document.createElement('div');
     gamediv.id = "pong-renderer"
     const scorediv = document.createElement('div');
     scorediv.id = "pong-score"
     if (Icookies.getCookie('token') != null) {
-		await setup("local");
+		setup("local");
     } else {
         generaldiv.classList.add('not-logged');
         generaldiv.innerText = 'You need to be logged in to play';

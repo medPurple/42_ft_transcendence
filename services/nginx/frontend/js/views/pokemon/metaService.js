@@ -13,7 +13,7 @@ export default () => `
 				<img src="../images/Site/Play-Battle.jpg" class="img-fluid h-100" style="object-fit: cover;" alt="Play">
 			</a>
 		</div>
-		<div class="col-sm-8">
+		<div class="col-sm-12">
 			<a href="/pongSettings" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Customization">
 				<img src="../images/Site/Play-Customization.jpg" class="img-fluid w-100" alt="Customization">
 			</a>
