@@ -30,34 +30,8 @@ export async function displayScore() {
 
 	if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
 		if (gameState.player1Score == gameState.score_limit)
-			scoreDiv.innerHTML = "Game Over ! Player 1 Won !"
+			window.location.href = '/P1Wins';
 		else
-			scoreDiv.innerHTML = "Game Over ! Player 2 Won !"
+			window.location.href = '/P2Wins';
 	}
-	// if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
-	// 	if (gameState.player1Score == gameState.score_limit)
-	// 		scoreDiv.innerHTML = `
-	// 			<div class="container mt-5">
-	// 				<div class="row justify-content-center">
-	// 					<div class="col-md-10">
-	// 						<div class="image-container">
-	// 							<img src="../../images/Game/P1-WINS.jpeg" alt="Display Image">
-	// 						</div>
-	// 					</div>
-	// 				</div>
-	// 			</div>
-	// 			`
-	// 	else
-	// 		scoreDiv.innerHTML = `
-	// 			<div class="container mt-5">
-	// 				<div class="row justify-content-center">
-	// 					<div class="col-md-10">
-	// 						<div class="image-container">
-	// 							<img src="../../images/Game/P2-WINS.jpeg" alt="Display Image">
-	// 						</div>
-	// 					</div>
-	// 				</div>
-	// 			</div>
-	// 			`
-	// }
 }

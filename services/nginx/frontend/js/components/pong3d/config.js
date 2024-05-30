@@ -130,5 +130,4 @@ export const palette = {
 	pu_red: 0xb4352e,
 	pu_blue: 0x025fac,
 	pu_yellow: 0xe6a700,
-
 }
