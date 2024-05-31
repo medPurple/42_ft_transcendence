@@ -19,7 +19,7 @@ async function setupSettings() {
 		gameCustom.score_limit = data.score;
 		gameCustom.score_limit = gameState.score_limit;
 		//console.log('GAMECUSTOM filled: ', gameCustom);
-		console.log('GAMESTATE filled: ', gameState);
+		//console.log('GAMESTATE filled: ', gameState);
 	} catch (error) {
 		console.error('Error: setupSettings', error)
 		alert('You should be logged to play');
@@ -52,15 +52,19 @@ export async function createScene() {
 		window.addEventListener('keydown', onKeyDownLocal, false);
 		window.addEventListener('keyup', onKeyUpLocal, false);
 	}
-
-  //Scene setup
-
-	core.scene = new THREE.Scene();
-
-  //Camera setup
-
+	
+	//Camera setup
+	
 	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, constants.ASPECT, constants.NEAR, constants.FAR)
 	core.camera.position.z = 230;
+	
+	// const controls = new THREE.OrbitControls(core.camera, c);
+	// controls.minDistance = 100;
+	// controls.maxDistance = 300;
+	
+	//Scene setup
+	
+	core.scene = new THREE.Scene();
 
   //Ball setup
 
