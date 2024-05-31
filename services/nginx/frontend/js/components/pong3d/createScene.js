@@ -17,7 +17,9 @@ async function setupSettings() {
 		gameCustom.table = data.table;
 		gameCustom.powerup = data.powerups;
 		gameCustom.score_limit = data.score;
-		// console.log('GAMECUSTOM filled: ', gameCustom);
+		gameCustom.score_limit = gameState.score_limit;
+		//console.log('GAMECUSTOM filled: ', gameCustom);
+		console.log('GAMESTATE filled: ', gameState);
 	} catch (error) {
 		console.error('Error: setupSettings', error)
 		alert('You should be logged to play');

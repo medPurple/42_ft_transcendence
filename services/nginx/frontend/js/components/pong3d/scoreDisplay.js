@@ -30,28 +30,28 @@ export function displayScore() {
 		scoreDiv.innerHTML = '';
 		if (gameState.player1Score == gameState.score_limit){
 			endgame.innerHTML = `
-				<div class="container mt-5">
-					<div class="row justify-content-center">
-						<div class="col-md-10">
-							<div class="#custom-endgame">
-								<img src="../../../images/Game/P1-WINS.jpeg" alt="Display Image">
-							</div>
+			<div class="container mt-5">
+				<div class="row justify-content-center">
+					<div class="col-md-8">
+						<div id="custom-endgame">
+							<img src="../../../images/Game/P1-WINS.jpeg" class="img-fluid" alt="Display Image">
 						</div>
 					</div>
 				</div>
+			</div>
 			`;
 		}
 		else
 			endgame.innerHTML = `
-				<div class="container mt-5">
-					<div class="row justify-content-center">
-						<div class="col-md-10">
-							<div class="#custom-endgame">
-								<img src="../../../images/Game/P2-WINS.jpeg" alt="Display Image">
-							</div>
+			<div class="container mt-5">
+				<div class="row justify-content-center">
+					<div class="col-md-8">
+						<div id="custom-endgame">
+							<img src="../../../images/Game/P2-WINS.jpeg" class="img-fluid" alt="Display Image">
 						</div>
 					</div>
 				</div>
+			</div>
 			`;
 	}
 }

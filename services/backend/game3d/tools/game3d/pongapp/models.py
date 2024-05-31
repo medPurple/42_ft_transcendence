@@ -14,6 +14,7 @@ class GameUser(models.Model):
 
 # GAME SETTINGS MODEL
 class GameSettings(models.Model):
+
 	SCENES = {
 		0: "Playground",
 		1: "Cornfield",
@@ -53,6 +54,9 @@ class GameSettings(models.Model):
 	table = models.IntegerField(choices=TABLES, default=1)
 	score = models.IntegerField(choices=SCORES, default=7)
 	powerups = models.BooleanField(default=False)
+
+	def get_score(self):
+		return self.score
 
 	def __str__(self):
 		return f'{self.user.userName}\'s settings'

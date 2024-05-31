@@ -29,7 +29,7 @@ export const gameCustom = {
 	map: 0,
 	table: 1,
 	powerup: 0,
-	score_limit: 7
+	score_limit: 1
 }
 
 

@@ -6,6 +6,7 @@ import logging
 import time
 from channels.layers import get_channel_layer
 from . import initvalues as iv
+from .models import GameSettings
 
 logger = logging.getLogger(__name__)
 
@@ -69,9 +70,9 @@ class   gameStateC:
         self.players_nb = 0
         self.player1Score = iv.PADDLE1_SCORE
         self.player2Score = iv.PADDLE2_SCORE
-		######## HERE recuperer score max de la partie
-        self.limitScore = iv.SMALL_LIMIT_SCORE
-        self.paddle1 = 0
+		######## HERE recuperer le USERID correct!!!!!! ########
+        # self.limitScore = GameSettings.objects.get(user=1).score
+        self.limitScore = 7
         self.paddle2 = 0
         self.ball = ballC()
         self.powerUpTimer = 0
