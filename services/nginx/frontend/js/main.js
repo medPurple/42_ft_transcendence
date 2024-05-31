@@ -10,7 +10,6 @@ import game from "./views/game.js";
 import pongSettings from "./views/pong3d/pongSettings.js";
 import metaService from "./views/pokemon/metaService.js";
 // import pokemap from "./views/pokemon/pokemap.js";
-import userService from "./views/user/userService.js";
 import code2FA from "./views/user/code2FA.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
@@ -24,7 +23,7 @@ import friendsProfile from "./views/friends/friendsProfile.js";
 import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
-import history from "./views/user/history.js";
+import userHistory from "./views/user/history.js";
 import "./components/user/logoutForm.js";
 
 // Define the routes
@@ -44,10 +43,6 @@ const routes = {
 	'/contact': {
 		title: "Contact",
 		render: contact
-	},
-	'/userService': {
-		title: "User Service",
-		render: userService
 	},
 	'/pongService': {
 		title: "Pong Service",
@@ -94,8 +89,8 @@ const routes = {
 		render: deleteAccount
 	},
 	'/history': {
-		title: "Game history",
-		render: history
+		title: "Game historical",
+		render: userHistory
 	},
 	'/friends': {
 		title: "Friends",
