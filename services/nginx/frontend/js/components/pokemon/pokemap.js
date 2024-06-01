@@ -9,29 +9,26 @@ export class pokeMap {
         this.map = 0;
         this.ctxMAP = null;
         this.ctxAllCharacters = null;
-        this.lastX = 0;
-        this.lastY = 0;
     }
 
     divmapCreation() {
 
         // MAP DIV
         const divmap = document.createElement('div');
-        divmap.style.textAlign = 'center';
-        divmap.style.position = 'relative';
-        divmap.style.width = '600px';
-        divmap.style.height = '500px';
-        divmap.style.marginLeft = '28%';
-        divmap.style.marginTop = '5%';
+        divmap.style.backgroundImage = "url(./images/Site/BG-GameBoy-win964x880.png)";
+        divmap.style.backgroundSize = 'cover';
+        divmap.style.backgroundRepeat = 'no-repeat';
+        divmap.style.zIndex = '1';
+        divmap.style.width = '101%';
+        divmap.style.height = '200vh';
+        divmap.style.marginRight = '0';
 
         
         const pokecanva = document.createElement('canvas');
-        pokecanva.width = 600;
+        pokecanva.width = 520;
         pokecanva.height = 500;
-        pokecanva.style.zIndex = '1';
-        pokecanva.style.position = 'absolute';
-        pokecanva.style.top = '0';
-        pokecanva.style.left = '0';
+        pokecanva.style.marginTop = '20%';
+        pokecanva.style.zIndex = '-1';
         this.ctxMAP = pokecanva.getContext('2d');
         divmap.appendChild(pokecanva);
 
@@ -44,7 +41,7 @@ export class pokeMap {
     }
 
     gety(y, mainy) {
-        return 230 + (y - mainy) * 26;
+        return 192 + (y - mainy) * 23;
     }
 
 
@@ -56,7 +53,7 @@ export class pokeMap {
             console.warn("talk");
         if (player.player_map != 0)
             console.warn("map");
-        const mapimage = new Image(600 , 500);
+        const mapimage = new Image(520 , 510);
         mapimage.src = './images/Maps/ext_grid.png';
         const img = new Image();
         img.src = this.asset_selection(player.orientation, player.player_skin);
@@ -65,7 +62,7 @@ export class pokeMap {
             let mainy = (player.posY - (19/2)) * 16;
             let pmainx = player.posX;
             let pmainy = player.posY;
-            this.ctxMAP.drawImage(mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 500, 500);
+            this.ctxMAP.drawImage(mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
             data.forEach(player => {
                 if (player.userID != this.userID && player.active && player.player_map == this.map) {
                         if (player.posX < pmainx + 10 && player.posX > pmainx - 10 && player.posY < pmainy + 10 && player.posY > pmainy - 10) {
