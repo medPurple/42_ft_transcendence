@@ -40,7 +40,7 @@ export default class LogoutForm extends HTMLElement {
 				}
 			})
             .catch(error => {
-                console.error('Error:', error);
+                // console.error('Error:', error);
                 // Handle API errors
             });
         });
