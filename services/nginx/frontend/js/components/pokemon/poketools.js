@@ -2,17 +2,64 @@ import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
 
 
-export class pokechat{
-    createElement(){
-        console.warn("chat")
+export class pokechat {
+    createElement() {
+        
+        // Création de la div principale
         const chatdiv = document.createElement('div');
-        chatdiv.style.backgroundColor = 'black';
+        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'm-5', 'p-0', 'text-black');
 
+        // Création de la div pour le titre et le bouton
+        const titleAndButtonDiv = document.createElement('div');
+        titleAndButtonDiv.classList.add('d-flex', 'justify-content-between', 'align-items-center');
+
+        // Création du titre
+        const title = document.createElement('h1');
+        title.innerText = 'Pokechat';
+        titleAndButtonDiv.appendChild(title);
+
+        // Création du bouton pour ouvrir le modal
+        const modalButton = document.createElement('button');
+        modalButton.classList.add('btn', 'btn-primary');
+        modalButton.setAttribute('data-bs-toggle', 'modal');
+        modalButton.setAttribute('data-bs-target', '#participantsModal');
+        modalButton.innerText = 'Voir les participants';
+        titleAndButtonDiv.appendChild(modalButton);
+
+        chatdiv.appendChild(titleAndButtonDiv);
+
+        // Création du modal pour la liste des participants
+        const participantsModal = document.createElement('div');
+        participantsModal.classList.add('modal', 'fade');
+        participantsModal.id = 'participantsModal';
+        
+        const modalDialog = document.createElement('div');
+        modalDialog.classList.add('modal-dialog');
+        
+        const modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content', 'bg-dark', 'text-white');
+        
+        const modalBody = document.createElement('div');
+        modalBody.classList.add('modal-body');
+        modalBody.innerText = 'Liste des participants';
+
+        modalContent.appendChild(modalBody);
+        modalDialog.appendChild(modalContent);
+        participantsModal.appendChild(modalDialog);
+        chatdiv.appendChild(participantsModal);
+
+        // Création de la div pour le chat
         const chatbox = document.createElement('div');
-        chatbox.classList.add('bg-white', 'rounded', 'p-3', 'mb-3', 'chatbox');
-        chatbox.innerText = 'Chatbox';
-
+        chatbox.classList.add('bg-white', 'rounded', 'p-3', 'mb-3', 'chatbox', 'w-100', 'border', 'border-dark');
+        chatbox.style.flexGrow = '1'; // Prend toute la hauteur restante
         chatdiv.appendChild(chatbox);
+
+        // Création de la zone de texte pour écrire
+        const inputArea = document.createElement('textarea');
+        inputArea.classList.add('form-control', 'w-100', 'border', 'border-dark');
+        inputArea.placeholder = 'Ecrire ici...';
+        chatdiv.appendChild(inputArea);
+
         return chatdiv
     }
 }
@@ -72,7 +119,7 @@ export class pokebag{
 
     createCardElement(){
         const card = document.createElement('div');
-        card.classList.add('card', 'mb-3', 'cardelement');
+        card.classList.add('card', 'mb-3', 'cardelement', 'border', 'border-dark');
         card.style.maxWidth = '540px';
         card.style.margin = '5%';
         return card;
@@ -142,6 +189,7 @@ export class pokebag{
     
     createAllCards(){
         const bagdiv = document.createElement('div');
+        // bagdiv.classList.add('container-fluid');
 
         const pokelist = this.getpokelist();
         console.warn(pokelist)
