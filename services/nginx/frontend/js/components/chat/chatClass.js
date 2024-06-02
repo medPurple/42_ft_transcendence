@@ -3,82 +3,120 @@ import Iuser from "../user/userInfo.js"
 import Ifriends from "../friends/friendsInfo.js";
 
 export class chat {
+	createChatDiv() {
+		const chatDiv = document.createElement('div');
+		chatDiv.style.backgroundColor = 'lightgray';
+		chatDiv.classList.add('m-3', 'rounded', 'border', 'border-dark', 'd-flex');;
+		chatDiv.style.height = 'calc(100vh - 2rem)';
+		chatDiv.id = 'chatDiv';
+		return chatDiv;
+	}
 
-	initChat() {
-		const chatContainer = document.createElement('div');
-		chatContainer.id = 'chat-container';
+	async createUsersDiv() {
+		const usersDiv = document.createElement('div');
+		usersDiv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded');
+		usersDiv.style.flex = '1'; // Ajoute la propriété flex
+		usersDiv.id = 'usersDiv';
 
-		const chatLog = document.createElement('textarea');
-		chatLog.id = 'chat-log';
-		chatLog.cols = '100';
-		chatLog.rows = '20';
-		chatContainer.appendChild(chatLog);
-
-		const chatMessageInput = document.createElement('input');
-		chatMessageInput.id = 'chat-message-input';
-		chatMessageInput.type = 'text';
-		chatMessageInput.size = '100';
-		chatContainer.appendChild(chatMessageInput);
-
-		const chatMessageSubmit = document.createElement('input');
-		chatMessageSubmit.id = 'chat-message-submit';
-		chatMessageSubmit.type = 'button';
-		chatMessageSubmit.value = 'Send';
-		chatContainer.appendChild(chatMessageSubmit);
-
-		const roomName = 'myroom';
-		const chatSocket = new WebSocket(
-			'wss://' + window.location.host + '/ws/chat/'
-			+ roomName
-			+ '/'
-		);
-
-		// receive msg from server
-		chatSocket.onmessage = function(e) {
-			const data = JSON.parse(e.data);
-			chatLog.value += (data.message + '\n');
-		};
+		const title = document.createElement('h2'); // Crée un nouvel élément de titre
+		title.textContent = 'User List'; // Ajoute du texte au titre
+		title.classList.add('text-underline', 'mt-3'); // Ajoute une marge en haut et souligne le texte
+		usersDiv.appendChild(title); // Ajoute le titre à usersDiv
 
 
-		window.addEventListener('beforeunload', function(event) {
-			// Fermez la connexion WebSocket si elle est ouverte.
-			if (chatSocket.readyState === WebSocket.OPEN) {
-				chatSocket.close();
-			}
-		});
-		// loosed connection with wbs
-		// chatSocket.onclose = function(e) {
-		// 	console.error('Chat socket closed unexpectedly');
-		// };
-
-		chatMessageInput.focus(); // Sets the focus to the chat message input field.
-		chatMessageInput.onkeyup = function(e) {
-			if (e.key === 'Enter') {
-				chatMessageSubmit.click();
-			}
-		};
-
-		chatMessageSubmit.onclick = async function(e) {
-			const message = chatMessageInput.value;
-			const user_id = await Iuser.getID();
-			if (user_id === '') {
-				console.error("You're not logged !");
-			} else {
-				chatSocket.send(JSON.stringify ({
-					'message': message,
-					'user_id': user_id
-				}));
-			}
-			chatMessageInput.value = '';
+		// const response = await Iuser.getAllUsers();
+		// console.log(response);
+		// response.users.forEach(user => {
+		// 	const userButton = document.createElement('button');
+		// 	userButton.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-light');
+		// 	userButton.textContent = "name";
+		// 	usersDiv.appendChild(userButton);
+		// });
+		for (let i = 0; i < 5; i++) {
+			const userButton = document.createElement('button');
+			userButton.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-light', 'border', 'border-dark', 'mb-1');
+			userButton.textContent = "name";
+			usersDiv.appendChild(userButton);
 		}
 
-		// connection to wbs
-		chatSocket.onopen = function(e) {
-			console.log('Chat connexion');
-			chatSocket.send(JSON.stringify({
-				"message" : "test",
-			}));
-		};
-		return chatContainer;
+		return usersDiv;
+	}
+
+	createMessagesDiv() {
+		const messagesDiv = document.createElement('div');
+		messagesDiv.style.backgroundColor = 'blue';
+		
+		messagesDiv.id = 'messagesDiv';
+		messagesDiv.textContent = 'messages';
+		return messagesDiv;
+	}
+
+	createInputDiv() {
+		const inputDiv = document.createElement('div');
+		inputDiv.id = 'inputDiv';
+		inputDiv.style.backgroundColor = 'green';
+
+		const input = document.createElement('input');
+		input.type = 'text';
+		input.id = 'messageInput';
+
+		const sendButton = document.createElement('button');
+		sendButton.textContent = 'Send';
+
+		const inviteButton = document.createElement('button');
+		inviteButton.textContent = 'Invite';
+
+		inputDiv.appendChild(input);
+		inputDiv.appendChild(sendButton);
+		inputDiv.appendChild(inviteButton);
+
+		return inputDiv;
+	}
+
+	createTitleDiv() {
+		const titleDiv = document.createElement('div');
+		titleDiv.id = 'titleDiv';
+		titleDiv.style.backgroundColor = 'yellow';
+
+		const titleElement = document.createElement('h1');
+		titleElement.textContent = "title";
+
+		const imageElement = document.createElement('img');
+		imageElement.src = "./images/Favicons/PH-01extra.png";
+
+		titleDiv.appendChild(titleElement);
+		titleDiv.appendChild(imageElement);
+
+		return titleDiv;
+	}
+
+	createInteractionDiv() {
+		const interactiondiv = document.createElement('div');
+		interactiondiv.style.backgroundColor = 'purple';
+		interactiondiv.style.flex = '3'; // Ajoute la propriété flex
+
+		const messagesDiv = this.createMessagesDiv();
+		const inputDiv = this.createInputDiv();
+		const titleDiv = this.createTitleDiv();
+
+		interactiondiv.appendChild(titleDiv);
+		interactiondiv.appendChild(messagesDiv);
+		interactiondiv.appendChild(inputDiv);
+
+		return	interactiondiv;
+	}
+
+	async initChat() {
+		const chatDiv = this.createChatDiv();
+		
+
+		const usersDiv = await this.createUsersDiv();
+		const interactiondiv = this.createInteractionDiv();
+
+		chatDiv.appendChild(usersDiv);
+		chatDiv.appendChild(interactiondiv);
+
+		document.body.appendChild(chatDiv);
+		return chatDiv;
 	}
 }
