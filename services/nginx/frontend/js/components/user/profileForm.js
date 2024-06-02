@@ -68,7 +68,7 @@ export default class profileForm extends HTMLElement {
 								<div class="progress-bar bg-danger" style="width: 100%">100%</div>
 							</div>
 						</div>
-					<a href="/history" class="card-link" data-link>see games details</a></li>
+					<a href="/statistics" class="card-link" data-link>see games details</a></li>
 				</ul>
 				<div class="card-body">
 					<a href="/edit-profile" class="card-link" data-link >Edit Profile</a><br>

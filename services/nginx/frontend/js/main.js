@@ -23,7 +23,7 @@ import friendsProfile from "./views/friends/friendsProfile.js";
 import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
-import userHistory from "./views/user/history.js";
+import statistics from "./views/user/statistics.js";
 import "./components/user/logoutForm.js";
 
 // Define the routes
@@ -88,9 +88,9 @@ const routes = {
 		title: "Delete account",
 		render: deleteAccount
 	},
-	'/history': {
-		title: "Game historical",
-		render: userHistory
+	'/statistics': {
+		title: "Statistics",
+		render: statistics
 	},
 	'/friends': {
 		title: "Friends",
