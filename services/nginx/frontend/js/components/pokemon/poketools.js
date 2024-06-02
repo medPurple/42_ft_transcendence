@@ -1,15 +1,20 @@
+import { chat } from "../chat/chatClass.js";
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
 
 
 export class pokechat {
-    createElement() {
-        
-        // Création de la div principale
-        const chatdiv = document.createElement('div');
-        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'm-5', 'p-0', 'text-black');
 
-        // Création de la div pour le titre et le bouton
+    constructor(){
+        const roomName = 'pokeroom';
+        this.chatSocket = new WebSocket(
+            'wss://' + window.location.host + '/ws/chat/'
+            + roomName
+            + '/'
+        );
+    }
+
+    createTitleAndModal(){
         const titleAndButtonDiv = document.createElement('div');
         titleAndButtonDiv.classList.add('d-flex', 'justify-content-between', 'align-items-center');
 
@@ -23,22 +28,25 @@ export class pokechat {
         modalButton.classList.add('btn', 'btn-primary');
         modalButton.setAttribute('data-bs-toggle', 'modal');
         modalButton.setAttribute('data-bs-target', '#participantsModal');
+        modalButton.setAttribute('type', 'button'); // Ajoutez cette ligne
         modalButton.innerText = 'Voir les participants';
         titleAndButtonDiv.appendChild(modalButton);
 
-        chatdiv.appendChild(titleAndButtonDiv);
+        return titleAndButtonDiv;
+    }
 
+    createModal(){
         // Création du modal pour la liste des participants
         const participantsModal = document.createElement('div');
         participantsModal.classList.add('modal', 'fade');
         participantsModal.id = 'participantsModal';
-        
+
         const modalDialog = document.createElement('div');
         modalDialog.classList.add('modal-dialog');
-        
+
         const modalContent = document.createElement('div');
         modalContent.classList.add('modal-content', 'bg-dark', 'text-white');
-        
+
         const modalBody = document.createElement('div');
         modalBody.classList.add('modal-body');
         modalBody.innerText = 'Liste des participants';
@@ -46,22 +54,132 @@ export class pokechat {
         modalContent.appendChild(modalBody);
         modalDialog.appendChild(modalContent);
         participantsModal.appendChild(modalDialog);
-        chatdiv.appendChild(participantsModal);
 
-        // Création de la div pour le chat
+        return participantsModal;
+    }
+
+    createChatbox(){
         const chatbox = document.createElement('div');
         chatbox.classList.add('bg-white', 'rounded', 'p-3', 'mb-3', 'chatbox', 'w-100', 'border', 'border-dark');
+        chatbox.style.textAlign = 'left'; // Ajoutez cette ligne
         chatbox.style.flexGrow = '1'; // Prend toute la hauteur restante
-        chatdiv.appendChild(chatbox);
+
+        return chatbox;
+    }
+
+    createInputAndButtonArea() {
+        // Création de la div pour l'input et le bouton
+        const inputAndButtonDiv = document.createElement('div');
+        inputAndButtonDiv.classList.add('d-flex');
 
         // Création de la zone de texte pour écrire
         const inputArea = document.createElement('textarea');
-        inputArea.classList.add('form-control', 'w-100', 'border', 'border-dark');
+        inputArea.classList.add('form-control', 'flex-grow-1', 'border', 'border-dark');
         inputArea.placeholder = 'Ecrire ici...';
-        chatdiv.appendChild(inputArea);
+        inputAndButtonDiv.appendChild(inputArea);
+
+        // Création du bouton pour envoyer
+        const sendButton = document.createElement('button');
+        sendButton.classList.add('btn', 'btn-primary', 'btn-sm', 'ms-2', 'send-button');
+        sendButton.innerText = 'Envoyer';
+        inputAndButtonDiv.appendChild(sendButton);
+
+        return inputAndButtonDiv;
+    }
+
+
+    createElement() {
+        
+        const chatdiv = document.createElement('div');
+        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'm-5', 'p-0', 'text-black');        
+        chatdiv.appendChild(this.createTitleAndModal());
+        chatdiv.appendChild(this.createModal());
+        chatdiv.appendChild(this.createChatbox());
+        chatdiv.appendChild(this.createInputAndButtonArea());
 
         return chatdiv
     }
+
+    getRandomColor(){
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    async getusername(data){
+        let message = data.message;
+        let parts = message.split(':');
+        let id = parts[0].trim();
+
+        const users = await Iuser.getAllUsers();
+        console.warn(users);
+        let username = users.users.find(user => user.user_id === parseInt(id)).username;
+        return username;
+
+    }
+
+    async addChatMessage(data){
+        const chatbox = document.querySelector('.chatbox');
+        console.log(data);
+        const username = await this.getusername(data)
+        const usernameColor = this.getRandomColor(); // Function to generate random color
+        let parts = data.message.split(':');
+        let message = parts[1].trim();
+        chatbox.innerHTML += `<span style="color: ${usernameColor};">${username}</span>: ${message}<br>`;
+    }
+
+    pokechatinit(){
+        const chatdiv = this.createElement();
+        const chatbox = chatdiv.querySelector('.chatbox');
+        const chatInput = chatdiv.querySelector('textarea');
+        const chatMessageSubmit = chatdiv.querySelector('.send-button');
+
+        this.chatSocket.onclose =  (e) => {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        this.chatSocket.onopen =  (e) => {
+            console.log('Chat socket opened');
+        };
+
+
+        this.chatSocket.onmessage = async (e) => {
+            const data = JSON.parse(e.data);
+            await this.addChatMessage(data);
+        };
+
+        chatInput.focus();
+        chatInput.onkeydown = function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        };
+        chatInput.onkeyup =  (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                chatMessageSubmit.click();
+            }
+        };
+
+        chatMessageSubmit.onclick = async (e) => {
+            const message = chatInput.value;
+            const user_id = await Iuser.getID();
+            if (user_id === '') {
+                console.error("You're not logged !");
+            } else {
+                this.chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'user_id': user_id
+                }));
+            }
+            chatInput.value = '';
+        }
+        return chatdiv;
+    }
+
 }
 
 export class pokebag{ 
