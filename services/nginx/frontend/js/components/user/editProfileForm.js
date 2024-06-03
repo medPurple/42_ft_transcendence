@@ -19,7 +19,6 @@ export default class editProfileForm extends HTMLElement {
 	async initUserInfo() {
 		try {
 			const data = await Iuser.getAllUserInfo();
-			console.log("2_fa", data.user.is_2fa);
 			if (data && data.user) {
                 this.displayEditProfileForm(data);
             } else {
@@ -107,7 +106,6 @@ export default class editProfileForm extends HTMLElement {
 			.then(response => response.json())
 			.then(data => {
 				if (data.success) {
-					console.log('Profile updated successfully');
 					// Redirect to the home page
 						window.location.href = '/home'; // Change the URL to your home page URL
 

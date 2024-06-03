@@ -20,10 +20,10 @@ export default class deleteAccountForm extends HTMLElement {
 				<button type="submit" class="btn btn-dark">Absolutely</button>
 			</div>
 			<div class="mb-4">
-				<button type="submit" class="btn btn-outline-dark" onclick="history.back()">No, please take me back</button>
+				<button type="button" class="btn btn-outline-dark" onclick="history.back()">No, please take me back</button>
 			</div>
 		</form>
-			
+
 		`;
 	}
 

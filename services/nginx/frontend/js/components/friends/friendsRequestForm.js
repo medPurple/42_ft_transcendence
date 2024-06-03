@@ -64,6 +64,8 @@ export class Friends {
 
 		this.variablesArray = [];
 		this.lastusernumber = 0;
+
+		this.stopMessage = false;
 	}
 
 
@@ -75,21 +77,20 @@ export class Friends {
 		};
 
 		socket.onmessage = async (event) => {
-			console.log(`[message] Data received from server: ${event.data}`);
+			if (this.stopMessage) {
+				socket.close();
+				return;
+			}
 			let data = JSON.parse(event.data);
-			// console.error(data
-			// );
 			if (data.error) {
 				console.error(data.error);
 			} else if (data.success) {
-				console.log(data);
 				if (socket.onmessagecallback) {
 					socket.onmessagecallback(data);
 					socket.onmessagecallback = null;
 				}
 			}
-			if (this.socket.readyState === WebSocket.OPEN)
-				await this.updateView();
+			await this.updateView();
 		};
 
 		socket.onclose = function(event) {
@@ -104,8 +105,13 @@ export class Friends {
 			console.log(`[error] ${error.message}`);
 		};
 
+		window.addEventListener('beforeunload', () => {
+			socket.close();
+		});
+
 		return socket;
 	}
+
 
 	async sendRequest(friend_username) {
 		let message = JSON.stringify({
@@ -166,6 +172,7 @@ export class Friends {
 		});
 	}
 
+
 	async updateView() {
 		const dataUsers = await Iuser.getAllUsers();
 		const currentUser = await Iuser.getUsername();
@@ -178,7 +185,7 @@ export class Friends {
 		} else if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(async (user) => {
 				if (currentUser != user.username) {
-					const bob = this.variablesArray.find(u => u.name === user.username);
+					const otherUser = this.variablesArray.find(u => u.name === user.username);
 					const cardElement = document.querySelector('#user_' + user.username);
 
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
@@ -191,40 +198,40 @@ export class Friends {
 
 					const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
 
-					if (isFriends != bob.isFriends) {
+					if (isFriends != otherUser.isFriends) {
 						if (isFriends) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
 							this.manageFriend(cardBody.querySelector('.card-footer'), user.username);
 							cardElement.appendChild(cardBody);
 						}
-						bob.isFriends = isFriends;
-						bob.addFriend = false;
-					} else if (hasFriendRequest != bob.hasFriendRequest) {
+						otherUser.isFriends = isFriends;
+						otherUser.addFriend = false;
+					} else if (hasFriendRequest != otherUser.hasFriendRequest) {
 						if (hasFriendRequest) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
 							this.manageFriendRequest(cardBody.querySelector('.card-footer'), user.username);
 							cardElement.appendChild(cardBody);
 						}
-						bob.hasFriendRequest = hasFriendRequest;
-						bob.addFriend = false;
-					} else if (hasSendRequest != bob.hasSendRequest) {
+						otherUser.hasFriendRequest = hasFriendRequest;
+						otherUser.addFriend = false;
+					} else if (hasSendRequest != otherUser.hasSendRequest) {
 						if (hasSendRequest) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
 							cardBody.querySelector('.card-footer').appendChild(this.friendsButton.requestSentButton());
 							cardElement.appendChild(cardBody);
 						}
-						bob.hasSendRequest = hasSendRequest;
-						bob.addFriend = false;
+						otherUser.hasSendRequest = hasSendRequest;
+						otherUser.addFriend = false;
 					} else {
-						if (!bob.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
+						if (!otherUser.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
 							cardElement.innerHTML = ''; // Clear card content
 							const cardBody = this.createCardBody(user, isFriends);
 							this.sendFriendRequest(cardBody.querySelector('.card-footer'), user.username);
 							cardElement.appendChild(cardBody);
-							bob.addFriend = true;
+							otherUser.addFriend = true;
 						}
 					}
 				}
@@ -240,7 +247,6 @@ export class Friends {
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
-		// console.error(dataUsers);
 
 		this.ulElement.innerHTML = ''; // Clear the list before populating it
 
@@ -285,8 +291,6 @@ export class Friends {
 						isFriends: isFriends,
 						addFriend: true
 					});
-
-					console.log(this.variablesArray);
 				}
 			});
 		} else {
@@ -383,9 +387,11 @@ export class Friends {
 		linkToFriendsProfile.textContent = 'See profile';
 		linkToFriendsProfile.href = `/friend-profile/${username}`;
 		linkToFriendsProfile.setAttribute('data-link', '');
-		// linkToFriendsProfile.addEventListener('click', () => {
-		// 	this.disconnect();
-		// });
+		linkToFriendsProfile.addEventListener('click', () => {
+			event.preventDefault();
+			this.stopMessage = true;
+
+		});
 		return linkToFriendsProfile;
 	}
 
@@ -419,7 +425,7 @@ export class Friends {
 		messageLink.textContent = this.getRandomSquidGamePhrase();
 		messageLink.href = '';
 		messageLink.className = 'card-link';
-		messageLink.setAttribute('data-link', '');
+		messageLink.setAttribute('nothing', '');
 		messageLink.addEventListener('click', (event) => {
 			event.preventDefault();
 		});

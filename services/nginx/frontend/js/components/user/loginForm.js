@@ -59,7 +59,7 @@ export default class LoginForm extends HTMLElement{
 				if (data.two_fa) {
 					window.location.href = '/code2FA';
 				}
-				if (data.success) {
+				else if (data.success) {
 					Icookies.setCookie('token', data.token, 90);
 					window.location.href = '/home'; // Change the URL to your home page URL
 

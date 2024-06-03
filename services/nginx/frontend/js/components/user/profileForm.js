@@ -50,11 +50,13 @@ export default class profileForm extends HTMLElement {
 					<li class="list-group-item">${data.user.last_name}</li>
 					<li class="list-group-item">${data.user.email}</li>
 					<li class="list-group-item">${data.user.is_online}</li>
-				</ul>
-				<div class="card-body">
+
+					</ul>
+					<div class="card-body">
 					<a href="/edit-profile" class="card-link" data-link >Edit Profile</a><br>
 					<a href="/update-password" class="card-link" data-link>Update password</a><br>
 					<a href="/friends" class="card-link" data-link>See my friends</a><br>
+					<a href="/statistics" class="card-link" data-link>See games details</a>
 				</div>
 				<div class="card-body">
 					<a href="/delete-account" class="btn btn-light">Delete Profile</a>
