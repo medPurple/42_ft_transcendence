@@ -15,24 +15,24 @@ export class pokeMap {
 
         // MAP DIV
         const divmap = document.createElement('div');
-        divmap.style.backgroundImage = "url(./images/Site/BG-GameBoy-win964x880.png)";
-        divmap.style.backgroundSize = 'cover';
-        divmap.style.backgroundRepeat = 'no-repeat';
-        divmap.style.zIndex = '1';
-        divmap.style.width = '101%';
-        divmap.style.height = '200vh';
-        divmap.style.marginRight = '0';
+		divmap.classList.add('PokeGB');
+		divmap.img = document.createElement('img');
+		divmap.img.src = '../images/Site/BG-GameBoy-win964x880.png';
+		divmap.img.classList.add('game-boy-background');
 
-        
-        const pokecanva = document.createElement('canvas');
-        pokecanva.width = 520;
-        pokecanva.height = 500;
-        pokecanva.style.marginTop = '20%';
-        pokecanva.style.zIndex = '-1';
-        this.ctxMAP = pokecanva.getContext('2d');
-        divmap.appendChild(pokecanva);
+		// CANVAS
+		divmap.canvas = document.createElement('canvas');
+		divmap.canvas.width = 500;
+		divmap.canvas.height = 500;
+		divmap.canvas.classList.add('pokecanva');
+
+		divmap.appendChild(divmap.img);
+		divmap.appendChild(divmap.canvas);
 
         document.body.appendChild(divmap);
+
+		console.log(divmap);
+		
         return divmap;
     }
 

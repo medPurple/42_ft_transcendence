@@ -178,14 +178,8 @@ function updateNavbarDropdown() {
 			`;
 	}
 }
-		// <li><a class="dropdown-item" href="/logout">log out</a></li>
 
 function checkConnected() {
-
-	if (Icookies.getCookie('token')) {
-		return true;
-	}
-	return false;
 	if (Icookies.getCookie('token')) {
 		return true;
 	}
@@ -224,39 +218,39 @@ async function router() {
 	if (!(await checkValidToken())){
 		alert('Invalid token, please reload');
 		Icookies.clearAllCookies();
-
-	for (let route in routes) {
-		let params = {}
-		if (route.includes(':')) {
-		let routeParts = route.split('/');
-		let pathParts = path.split('/');
-		if (routeParts.length === pathParts.length) {
-			let match = true;
-			for (let i = 0; i < routeParts.length; i++) {
-			if (routeParts[i].startsWith(':')) {
-				params[routeParts[i].substring(1)] = pathParts[i];
-			} else if (routeParts[i] !== pathParts[i]) {
-				match = false;
+	} else {
+		for (let route in routes) {
+			let params = {}
+			if (route.includes(':')) {
+				let routeParts = route.split('/');
+				let pathParts = path.split('/');
+				if (routeParts.length === pathParts.length) {
+					let match = true;
+					for (let i = 0; i < routeParts.length; i++) {
+						if (routeParts[i].startsWith(':')) {
+							params[routeParts[i].substring(1)] = pathParts[i];
+						} else if (routeParts[i] !== pathParts[i]) {
+							match = false;
+							break;
+						}
+					}
+					if (match) {
+						view = routes[route];
+						view.params = params;
+						break;
+					}
+				}
+			} else if (route === path) {
+				view = routes[route];
+				view.params = params;
 				break;
 			}
-			}
-			if (match) {
-			view = routes[route];
-			view.params = params;
-			break;
-			}
 		}
-		} else if (route === path) {
-		view = routes[route];
-		view.params = params;
-		break;
-		}
-	}
 
-	const pageTitle = "Transcendence";
+		const pageTitle = "Transcendence";
 
-	NavbarFooterVisibility();
-	updateNavbarDropdown();
+		NavbarFooterVisibility();
+		updateNavbarDropdown();
 
 		if (view) {
 			document.title = pageTitle + " | " + view.title;
@@ -289,7 +283,7 @@ async function router() {
 		});
 	}
 }
-	
+
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
