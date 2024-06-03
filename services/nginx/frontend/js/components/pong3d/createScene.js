@@ -34,7 +34,7 @@ export async function createScene() {
 	// console.log("Scene is created");
 	core.renderer = new THREE.WebGLRenderer();
 
-	core.renderer.setSize(constants.WIDTH, constants.HEIGHT);
+	core.renderer.setSize(window.innerWidth, window.innerHeight);
 
 	var c = document.getElementById("pong-renderer");
 
@@ -55,7 +55,7 @@ export async function createScene() {
 	
 	//Camera setup
 	
-	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, constants.ASPECT, constants.NEAR, constants.FAR)
+	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
 	core.camera.position.z = 230;
 	
 	// const controls = new THREE.OrbitControls(core.camera, c);
