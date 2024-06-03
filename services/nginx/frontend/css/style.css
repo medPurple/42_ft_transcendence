@@ -168,6 +168,31 @@ a:hover {
 	font-size: 1rem;
 }
 
+/********** POKEMAP ***********/
+
+.PokeGB {
+	position: relative;
+	margin: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.game-boy-background {
+	display: flex;
+	width: 100vw;
+}
+
+.pokecanva {
+	position: absolute;
+	top: 15%; /* Adjust based on the position of the rectangle inside the image */
+	left: 50%;
+	transform: translate(-50%, 0);
+	width: 41%; /* Adjust based on the size of the rectangle inside the image */
+	height: auto;
+	background-color: #b32c6f;
+}
+
 /* CSS FOR THE MATCHMAKING PAGE */
 .matchmakingdiv {
 	display: flex;
