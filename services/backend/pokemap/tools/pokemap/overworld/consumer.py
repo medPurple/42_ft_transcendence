@@ -17,7 +17,6 @@ class PlayerConsumer(AsyncWebsocketConsumer):
         await self.accept()
         logger.info("connected")
         self.send_message_task = asyncio.create_task(self.send_message())
-        logger.info("task created")
 
 
         
@@ -63,7 +62,6 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                     "player_map": playerobj.player_map,
                     "player_status": playerobj.player_status,
                 }
-                logger.info("before match")
                 match data:
                     case "y+":
                         json_data = await modify_json_ymore(basejson, playerobj)
@@ -75,13 +73,11 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                         json_data = await modify_json_xless(basejson, playerobj)
                     case _:
                         logger.info("data not found")
-                logger.info("before event")
                 data_json_load = json.loads(json_data)
                 if data_json_load.get("event") is not None:
                     await change_status(playerobj, data_json_load)
                 else:
                     await reset_status(playerobj)
-                logger.info("after event")
                 
             all_players = await sync_to_async(player.objects.all, thread_sensitive=True)()
             all_players_json = await sync_to_async(PlayerModelSerializer, thread_sensitive=True)(all_players, many=True)
