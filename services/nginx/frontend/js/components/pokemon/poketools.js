@@ -115,7 +115,6 @@ export class pokechat {
         let id = parts[0].trim();
 
         const users = await Iuser.getAllUsers();
-        console.warn(users);
         let username = users.users.find(user => user.user_id === parseInt(id)).username;
         return username;
 
@@ -123,7 +122,6 @@ export class pokechat {
 
     async addChatMessage(data){
         const chatbox = document.querySelector('.chatbox');
-        console.log(data);
         const username = await this.getusername(data)
         const usernameColor = this.getRandomColor(); // Function to generate random color
         let parts = data.message.split(':');

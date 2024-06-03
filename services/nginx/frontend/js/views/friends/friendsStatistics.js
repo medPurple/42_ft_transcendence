@@ -1,12 +1,11 @@
-// import "../../components/friends/friendsProfileForm.js";
-import { FriendsProfile } from "../../components/friends/friendsProfileForm.js";
+import { FriendsStatistics } from "../../components/friends/friendsStatisticsForm.js";
 import Icookies from "../../components/cookie/cookie.js"
 
 
-export default async function friendsProfile(username) {
+export default async function friendsStatistics(username) {
 	const logdiv = document.createElement('div');
 	if (Icookies.getCookie('token')) {
-		logdiv.appendChild(await new FriendsProfile(username).initFriendsInfo());
+		logdiv.appendChild(await new FriendsStatistics(username).initFriendsStatistics());
 	} else {
 		logdiv.classList.add('not-logged');
 		logdiv.innerText = "You need to be logged in to see your friends"

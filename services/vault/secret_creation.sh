@@ -82,12 +82,13 @@ fi
 echo "[VAULT SECRET] JWToken container secret"
 ENV_FILE="/vault/JWToken/.env"
 SECRET_PATH="key"
-
+secret=$(dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//')
+echo "PASS=$secret" > /vault/JWToken/.env
 if [ -f "$ENV_FILE" ]; then
 	set -a
 	. "$ENV_FILE"
 	set +a
-    vault kv put kv/key SECRET_KEY="refinery strongman stricken tassel enjoyment frigidity underage curling spouse cheating armory jarring"
+    vault kv put kv/key SECRET_KEY=$PASS
 else
 	echo "$ENV_FILE unknow file."
 fi

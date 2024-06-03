@@ -10,7 +10,6 @@ import game from "./views/game.js";
 import pongSettings from "./views/pong3d/pongSettings.js";
 import metaService from "./views/pokemon/metaService.js";
 // import pokemap from "./views/pokemon/pokemap.js";
-import userService from "./views/user/userService.js";
 import code2FA from "./views/user/code2FA.js";
 import chatService from "./views/chat/chatService.js";
 import register from "./views/user/register.js";
@@ -21,9 +20,11 @@ import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
+import friendsStatistics from "./views/friends/friendsStatistics.js";
 import { pong_remoteplay, pong_localplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
+import statistics from "./views/user/statistics.js";
 import "./components/user/logoutForm.js";
 
 // Define the routes
@@ -43,10 +44,6 @@ const routes = {
 	'/contact': {
 		title: "Contact",
 		render: contact
-	},
-	'/userService': {
-		title: "User Service",
-		render: userService
 	},
 	'/pongService': {
 		title: "Pong Service",
@@ -91,6 +88,18 @@ const routes = {
 	'/delete-account': {
 		title: "Delete account",
 		render: deleteAccount
+	},
+	'/statistics': {
+		title: "Statistics",
+		render: statistics
+	},
+	'/statistics/:username': {
+		title: "Friends statistics",
+		render: async (params) => {
+            // params.username contiendra le nom d'utilisateur
+            let username = params.username;
+            return await friendsStatistics(username);
+        }
 	},
 	'/friends': {
 		title: "Friends",
@@ -184,45 +193,68 @@ function checkConnected() {
 }
 
 
+async function checkValidToken() {
+	const token = Icookies.getCookie('token');
+	if (token){
+		try {
+			const response = await fetch('/api/token/', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': token
+				}
+			});
+
+			if (response.ok){
+				return true
+			} else {
+				throw new Error('Failed to get user info');
+			}
+		} catch (error) {
+			return false;
+		}
+	}
+	return true;
+} 
+
 async function router() {
 	let path = location.pathname;
 	let view = null;
-	let path = location.pathname;
-	let view = null;
+	if (!(await checkValidToken())){
+		alert('Invalid token, please reload');
+		Icookies.clearAllCookies();
 
 	for (let route in routes) {
 		let params = {}
 		if (route.includes(':')) {
-			let routeParts = route.split('/');
-			let pathParts = path.split('/');
-			if (routeParts.length === pathParts.length) {
-				let match = true;
-				for (let i = 0; i < routeParts.length; i++) {
-					if (routeParts[i].startsWith(':')) {
-						params[routeParts[i].substring(1)] = pathParts[i];
-					} else if (routeParts[i] !== pathParts[i]) {
-						match = false;
-						break;
-					}
-				}
-				if (match) {
-					view = routes[route];
-					view.params = params;
-					break;
-				}
+		let routeParts = route.split('/');
+		let pathParts = path.split('/');
+		if (routeParts.length === pathParts.length) {
+			let match = true;
+			for (let i = 0; i < routeParts.length; i++) {
+			if (routeParts[i].startsWith(':')) {
+				params[routeParts[i].substring(1)] = pathParts[i];
+			} else if (routeParts[i] !== pathParts[i]) {
+				match = false;
+				break;
 			}
-		} else if (route === path) {
+			}
+			if (match) {
 			view = routes[route];
 			view.params = params;
 			break;
+			}
+		}
+		} else if (route === path) {
+		view = routes[route];
+		view.params = params;
+		break;
 		}
 	}
 
 	const pageTitle = "Transcendence";
-	const pageTitle = "Transcendence";
 
-	NavbarFooterVisibility();
-	updateNavbarDropdown();
 	NavbarFooterVisibility();
 	updateNavbarDropdown();
 
@@ -242,21 +274,22 @@ async function router() {
 				let textNode = document.createTextNode(String(result));
 				app.appendChild(textNode);
 			}
-
-	} else {
-		history.replaceState("", "", "/404");
-		router();
+			
+		} else {
+			history.replaceState("", "", "/404");
+			router();
+		}
+		// Handle navigation
+		window.addEventListener("click", (e) => {
+			if (e.target.matches("[data-link]")) {
+				e.preventDefault();
+				history.pushState("", "", e.target.href);
+				router();
+			}
+		});
 	}
 }
-// Handle navigation
-window.addEventListener("click", (e) => {
-	if (e.target.matches("[data-link]")) {
-		e.preventDefault();
-		history.pushState("", "", e.target.href);
-		router();
-	}
-});
-
+	
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);

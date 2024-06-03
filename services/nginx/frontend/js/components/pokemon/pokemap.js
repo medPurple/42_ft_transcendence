@@ -160,8 +160,9 @@ export class pokeMap {
         }
 
         document.onkeydown = (event) => {
-            event.preventDefault();
+            
             if (event.key == 'ArrowUp') {
+                event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "y-",
@@ -170,6 +171,7 @@ export class pokeMap {
 
             }
             if (event.key == 'ArrowDown') {
+                event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "y+",
@@ -177,6 +179,7 @@ export class pokeMap {
                 }));
             }
             if (event.key == 'ArrowRight') {
+                event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "x+",
@@ -184,6 +187,7 @@ export class pokeMap {
                 }));
             }
             if (event.key == 'ArrowLeft') {
+                event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
                     new: "x-",

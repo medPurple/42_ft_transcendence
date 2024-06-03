@@ -119,8 +119,6 @@ class MatchmakingButtons {
 	checkstatus(data) {
 		if (this.status === 'found') {
 			this.removeWaitingPage();
-			// this.matchsocket.close();
-			console.log(data);
 			window.location.href = "/gameService"
 		}
 	}
@@ -136,12 +134,11 @@ class MatchmakingButtons {
 			"id": await Iuser.getID(),
 		}
 
-		const waitForOpenConnection = new Promise(resolve => {
-			this.matchsocket.addEventListener('open', resolve);
-		});
-		await waitForOpenConnection;
+		// const waitForOpenConnection = new Promise(resolve => {
+		// 	this.matchsocket.addEventListener('open', resolve);
+		// });
+		// await waitForOpenConnection;
 
-		console.log("Matchmaking socket ok.");
 		this.matchsocket.send(JSON.stringify(msg));
 		this.maindiv.appendChild(this.waitingPage());
 		return this.maindiv;
