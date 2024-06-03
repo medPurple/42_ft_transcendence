@@ -48,6 +48,74 @@ class friendsInfo {
 		}
     }
 
+	async getUserBlock(username){
+		try {
+			const response = await fetch(`/api/friends/block-list/${username}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': Icookies.getCookie('token')
+				},
+			});
+			const data = await response.json();
+			if (data.success) {
+				return data;
+			} else {
+				alert('Failed to get block user');
+			}
+		} catch (error) {
+			console.error('Error', error);
+		}
+	}
+
+	async blockUser(username){
+		try {
+			const response = await fetch(`api/friends/block-list/${username}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': Icookies.getCookie('token')
+
+				},
+				// body: JSON.stringify({block_username: username})
+			});
+			const data = await response.json();
+			if (data.success) {
+				return 'User blocked';
+			} else {
+				alert('Failed to block user');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	}
+
+	async unblockUser(username){
+		try {
+			const response = await fetch(`api/friends/block-list/${username}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': Icookies.getCookie('token')
+				},
+				// body: JSON.stringify({block_username: username})
+			});
+			const data = await response.json();
+			if(data.success){
+				return 'User unblocked';
+			} else {
+				alert('Failed to unblock user');
+			}
+		} catch (error) {
+			console.error('Error', error);
+		}
+	}
+
+	}
+
 }
 
 let Ifriends = new friendsInfo();

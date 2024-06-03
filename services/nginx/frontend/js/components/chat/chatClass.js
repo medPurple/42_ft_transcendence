@@ -83,20 +83,20 @@ export class chat {
 		const inputDiv = document.createElement('div');
 		inputDiv.id = 'inputDiv';
 		inputDiv.classList.add('p-3', 'mt-auto');
-	
+
 		const input = document.createElement('input');
 		input.type = 'text';
 		input.id = 'messageInput';
 		input.classList.add('form-control', 'mr-2');
-	
+
 		const sendButton = document.createElement('button');
 		sendButton.id = 'sendButton';
 		sendButton.textContent = 'Send';
 		sendButton.classList.add('btn', 'btn-primary');
-	
+
 		inputDiv.appendChild(input);
 		inputDiv.appendChild(sendButton);
-	
+
 		return inputDiv;
 	}
 
@@ -104,31 +104,78 @@ export class chat {
 		const response = await Iuser.getAllUsers();
 		let user = response.users.find(user => user.user_id === parseInt(this.targetid));
 		console.warn(user)
-	
+
 		const titleDiv = document.createElement('div');
 		titleDiv.id = 'titleDiv';
 		titleDiv.classList.add('bg-light', 'align-items-center', 'w-100', 'p-1', 'border', 'border-dark', 'rounded');
-	
+
 		const titleElement = document.createElement('h1');
 		titleElement.textContent = user.username;
 		titleElement.classList.add('text-center', 'font-italic', 'mr-3');
-	
+
 		const inviteButton = document.createElement('button');
 		inviteButton.id = 'inviteButton';
 		inviteButton.textContent = 'Invite';
 		inviteButton.classList.add('btn', 'btn-secondary', 'ml-3', 'mr-3'); // Ajoute les classes ml-auto et mr-2
-	
+
 		const blockButton = document.createElement('button');
 		blockButton.id = 'blockButton';
 		blockButton.textContent = 'Block';
 		blockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3'); // Ajoute la classe mr-2
-	
+		this.blockExec(blockButton, user.username);
+
 		titleDiv.appendChild(titleElement);
 		titleDiv.appendChild(inviteButton);
-		titleDiv.appendChild(blockButton);		
-	
+		titleDiv.appendChild(blockButton);
+
 		return titleDiv;
 	}
+
+	async blockExec(blockButton, username){
+		blockButton.onclick = async () => {
+			try {
+				const blockIsValid = await Ifriends.blockUser(username);
+				console.log(blockIsValid);
+				if (blockIsValid.success){
+					blockButton.textContent = 'User is blocked';
+				}
+			} catch (error) {
+				console.error('Error:', error);
+			}
+		}
+	}
+
+	// async unblockExec(blockButton, username) {
+	// 	blockButton.onclick = async () => {
+	// 		try {
+	// 			const unblockIsValid = await Ifriends.unblockUser(username);
+	// 			console.log(unblockIsValid)
+	// 			if (unblockIsValid.success){
+	// 				blockButton.textContent = 'User is unblocked';
+	// 			}
+	// 		} catch (error) {
+	// 			console.error('Error:', error);
+	// 		}
+	// 	}
+	// }
+
+	async checkBlockStatus(message){
+		const username = this.getusername(message)
+		try {
+			const blockStatus = await Ifriends.getUserBlock(username);
+			console.log(blockStatus);
+			if (blockStatus.success){
+				return true;
+			}
+			else {
+				return false;
+			}
+		} catch (error) {
+			console.error('Error:', error);
+		}
+
+	}
+
 
 	async createInteractionDiv() {
 		const interactiondiv = document.createElement('div');
@@ -159,7 +206,7 @@ export class chat {
 	async initChat() {
 		const chatDiv = this.createChatDiv();
 		const usersDiv = await this.createUsersDiv();
-		
+
 		chatDiv.appendChild(usersDiv);
 		if (this.targetid){
 			chatDiv.appendChild(await this.createInteractionDiv());
@@ -257,7 +304,7 @@ export class chat {
 		return refuseButton;
 
 	}
-	
+
 	async checkInviteStatus(data){
 		let parts = data.split(':');
 		let id = parts[0].trim();
@@ -286,7 +333,7 @@ export class chat {
 			return true;
 		}
 		return false;
-	
+
 	}
 
 	async createChat(){
@@ -319,6 +366,7 @@ export class chat {
 			const message = data['message'];
 			const invite = await this.checkInvite(message);
 			const invitestatus = await this.checkInviteStatus(message);
+			const blockstatus = await this.checkBlockStatus(message);
 			if (invite){
 				inviteButton.disabled = true;
 				this.createInviteButton();
@@ -327,6 +375,9 @@ export class chat {
 				console.warn('INVITATION STATUS');
 				if (!this.player1 && !this.player2)
 					inviteButton.disabled = false;
+			}
+			else if (blockstatus){
+				console.log('BLOCK STATUS');
 			}
 			else
 				await this.addMessage(message);

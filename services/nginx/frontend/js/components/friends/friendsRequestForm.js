@@ -349,7 +349,6 @@ export class Friends {
 		buttonSendRequest.onclick = async () => {
 			try {
 				const requestIsValid = await this.sendRequest(username);
-				console.log(requestIsValid);
 				if (requestIsValid.success === true) {
 					buttonSendRequest.textContent = 'Request Sent';
 					buttonSendRequest.disabled = true;
