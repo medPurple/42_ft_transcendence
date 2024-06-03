@@ -166,19 +166,19 @@ export class Friends {
 			friend_username: friend_username
 		});
 		this.socket.send(message);
-		
+
 		return new Promise((resolve, reject) => {
 			this.socket.onmessagecallback = resolve;
 		});
 	}
-	
-	
+
+
 	async updateView() {
 		const dataUsers = await Iuser.getAllUsers();
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
-		
+
 		if (dataUsers.users.length != this.lastusernumber) {
 			this.ulElement.innerHTML = ''; // Clear the list before populating it
 			await this.viewUsers();
@@ -187,17 +187,17 @@ export class Friends {
 				if (currentUser != user.username) {
 					const otherUser = this.variablesArray.find(u => u.name === user.username);
 					const cardElement = document.querySelector('#user_' + user.username);
-					
+
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
 						return request.from_user === user.user_id || request.to_user === user.user_id;
 					});
-					
+
 					const hasSendRequest = requestFriend.sent_requests.some(request => {
 						return request.from_user === user.user_id || request.to_user === user.user_id;
 					});
-					
+
 					const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
-					
+
 					if (isFriends != otherUser.isFriends) {
 						if (isFriends) {
 							cardElement.innerHTML = ''; // Clear card content
@@ -239,33 +239,33 @@ export class Friends {
 		}
 		this.lastusernumber = dataUsers.users.length;
 	}
-	
-	
+
+
 	async viewUsers() {
 		const dataUsers = await Iuser.getAllUsers();
 		this.lastusernumber = dataUsers.users.length;
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
-		
+
 		this.ulElement.innerHTML = ''; // Clear the list before populating it
-		
+
 		if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(users => {
 				if (currentUser != users.username) {
-					
+
 					const hasFriendRequest = requestFriend.received_requests.some(request => {
 						return request.from_user === users.user_id || request.to_user === users.user_id;
 					});
-					
+
 					const hasSendRequest = requestFriend.sent_requests.some(request => {
 						return request.from_user === users.user_id || request.to_user === users.user_id;
 					});
-					
+
 					const isFriends = friendsList.friends.some(friend => friend.user_id === users.user_id);
 					const cardElement = this.createCardBody(users, isFriends);
 					const cardFooter = cardElement.querySelector('.card-footer');
-					
+
 					if (isFriends) {
 						this.manageFriend(cardFooter, users.username);
 					} else if (hasFriendRequest) {
@@ -275,15 +275,15 @@ export class Friends {
 					} else {
 						this.sendFriendRequest(cardFooter, users.username);
 					}
-					
+
 					this.ulElement.appendChild(cardElement);
-					
+
 					const column = document.createElement('div');
 					column.classList.add('col-md-4'); // Définir la taille de la colonne Bootstrap
 					column.appendChild(cardElement);
-					
+
 					this.ulElement.appendChild(column);
-					
+
 					this.variablesArray.push({
 						name: users.username,
 						hasFriendRequest: hasFriendRequest,
@@ -302,35 +302,35 @@ export class Friends {
 		document.body.appendChild(this.usersList);
 		return this.usersList;
 	}
-	
+
 	createCardBody(user, isFriend) {
 		const cardElement = document.createElement('div');
 		cardElement.className = 'card mb-3';
 		cardElement.id = 'user_' + user.username;
-		
+
 		const cardBody = document.createElement('div');
 		cardBody.className = 'card-body';
-		
+
 		const userImage = document.createElement('img');
 		userImage.src = `data:image/jpeg;base64,${user.profile_picture_data}`;
 		userImage.alt = '';
 		userImage.className = 'rounded-circle mb-3';
 		userImage.width = 80;
 		userImage.height = 80;
-		
+
 		const userName = document.createElement('h5');
 		userName.className = 'card-title';
 		userName.textContent = user.username;
-		
+
 		cardBody.appendChild(userImage);
 		cardBody.appendChild(userName);
-		
+
 		cardElement.appendChild(cardBody);
-		
-		
+
+
 		const cardFooter = document.createElement('div');
 		cardFooter.className = 'card-footer';
-		
+
 		if (isFriend) {
 			const linkToProfile = this.seeFriend(user.username);
 			cardBody.appendChild(linkToProfile);
@@ -338,12 +338,12 @@ export class Friends {
 			const message = this.createMessage();
 			cardBody.appendChild(message);
 		}
-		
+
 		cardElement.appendChild(cardFooter);
-		
+
 		return cardElement;
 	}
-	
+
 	async sendFriendRequest(cardFooter, username) {
 		const buttonSendRequest = this.friendsButton.sendRequestButton();
 		buttonSendRequest.onclick = async () => {
@@ -362,7 +362,7 @@ export class Friends {
 		cardFooter.appendChild(buttonSendRequest);
 		return buttonSendRequest;
 	}
-	
+
 	async manageFriend(cardFooter, username) {
 		const buttonDeleteFriend = this.friendsButton.deleteFriendButton();
 		buttonDeleteFriend.onclick = async () => {
@@ -381,7 +381,7 @@ export class Friends {
 		cardFooter.appendChild(buttonDeleteFriend);
 		return buttonDeleteFriend;
 	}
-	
+
 	seeFriend(username){
 		const linkToFriendsProfile = document.createElement('a');
 		linkToFriendsProfile.textContent = 'See profile';
@@ -394,8 +394,8 @@ export class Friends {
 		});
 		return linkToFriendsProfile;
 	}
-	
-	
+
+
 	getRandomSquidGamePhrase() {
 		const phrases = [
 			"Red Light, Green Light",
@@ -414,12 +414,12 @@ export class Friends {
 			"Unexpected betrayals unfold",
 			"Mind and strength tested"
 		];
-		
+
 		const randomIndex = Math.floor(Math.random() * phrases.length);
 		return phrases[randomIndex];
 	}
-	
-	
+
+
 	createMessage() {
 		const messageLink = document.createElement('a');
 		messageLink.textContent = this.getRandomSquidGamePhrase();
@@ -431,8 +431,8 @@ export class Friends {
 		});
 		return messageLink;
 	}
-	
-	
+
+
 	async manageFriendRequest(cardFooter, username) {
 		const buttonAcceptRequest = this.friendsButton.acceptRequestButton();
 		buttonAcceptRequest.onclick = async () => {
@@ -447,7 +447,7 @@ export class Friends {
 				console.error('Error:', error);
 			}
 		};
-		
+
 		const buttonRejectRequest = this.friendsButton.rejectRequestButton();
 		buttonRejectRequest.onclick = async () => {
 			try {
@@ -461,7 +461,7 @@ export class Friends {
 				console.error('Error:', error);
 			}
 		};
-		
+
 		cardFooter.appendChild(buttonAcceptRequest);
 		cardFooter.appendChild(buttonRejectRequest);
 		return cardFooter;

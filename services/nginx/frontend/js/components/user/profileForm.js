@@ -50,30 +50,13 @@ export default class profileForm extends HTMLElement {
 					<li class="list-group-item">${data.user.last_name}</li>
 					<li class="list-group-item">${data.user.email}</li>
 					<li class="list-group-item">${data.user.is_online}</li>
-					<li class="list-group-item">
-					<div class="container text-center">
-						<div class="row">
-						  <div class="col">Game wins</div>
-						  <div class="col">Game losses</div>
-						</div>
-						<div class="row">
-							<div class="col">3</div>
-							<div class="col">2</div>
-						</div>
-						<div class="row">
-							<div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-								<div class="progress-bar bg-success" style="width: 50%">One more round.</div>
-							</div>
-							<div class="progress" role="progressbar" aria-label="Danger example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-								<div class="progress-bar bg-danger" style="width: 100%">100%</div>
-							</div>
-						</div>
-					<a href="/statistics" class="card-link" data-link>see games details</a></li>
-				</ul>
-				<div class="card-body">
+
+					</ul>
+					<div class="card-body">
 					<a href="/edit-profile" class="card-link" data-link >Edit Profile</a><br>
 					<a href="/update-password" class="card-link" data-link>Update password</a><br>
 					<a href="/friends" class="card-link" data-link>See my friends</a><br>
+					<a href="/statistics" class="card-link" data-link>See games details</a>
 				</div>
 				<div class="card-body">
 					<a href="/delete-account" class="btn btn-light">Delete Profile</a>

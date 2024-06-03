@@ -20,6 +20,7 @@ import updatePassword from "./views/user/updatePassword.js";
 import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
+import friendsStatistics from "./views/friends/friendsStatistics.js";
 import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
@@ -91,6 +92,14 @@ const routes = {
 	'/statistics': {
 		title: "Statistics",
 		render: statistics
+	},
+	'/statistics/:username': {
+		title: "Friends statistics",
+		render: async (params) => {
+            // params.username contiendra le nom d'utilisateur
+            let username = params.username;
+            return await friendsStatistics(username);
+        }
 	},
 	'/friends': {
 		title: "Friends",

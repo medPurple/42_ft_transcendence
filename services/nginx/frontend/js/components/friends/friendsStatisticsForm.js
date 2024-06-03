@@ -1,9 +1,11 @@
 import Iuser from "../../components/user/userInfo.js";
 
-export class Statistics {
+export class FriendsStatistics {
 
-	constructor(){
-		this.games = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+	constructor(username){
+		this.games = [0, 1, 2, 3, 4, 5, 6];
+		this.username = username;
+
 	}
 
 	createUserCardStats(containerStats, userInfo){
@@ -20,7 +22,8 @@ export class Statistics {
 		rowUser.appendChild(profileUser);
 
 		const cardDivUser = document.createElement('div');
-		cardDivUser.classList.add('card', 'mb-3', 'mx-3');
+		cardDivUser.classList.add('card');
+		cardDivUser.classList.add('mb-3');
 		cardDivUser.id = 'user_';
 		profileUser.appendChild(cardDivUser);
 
@@ -29,7 +32,7 @@ export class Statistics {
 		cardDivUser.appendChild(rowCard);
 
 		let cardImage = document.createElement('img');
-		cardImage.src = `data:image/jpeg;base64,${userInfo.user.profile_picture_data}`;
+		cardImage.src = `data:image/jpeg;base64,${userInfo.profile_picture_data}`;
 		cardImage.classList.add('rounded-circle');
 		cardImage.classList.add('mb-3');
 		cardImage.width = 80;
@@ -39,7 +42,7 @@ export class Statistics {
 		for (let i = 0; i < 4; i++) {
 
 			let divCol = document.createElement('div');
-			divCol.classList.add('col-md-3', 'col-sm-6', 'col-12');
+			divCol.classList.add('col-md-3');
 			rowCard.appendChild(divCol);
 
 			let divCardBody = document.createElement('div');
@@ -69,7 +72,7 @@ export class Statistics {
 
 		switch(i) {
 			case 0:
-				strong.textContent = userInfo.user.username;
+				strong.textContent = userInfo.username;
 				break;
 			case 1:
 				strong.textContent = 'Played games';
@@ -114,6 +117,7 @@ export class Statistics {
 
 	}
 
+
 	createPartyStats(containerStats, userInfo){
 
 		let rowOther = document.createElement('div');
@@ -156,7 +160,7 @@ export class Statistics {
 			rowPlayers.appendChild(playerTwoCol);
 
 			let playerOneText = document.createElement('div');
-			playerOneText.innerHTML = `<strong>${userInfo.user.username} </strong>`;
+			playerOneText.innerHTML = `<strong>${userInfo.username} </strong>`;
 			playerOneCol.appendChild(playerOneText);
 
 			let playerTwoText = document.createElement('div');
@@ -164,14 +168,14 @@ export class Statistics {
 			playerTwoCol.appendChild(playerTwoText);
 
 			let playerOneImage = document.createElement('img');
-			playerOneImage.src = `data:image/jpeg;base64,${userInfo.user.profile_picture_data}`;
+			playerOneImage.src = `data:image/jpeg;base64,${userInfo.profile_picture_data}`;
 			playerOneImage.classList.add('rounded-circle', 'mt-2');
 			playerOneImage.width = 80;
 			playerOneImage.alt = 'Player one picture';
 			playerOneCol.appendChild(playerOneImage);
 
 			let playerTwoImage = document.createElement('img');
-			playerTwoImage.src = `data:image/jpeg;base64,${userInfo.user.profile_picture_data}`; // Remplacer par l'URL de l'image de Player two
+			playerTwoImage.src = `data:image/jpeg;base64,${userInfo.profile_picture_data}`; // Remplacer par l'URL de l'image de Player two
 			playerTwoImage.classList.add('rounded-circle', 'mt-2');
 			playerTwoImage.width = 80;
 			playerTwoImage.alt = 'Player two picture';
@@ -193,13 +197,15 @@ export class Statistics {
 		return rowOther;
 	}
 
-	async displayStat(){
+
+	async initFriendsStatistics(){
 
 		const containerStats = document.createElement('div');
 		containerStats.classList.add('container');
 		containerStats.id = 'stats';
 		document.querySelector('main').appendChild(containerStats);
-		const userInfo = await Iuser.getAllUserInfo();
+		const users = await Iuser.getAllUsers();
+		const userInfo = users.users.find(user => user.username === this.username);
 
 		this.createUserCardStats(containerStats, userInfo);
 		this.createPartyStats(containerStats, userInfo);
