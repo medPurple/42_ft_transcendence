@@ -154,6 +154,7 @@ clean : down
 	@ docker system prune -af
 	@ docker volume prune -f
 # after prune, the secret volume is still there!
+	@ docker volume rm secret_volume
 
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 

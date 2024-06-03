@@ -186,43 +186,73 @@ function checkConnected() {
 }
 
 
+async function checkValidToken() {
+	const token = Icookies.getCookie('token');
+	if (token){
+		try {
+			const response = await fetch('/api/token/', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': token
+				}
+			});
+
+			if (response.ok){
+				return true
+			} else {
+				throw new Error('Failed to get user info');
+			}
+		} catch (error) {
+			return false;
+		}
+	}
+	return true;
+} 
+
 async function router() {
 	let path = location.pathname;
 	let view = null;
+	if (!(await checkValidToken())){
+		alert('Invalid token, please reload');
+		Icookies.clearAllCookies();
 
-	for (let route in routes) {
-		let params = {}
-		if (route.includes(':')) {
-		let routeParts = route.split('/');
-		let pathParts = path.split('/');
-		if (routeParts.length === pathParts.length) {
-			let match = true;
-			for (let i = 0; i < routeParts.length; i++) {
-			if (routeParts[i].startsWith(':')) {
-				params[routeParts[i].substring(1)] = pathParts[i];
-			} else if (routeParts[i] !== pathParts[i]) {
-				match = false;
+	}
+	else{
+		for (let route in routes) {
+			let params = {}
+			if (route.includes(':')) {
+			let routeParts = route.split('/');
+			let pathParts = path.split('/');
+			if (routeParts.length === pathParts.length) {
+				let match = true;
+				for (let i = 0; i < routeParts.length; i++) {
+				if (routeParts[i].startsWith(':')) {
+					params[routeParts[i].substring(1)] = pathParts[i];
+				} else if (routeParts[i] !== pathParts[i]) {
+					match = false;
+					break;
+				}
+				}
+				if (match) {
+				view = routes[route];
+				view.params = params;
 				break;
+				}
 			}
-			}
-			if (match) {
+			} else if (route === path) {
 			view = routes[route];
 			view.params = params;
 			break;
 			}
 		}
-		} else if (route === path) {
-		view = routes[route];
-		view.params = params;
-		break;
-		}
-	}
-
-	const pageTitle = "Transcendence";
-
-	NavbarFooterVisibility();
-	updateNavbarDropdown();
-
+		
+		const pageTitle = "Transcendence";
+		
+		NavbarFooterVisibility();
+		updateNavbarDropdown();
+		
 		if (view) {
 			document.title = pageTitle + " | " + view.title;
 			let result = await view.render(view.params);	
@@ -239,21 +269,22 @@ async function router() {
 				let textNode = document.createTextNode(String(result));
 				app.appendChild(textNode);
 			}
-
-	} else {
-		history.replaceState("", "", "/404");
-		router();
+			
+		} else {
+			history.replaceState("", "", "/404");
+			router();
+		}
+		// Handle navigation
+		window.addEventListener("click", (e) => {
+			if (e.target.matches("[data-link]")) {
+				e.preventDefault();
+				history.pushState("", "", e.target.href);
+				router();
+			}
+		});
 	}
-	}
-	// Handle navigation
-	window.addEventListener("click", (e) => {
-	if (e.target.matches("[data-link]")) {
-		e.preventDefault();
-		history.pushState("", "", e.target.href);
-		router();
-	}
-});
-
+}
+	
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
