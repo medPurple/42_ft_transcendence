@@ -136,7 +136,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');
@@ -172,6 +172,11 @@ function updateNavbarDropdown() {
 		// <li><a class="dropdown-item" href="/logout">log out</a></li>
 
 function checkConnected() {
+
+	if (Icookies.getCookie('token')) {
+		return true;
+	}
+	return false;
 	if (Icookies.getCookie('token')) {
 		return true;
 	}
@@ -180,6 +185,8 @@ function checkConnected() {
 
 
 async function router() {
+	let path = location.pathname;
+	let view = null;
 	let path = location.pathname;
 	let view = null;
 
@@ -212,26 +219,29 @@ async function router() {
 	}
 
 	const pageTitle = "Transcendence";
+	const pageTitle = "Transcendence";
 
 	NavbarFooterVisibility();
 	updateNavbarDropdown();
+	NavbarFooterVisibility();
+	updateNavbarDropdown();
 
-	if (view) {
-		document.title = pageTitle + " | " + view.title;
-		let result = await view.render(view.params);	
-		//Clear the app content
-		app.innerHTML = '';
-		if (typeof result === 'string') {
-			// If it's a string, user innerHTML
-			app.innerHTML = result;
-		} else if (result instanceof Node) {
-			// If it's a Node, use appendChild
-			app.appendChild(result);
-		} else {
-			// If it's neither, create a text node and append it
-			let textNode = document.createTextNode(String(result));
-			app.appendChild(textNode);
-		}
+		if (view) {
+			document.title = pageTitle + " | " + view.title;
+			let result = await view.render(view.params);	
+			//Clear the app content
+			app.innerHTML = '';
+			if (typeof result === 'string') {
+				// If it's a string, user innerHTML
+				app.innerHTML = result;
+			} else if (result instanceof Node) {
+				// If it's a Node, use appendChild
+				app.appendChild(result);
+			} else {
+				// If it's neither, create a text node and append it
+				let textNode = document.createTextNode(String(result));
+				app.appendChild(textNode);
+			}
 
 	} else {
 		history.replaceState("", "", "/404");

@@ -4,81 +4,255 @@ import Ifriends from "../friends/friendsInfo.js";
 
 export class chat {
 
-	initChat() {
-		const chatContainer = document.createElement('div');
-		chatContainer.id = 'chat-container';
+	constructor(){
+		this.targetid = 1;
+	}
 
-		const chatLog = document.createElement('textarea');
-		chatLog.id = 'chat-log';
-		chatLog.cols = '100';
-		chatLog.rows = '20';
-		chatContainer.appendChild(chatLog);
+	async getusername(data) {
+		let message = data.message;
+		let parts = message.split(':');
+		let id = parts[0].trim();
 
-		const chatMessageInput = document.createElement('input');
-		chatMessageInput.id = 'chat-message-input';
-		chatMessageInput.type = 'text';
-		chatMessageInput.size = '100';
-		chatContainer.appendChild(chatMessageInput);
+		const users = await Iuser.getAllUsers();
+		console.warn(users);
+		let username = users.users.find(user => user.user_id === parseInt(id)).username;
+		return username;
 
-		const chatMessageSubmit = document.createElement('input');
-		chatMessageSubmit.id = 'chat-message-submit';
-		chatMessageSubmit.type = 'button';
-		chatMessageSubmit.value = 'Send';
-		chatContainer.appendChild(chatMessageSubmit);
+	}
 
-		const roomName = 'myroom';
-		const chatSocket = new WebSocket(
+	createChatDiv() {
+		const chatDiv = document.createElement('div');
+		chatDiv.style.backgroundColor = 'lightgray';
+		chatDiv.classList.add('m-3', 'rounded', 'border', 'border-dark', 'd-flex');;
+		chatDiv.style.height = 'calc(100vh - 2rem)';
+		chatDiv.id = 'chatDiv';
+		return chatDiv;
+	}
+
+	async createUsersDiv() {
+		const usersDiv = document.createElement('div');
+		usersDiv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded');
+		usersDiv.style.flex = '1'; // Ajoute la propriété flex
+		usersDiv.id = 'usersDiv';
+
+		const title = document.createElement('h2'); // Crée un nouvel élément de titre
+		title.textContent = 'User List'; // Ajoute du texte au titre
+		title.classList.add('text-underline', 'mt-3'); // Ajoute une marge en haut et souligne le texte
+		usersDiv.appendChild(title); // Ajoute le titre à usersDiv
+
+
+		// const response = await Iuser.getAllUsers();
+		// console.log(response);
+		// response.users.forEach(user => {
+		// 	const userButton = document.createElement('button');
+		// 	userButton.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-light');
+		// 	userButton.textContent = "name";
+		// 	usersDiv.appendChild(userButton);
+		// });
+		for (let i = 0; i < 5; i++) {
+			const userButton = document.createElement('button');
+			userButton.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-light', 'border', 'border-dark', 'mb-1');
+			userButton.textContent = "name";
+			usersDiv.appendChild(userButton);
+		}
+
+		return usersDiv;
+	}
+
+	createMessagesDiv() {
+		const messagesDiv = document.createElement('div');
+		messagesDiv.style.backgroundColor = 'blue';
+		
+		messagesDiv.id = 'messagesDiv';
+		messagesDiv.textContent = 'messages';
+		return messagesDiv;
+	}
+
+	createInputDiv() {
+		const inputDiv = document.createElement('div');
+		inputDiv.id = 'inputDiv';
+		inputDiv.style.backgroundColor = 'green';
+
+		const input = document.createElement('input');
+		input.type = 'text';
+		input.id = 'messageInput';
+
+		const sendButton = document.createElement('button');
+		sendButton.id = 'sendButton';
+		sendButton.textContent = 'Send';
+
+		const inviteButton = document.createElement('button');
+		inviteButton.id = 'inviteButton';
+		inviteButton.textContent = 'Invite';
+
+		inputDiv.appendChild(input);
+		inputDiv.appendChild(sendButton);
+		inputDiv.appendChild(inviteButton);
+
+		return inputDiv;
+	}
+
+	async createTitleDiv() {
+
+		const response = await Iuser.getAllUsers();
+		let user = response.users.find(user => user.user_id === parseInt(this.targetid));
+		console.warn(user)
+
+		const titleDiv = document.createElement('div');
+		titleDiv.id = 'titleDiv';
+		titleDiv.style.backgroundColor = 'yellow';
+		titleDiv.classList.add('d-flex', 'flex-row', 'justify-content-center', 'align-items-center', 'w-100'); // Ajout des classes Bootstrap
+
+		const titleElement = document.createElement('h1');
+		titleElement.textContent = user.username;
+		titleElement.classList.add('text-center', 'font-italic', 'mr-3',); // Ajout des classes Bootstrap
+
+		const imageElement = document.createElement('img');
+		imageElement.src = `data:image/jpeg;base64,${user.profile_picture_data}`;
+		imageElement.classList.add('rounded-circle'); // Ajout des classes Bootstrap
+
+
+		titleDiv.appendChild(titleElement);
+		titleDiv.appendChild(imageElement);
+
+		return titleDiv;
+	}
+
+	async createInteractionDiv() {
+		const interactiondiv = document.createElement('div');
+		interactiondiv.classList.add('interactionDiv');
+		interactiondiv.style.backgroundColor = 'purple';
+		interactiondiv.style.flex = '3'; // Ajoute la propriété flex
+
+		const messagesDiv = this.createMessagesDiv();
+		const inputDiv = this.createInputDiv();
+		const titleDiv = await this.createTitleDiv();
+
+		interactiondiv.appendChild(titleDiv);
+		interactiondiv.appendChild(messagesDiv);
+		interactiondiv.appendChild(inputDiv);
+
+		return	interactiondiv;
+	}
+
+	createNonediv(){
+		const Nonediv = document.createElement('div');
+		Nonediv.style.flex = '3';
+		Nonediv.innerText = "Nobody selected"
+
+
+		return Nonediv;
+	}
+
+	async initChat() {
+		const chatDiv = this.createChatDiv();
+		
+
+		const usersDiv = await this.createUsersDiv();
+		
+		chatDiv.appendChild(usersDiv);
+		if (this.targetid){
+			chatDiv.appendChild(await this.createInteractionDiv());
+			this.createChatDiv();
+		}
+		else
+			chatDiv.appendChild(this.createNonediv());
+
+		document.body.appendChild(chatDiv);
+		return chatDiv;
+	}
+
+	async createChat(){
+		let myid = await Iuser.getID()
+		let roomName = ''
+		const interactiondiv = document.querySelector('.interactionDiv');
+		const inputDiv = interactiondiv.querySelector('#inputDiv');
+		const input = inputDiv.querySelector('#messageInput');
+		const sendButton = inputDiv.querySelector('#sendButton');
+		const inviteButton = inputDiv.querySelector('#inviteButton');
+
+
+		if (myid > this.targetid)
+			roomName = myid + '_' + this.targetid;
+		else
+			roomName = this.targetid + '_' + myid;
+
+		chatSocket = new WebSocket(
 			'wss://' + window.location.host + '/ws/chat/'
 			+ roomName
 			+ '/'
 		);
 
-		// receive msg from server
-		chatSocket.onmessage = function(e) {
-			const data = JSON.parse(e.data);
-			chatLog.value += (data.message + '\n');
-		};
-
-
-		window.addEventListener('beforeunload', function(event) {
-			// Fermez la connexion WebSocket si elle est ouverte.
-			if (chatSocket.readyState === WebSocket.OPEN) {
-				chatSocket.close();
-			}
-		});
-		// loosed connection with wbs
-		// chatSocket.onclose = function(e) {
-		// 	console.error('Chat socket closed unexpectedly');
-		// };
-
-		chatMessageInput.focus(); // Sets the focus to the chat message input field.
-		chatMessageInput.onkeyup = function(e) {
-			if (e.key === 'Enter') {
-				chatMessageSubmit.click();
-			}
-		};
-
-		chatMessageSubmit.onclick = async function(e) {
-			const message = chatMessageInput.value;
-			const user_id = await Iuser.getID();
-			if (user_id === '') {
-				console.error("You're not logged !");
-			} else {
-				chatSocket.send(JSON.stringify ({
-					'message': message,
-					'user_id': user_id
-				}));
-			}
-			chatMessageInput.value = '';
+		chatSocket.onopen = function(e) {
+			console.log('Chat socket open');
 		}
 
-		// connection to wbs
-		chatSocket.onopen = function(e) {
-			console.log('Chat connexion');
-			chatSocket.send(JSON.stringify({
-				"message" : "test",
-			}));
+		chatSocket.onmessage = function(e) {
+			const data = JSON.parse(e.data);
+			const message = data['message'];
+			this.checkInvite(message);
+			this.addMessage(message);
 		};
-		return chatContainer;
+
+		chatSocket.onclose = function(e) {
+			console.error('Chat socket closed unexpectedly');
+		};
+
+		input.focus();
+		input.onkeyup = (e) => {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				sendButton.click();
+			}
+		};
+
+		sendButton.onclick = async (e) => {
+			const message = input.value;
+			const user_id = await Iuser.getID();
+			chatSocket.send(JSON.stringify({
+				'message': message,
+				'user_id': user_id
+			}));
+			input.value = '';
+		}
+
+		inviteButton.onclick = async (e) => {
+			const user_id = await Iuser.getID();
+			chatSocket.send(JSON.stringify({
+				'message': '@invite@',
+				'user_id': user_id
+			}));
+		}
+
 	}
+
+	async addMessage(data){
+		const messagediv = interactiondiv.querySelector('#messagesDiv');
+		console.log(data);
+		const username = await this.getusername(data)
+		const usernameColor = this.getRandomColor(); // Function to generate random color
+		let parts = data.message.split(':');
+		let message = parts[1].trim();
+		messagediv.innerHTML += `<span style="color: ${usernameColor};">${username}</span>: ${message}<br>`;
+	}
+
+	getRandomColor() {
+		const letters = '0123456789ABCDEF';
+		let color = '#';
+		for (let i = 0; i < 6; i++) {
+			color += letters[Math.floor(Math.random() * 16)];
+		}
+		return color;
+	}
+
+	async checkInvite(){
+		let message = data.message;
+		let parts = message.split(':');
+		let id = parts[0].trim();
+		let user_message = parts[1].trim();
+		if (user_message === '@invite@'){
+			console.warn('INVITATION BY' + id);
+		}
+	}
+
 }

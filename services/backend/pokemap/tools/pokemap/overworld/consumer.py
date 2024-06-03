@@ -36,6 +36,8 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                     "userID": playerobj.userID,
                     "posX": playerobj.posX,
                     "posY": playerobj.posY,
+                    "lastPosX": playerobj.lastPosX,
+                    "lastPosY": playerobj.lastPosY,
                     "orientation": playerobj.orientation,
                     "player_skin": playerobj.player_skin,
                     "player_map": playerobj.player_map,
@@ -53,6 +55,8 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                     "userID": playerobj.userID,
                     "posX": playerobj.posX,
                     "posY": playerobj.posY,
+                    "lastPosX": playerobj.lastPosX,
+                    "lastPosY": playerobj.lastPosY,
                     "orientation": playerobj.orientation,
                     "active": playerobj.active,
                     "player_skin": playerobj.player_skin,
@@ -107,6 +111,7 @@ async def modify_json_xless(basejson, playerobj):
     if (basejson["orientation"] == "W"):
 
         if (default_mapa[playerobj.posY][playerobj.posX - 1] == 0):
+            basejson["lastPosX"] = basejson["posX"]
             basejson["posX"] -= 1
             basejson["orientation"] = "W"
             instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -126,6 +131,7 @@ async def modify_json_xless(basejson, playerobj):
                     json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
             else:
+                basejson["lastPosX"] = basejson["posX"]
                 basejson["posX"] -= 1
                 basejson["orientation"] = "W"
                 instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -170,6 +176,7 @@ async def modify_json_xmore(basejson, playerobj):
     if (basejson["orientation"] == "E"):
 
         if (default_mapa[playerobj.posY][playerobj.posX + 1] == 0):
+            basejson["lastPosX"] = basejson["posX"]
             basejson["posX"] += 1
             basejson["orientation"] = "E"
             instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -190,6 +197,7 @@ async def modify_json_xmore(basejson, playerobj):
                     json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
             else:
+                basejson["lastPosX"] = basejson["posX"]
                 basejson["posX"] += 1
                 basejson["orientation"] = "E"
                 instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -233,6 +241,7 @@ async def modify_json_xmore(basejson, playerobj):
 async def modify_json_yless(basejson, playerobj):
     if (basejson["orientation"] == "N"):
         if (default_mapa[playerobj.posY - 1 ][playerobj.posX] == 0):
+            basejson["lastPosY"] = basejson["posY"]
             basejson["posY"] -= 1
             basejson["orientation"] = "N"
             instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -253,6 +262,7 @@ async def modify_json_yless(basejson, playerobj):
                     json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
             else:
+                basejson["lastPosY"] = basejson["posY"]
                 basejson["posY"] -= 1
                 basejson["orientation"] = "N"
                 instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -293,6 +303,7 @@ async def modify_json_yless(basejson, playerobj):
 async def modify_json_ymore(basejson, playerobj):
     if (basejson["orientation"] == "S"):
         if (default_mapa[playerobj.posY + 1][playerobj.posX] == 0):
+            basejson["lastPosY"] = basejson["posY"]
             basejson["posY"] += 1
             basejson["orientation"] = "S"
             instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -312,6 +323,7 @@ async def modify_json_ymore(basejson, playerobj):
                     json_data = await sync_to_async(json.dumps, thread_sensitive=True)(data_with_event)
                     return json_data
             else:
+                basejson["lastPosY"] = basejson["posY"]
                 basejson["posY"] += 1
                 basejson["orientation"] = "S"
                 instance = editplayerModelSerializer(playerobj, data=basejson)
@@ -363,6 +375,8 @@ async def change_status(playerobj, json_data):
         "userID": playerobj.userID,
         "posX": playerobj.posX,
         "posY": playerobj.posY,
+        "lastPosX": playerobj.lastPosX,
+        "lastPosY": playerobj.lastPosY,
         "orientation": playerobj.orientation,
         "player_skin": playerobj.player_skin,
         "player_map": playerobj.player_map,
@@ -386,6 +400,8 @@ async def reset_status(playerobj):
         "userID": playerobj.userID,
         "posX": playerobj.posX,
         "posY": playerobj.posY,
+        "lastPosX": playerobj.lastPosX,
+        "lastPosY": playerobj.lastPosY,
         "orientation": playerobj.orientation,
         "player_skin": playerobj.player_skin,
         "player_map": playerobj.player_map,

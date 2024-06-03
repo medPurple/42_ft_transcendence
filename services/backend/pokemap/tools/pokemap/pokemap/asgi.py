@@ -21,6 +21,7 @@ django_asgi_app = get_asgi_application()
 from overworld.routing import websocket_urlpatterns
 
 
+
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
@@ -30,23 +31,3 @@ application = ProtocolTypeRouter(
             ),
     }
 )
-
-
-
-# application = ProtocolTypeRouter(
-#     {
-#         "http": django_asgi_app,
-#         "websocket": AllowedHostsOriginValidator(
-#             AuthMiddlewareStack(URLRouter(websocket_urlpatterns))
-#         ),
-#     }
-# )
-
-
-
-# application = ProtocolTypeRouter(
-#     {
-#         'http': get_asgi_application(),
-#         'websocket': AllowOriginMiddleware(
-#     URLRouter(websocket_urlpatterns)),
-# })
