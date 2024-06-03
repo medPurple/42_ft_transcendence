@@ -136,11 +136,31 @@ class GameUserAPI(APIView):
 class GameMatchAPI(APIView):
 	def post(self, request):
 		# logger.info(f'Match ID: {match_id}')
-		match_serializer = GameMatchSerializer(data=request.data)
-		if match_serializer.is_valid():
-			match_serializer.save()
-			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
-		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		player1 = request.data.get('player1')
+		player2 = request.data.get('player2')
+		
+		try:
+			user1, _ = GameUser.objects.get_or_create(userID=player1.get("id"), userName=player1.get("username"))
+			user2, _ = GameUser.objects.get_or_create(userID=player2.get("id"), userName=player2.get("username"))
+		except GameUser.DoesNotExist:
+			return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+		match, created = GameMatch.objects.get_or_create(
+			player1=user1,
+			player2=user2,
+			defaults={
+				"player1_score": 0,
+				"player2_score": 0,
+				"status": 0,
+			}
+		)
+		logger.info(f'Match: {match}')
+		logger.info(f'Created: {created}')
+		match_serializer = GameMatchSerializer(match)
+		logger.info(f'Match Serializer: {match_serializer}')
+		# if match_serializer.is_valid():
+		# match_serializer.save()
+		return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		# return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def get(self, request, match_id=None):
 		# logger.info(f'Match ID: {match_id}')
