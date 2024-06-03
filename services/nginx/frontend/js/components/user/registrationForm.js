@@ -36,11 +36,11 @@ export default class RegistrationForm extends HTMLElement {
 		</div>
 
 		<div class="mb-4">
-			<input type="password" class="form-control" name="password1" placeholder="Password">
+			<input type="password" class="form-control" name="password1" placeholder="Password" autocomplete="password" required>
 		</div>
 
 		<div class="mb-4">
-			<input type="password" class="form-control" name="password2" placeholder="Confirm Password">
+			<input type="password" class="form-control" name="password2" placeholder="Confirm Password" autocomplete="confirm-password" required>
 		</div>
 
 		<input type="hidden" class="form-control" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

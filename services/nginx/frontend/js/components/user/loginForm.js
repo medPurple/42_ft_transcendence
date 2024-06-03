@@ -13,17 +13,19 @@ export default class LoginForm extends HTMLElement{
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
 		<div id="app-general-container">
-		<div id="alert-container"></div>
-			<form id="login-form" method="post" action="" class="container">
-				<div class="mb-4">
-					<input type="text" name="username" placeholder="Username">
-				</div>
-				<div class="mb-4">
-					<input type="password" class="form-control" name="password" placeholder="Password">
-				</div>
-				<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-				<button type="submit" class="btn btn-dark">Log in</button>
-			</form>
+			<div id="alert-container"></div>
+				<form id="login-form" method="post" action="" class="container" style="width: 21rem; padding: 18px;">
+					<div class="mb-4">
+						<input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" required>
+					</div>
+					<div class="mb-4">
+						<input type="password" class="form-control" name="password" placeholder="Password" autocomplete="password" required>
+						<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+					</div>
+					<div class="mb-4">
+						<button type="submit" class="btn btn-dark">Log in</button>
+					</div>
+				</form>
 		</div>
 		`;
 	}

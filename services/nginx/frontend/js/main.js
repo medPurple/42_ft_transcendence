@@ -60,13 +60,6 @@ const routes = {
 		title: "Pong Settings",
 		render: pongSettings
 	},
-	// '/pongEnd/:player': {
-	// 	title: "Pong End",
-	// 	render: async (params) => {
-	// 		let winner = params.player;
-	// 		return await pongEnd(winner);
-	// 	}
-	// },
 	'/metaService': {
 		title: "Meta Service",
 		render: metaService
@@ -162,10 +155,9 @@ function updateNavbarDropdown() {
 
 	if (condition) {
 		dropdownMenu.innerHTML = `
-			<li><a class="dropdown-item" href="/profile">settings</a></li>
+			<li><a class="dropdown-item" href="/profile">profile</a></li>
 			<li><a class="dropdown-item" href="/friends">friends</a></li>
 			<li><a class="dropdown-item" href="/chat">chat</a></li>
-			<li><a class="dropdown-item" href="/play">play</a></li>
 			<li><hr class="dropdown-divider"></li>
 			<li><logout-form></logout-form></li>
 			<li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
@@ -188,41 +180,41 @@ function checkConnected() {
 
 
 async function router() {
-  let path = location.pathname;
-  let view = null;
+	let path = location.pathname;
+	let view = null;
 
-  for (let route in routes) {
-    let params = {}
-    if (route.includes(':')) {
-      let routeParts = route.split('/');
-      let pathParts = path.split('/');
-      if (routeParts.length === pathParts.length) {
-        let match = true;
-        for (let i = 0; i < routeParts.length; i++) {
-          if (routeParts[i].startsWith(':')) {
-            params[routeParts[i].substring(1)] = pathParts[i];
-          } else if (routeParts[i] !== pathParts[i]) {
-            match = false;
-            break;
-          }
-        }
-        if (match) {
-          view = routes[route];
-          view.params = params;
-          break;
-        }
-      }
-    } else if (route === path) {
-      view = routes[route];
-      view.params = params;
-      break;
-    }
-  }
+	for (let route in routes) {
+		let params = {}
+		if (route.includes(':')) {
+			let routeParts = route.split('/');
+			let pathParts = path.split('/');
+			if (routeParts.length === pathParts.length) {
+				let match = true;
+				for (let i = 0; i < routeParts.length; i++) {
+					if (routeParts[i].startsWith(':')) {
+						params[routeParts[i].substring(1)] = pathParts[i];
+					} else if (routeParts[i] !== pathParts[i]) {
+						match = false;
+						break;
+					}
+				}
+				if (match) {
+					view = routes[route];
+					view.params = params;
+					break;
+				}
+			}
+		} else if (route === path) {
+			view = routes[route];
+			view.params = params;
+			break;
+		}
+	}
 
-  const pageTitle = "Transcendence";
+	const pageTitle = "Transcendence";
 
-  NavbarFooterVisibility();
-  updateNavbarDropdown();
+	NavbarFooterVisibility();
+	updateNavbarDropdown();
 
 	if (view) {
 		document.title = pageTitle + " | " + view.title;
@@ -241,18 +233,18 @@ async function router() {
 			app.appendChild(textNode);
 		}
 
-  } else {
-    history.replaceState("", "", "/404");
-    router();
-  }
+	} else {
+		history.replaceState("", "", "/404");
+		router();
+	}
 }
 // Handle navigation
 window.addEventListener("click", (e) => {
-  if (e.target.matches("[data-link]")) {
-    e.preventDefault();
-    history.pushState("", "", e.target.href);
-    router();
-  }
+	if (e.target.matches("[data-link]")) {
+		e.preventDefault();
+		history.pushState("", "", e.target.href);
+		router();
+	}
 });
 
 // Update router

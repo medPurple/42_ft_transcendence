@@ -123,7 +123,7 @@ a:hover {
 
 
 /********** LOGIN PAGE ***********/
-#login-form {
+/* #login-form {
 	width: 300px;
 	margin: 0 auto;
 	padding: 20px;
@@ -140,12 +140,11 @@ a:hover {
 	box-sizing: border-box;
 }
 
-/* Media query for small devices */
 @media screen and (max-width: 600px) {
 #login-form {
 	width: 80%;
 	}
-}
+} */
 
 
 /********** PONG ***********/

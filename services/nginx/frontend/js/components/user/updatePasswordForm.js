@@ -14,17 +14,18 @@ export default class updatePasswordForm extends HTMLElement {
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
 		<div id="app-general-container">
-		<form id="update-password-form" method="post" action="/api/profiles/update-password" class="container">
-			<div class="mb-4">
-				<input type="password" name="new_password1" label="New Password" placeholder="New Password">
-			</div>
-			<div class="mb-4">
-				<input type="password" name="new_password2" label="Confirm Password" placeholder="Confirm Password">
-			</div>
-			<div class="mb-4">
-				<button type="submit" class="btn btn-dark">Save changes</button>
-			</div>
-		</form>
+		<div id="alert-container"></div>
+			<form id="update-password-form" method="post" action="/api/profiles/update-password" class="container" style="width: 21rem; padding: 18px;">
+				<div class="mb-4">
+					<input type="password" class="form-control" name="password1" placeholder="Password" autocomplete="current-password" required>
+				</div>
+				<div class="mb-4">
+					<input type="password" class="form-control" name="password2" placeholder="New Password" autocomplete="new-password" required>
+				</div>
+				<div class="mb-4">
+					<button type="submit" class="btn btn-dark">Save changes</button>
+				</div>
+			</form>
 		</div>
 		`;
 	}
