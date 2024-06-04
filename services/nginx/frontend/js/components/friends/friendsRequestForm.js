@@ -64,8 +64,6 @@ export class Friends {
 
 		this.variablesArray = [];
 		this.lastusernumber = 0;
-
-		this.stopMessage = false;
 	}
 
 
@@ -77,10 +75,6 @@ export class Friends {
 		};
 
 		socket.onmessage = async (event) => {
-			if (this.stopMessage) {
-				socket.close();
-				return;
-			}
 			let data = JSON.parse(event.data);
 			if (data.error) {
 				console.error(data.error);
@@ -349,7 +343,6 @@ export class Friends {
 		buttonSendRequest.onclick = async () => {
 			try {
 				const requestIsValid = await this.sendRequest(username);
-				console.log(requestIsValid);
 				if (requestIsValid.success === true) {
 					buttonSendRequest.textContent = 'Request Sent';
 					buttonSendRequest.disabled = true;
@@ -387,11 +380,6 @@ export class Friends {
 		linkToFriendsProfile.textContent = 'See profile';
 		linkToFriendsProfile.href = `/friend-profile/${username}`;
 		linkToFriendsProfile.setAttribute('data-link', '');
-		linkToFriendsProfile.addEventListener('click', () => {
-			event.preventDefault();
-			this.stopMessage = true;
-
-		});
 		return linkToFriendsProfile;
 	}
 

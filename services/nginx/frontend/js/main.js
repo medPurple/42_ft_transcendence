@@ -96,7 +96,6 @@ const routes = {
 	'/statistics/:username': {
 		title: "Friends statistics",
 		render: async (params) => {
-            // params.username contiendra le nom d'utilisateur
             let username = params.username;
             return await friendsStatistics(username);
         }
@@ -108,7 +107,6 @@ const routes = {
     '/friend-profile/:username': {
         title: "Friends profile",
         render: async (params) => {
-            // params.username contiendra le nom d'utilisateur
             let username = params.username;
             return await friendsProfile(username);
         }
@@ -145,7 +143,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/statistics', '/chat', '/play', '/pongService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');
@@ -211,7 +209,7 @@ async function checkValidToken() {
 		}
 	}
 	return true;
-} 
+}
 
 async function router() {
 	let path = location.pathname;
@@ -255,7 +253,7 @@ async function router() {
 
 		if (view) {
 			document.title = pageTitle + " | " + view.title;
-			let result = await view.render(view.params);	
+			let result = await view.render(view.params);
 			//Clear the app content
 			app.innerHTML = '';
 			if (typeof result === 'string') {
@@ -269,7 +267,7 @@ async function router() {
 				let textNode = document.createTextNode(String(result));
 				app.appendChild(textNode);
 			}
-			
+
 		} else {
 			history.replaceState("", "", "/404");
 			router();
