@@ -160,7 +160,7 @@ async function handleServerMessage(message) {
 		}
 	}
 	handlePowerUp();
-	displayScore();
+	await displayScore();
 	draw();
 }
 

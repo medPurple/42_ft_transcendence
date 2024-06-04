@@ -1,24 +1,27 @@
 import { gameState } from './config.js'
+import Icookies from "../cookie/cookie.js"
+import Iuser from "../user/userInfo.js";
 
-// async function removeUser() {
-// 	console.log("Removing user from queue.");
-// 	const id = await Iuser.getID();
-// 	const body = {
-// 		"userID": id}
-// 	const response = await fetch('https://localhost:4430/api/matchmaking/', {
-// 		method: 'DELETE',
-// 		headers: {
-// 			'Content-Type': 'application/json',
-// 			'Authorization': Icookies.getCookie('token'),
-// 			'X-CSRFToken': Icookies.getCookie('csrftoken')
-// 		},
-// 		credentials: 'include',
-// 		body: JSON.stringify(body)
-// 	});
-// 	console.log(response);
+async function removeUser() {
+	console.log("Removing user from queue.");
+	const id = await Iuser.getID();
+	const body = {
+		"userID": id}
+	const response = await fetch('https://localhost:4430/api/matchmaking/', {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': Icookies.getCookie('token'),
+			'X-CSRFToken': Icookies.getCookie('csrftoken')
+		},
+		credentials: 'include',
+		body: JSON.stringify(body)
+	});
+	console.log(response);
 
-// }
-export function displayScore() {
+}
+
+export async function displayScore() {
 
 	var scoreDiv = document.getElementById("pong-score");
 	var endgame = document.getElementById("pong-renderer");
@@ -45,6 +48,7 @@ export function displayScore() {
 	`
 
 	if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
+		await removeUser();
 		scoreDiv.innerHTML = '';
 		if (gameState.player1Score == gameState.score_limit){
 			endgame.innerHTML = `

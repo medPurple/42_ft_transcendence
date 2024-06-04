@@ -11,9 +11,6 @@ class MMAPI(APIView):
     def get(self, request):
         waiting_objects = WaitingModel.objects.all()
         serializer = WaitingModelSerializer(waiting_objects, many=True)
-        logger.info(serializer.data)
-        logger.info(f"pokemon {pokemon_queue}")
-        logger.info(f"pong {pong_queue}")
         data = {
             'serializer_data': serializer.data,
             'pokemon_queue': [WaitingModelSerializer(item).data for item in pokemon_queue],
@@ -36,9 +33,9 @@ class MMAPI(APIView):
         data = request.data
         try:
             userexist = WaitingModel.objects.get(userID=data['userID'])
-            if userexist.game == 'pokemon_multiplayer':
+            if userexist.game == 'pokemon_multiplayer' and userexist in pokemon_queue:
                 pokemon_queue.remove(userexist)
-            elif userexist.game == 'pong_multiplayer':
+            elif userexist.game == 'pong_multiplayer' and userexist in pong_queue:
                 pong_queue.remove(userexist)
             userexist.delete()
         except Exception as e:

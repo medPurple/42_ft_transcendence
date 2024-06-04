@@ -17,6 +17,9 @@ export default class updatePasswordForm extends HTMLElement {
 		<div id="alert-container"></div>
 			<form id="update-password-form" method="post" action="/api/profiles/update-password" class="container" style="width: 21rem; padding: 18px;">
 				<div class="mb-4">
+					<input type="text" style="display:none;" name="username" autocomplete="username">
+				</div>
+				<div class="mb-4">
 					<input type="password" class="form-control" name="password1" placeholder="Password" autocomplete="current-password" required>
 				</div>
 				<div class="mb-4">
