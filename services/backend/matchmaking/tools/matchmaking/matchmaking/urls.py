@@ -17,9 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-
+from classic import views
 
 urlpatterns = [
+    path('api/matchmaking/', views.MMAPI.as_view(), name='matchmaking'),
 ]
 
 

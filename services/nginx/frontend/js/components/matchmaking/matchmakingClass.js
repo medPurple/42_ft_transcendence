@@ -18,13 +18,6 @@ class MatchmakingButtons {
 
 		this.matchsocket.onclose = (event) => {
 			console.log("Matchmaking socket closed.", event.data);
-			const msg = {
-				"action": "queue_remove",
-				"game": this.game,
-				"id": Iuser.getID(),
-			}
-			this.matchsocket.send(JSON.stringify(msg));
-			this.maindiv.remove();
 		}
 
 		this.matchsocket.onmessage = async (event) => {
@@ -32,58 +25,86 @@ class MatchmakingButtons {
 			this.status = data.status;
 			this.timer = data.waitingTime;
 			this.game = data.game;
+			console.log("Matchmaking socket received data:", data);
+			if (this.status === 'game') {
+				console.log("already in game");
+				this.removeWaitingPage();
+				window.location.href = "/gameService"
+
+			}
 			this.updateData();
-			this.checkstatus(data);
+			console.log("Data updated.");
+			await this.checkstatus(data);
+			console.log("Status checked.");
 			const msg = {
 				"action": "queue_status",
 				"game": this.game,
 				"id": await Iuser.getID(),
 			}
 			this.matchsocket.send(JSON.stringify(msg));
+			console.log("Status sent.");
 		}
 
 	}
 
 	timerCalculation() {
 
-		let time = new Date(this.timer);
-		if (isNaN(time.getTime())) {
-			console.error('Invalid date:', this.timer);
-			return;
+		try{
+			let time = new Date(this.timer);
+			if (isNaN(time.getTime())) {
+				return 0;
+			}
+			let now = new Date(); // Date actuelle
+			let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+			return (Math.floor(elapsedTimeMillis / 1000));
 		}
-		let now = new Date(); // Date actuelle
-		let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
-		return (Math.floor(elapsedTimeMillis / 1000));
+		catch (error) {
+			return (0);
+		}
 	}
 
+	async removeUser() {
+		console.log("Removing user from queue.");
+		const id = await Iuser.getID();
+		const body = {
+			"userID": id}
+		const response = await fetch('https://localhost:4430/api/matchmaking/', {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': Icookies.getCookie('token'),
+				'X-CSRFToken': Icookies.getCookie('csrftoken')
+			},
+			credentials: 'include',
+			body: JSON.stringify(body)
+		});
+		console.log(response);
+
+	}
+	
 	waitingPage() {
 		const waitingpage = document.createElement('div');
-		waitingpage.classList.add('waiting-page');
+		waitingpage.id = 'waiting-page';
 
 		const waitingtitle = document.createElement('p');
-		waitingtitle.classList.add('waiting-title');
+		waitingtitle.id = 'waiting-title';
 		waitingtitle.innerText = "status = " + this.status;
 
 		const timer = document.createElement('p');
-		timer.classList.add('timer');
+		timer.id = 'timer';
 		timer.innerText = "timer : " + this.timerCalculation();
 
 		const game = document.createElement('p');
-		game.classList.add('game');
+		game.id = 'game';
 		game.innerText = "game : " + this.game;
 
 		const cancelbutton = document.createElement('button');
 		cancelbutton.classList.add('cancel-button');
 		cancelbutton.innerText = 'Cancel';
-		cancelbutton.onclick = () => {
-			const msg = {
-				"action": "queue_remove",
-				"game": this.game,
-				"id": Iuser.getID(),
-			}
-			this.matchsocket.send(JSON.stringify(msg));
-			window.location.href = '/home';
+		cancelbutton.onclick = async () => {
+			await this.removeUser();
 			this.removeWaitingPage();
+			window.location.href = '/home';
 		}
 
 		waitingpage.appendChild(waitingtitle);
@@ -95,30 +116,83 @@ class MatchmakingButtons {
 	}
 
 	removeWaitingPage() {
-		const waitingpage = document.querySelector('.waiting-page');
+		const waitingpage = document.querySelector('#waiting-page');
 		waitingpage.remove();
 	}
 
 	updateData() {
-		const waitingpage = document.querySelector('.waiting-page');
-		const waitingtitle = document.querySelector('.waiting-title');
-		const timer = document.querySelector('.timer');
-		const game = document.querySelector('.game');
+		const waitingtitle = document.querySelector('#waiting-title');
+		const timer = document.querySelector('#timer');
+		const game = document.querySelector('#game');
 
-		waitingtitle.innerText = "status = " + this.status;
-		const time = this.timerCalculation();
-		if (time > 60) {
-			timer.innerText = "timer : " + Math.floor(time / 60) + "m " + time % 60 + "s";
+		if (waitingtitle)
+			waitingtitle.innerText = "status = " + this.status;
+		if (timer){
+			const time = this.timerCalculation();
+			if (time > 60) {
+				timer.innerText = "timer : " + Math.floor(time / 60) + "m " + time % 60 + "s";
+			}
+			else {
+				timer.innerText = "timer : " + time;
+			}
 		}
-		else {
-			timer.innerText = "timer : " + time;
-		}
-		game.innerText = "game : " + this.game;
+		if (game)
+			game.innerText = "game : " + this.game;
 	}
 
-	checkstatus(data) {
+	async createParty(data) {
+		console.log("Creating party with data:", data);
+		const users = await Iuser.getAllUsers();
+		let username1 = users.users.find(user => user.user_id === parseInt(data.player1)).username;
+		let username2 = users.users.find(user => user.user_id === parseInt(data.player2)).username;
+		const party = {
+			"player1": {
+				id : data.player1,
+				username : username1
+			},
+			"player2": {
+				id : data.player2,
+				username : username2
+			},
+		}
+		const response = await fetch('https://localhost:4430/api/pong/match/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': Icookies.getCookie('token'),
+				'X-CSRFToken': Icookies.getCookie('csrftoken')
+			},
+			credentials: 'include',
+			body: JSON.stringify(party)
+		});
+		console.log(response);
+	}
+
+	async changeStatus() {
+		console.log("Changing status to game.");
+		const id = await Iuser.getID();
+		const body = {
+			"userID": id,
+			"status": "game"
+		}
+		const response = await fetch('https://localhost:4430/api/matchmaking/', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': Icookies.getCookie('token'),
+				'X-CSRFToken': Icookies.getCookie('csrftoken')
+			},
+			credentials: 'include',
+			body: JSON.stringify(body)
+		});
+		console.log(response);
+	}
+
+	async checkstatus(data) {
 		if (this.status === 'found') {
 			this.removeWaitingPage();
+			await this.createParty(data);
+			await this.changeStatus();
 			window.location.href = "/gameService"
 		}
 	}
@@ -134,13 +208,20 @@ class MatchmakingButtons {
 			"id": await Iuser.getID(),
 		}
 
-		// const waitForOpenConnection = new Promise(resolve => {
-		// 	this.matchsocket.addEventListener('open', resolve);
-		// });
-		// await waitForOpenConnection;
+		const waitForOpenConnection = new Promise(resolve => {
+			this.matchsocket.addEventListener('open', resolve);
+		});
+		await waitForOpenConnection;
 
+		const waitingPage = this.waitingPage();
+		if (waitingPage instanceof HTMLElement) {
+			this.maindiv.appendChild(waitingPage);
+		} else {
+			console.error("waitingPage did not return a valid DOM node.");
+		}
 		this.matchsocket.send(JSON.stringify(msg));
-		this.maindiv.appendChild(this.waitingPage());
+
+		document.body.appendChild(this.maindiv);
 		return this.maindiv;
 	}
 }
@@ -158,3 +239,8 @@ const pkmRemoteMatchmaking = new Matchmaking('pkm_multiplayer');
 const pkmTournamentMatchmaking = new Matchmaking('pkm_tournament');
 
 export { pongRemoteMatchmaking, pongTournamentMatchmaking, pkmRemoteMatchmaking, pkmTournamentMatchmaking };
+
+
+
+// Creating party with data: 
+// Object { userID: 2, waitingTime: "2024-06-04T09:54:31.971412+02:00", game: "pong_multiplayer", status: "found", player1: 1, player2: 2 }

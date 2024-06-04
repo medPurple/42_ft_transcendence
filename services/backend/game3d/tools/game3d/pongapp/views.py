@@ -157,10 +157,7 @@ class GameMatchAPI(APIView):
 		logger.info(f'Created: {created}')
 		match_serializer = GameMatchSerializer(match)
 		logger.info(f'Match Serializer: {match_serializer}')
-		# if match_serializer.is_valid():
-		# match_serializer.save()
 		return Response(match_serializer.data, status=status.HTTP_201_CREATED)
-		# return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 	def get(self, request, match_id=None):
 		# logger.info(f'Match ID: {match_id}')
