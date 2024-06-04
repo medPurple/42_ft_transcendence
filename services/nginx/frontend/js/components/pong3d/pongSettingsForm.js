@@ -23,9 +23,8 @@ export default class pongSettingsForm extends HTMLElement {
 			const data = await gamer.getGamerSettings();
 			this.displaypongSettingsForm(data);
 		} catch (error) {
-			console.error('Error: initGamerInfo', error)
 			alert('You should be logged in to change the settings');
-			window.location.href = '/pongService';
+			window.location.href = '/home';
 		}
 	}
 

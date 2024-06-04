@@ -19,7 +19,7 @@ export class pokechat {
         titleAndButtonDiv.classList.add('d-flex', 'justify-content-between', 'align-items-center');
 
         // Création du titre
-        const title = document.createElement('h5');
+        const title = document.createElement('h6');
         title.innerText = 'Pokechat';
         titleAndButtonDiv.appendChild(title);
 
@@ -201,7 +201,7 @@ export class pokebag{
         const percentage = pokemon.pvActuel / pokemon.pvMax;
 
         const colorBarContainer = document.createElement('div');
-        colorBarContainer.classList.add('border', 'border-dark', 'rounded', 'overflow-hidden');
+        colorBarContainer.classList.add('border', 'border-light', 'rounded', 'overflow-hidden');
 
         const colorBar = document.createElement('div');
         colorBar.classList.add('progress-bar');
@@ -235,9 +235,9 @@ export class pokebag{
 
     createCardElement(){
         const card = document.createElement('div');
-        card.classList.add('card', 'mb-3', 'cardelement', 'border', 'border-dark');
-        card.style.maxWidth = '540px';
-        card.style.margin = '5%';
+        card.classList.add('card', 'rounded','p-3', 'mb-3', 'cardelement','w-100', 'border');
+        // card.style.maxWidth = '540px';
+        // card.style.margin = '5%';
         return card;
     }
 

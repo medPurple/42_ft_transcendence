@@ -15,7 +15,8 @@ export function pong_localplay() {
 		setup("local");
     } else {
         generaldiv.classList.add('not-logged');
-        generaldiv.innerText = 'You need to be logged in to play';
+        alert("You need to be logged in to play in local");
+		window.location.href = '/pongService';
     }
     generaldiv.appendChild(gamediv);
     generaldiv.appendChild(scorediv);
@@ -29,7 +30,8 @@ export async function pong_remoteplay() {
                 gamediv.appendChild(await pongRemoteMatchmaking.mainMatchmakingDiv());
         } else {
                 gamediv.classList.add('not-logged');
-                gamediv.innerText = 'You need to be logged in to play';
+                alert("You need to be logged in to play in remote");
+				window.location.href = '/pongService';
         }
         document.body.appendChild(gamediv);
         return gamediv;
@@ -41,7 +43,8 @@ export async function pong_tournamentplay() {
                 gamediv.appendChild(await pongTournamentMatchmaking.mainMatchmakingDiv());
         } else {
                 gamediv.classList.add('not-logged');
-                gamediv.innerText = 'You need to be logged in to play';
+                alert("You need to be logged in to play in tournament");
+				window.location.href = '/pongService';
         }
         document.body.appendChild(gamediv);
         return gamediv;
@@ -53,7 +56,8 @@ export async function pkm_remoteplay() {
                 gamediv.appendChild(await pkmRemoteMatchmaking.mainMatchmakingDiv());
         } else {
                 gamediv.classList.add('not-logged');
-                gamediv.innerText = 'You need to be logged in to play';
+                alert("You need to be logged in to play in remote");
+				window.location.href = '/metaService';
         }
         document.body.appendChild(gamediv);
         return gamediv;
@@ -65,27 +69,32 @@ export async function pokemap_interactive() {
 
         if (Icookies.getCookie('token') != null) {
                 const gamediv = document.createElement('div');
-                gamediv.classList.add('col-8');
+                gamediv.classList.add('col-md-8');
 
                 gamediv.appendChild(new pokeMap().startingPokeverse());
 
                 const toolsdiv = document.createElement('div');
-                toolsdiv.classList.add('col-4');
+                toolsdiv.classList.add('col-md-4');
                 toolsdiv.style.display = 'flex';
                 toolsdiv.style.flexDirection = 'column';
                 const chatdiv = new pokechat().pokechatinit();
                 chatdiv.style.flex = '2';
+				chatdiv.style.display = 'flex';
+				chatdiv.style.flexDirection = 'column';
                 toolsdiv.appendChild(chatdiv);
 
                 const bagdiv = new pokebag().createAllCards();
                 bagdiv.style.flex = '1';
+				bagdiv.style.display = 'flex';
+				bagdiv.style.flexWrap = 'wrap';
                 toolsdiv.appendChild(bagdiv);
 
                 maindiv.appendChild(gamediv);
                 maindiv.appendChild(toolsdiv);
         } else {
                 maindiv.classList.add('not-logged');
-                maindiv.innerText = 'You need to be logged in to play';
+                alert("You need to be logged in to play in the pokeverse");
+				window.location.href = '/metaService';
         }
         document.body.appendChild(maindiv);
         return maindiv;

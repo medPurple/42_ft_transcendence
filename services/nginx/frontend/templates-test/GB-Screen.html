@@ -62,9 +62,45 @@
 
 	<!-- MAIN ZONE ('CHANGING body' here) -->
 	<main id="app">
-		<div class="PokeGB">
-			<img src="../images/Site/BG-GameBoy-win964x880.png" alt="GameBoy Background" class="game-boy-background">
-			<canvas width="500" height="500" class="pokecanva"></canvas>
+
+		<div id="maindiv" class="row">
+
+			<div id="gamediv" class="col-8">
+				<div class="PokeGB">
+					<img src="../images/Site/BG-GameBoy-win964x880.png" alt="GameBoy Background" class="game-boy-background">
+					<canvas width="500" height="500" class="pokecanva"></canvas>
+				</div>
+			</div>
+			
+			<div id="toolsdiv" class="col-4" style="display: flex; flex-direction: column;">
+				<div class="d-flex flex-column vh-100 m-5 p-0 text-black" style="flex: 2;">
+					<div class="d-flex justify-content-between align-items-center">
+						<h5>Pokechat</h5>
+						<button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#pokechatModal" type="button">See participants</button>
+					</div>
+					
+					<div class="modal fade" id="participantsModal">
+						<div class="modal-dialog"></div>
+						<div class="modal-content bg-dark text-white"></div>
+						<div class="modal-body">Participants</div>
+					</div>
+					
+					<div class="bg-white rounded p-3 mb-3 chatbox w-100" style="text-align: left; flex-grow: 1;"></div>
+					
+					<div class="d-flex">
+						<div class="form-control flex-grow-1 border" placeholder="Write here..."></div>
+						<button class="btn btn-dark btn-sm ms-2 send-button">Send</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="bagdiv" style="flex: 1;">
+				<div>
+					<div class="row g-0 cardelementrow"></div>
+					<div class="col-md-4 cardelementcolimg"></div>
+				</div>
+			</div>
+			
 		</div>
 	</main>
 
