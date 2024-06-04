@@ -8,7 +8,7 @@ export default function pong_remoteplay() {
     const scorediv = document.createElement('div');
     scorediv.id = "pong-score"
     if (Icookies.getCookie('token') != null) {
-        setup();
+        setup("remote");
     } else {
         generaldiv.classList.add('not-logged');
         generaldiv.innerText = 'You need to be logged in to play';

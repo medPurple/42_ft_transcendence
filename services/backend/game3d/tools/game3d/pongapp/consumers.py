@@ -11,11 +11,64 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from pongapp.game_classes import paddleC, ballC, gameStateC
 
 logger = logging.getLogger(__name__)
-parties = []
+remote_parties = []
+local_partie = []
 group_names = []
 group_members = 0
 
-class PongConsumer(AsyncWebsocketConsumer):
+class PongLocalConsumer(AsyncWebsocketConsumer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.gameState = 0
+
+    async def connect(self):
+        await self.accept()
+        self.gameState = await self.findLocalParty()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
+
+    async def findLocalParty(self):
+        self.gameState = gameStateC()
+        self.gameState.game_mode = "local"
+        self.gameState.group_name = await self.generate_local_name()
+        await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
+        self.gameState.paddle1 = paddleC(1)
+        self.gameState.paddle2 = paddleC(2)
+        self.gameState.players_nb = 2
+        await self.send(text_data=json.dumps({"party": "active"})) 
+        self.gameState.powerUpTimer = time.time()
+        asyncio.create_task(self.gameState.run_game_loop())
+        return self.gameState
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+
+        for key in text_data_json:
+            if (key == "paddleMov1"):
+                with self.gameState._lock:
+                    self.gameState.paddle1.move = text_data_json["paddleMov1"]
+
+            if (key == "paddleMov2"):
+                with self.gameState._lock:
+                    self.gameState.paddle2.move = text_data_json["paddleMov2"]
+
+    async def game_state(self,event):
+        await self.send(text_data=json.dumps(event["game_state"]))
+     
+    async def generate_local_name(self, length=8):
+        global group_names
+        characters = string.ascii_letters + string.digits
+        group_name = ''.join(random.choice(characters) for _ in range(length))
+        if (group_name in group_names):
+            generate_local_name()
+        else:
+            group_names.append(group_name)
+            return group_name
+
+
+class PongRemoteConsumer(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,16 +77,16 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         await self.accept()
-        self.gameState =  await self.findParty()
+        self.gameState =  await self.findRemoteParty()
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
+
         paddleMov = text_data_json["paddleMov"]
 
-        logger.info("paddleMov : %s", paddleMov)
         if (self.player_id == 1):
             with self.gameState._lock:
                 #await self.testpaddle1Mov(self.gameState.paddle1, paddleMov)
@@ -92,31 +145,32 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def game_state(self,event):
         await self.send(text_data=json.dumps(event["game_state"]))
 
-    async def findParty(self):
-        global parties
-        listLen = len(parties)
-        if (listLen == 0 or parties[listLen - 1].players_nb == 2):
+    async def findRemoteParty(self):
+        global remote_parties
+        listLen = len(remote_parties)
+        if (listLen == 0 or remote_parties[listLen - 1].players_nb == 2):
             newPart = gameStateC()
-            parties.append(newPart)
-            parties[listLen].paddle1 = paddleC(1)
+            remote_parties.append(newPart)
+            remote_parties[listLen].paddle1 = paddleC(1)
             self.player_id = 1
             await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = newPart
+            self.gameState.game_mode = "remote"
             self.gameState.group_name = await self.generate_group_name()
-            parties[listLen].players_nb = 1
+            remote_parties[listLen].players_nb = 1
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             return newPart
         else:
-            parties[listLen - 1].paddle2 = paddleC(2)
+            remote_parties[listLen - 1].paddle2 = paddleC(2)
             self.player_id = 2 
             await self.send(text_data=json.dumps({"player": self.player_id}))
-            self.gameState = parties[listLen - 1]
+            self.gameState = remote_parties[listLen - 1]
             self.gameState.players_nb = 2
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
             self.gameState.powerUpTimer = time.time()
             asyncio.create_task(self.gameState.run_game_loop())
-            return parties[listLen - 1]
+            return remote_parties[listLen - 1]
 
     async def logObject(self):
         logbuff = self.gameState

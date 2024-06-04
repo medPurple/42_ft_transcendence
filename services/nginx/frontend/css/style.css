@@ -123,42 +123,57 @@ a:hover {
 	width: 300px;
 	margin: 0 auto;
 	padding: 20px;
-	border: 1px solid #7b8787;
-	border-radius: 5px;
-	background-color: #f9f9f9;
 }
 
-/* LOGIN Form Input Fields */
 #login-form input[type="text"],
 #login-form input[type="password"],
 #login-form input[type="submit"] {
 	width: 100%;
 	padding: 10px;
 	margin: 5px 0;
-	border: 1px solid #7b8787;
 	border-radius: 3px;
-	box-sizing: border-box; /* Include padding and border in element's total width and height */
-  }
+	border: 1px solid #7b8787;
+	box-sizing: border-box;
+}
 
 /* Media query for small devices */
 @media screen and (max-width: 600px) {
 #login-form {
-	  width: 80%; /* Adjust width as needed */
+	width: 80%;
 	}
-  }
+}
 
+
+/********** PONG ***********/
 #pong-renderer {
 	display: flex;
 	justify-content: center;
 }
 
-/* .profile-content .profile-pic {
-	border-radius: 50%;
-	width: 100px;
-	height: 100px;
-	object-fit: cover;
-} */
+.image-container {
+	width: 900px;
+	height: 600px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #f8f9fa;
+}
 
+.image-container img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.scoreboard {
+	padding: 20px;
+	border-radius: 10px;
+	margin-top: 20px;
+}
+
+.score {
+	font-size: 2rem;
+}
 
 /* CSS FOR THE MATCHMAKING PAGE */
 .matchmakingdiv {
@@ -212,7 +227,6 @@ a:hover {
     display: none;
 }
 
-
 .chat-popup {
 	display: none;
 	position: fixed;
@@ -224,5 +238,5 @@ a:hover {
 	border-radius: 5px;
 	padding: 10px;
 	z-index: 999;
-  }
-  
+}
+

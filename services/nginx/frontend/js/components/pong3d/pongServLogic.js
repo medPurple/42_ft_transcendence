@@ -9,25 +9,41 @@ import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
 async function draw() {
 
-	// console.log("Frame is drawn");
-
+	// console.log("Frame is drawn")
 	if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
 		await cameraLogic();
 	}
 	else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
 		await cameraLogic2();
 	}
+	else if (gameState.game_mode != "remote") {
+		if (gameState.paddle1_powerup == 3)
+			await cameraLogic();
+		else if (gameState.paddle2_powerup == 3)
+			await cameraLogic2();
+		else
+			await cameraLogic2d();
+	}
 	else {
 		await cameraLogic2d();
 	}
-
 	core.renderer.render(core.scene, core.camera);
-
 }
 
-async function setup() {
+async function setup(gameMode) {
 
-	core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/');
+	gameState.game_mode = gameMode;
+	switch (gameState.game_mode) {
+		case "remote":
+			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote');
+			break;
+		case "local":
+			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local');
+			break;
+		default:
+			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament');
+			break;
+	}
 
 	core.gameSocket.onopen = function(e) {
 		console.log('Connected');

@@ -57,6 +57,13 @@ const routes = {
 		title: "Pong Settings",
 		render: pongSettings
 	},
+	'/pongEnd/:player': {
+		title: "Pong End",
+		render: async (params) => {
+			let winner = params.player;
+			return await pongEnd(winner);
+		}
+	},
 	'/metaService': {
 		title: "Meta Service",
 		render: metaService
@@ -113,6 +120,10 @@ const routes = {
             return await friendsProfile(username);
         }
 	},
+	'/play_pl': {
+		title: "Pong Local Play",
+		render: pong_localplay
+	},
 	'/play_pr': {
 		title: "Pong Remote Play",
 		render: pong_remoteplay
@@ -144,38 +155,38 @@ function NavbarFooterVisibility() {
 	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/chat', '/play', '/pongService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
 	const showNavbarFooter = showInRoute.includes(path);
 
-  const footer = document.getElementById('custom-footer');
-  const navbar = document.getElementById('navbar');
+	const footer = document.getElementById('custom-footer');
+	const navbar = document.getElementById('navbar');
 
-  if (showNavbarFooter) {
-    footer.classList.remove('hidden');
-    navbar.classList.remove('hidden');
-  }
+	if (showNavbarFooter) {
+		footer.classList.remove('hidden');
+		navbar.classList.remove('hidden');
+	}
 }
 
 function updateNavbarDropdown() {
-  var dropdownMenu = document.getElementById("navbar-dropdown-menu");
+	var dropdownMenu = document.getElementById("navbar-dropdown-menu");
 
-  var condition = checkConnected();
+	var condition = checkConnected();
 
-  if (condition) {
-    dropdownMenu.innerHTML = `
-            <li><a class="dropdown-item" href="/profile">settings</a></li>
-            <li><a class="dropdown-item" href="/friends">friends</a></li>
+	if (condition) {
+		dropdownMenu.innerHTML = `
+			<li><a class="dropdown-item" href="/profile">settings</a></li>
+			<li><a class="dropdown-item" href="/friends">friends</a></li>
 			<li><a class="dropdown-item" href="/chat">chat</a></li>
 			<li><a class="dropdown-item" href="/play">play</a></li>
-            <li><hr class="dropdown-divider"></li>
+			<li><hr class="dropdown-divider"></li>
 			<li><logout-form></logout-form></li>
-            <li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
+			<li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
 			`;
-		} else {
-			dropdownMenu.innerHTML = `
-            <li><a class="dropdown-item" href="/login">log in</a></li>
-            <li><a class="dropdown-item" href="/register">register</a></li>
+	} else {
+		dropdownMenu.innerHTML = `
+			<li><a class="dropdown-item" href="/login">log in</a></li>
+			<li><a class="dropdown-item" href="/register">register</a></li>
 			`;
-		}
 	}
-	// <li><a class="dropdown-item" href="/logout">log out</a></li>
+}
+		// <li><a class="dropdown-item" href="/logout">log out</a></li>
 
 function checkConnected() {
 

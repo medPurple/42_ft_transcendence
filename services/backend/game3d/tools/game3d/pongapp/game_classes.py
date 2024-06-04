@@ -64,6 +64,7 @@ class   gameStateC:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.game_mode = 0
         self.group_name = 0
         self.players_nb = 0
         self.player1Score = iv.PADDLE1_SCORE
@@ -203,12 +204,12 @@ class   gameStateC:
             if (ball.positionY <= paddle1.positionY + paddle1.height / 2 and ball.positionY >= paddle1.positionY - paddle1.height / 2):
                 if (ball.dirX < 0):
                     ball.dirX = -ball.dirX
-                    ball.dirY -= paddle1.dirY * 0.7
+                    ball.dirY -= paddle1.dirY * 0.4
         if (ball.positionX <= paddle2.positionX and ball.positionX >= paddle2.positionX - paddle2.width):
             if (ball.positionY <= paddle2.positionY + paddle2.height / 2 and ball.positionY >= paddle2.positionY - paddle2.height / 2):
                 if (ball.dirX > 0):
                     ball.dirX = -ball.dirX
-                    ball.dirY -= paddle2.dirY * 0.7
+                    ball.dirY -= paddle2.dirY * 0.4
 
     def paddle1Movement(self, paddle1):
         if (paddle1.move == "left"):
@@ -272,7 +273,7 @@ class   gameStateC:
                 }
             }
         )
-        
+            
     def logObject(self):
 
         logbuff = self
