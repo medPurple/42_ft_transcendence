@@ -58,6 +58,12 @@ export class chat {
 					if (Nonediv)
 						Nonediv.remove();
 					else{
+						this.websocket.send(JSON.stringify({
+							'message': '@refuse@',
+							'user_id': await Iuser.getID()
+						}));
+						this.player1 = null;
+						this.player2 = null;
 						this.websocket.close();
 						interactiondiv.remove();
 					}
@@ -238,7 +244,7 @@ export class chat {
 			this.createChatDiv();
 		}
 		else
-		chatDiv.appendChild(this.createNonediv());
+			chatDiv.appendChild(this.createNonediv());
 		document.body.appendChild(chatDiv);
 		return chatDiv;
 	}
@@ -403,8 +409,13 @@ export class chat {
 			else if (!blockstatus){
 				await this.addMessage(message);
 			}
-			if (this.player1 && this.player2)
-				console.warn("PLAY");
+			console.log(this.player1, this.player2)
+			if (this.player1 && this.player2){
+				console.log("Creating party");
+				await this.createParty(this.player1, this.player2);
+				await this.changeStatus();
+				window.location.href = "/gameService"
+			}
 
 		};
 
@@ -440,5 +451,53 @@ export class chat {
 
 	}
 
+	async createParty(id1, id2) {
+		const users = await Iuser.getAllUsers();
+		let username1 = users.users.find(user => user.user_id === parseInt(id1)).username;
+		let username2 = users.users.find(user => user.user_id === parseInt(id2)).username;
+		const party = {
+			"player1": {
+				id : id1,
+				username : username1
+			},
+			"player2": {
+				id : id2,
+				username : username2
+			},
+		}
+		const response = await fetch('https://localhost:4430/api/pong/match/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': Icookies.getCookie('token'),
+				'X-CSRFToken': Icookies.getCookie('csrftoken')
+			},
+			credentials: 'include',
+			body: JSON.stringify(party)
+		});
+		console.log(response);
+	}	
+	
+	async changeStatus() {
+		console.log("Changing status to game.");
+		const id = await Iuser.getID();
+		const body = {
+			"userID": id,
+			"status": "game"
+		}
+		const response = await fetch('https://localhost:4430/api/matchmaking/', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': Icookies.getCookie('token'),
+				'X-CSRFToken': Icookies.getCookie('csrftoken')
+			},
+			credentials: 'include',
+			body: JSON.stringify(body)
+		});
+		console.log(response);
+	}
 
 }
+
+
