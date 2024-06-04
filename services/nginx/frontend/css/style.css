@@ -12,7 +12,6 @@ body {
 }
 
 p {
-	font-family: 'Avenir';
 	text-align: justify;
     margin-top: 3em;
 	margin-left: 5em;
@@ -48,7 +47,12 @@ a:hover {
 	display: none;
 }
 
-#app {
+/* #app {
+	padding-top: 5em;
+	padding-bottom: 5em;
+} */
+
+#app-general-container {
 	padding-top: 10em;
 	padding-bottom: 10em;
 }
@@ -119,7 +123,7 @@ a:hover {
 
 
 /********** LOGIN PAGE ***********/
-#login-form {
+/* #login-form {
 	width: 300px;
 	margin: 0 auto;
 	padding: 20px;
@@ -136,12 +140,11 @@ a:hover {
 	box-sizing: border-box;
 }
 
-/* Media query for small devices */
 @media screen and (max-width: 600px) {
 #login-form {
 	width: 80%;
 	}
-}
+} */
 
 
 /********** PONG ***********/
@@ -150,19 +153,9 @@ a:hover {
 	justify-content: center;
 }
 
-.image-container {
-	width: 900px;
-	height: 600px;
-	overflow: hidden;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: #f8f9fa;
-}
-
-.image-container img {
-	max-width: 100%;
-	max-height: 100%;
+#custom-endgame {
+	max-width: 900px;
+	max-height: 600px;
 }
 
 .scoreboard {
@@ -172,7 +165,31 @@ a:hover {
 }
 
 .score {
-	font-size: 2rem;
+	font-size: 1rem;
+}
+
+/********** POKEMAP ***********/
+
+.PokeGB {
+	position: relative;
+	margin: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.game-boy-background {
+	display: flex;
+	width: 50vw;
+}
+
+.pokecanva {
+	position: absolute;
+	top: 12%; /* Position of the rectangle inside the image */
+	left: 50%;
+	transform: translate(-50%, 0);
+	width: 43%; /* Size of the rectangle inside the image */
+	height: auto;
 }
 
 /* CSS FOR THE MATCHMAKING PAGE */

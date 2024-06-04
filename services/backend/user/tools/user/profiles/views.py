@@ -107,7 +107,7 @@ class CustomUserRegister(APIView):
 		form = CustomUserCreationForm(request.POST, request.FILES)
 		if form.is_valid():
 			user = form.save(commit=False)
-			user.is_online = True
+			user.is_online = 1
 			user.save()
 			token = user_token(request, user.user_id)
 			if token is not None:
@@ -146,7 +146,7 @@ class CustomUserLogin(APIView):
 				return Response({'succes:': True, 'two_fa': True}, status=status.HTTP_200_OK)
 			else:
 				token = user_token(request, user.user_id)
-				user.is_online = True
+				user.is_online = 1
 				user.save()
 				login(request, user)
 				return Response({'success': True, 'token' : token, 'two_fa': False},
@@ -165,7 +165,7 @@ class CustomUserVerify(APIView):
 				user.otp_expiry_time is not None and
 				user.otp_expiry_time > timezone.now()
 			):
-				user.is_online = True
+				user.is_online = 1
 				user.otp = ''
 				user.otp_expiry_time = None
 				token = user_token(request, user.user_id)
@@ -185,7 +185,7 @@ class CustomUserLogout(APIView):
 		logger.debug(request)
 		user = request.user
 		try:
-			user.is_online = False
+			user.is_online = 0
 			user.save()
 		except CustomUser.DoesNotExist:
 			return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)

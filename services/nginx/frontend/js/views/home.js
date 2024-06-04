@@ -1,6 +1,6 @@
 export default () => `
 
-<div class="container">
+<div class="container" id="app-general-container">
 <div class="row">
 	<div class="col-md-6 g-3 d-flex align-items-center justify-content-center">
 		<a href="/pongService" data-link>

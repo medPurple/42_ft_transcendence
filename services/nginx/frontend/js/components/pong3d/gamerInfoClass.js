@@ -27,7 +27,6 @@ export default class gamerInfo {
 			}
 
 		} catch (error) {
-			console.error('Error', error);
 			throw error;
 		}
 	}
@@ -54,7 +53,6 @@ export default class gamerInfo {
 				throw new Error('Failed to get gamer info');
 			}
 		} catch (error) {
-			console.error('Error', error);
 			throw error;
 		}
 	
@@ -84,7 +82,6 @@ export default class gamerInfo {
 				throw new Error('Failed to get match info');
 			}
 		} catch (error) {
-			console.error('Error', error);
 			throw error;
 		}
 	}

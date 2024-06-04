@@ -5,10 +5,12 @@ export default () => {
 	let content = '';
 	if (Icookies.getCookie('token')) {
 		content = `
-		<div class="mb-4">
-			<h2>Delete Profile</h2>
-		</div>
-		<delete-account-form></delete-account-form>`
+		<div id="app-general-container">
+			<div class="mb-4">
+				<h2>Delete Profile</h2>
+			</div>
+			<delete-account-form></delete-account-form>
+		</div>`
 	} else {
 		const logdiv = document.createElement('div');
 		logdiv.classList.add('not-logged');

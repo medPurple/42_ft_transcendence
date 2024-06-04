@@ -1,5 +1,4 @@
 import "../../components/user/profileForm.js";
-
 import Icookies from "../../components/cookie/cookie.js"
 
 export default () => {

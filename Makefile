@@ -150,11 +150,8 @@ clean : down
 	@ if [ $(PM_VOL) = "1" ]; then docker volume rm services_$(PM_NAME); \
 	else echo "	POKEMAP Volume already deleted"; fi;
 
-# Weird volumes created somewhere using secret volume?
 	@ docker system prune -af
 	@ docker volume prune -f
-# after prune, the secret volume is still there!
-	@ docker volume rm secret_volume
 
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 

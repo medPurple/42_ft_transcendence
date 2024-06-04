@@ -21,7 +21,7 @@ import deleteAccount from "./views/user/deleteAccount.js";
 import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
 import friendsStatistics from "./views/friends/friendsStatistics.js";
-import { pong_remoteplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
+import { pong_remoteplay, pong_localplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
 import statistics from "./views/user/statistics.js";
@@ -56,13 +56,6 @@ const routes = {
 	'/pongSettings': {
 		title: "Pong Settings",
 		render: pongSettings
-	},
-	'/pongEnd/:player': {
-		title: "Pong End",
-		render: async (params) => {
-			let winner = params.player;
-			return await pongEnd(winner);
-		}
 	},
 	'/metaService': {
 		title: "Meta Service",
@@ -171,10 +164,9 @@ function updateNavbarDropdown() {
 
 	if (condition) {
 		dropdownMenu.innerHTML = `
-			<li><a class="dropdown-item" href="/profile">settings</a></li>
+			<li><a class="dropdown-item" href="/profile">profile</a></li>
 			<li><a class="dropdown-item" href="/friends">friends</a></li>
 			<li><a class="dropdown-item" href="/chat">chat</a></li>
-			<li><a class="dropdown-item" href="/play">play</a></li>
 			<li><hr class="dropdown-divider"></li>
 			<li><logout-form></logout-form></li>
 			<li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
@@ -186,7 +178,6 @@ function updateNavbarDropdown() {
 			`;
 	}
 }
-		// <li><a class="dropdown-item" href="/logout">log out</a></li>
 
 function checkConnected() {
 
@@ -228,42 +219,40 @@ async function router() {
 	if (!(await checkValidToken())){
 		alert('Invalid token, please reload');
 		Icookies.clearAllCookies();
-
-	}
-	else{
+	} else {
 		for (let route in routes) {
 			let params = {}
 			if (route.includes(':')) {
-			let routeParts = route.split('/');
-			let pathParts = path.split('/');
-			if (routeParts.length === pathParts.length) {
-				let match = true;
-				for (let i = 0; i < routeParts.length; i++) {
-				if (routeParts[i].startsWith(':')) {
-					params[routeParts[i].substring(1)] = pathParts[i];
-				} else if (routeParts[i] !== pathParts[i]) {
-					match = false;
-					break;
+				let routeParts = route.split('/');
+				let pathParts = path.split('/');
+				if (routeParts.length === pathParts.length) {
+					let match = true;
+					for (let i = 0; i < routeParts.length; i++) {
+						if (routeParts[i].startsWith(':')) {
+							params[routeParts[i].substring(1)] = pathParts[i];
+						} else if (routeParts[i] !== pathParts[i]) {
+							match = false;
+							break;
+						}
+					}
+					if (match) {
+						view = routes[route];
+						view.params = params;
+						break;
+					}
 				}
-				}
-				if (match) {
+			} else if (route === path) {
 				view = routes[route];
 				view.params = params;
 				break;
-				}
-			}
-			} else if (route === path) {
-			view = routes[route];
-			view.params = params;
-			break;
 			}
 		}
-		
+
 		const pageTitle = "Transcendence";
-		
+
 		NavbarFooterVisibility();
 		updateNavbarDropdown();
-		
+
 		if (view) {
 			document.title = pageTitle + " | " + view.title;
 			let result = await view.render(view.params);	
@@ -295,7 +284,7 @@ async function router() {
 		});
 	}
 }
-	
+
 // Update router
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);

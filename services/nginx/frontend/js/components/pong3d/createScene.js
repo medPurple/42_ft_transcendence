@@ -1,5 +1,5 @@
 import gamer from "./gamerInfo.js"
-import { core, playMesh, decMesh, gameCustom, lights, constants } from "./config.js"
+import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
 import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
@@ -17,7 +17,9 @@ async function setupSettings() {
 		gameCustom.table = data.table;
 		gameCustom.powerup = data.powerups;
 		gameCustom.score_limit = data.score;
-		// console.log('GAMECUSTOM filled: ', gameCustom);
+		gameCustom.score_limit = gameState.score_limit;
+		//console.log('GAMECUSTOM filled: ', gameCustom);
+		//console.log('GAMESTATE filled: ', gameState);
 	} catch (error) {
 		console.error('Error: setupSettings', error)
 		alert('You should be logged to play');
@@ -32,7 +34,7 @@ export async function createScene() {
 	// console.log("Scene is created");
 	core.renderer = new THREE.WebGLRenderer();
 
-	core.renderer.setSize(constants.WIDTH, constants.HEIGHT);
+	core.renderer.setSize(window.innerWidth, window.innerHeight);
 
 	var c = document.getElementById("pong-renderer");
 
@@ -50,15 +52,19 @@ export async function createScene() {
 		window.addEventListener('keydown', onKeyDownLocal, false);
 		window.addEventListener('keyup', onKeyUpLocal, false);
 	}
-
-  //Scene setup
-
-	core.scene = new THREE.Scene();
-
-  //Camera setup
-
-	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, constants.ASPECT, constants.NEAR, constants.FAR)
+	
+	//Camera setup
+	
+	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
 	core.camera.position.z = 230;
+	
+	// const controls = new THREE.OrbitControls(core.camera, c);
+	// controls.minDistance = 100;
+	// controls.maxDistance = 300;
+	
+	//Scene setup
+	
+	core.scene = new THREE.Scene();
 
   //Ball setup
 
@@ -88,11 +94,13 @@ export async function createScene() {
   //Paddle Setup
 	if (core.player_id == 1) {
 		playMesh.paddle1 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
+		console.log("Je cree le paddle 1");
 		playMesh.paddle2 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
 	}
 	else {
 		playMesh.paddle2 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
 		playMesh.paddle1 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
+		console.log("Je cree le paddle 1");
 	}
   //Table Setup
 

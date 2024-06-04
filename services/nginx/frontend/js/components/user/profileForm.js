@@ -39,30 +39,34 @@ export default class profileForm extends HTMLElement {
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
 		<div class="d-flex justify-content-center">
-			<div class="card text-center" style="width: 20rem;">
+			<div class="card text-center" style="width: 21rem;">
 				<img src="data:image/jpeg;base64,${profilePictureData}" class="card-img-top profile-pic" alt="Profile Picture">
 				<div class="card-body">
 					<h5 class="card-title">${data.user.username}</h5>
-					<p class="card-text">He is evaluating la Pat Patrouille</p>
+					<h6 class="card-text">... thinks this is an outstanding project</h6>
 				</div>
 				<ul id="profile-content" class="list-group list-group-flush">
 					<li class="list-group-item">${data.user.first_name}</li>
 					<li class="list-group-item">${data.user.last_name}</li>
 					<li class="list-group-item">${data.user.email}</li>
+					<li class="list-group-item">42 School</li>
+				</ul>
+				<div class="card-body">
 					<li class="list-group-item">${data.user.is_online}</li>
 
 					</ul>
 					<div class="card-body">
-					<a href="/edit-profile" class="card-link" data-link >Edit Profile</a><br>
-					<a href="/update-password" class="card-link" data-link>Update password</a><br>
-					<a href="/friends" class="card-link" data-link>See my friends</a><br>
-					<a href="/statistics" class="card-link" data-link>See games details</a>
+					<a href="/edit-profile" class="card-link" data-link >Edit profile</a><br>
+					<a href="/update-password" class="card-link" data-link>Change password</a><br>
+					<a href="/statistics" class="card-link" data-link>My stats</a>
 				</div>
 				<div class="card-body">
 					<a href="/delete-account" class="btn btn-light">Delete Profile</a>
 				</div>
 				<div class="card-footer text-body-secondary">
-					42 School
+					<option value="0" ${data.user.is_online === 0 ? 'selected' : ''}>Offline</option>
+					<option value="1" ${data.user.is_online === 1 ? 'selected' : ''}>Online</option>
+					<option value="2" ${data.user.is_online === 2 ? 'selected' : ''}>Playing</option>
 				</div>
 			</div>
 		</div>

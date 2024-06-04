@@ -1,19 +1,20 @@
 
 export default () => `
 
-	<div class="image-container">
-		<img src="../images/Site/InvitationCard_Front.png" alt="Original Image" class="original-image">
-		<img src="../images/Site/InvitationCard_Rev.png" alt="Hover Image" class="hover-image">
+	<div id="app-general-container">
+		<div class="image-container">
+			<img src="../images/Site/InvitationCard_Front.png" alt="Original Image" class="original-image">
+			<img src="../images/Site/InvitationCard_Rev.png" alt="Hover Image" class="hover-image">
+		</div>
+		<form class="buttons-container" onsubmit="validateCodeAndRedirect(); return false;">	
+			<div class="mb-4">
+				<input type="text" class="form-control" placeholder="Enter Code">
+			</div>
+			<div class="mb-4">
+				<button type="submit" class="btn btn-dark">Start</button>
+			</div>
+		</form>
 	</div>
-	<form class="buttons-container" onsubmit="validateCodeAndRedirect(); return false;">	
-		<div class="mb-4">
-			<input type="text" class="form-control" placeholder="Enter Code">
-		</div>
-		<div class="mb-4">
-			<button type="submit" class="btn btn-dark">Start</button>
-		</div>
-	</form>
-
 	`;
 
 window.validateCodeAndRedirect = validateCodeAndRedirect;

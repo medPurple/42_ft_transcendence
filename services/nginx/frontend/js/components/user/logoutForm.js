@@ -7,7 +7,7 @@ export default class LogoutForm extends HTMLElement {
         link.setAttribute('id', 'logout-link');
         link.setAttribute('class', 'dropdown-item');
         link.textContent = 'log out';
-        link.href = '#'; 
+        link.href = '#';
         this.appendChild(link);
     }
 

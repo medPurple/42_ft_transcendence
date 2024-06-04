@@ -1,6 +1,6 @@
 export default () => `
 
-	<div class="container justify-content-center">
+	<div class="container justify-content-center" id="app-general-container">
 	<div class="row">
 		<div class="col-12 col-md text-center mb-4">
 			<img src="../images/Favicons/PH-atardif.png" alt="logo" width="100" height="100" class="d-inline-block align-text-top img-fluid rounded">

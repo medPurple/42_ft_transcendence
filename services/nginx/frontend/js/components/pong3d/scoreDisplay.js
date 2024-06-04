@@ -1,7 +1,5 @@
 import { gameState } from './config.js'
 
-/// CHNAGEr AFICHAGE SCORE / endgame
-
 // async function removeUser() {
 // 	console.log("Removing user from queue.");
 // 	const id = await Iuser.getID();
@@ -20,12 +18,10 @@ import { gameState } from './config.js'
 // 	console.log(response);
 
 // }
-
-export async function displayScore() {
+export function displayScore() {
 
 	var scoreDiv = document.getElementById("pong-score");
-
-	// scoreDiv.innerHTML = "Player 1 : " + gameState.player1Score + " - Player 2 : " + gameState.player2Score;
+	var endgame = document.getElementById("pong-renderer");
 
 	scoreDiv.innerHTML = `
 	<div class="container mt-5">
@@ -49,10 +45,31 @@ export async function displayScore() {
 	`
 
 	if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
-		await removeUser();
-		if (gameState.player1Score == gameState.score_limit)
-			window.location.href = '/pongEnd/1';
+		scoreDiv.innerHTML = '';
+		if (gameState.player1Score == gameState.score_limit){
+			endgame.innerHTML = `
+			<div class="container mt-5">
+				<div class="row justify-content-center">
+					<div class="col-md-8">
+						<div id="custom-endgame">
+							<img src="../../../images/Game/P1-WINS.jpeg" class="img-fluid" alt="Display Image">
+						</div>
+					</div>
+				</div>
+			</div>
+			`;
+		}
 		else
-			window.location.href = '/pongEnd/2';
+			endgame.innerHTML = `
+			<div class="container mt-5">
+				<div class="row justify-content-center">
+					<div class="col-md-8">
+						<div id="custom-endgame">
+							<img src="../../../images/Game/P2-WINS.jpeg" class="img-fluid" alt="Display Image">
+						</div>
+					</div>
+				</div>
+			</div>
+			`;
 	}
 }

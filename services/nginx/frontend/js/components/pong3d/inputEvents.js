@@ -30,10 +30,10 @@ export function onKeyDownLocal(event) {
     case 83:
       core.gameSocket.send(JSON.stringify({ 'paddleMov1': "right" }))
       break;
-    case 40:
+    case 101:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "left" }))
       break;
-    case 38:
+    case 104:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "right" }))
       break;
   }
@@ -47,10 +47,10 @@ export function onKeyUpLocal(event) {
     case 83:
       core.gameSocket.send(JSON.stringify({ 'paddleMov1': "false" }))
       break;
-    case 40:
+    case 101:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "false" }))
       break;
-    case 38:
+    case 104:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "false" }))
       break;
 

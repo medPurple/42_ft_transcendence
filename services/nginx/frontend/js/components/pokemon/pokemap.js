@@ -4,37 +4,38 @@ import Iuser from "../user/userInfo.js";
 
 export class pokeMap {
 
-    constructor() {
-        this.userID = null;
-        this.map = 0;
-        this.ctxMAP = null;
-        this.ctxAllCharacters = null;
-    }
+	constructor() {
+		this.userID = null;
+		this.map = 0;
+		this.ctxMAP = null;
+		this.ctxAllCharacters = null;
+	}
 
-    divmapCreation() {
+	divmapCreation() {
 
-        // MAP DIV
-        const divmap = document.createElement('div');
-        divmap.style.backgroundImage = "url(./images/Site/BG-GameBoy-win964x880.png)";
-        divmap.style.backgroundSize = 'cover';
-        divmap.style.backgroundRepeat = 'no-repeat';
-        divmap.style.zIndex = '1';
-        divmap.style.width = '101%';
-        divmap.style.height = '200vh';
-        divmap.style.marginRight = '0';
+		// MAP DIV
+		const divmap = document.createElement('div');
+		divmap.classList.add('PokeGB');
 
-        
-        const pokecanva = document.createElement('canvas');
-        pokecanva.width = 520;
-        pokecanva.height = 500;
-        pokecanva.style.marginTop = '20%';
-        pokecanva.style.zIndex = '-1';
-        this.ctxMAP = pokecanva.getContext('2d');
-        divmap.appendChild(pokecanva);
+		// IMG
+		const img = document.createElement('img');
+		img.classList.add('game-boy-background');
+		img.src = '../images/Site/BG-GameBoy-win964x880.png';
 
-        document.body.appendChild(divmap);
-        return divmap;
-    }
+		// CANVAS
+		const canvas = document.createElement('canvas');
+		canvas.classList.add('pokecanva');
+		canvas.width = 500;
+		canvas.height = 500;
+
+		this.ctxMAP = canvas.getContext('2d');
+		
+		divmap.appendChild(img);
+		divmap.appendChild(canvas);
+		document.body.appendChild(divmap);
+		
+		return divmap;
+	}
 
     getx(x, mainx) {
         return 254 + (x - mainx) * 26;

@@ -7,6 +7,12 @@ from django.conf import settings
 import os
 
 class	CustomUser(AbstractUser):
+	STATUS = {
+		0: "Disconnected",
+		1: "Connected",
+		2: "Playing",
+	}
+
 	user_id = models.AutoField(primary_key=True)
 	profile_picture = models.ImageField(blank=True, upload_to='images')
 	username = models.CharField(max_length=200, unique=True)
@@ -14,7 +20,7 @@ class	CustomUser(AbstractUser):
 	email = models.EmailField(null=True, unique=True)
 	first_name = models.CharField(max_length=200, null=True)
 	last_name = models.CharField(max_length=200, null=True)
-	is_online = models.BooleanField(default=False)
+	is_online = models.IntegerField(choices=STATUS, default=0)
 	friends = models.ManyToManyField("CustomUser", blank=True)
 	is_2fa = models.BooleanField(default=False)
 	otp = models.CharField(max_length=10, blank=True)
