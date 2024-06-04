@@ -16,24 +16,25 @@ export class pokechat {
 
     createTitleAndModal(){
         const titleAndButtonDiv = document.createElement('div');
-        titleAndButtonDiv.classList.add('d-flex', 'justify-content-between', 'align-items-center');
-
-        // Création du titre
-        const title = document.createElement('h6');
-        title.innerText = 'Pokechat';
-        titleAndButtonDiv.appendChild(title);
-
+        // titleAndButtonDiv.classList.add('d-flex', 'justify-content-between', 'align-items-center');
+		
         // Création du bouton pour ouvrir le modal
         const modalButton = document.createElement('button');
         modalButton.classList.add('btn', 'btn-dark');
         modalButton.setAttribute('data-bs-toggle', 'modal');
         modalButton.setAttribute('data-bs-target', '#participantsModal');
         modalButton.setAttribute('type', 'button'); // Ajoutez cette ligne
-        modalButton.innerText = 'See participants';
+        modalButton.innerText = 'Who\'s there ?';
         titleAndButtonDiv.appendChild(modalButton);
+		
+		// Création du titre
+		const title = document.createElement('h5');
+		title.classList.add('p-2');
+		title.innerText = 'Pokechat';
+		titleAndButtonDiv.appendChild(title);
 
-        return titleAndButtonDiv;
-    }
+		return titleAndButtonDiv;
+	}
 
     createModal(){
         // Création du modal pour la liste des participants
@@ -60,7 +61,7 @@ export class pokechat {
 
     createChatbox(){
         const chatbox = document.createElement('div');
-        chatbox.classList.add('bg-white', 'rounded', 'p-3', 'mb-3', 'chatbox', 'w-100', 'border');
+        chatbox.classList.add('bg-white', 'rounded', 'mb-3', 'chatbox', 'vh-80');
         chatbox.style.textAlign = 'left'; // Ajoutez cette ligne
         chatbox.style.flexGrow = '1'; // Prend toute la hauteur restante
 
@@ -91,7 +92,7 @@ export class pokechat {
     createElement() {
         
         const chatdiv = document.createElement('div');
-        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'm-5', 'p-0', 'text-black');
+        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'text-black', 'justify-content-center');
         chatdiv.appendChild(this.createTitleAndModal());
         chatdiv.appendChild(this.createModal());
         chatdiv.appendChild(this.createChatbox());
@@ -183,14 +184,14 @@ export class pokechat {
 export class pokebag{ 
 
     createCardLevel(pokemon){
-        const cardTitle = document.createElement('h5');
+        const cardTitle = document.createElement('h6');
         cardTitle.classList.add('card-title');
         cardTitle.innerText = pokemon.name; // Replace with your card title
         return cardTitle;
     }
 
     createCardTitle(pokemon) {
-        const cardLevel = document.createElement('h5');
+        const cardLevel = document.createElement('h6');
         cardLevel.classList.add('card-level');
         cardLevel.innerText = "N.  " + pokemon.level; // Replace with your card title
         return cardLevel;
@@ -201,7 +202,7 @@ export class pokebag{
         const percentage = pokemon.pvActuel / pokemon.pvMax;
 
         const colorBarContainer = document.createElement('div');
-        colorBarContainer.classList.add('border', 'border-light', 'rounded', 'overflow-hidden');
+        colorBarContainer.classList.add('border', 'border-dark', 'rounded', 'overflow-hidden');
 
         const colorBar = document.createElement('div');
         colorBar.classList.add('progress-bar');
@@ -235,9 +236,8 @@ export class pokebag{
 
     createCardElement(){
         const card = document.createElement('div');
-        card.classList.add('card', 'rounded','p-3', 'mb-3', 'cardelement','w-100', 'border');
-        // card.style.maxWidth = '540px';
-        // card.style.margin = '5%';
+        card.classList.add('card', 'mb-3', 'cardelement', 'border');
+		
         return card;
     }
 

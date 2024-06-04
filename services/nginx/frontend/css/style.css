@@ -180,7 +180,9 @@ a:hover {
 
 .game-boy-background {
 	display: flex;
-	width: 50vw;
+	width: 52vw;
+	z-index: 2;
+	position: relative;
 }
 
 .pokecanva {
@@ -188,12 +190,18 @@ a:hover {
 	top: 12%; /* Position of the rectangle inside the image */
 	left: 50%;
 	transform: translate(-50%, 0);
-	width: 43%; /* Size of the rectangle inside the image */
+	width: 50%; /* Size of the rectangle inside the image */
 	height: auto;
+	z-index: 1;
+	/* background-color: #7b8787; */
 }
+/* 
+.cardi {
+	background-color: #f1f1f1;
+} */
 
 /* CSS FOR THE MATCHMAKING PAGE */
-.matchmakingdiv {
+/* .matchmakingdiv {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -238,16 +246,16 @@ a:hover {
 
 .matchmakingdiv .button-div .queue-button {
 	margin-top: 50px;
-}
+} */
 
 #navbar.hidden {
     display: none;
 }
-
+/* 
 .chat-popup {
 	display: none;
 	position: fixed;
-	bottom: 20px; /* Adjust this value as needed */
+	bottom: 20px;
 	right: 20px;
 	width: 300px;
 	background-color: #f1f1f1;
@@ -255,5 +263,5 @@ a:hover {
 	border-radius: 5px;
 	padding: 10px;
 	z-index: 999;
-}
+} */
 

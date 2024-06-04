@@ -65,32 +65,29 @@ export async function pkm_remoteplay() {
 
 export async function pokemap_interactive() {
         const maindiv = document.createElement('div');
-        maindiv.classList.add('row');
+        maindiv.classList.add('row', 'p-4');
 
         if (Icookies.getCookie('token') != null) {
                 const gamediv = document.createElement('div');
                 gamediv.classList.add('col-8');
-
                 gamediv.appendChild(new pokeMap().startingPokeverse());
-
-                const toolsdiv = document.createElement('div');
+                
+				const toolsdiv = document.createElement('div');
                 toolsdiv.classList.add('col-4');
                 toolsdiv.style.display = 'flex';
                 toolsdiv.style.flexDirection = 'column';
                 const chatdiv = new pokechat().pokechatinit();
-                chatdiv.style.flex = '2';
 				chatdiv.style.display = 'flex';
 				chatdiv.style.flexDirection = 'column';
                 toolsdiv.appendChild(chatdiv);
 
                 const bagdiv = new pokebag().createAllCards();
-                bagdiv.style.flex = '1';
-				bagdiv.style.display = 'flex';
-				bagdiv.style.flexWrap = 'wrap';
-                toolsdiv.appendChild(bagdiv);
+				bagdiv.style.marginTop = '15px';
+				toolsdiv.appendChild(bagdiv);
 
                 maindiv.appendChild(gamediv);
                 maindiv.appendChild(toolsdiv);
+				
         } else {
                 maindiv.classList.add('not-logged');
                 alert("You need to be logged in to play in the pokeverse");
