@@ -19,17 +19,17 @@ export class pokechat {
         titleAndButtonDiv.classList.add('d-flex', 'justify-content-between', 'align-items-center');
 
         // Création du titre
-        const title = document.createElement('h1');
+        const title = document.createElement('h5');
         title.innerText = 'Pokechat';
         titleAndButtonDiv.appendChild(title);
 
         // Création du bouton pour ouvrir le modal
         const modalButton = document.createElement('button');
-        modalButton.classList.add('btn', 'btn-primary');
+        modalButton.classList.add('btn', 'btn-dark');
         modalButton.setAttribute('data-bs-toggle', 'modal');
         modalButton.setAttribute('data-bs-target', '#participantsModal');
         modalButton.setAttribute('type', 'button'); // Ajoutez cette ligne
-        modalButton.innerText = 'Voir les participants';
+        modalButton.innerText = 'See participants';
         titleAndButtonDiv.appendChild(modalButton);
 
         return titleAndButtonDiv;
@@ -49,7 +49,7 @@ export class pokechat {
 
         const modalBody = document.createElement('div');
         modalBody.classList.add('modal-body');
-        modalBody.innerText = 'Liste des participants';
+        modalBody.innerText = 'Participants: ';
 
         modalContent.appendChild(modalBody);
         modalDialog.appendChild(modalContent);
@@ -60,7 +60,7 @@ export class pokechat {
 
     createChatbox(){
         const chatbox = document.createElement('div');
-        chatbox.classList.add('bg-white', 'rounded', 'p-3', 'mb-3', 'chatbox', 'w-100', 'border', 'border-dark');
+        chatbox.classList.add('bg-white', 'rounded', 'p-3', 'mb-3', 'chatbox', 'w-100', 'border');
         chatbox.style.textAlign = 'left'; // Ajoutez cette ligne
         chatbox.style.flexGrow = '1'; // Prend toute la hauteur restante
 
@@ -74,14 +74,14 @@ export class pokechat {
 
         // Création de la zone de texte pour écrire
         const inputArea = document.createElement('textarea');
-        inputArea.classList.add('form-control', 'flex-grow-1', 'border', 'border-dark');
-        inputArea.placeholder = 'Ecrire ici...';
+        inputArea.classList.add('form-control', 'flex-grow-1', 'border');
+        inputArea.placeholder = 'Write here...';
         inputAndButtonDiv.appendChild(inputArea);
 
         // Création du bouton pour envoyer
         const sendButton = document.createElement('button');
-        sendButton.classList.add('btn', 'btn-primary', 'btn-sm', 'ms-2', 'send-button');
-        sendButton.innerText = 'Envoyer';
+        sendButton.classList.add('btn', 'btn-dark', 'btn-sm', 'ms-2', 'send-button');
+        sendButton.innerText = 'Send';
         inputAndButtonDiv.appendChild(sendButton);
 
         return inputAndButtonDiv;
@@ -91,7 +91,7 @@ export class pokechat {
     createElement() {
         
         const chatdiv = document.createElement('div');
-        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'm-5', 'p-0', 'text-black');        
+        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'm-5', 'p-0', 'text-black');
         chatdiv.appendChild(this.createTitleAndModal());
         chatdiv.appendChild(this.createModal());
         chatdiv.appendChild(this.createChatbox());

@@ -180,17 +180,16 @@ a:hover {
 
 .game-boy-background {
 	display: flex;
-	width: 100vw;
+	width: 50vw;
 }
 
 .pokecanva {
 	position: absolute;
-	top: 15%; /* Adjust based on the position of the rectangle inside the image */
+	top: 12%; /* Position of the rectangle inside the image */
 	left: 50%;
 	transform: translate(-50%, 0);
-	width: 41%; /* Adjust based on the size of the rectangle inside the image */
+	width: 43%; /* Size of the rectangle inside the image */
 	height: auto;
-	background-color: #b32c6f;
 }
 
 /* CSS FOR THE MATCHMAKING PAGE */

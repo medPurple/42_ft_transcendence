@@ -4,37 +4,38 @@ import Iuser from "../user/userInfo.js";
 
 export class pokeMap {
 
-    constructor() {
-        this.userID = null;
-        this.map = 0;
-        this.ctxMAP = null;
-        this.ctxAllCharacters = null;
-    }
+	constructor() {
+		this.userID = null;
+		this.map = 0;
+		this.ctxMAP = null;
+		this.ctxAllCharacters = null;
+	}
 
-    divmapCreation() {
+	divmapCreation() {
 
-        // MAP DIV
-        const divmap = document.createElement('div');
+		// MAP DIV
+		const divmap = document.createElement('div');
 		divmap.classList.add('PokeGB');
-		divmap.img = document.createElement('img');
-		divmap.img.src = '../images/Site/BG-GameBoy-win964x880.png';
-		divmap.img.classList.add('game-boy-background');
+
+		// IMG
+		const img = document.createElement('img');
+		img.classList.add('game-boy-background');
+		img.src = '../images/Site/BG-GameBoy-win964x880.png';
 
 		// CANVAS
-		divmap.canvas = document.createElement('canvas');
-		divmap.canvas.width = 500;
-		divmap.canvas.height = 500;
-		divmap.canvas.classList.add('pokecanva');
+		const canvas = document.createElement('canvas');
+		canvas.classList.add('pokecanva');
+		canvas.width = 500;
+		canvas.height = 500;
 
-		divmap.appendChild(divmap.img);
-		divmap.appendChild(divmap.canvas);
-
-        document.body.appendChild(divmap);
-
-		console.log(divmap);
+		this.ctxMAP = canvas.getContext('2d');
 		
-        return divmap;
-    }
+		divmap.appendChild(img);
+		divmap.appendChild(canvas);
+		document.body.appendChild(divmap);
+		
+		return divmap;
+	}
 
     getx(x, mainx) {
         return 254 + (x - mainx) * 26;
