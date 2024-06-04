@@ -69,12 +69,12 @@ export async function pokemap_interactive() {
 
         if (Icookies.getCookie('token') != null) {
                 const gamediv = document.createElement('div');
-                gamediv.classList.add('col-md-8');
+                gamediv.classList.add('col-8');
 
                 gamediv.appendChild(new pokeMap().startingPokeverse());
 
                 const toolsdiv = document.createElement('div');
-                toolsdiv.classList.add('col-md-4');
+                toolsdiv.classList.add('col-4');
                 toolsdiv.style.display = 'flex';
                 toolsdiv.style.flexDirection = 'column';
                 const chatdiv = new pokechat().pokechatinit();
