@@ -61,9 +61,13 @@ export class pokechat {
 
     createChatbox(){
         const chatbox = document.createElement('div');
-        chatbox.classList.add('bg-white', 'rounded', 'mb-3', 'chatbox', 'vh-80');
-        chatbox.style.textAlign = 'left'; // Ajoutez cette ligne
-        chatbox.style.flexGrow = '1'; // Prend toute la hauteur restante
+        chatbox.classList.add('bg-white', 'rounded', 'mb-3', 'chatbox');
+		chatbox.style.padding = '12px';
+		chatbox.style.overflowWrap = 'break-word';
+		chatbox.style.overflowY = 'auto';
+        chatbox.style.textAlign = 'left';
+        chatbox.style.flexGrow = '1';
+	
 
         return chatbox;
     }
@@ -82,6 +86,7 @@ export class pokechat {
         // Création du bouton pour envoyer
         const sendButton = document.createElement('button');
         sendButton.classList.add('btn', 'btn-dark', 'btn-sm', 'ms-2', 'send-button');
+		
         sendButton.innerText = 'Send';
         inputAndButtonDiv.appendChild(sendButton);
 
@@ -92,7 +97,8 @@ export class pokechat {
     createElement() {
         
         const chatdiv = document.createElement('div');
-        chatdiv.classList.add('d-flex', 'flex-column', 'vh-100', 'text-black', 'justify-content-center');
+        chatdiv.classList.add('d-flex', 'flex-column', 'text-black', 'justify-content-center');
+		chatdiv.style.height = '50vw';
         chatdiv.appendChild(this.createTitleAndModal());
         chatdiv.appendChild(this.createModal());
         chatdiv.appendChild(this.createChatbox());
