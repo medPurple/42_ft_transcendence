@@ -29,7 +29,7 @@ class friendsInfo {
 
     async getFriend(username) {
         try {
-			const response = await fetch(`/api/friends/friends-list/${username}`, {
+			const response = await fetch(`/api/friends/friends-list/${username}/`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ class friendsInfo {
 
 	async getUserBlock(username){
 		try {
-			const response = await fetch(`/api/friends/block-list/${username}`, {
+			const response = await fetch(`/api/friends/block-list/${username}/`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -60,9 +60,10 @@ class friendsInfo {
 			});
 			const data = await response.json();
 			if (data.success) {
+				console.log(data);
 				return data;
 			} else {
-				alert('Failed to get block user');
+				return false;
 			}
 		} catch (error) {
 			console.error('Error', error);
@@ -71,7 +72,7 @@ class friendsInfo {
 
 	async blockUser(username){
 		try {
-			const response = await fetch(`api/friends/block-list/${username}`, {
+			const response = await fetch(`/api/friends/block-list/${username}/`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -79,11 +80,10 @@ class friendsInfo {
 					'Authorization': Icookies.getCookie('token')
 
 				},
-				// body: JSON.stringify({block_username: username})
 			});
 			const data = await response.json();
 			if (data.success) {
-				return 'User blocked';
+				return data;
 			} else {
 				alert('Failed to block user');
 			}
@@ -94,18 +94,17 @@ class friendsInfo {
 
 	async unblockUser(username){
 		try {
-			const response = await fetch(`api/friends/block-list/${username}`, {
+			const response = await fetch(`/api/friends/block-list/${username}/`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
 					'X-CSRFToken': Icookies.getCookie('csrftoken'),
 					'Authorization': Icookies.getCookie('token')
 				},
-				// body: JSON.stringify({block_username: username})
 			});
 			const data = await response.json();
 			if(data.success){
-				return 'User unblocked';
+				return data;
 			} else {
 				alert('Failed to unblock user');
 			}
@@ -114,9 +113,8 @@ class friendsInfo {
 		}
 	}
 
-	}
-
 }
+
 
 let Ifriends = new friendsInfo();
 
