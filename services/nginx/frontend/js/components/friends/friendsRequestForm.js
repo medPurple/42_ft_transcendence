@@ -268,7 +268,7 @@ export class Friends {
 					this.ulElement.appendChild(cardElement);
 
 					const column = document.createElement('div');
-					column.classList.add('col-md-4'); // Définir la taille de la colonne Bootstrap
+					column.classList.add('col-md-4');
 					column.appendChild(cardElement);
 
 					this.ulElement.appendChild(column);
@@ -373,7 +373,7 @@ export class Friends {
 	seeFriend(username){
 		const linkToFriendsProfile = document.createElement('a');
 		linkToFriendsProfile.textContent = 'See profile';
-		linkToFriendsProfile.href = `/friend-profile/${username}`;
+		linkToFriendsProfile.href = `/friends/${username}`;
 		linkToFriendsProfile.setAttribute('data-link', '');
 		return linkToFriendsProfile;
 	}

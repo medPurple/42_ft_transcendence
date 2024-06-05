@@ -88,7 +88,7 @@ class JWTAuthentication(BaseAuthentication):
 			return (user, token)
 		except (requests.exceptions.RequestException, CustomUser.DoesNotExist):
 			raise exceptions.AuthenticationFailed('Invalid token')
-			
+
 
 class AllCustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]

@@ -104,7 +104,7 @@ const routes = {
 		title: "Friends",
 		render: friendsRequest
 	},
-    '/friend-profile/:username': {
+    '/friends/:username': {
         title: "Friends profile",
         render: async (params) => {
             let username = params.username;
@@ -143,7 +143,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/statistics', '/chat', '/play', '/pongService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/statistics', '/chat', '/play', '/pongService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');

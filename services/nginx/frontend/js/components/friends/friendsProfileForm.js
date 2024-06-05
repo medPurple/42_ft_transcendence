@@ -12,14 +12,24 @@ export class FriendsProfile {
 			const users = await Iuser.getAllUsers();
 			let data = users.users.find(user => user.username === this.username);
 			let profilePictureData = data.profile_picture_data;
-			const profileContainer = this.displayFriendsProfile(data, profilePictureData);
+			let statut = this.checkStatut(data.is_online);
+			const profileContainer = this.displayFriendsProfile(data, profilePictureData, statut);
 			return profileContainer;
 		} catch (error) {
 			console.error('Error:', error);
 		}
 	}
 
-	displayFriendsProfile(data, profilePictureData) {
+	checkStatut(is_online) {
+		if(is_online === 0)
+			return {text: "Offline", color: "grey"};
+		else if (is_online === 1)
+			return {text: "Online", color: "green"};
+		else
+			return {text: "Playing", color: "yellow"};
+	}
+
+	displayFriendsProfile(data, profilePictureData, statut) {
 		let profileContainer = document.createElement('div');
 		profileContainer.className = 'd-flex justify-content-center'; // Appliquer la classe Bootstrap pour centrer les éléments horizontalement
 		profileContainer.id = 'profile-friends-container';
@@ -40,22 +50,24 @@ export class FriendsProfile {
 
 		let cardTitle = document.createElement('h5');
 		cardTitle.className = 'card-title';
-		cardTitle.textContent = data.username;
+		let usernameStrong = document.createElement('strong');
+		usernameStrong.textContent = data.username;
+		cardTitle.appendChild(usernameStrong);
 
-		let cardText = document.createElement('p');
+		let cardText = document.createElement('h6');
 		cardText.className = 'card-text';
-		cardText.textContent = 'Description text here to do, something funny about the student'; // Vous pouvez remplacer cela par la description réelle si vous en avez
+		cardText.textContent = '... thinks this is an outstanding project';
 
 		let cardList = document.createElement('ul');
 		cardList.id = 'profile-content';
 		cardList.className = 'list-group list-group-flush';
 
 		let listItems = `
-			<li class="list-group-item"><strong>Username:</strong> ${data.username}</li>
-			<li class="list-group-item"><strong>First Name:</strong> ${data.first_name}</li>
-			<li class="list-group-item"><strong>Last Name:</strong> ${data.last_name}</li>
-			<li class="list-group-item"><strong>Online:</strong> ${data.is_online}</li>
-			<li class="list-group-item"><a href="/statistics/${data.username}" class="card-link" data-link>See games details</a></li>
+			<li class="list-group-item"> <strong> Username  </strong> <br> ${data.username}</li>
+			<li class="list-group-item"> <strong> First name  </strong> <br> ${data.first_name}</li>
+			<li class="list-group-item"> <strong> Last name  </strong> <br> ${data.last_name}</li>
+			<li class="list-group-item"><a href="/statistics/${data.username}" class="card-link" data-link><strong>Friend's stats</strong></a></li>
+			<li class="list-group-item"> 42 School</li>
 
 		`;
 
@@ -63,7 +75,19 @@ export class FriendsProfile {
 
 		let cardFooter = document.createElement('div');
 		cardFooter.className = 'card-footer text-body-secondary';
-		cardFooter.textContent = '42 School';
+
+		let statusText = document.createTextNode(statut.text);
+		cardFooter.appendChild(statusText);
+
+		let statusSpan = document.createElement('span');
+		statusSpan.style.display = 'inline-block';
+		statusSpan.style.width = '10px';
+		statusSpan.style.height = '10px';
+		statusSpan.style.borderRadius = '50%';
+		statusSpan.style.backgroundColor = statut.color;
+		statusSpan.style.marginLeft = '5px';
+
+		cardFooter.appendChild(statusSpan);
 
 		// Assemblez la structure de la carte
 		cardBody.appendChild(cardTitle);
