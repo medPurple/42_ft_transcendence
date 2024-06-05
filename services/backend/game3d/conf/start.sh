@@ -28,4 +28,4 @@ cp /tmp/server.crt /usr/local/share/ca-certificates/
 update-ca-certificates
 openssl x509 -in /usr/local/share/ca-certificates/server.crt -out /usr/local/share/ca-certificates/server.pem -outform PEM
 
-uvicorn game3d.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt
+uvicorn game3d.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt --reload

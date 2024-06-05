@@ -1,3 +1,6 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 import gamer from "./gamerInfo.js"
 import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
@@ -58,9 +61,9 @@ export async function createScene() {
 	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
 	core.camera.position.z = 230;
 	
-	// const controls = new THREE.OrbitControls(core.camera, c);
-	// controls.minDistance = 100;
-	// controls.maxDistance = 300;
+	const controls = new OrbitControls(core.camera, c);
+	controls.minDistance = 100;
+	controls.maxDistance = 300;
 	
 	//Scene setup
 	
