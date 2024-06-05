@@ -80,6 +80,7 @@ export class pokechat {
         // Création de la zone de texte pour écrire
         const inputArea = document.createElement('textarea');
         inputArea.classList.add('form-control', 'flex-grow-1', 'border');
+		inputArea.style.resize = 'none';
         inputArea.placeholder = 'Write here...';
         inputAndButtonDiv.appendChild(inputArea);
 
