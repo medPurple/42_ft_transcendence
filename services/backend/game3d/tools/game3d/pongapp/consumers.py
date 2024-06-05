@@ -73,13 +73,17 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.player_id = 0
+        self.user_id = 0
         self.gameState = 0
 
     async def connect(self):
+        self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
+
         await self.accept()
         self.gameState =  await self.findRemoteParty()
 
     async def disconnect(self, close_code):
+        self.gameState
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -97,50 +101,6 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
                 #await self.testpaddle2Mov(self.gameState.paddle2, paddleMov)
                 self.gameState.paddle2.move = paddleMov
             #await self.channel_layer.group_send(self.gameState.group_name, {"type": "paddle.message", "paddleMov2": paddleMov})
-
-    async def testpaddle1Mov(self, paddle1, paddleMov):
-        if (paddleMov == "left"):
-            if (paddle1.positionY < initvalues.FIELD_HEIGHT * 0.45):
-                paddle1.dirY = paddle1.speed * 0.5
-            else:
-                paddle1.dirY = 0
-        elif (paddleMov == "right"):
-            if (paddle1.positionY > -initvalues.FIELD_HEIGHT * 0.45):
-                paddle1.dirY = -paddle1.speed * 0.5
-            else:
-                paddle1.dirY = 0
-        else:
-            paddle1.dirY = 0
-        paddle1.scaleY += (1 - paddle1.scaleY) * 0.2
-        paddle1.scaleZ += (1 - paddle1.scaleZ) * 0.2
-        paddle1.positionY += paddle1.dirY
-
-    async def testpaddle2Mov(self, paddle2, paddleMov):
-        if (paddleMov == "right"):
-            if (paddle2.positionY < initvalues.FIELD_HEIGHT * 0.45):
-                paddle2.dirY = paddle2.speed * 0.5
-            else:
-                paddle2.dirY = 0
-        elif (paddleMov == "left"):
-            if (paddle2.positionY > -initvalues.FIELD_HEIGHT * 0.45):
-                paddle2.dirY = -paddle2.speed * 0.5
-            else:
-                paddle2.dirY = 0
-        else:
-            paddle2.dirY = 0
-        paddle2.scaleY += (1 - paddle2.scaleY) * 0.2
-        paddle2.scaleZ += (1 - paddle2.scaleZ) * 0.2
-        paddle2.positionY += paddle2.dirY
-
-
-    # async def paddle_message(self, event):
-    #     if(self.player_id == 1 and "paddleMov2" in event):
-    #         paddleMov = event["paddleMov2"];
-    #         await self.send(text_data=json.dumps({"paddleMov2": paddleMov}))
-    #     elif(self.player_id == 2 and "paddleMov1" in event):
-    #         paddleMov = event["paddleMov1"];
-    #         await self.send(text_data=json.dumps({"paddleMov1": paddleMov}))
-    #
 
     async def game_state(self,event):
         await self.send(text_data=json.dumps(event["game_state"]))

@@ -13,6 +13,8 @@ RUN apt-get install jq -y
 ### Clean up
 RUN rm -rf /var/lib/apt/lists/*
 
+ENV WATCHFILES_FORCE_POLLING=true
+
 ### Postgres configuration
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
 COPY /conf/.key /tmp/.key
