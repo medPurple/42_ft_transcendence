@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from overworld.views import playerAPI
+from overworld.views import playerAPI, editplayerskin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/pokemap/', playerAPI.as_view()),
+    path('api/pokemap/player/', editplayerskin.as_view()),
 ]

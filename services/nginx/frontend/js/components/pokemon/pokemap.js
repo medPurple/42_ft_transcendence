@@ -84,7 +84,7 @@ export class pokeMap {
 
     asset_selection(orientation, skin) {
         switch (skin) {
-            case 1:
+            case 0:
                 switch (orientation) {
                     case "N":
                         return './images/Persos/Guards-Tileset/Guards-Planche_03.png';
@@ -95,20 +95,16 @@ export class pokeMap {
                     case "W":
                         return './images/Persos/Guards-Tileset/Guards-Planche_07.png';
                 }
-            case 0:
+            case 2:
                 switch (orientation) {
                     case "N":
-                        return "./images/player_n.png";
-                        // return './images/Persos/James-Tileset/James-Planche_00.png';
+                        return './images/Persos/James-Tileset/James-Planche_00.png';
                     case "S":
-                        return "./images/player_s.png";
-                        // return './images/Persos/James-Tileset/James-Planche_03.png';
+                        return './images/Persos/James-Tileset/James-Planche_03.png';
                     case "E":
-                        return "./images/player_e.png";
-                        // return './images/Persos/James-Tileset/James-Planche_09.png';
+                        return './images/Persos/James-Tileset/James-Planche_09.png';
                     case "W":
-                        return "./images/player_w.png";
-                        // return './images/Persos/James-Tileset/James-Planche_06.png';
+                        return './images/Persos/James-Tileset/James-Planche_06.png';
                 }
             case 1:
                 switch (orientation) {

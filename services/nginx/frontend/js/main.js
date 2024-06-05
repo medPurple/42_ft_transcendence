@@ -22,6 +22,7 @@ import friendsRequest from "./views/friends/friendsRequest.js";
 import friendsProfile from "./views/friends/friendsProfile.js";
 import friendsStatistics from "./views/friends/friendsStatistics.js";
 import { pong_remoteplay, pong_localplay, pong_tournamentplay, pkm_remoteplay, pokemap_interactive} from "./views/play.js";
+import pkmSettings from "./views/pokemon/pkmSettings.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
 import statistics from "./views/user/statistics.js";
@@ -131,6 +132,10 @@ const routes = {
 		title: "Pokemon Map",
 		render: pokemap_interactive
 	},
+	'/pkmSettings': {
+		title: "Pokemon Settings",
+		render: pkmSettings
+	},
 	'/chat': {
 		title: "Chat",
 		render: chatService
@@ -143,7 +148,7 @@ const routes = {
 
 function NavbarFooterVisibility() {
 	const path = location.pathname;
-	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/statistics', '/chat', '/play', '/pongService', '/gameService', '/pongSettings', '/metaService', '/pokemap', '/play_pr', '/play_pkr'];
+	const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/friend-profile', '/statistics', '/chat', '/play', '/pongService', '/gameService', '/pongSettings', '/metaService', '/pkmSettings', '/pokemap', '/play_pr', '/play_pkr'];
 	const showNavbarFooter = showInRoute.includes(path);
 
 	const footer = document.getElementById('custom-footer');

@@ -25,7 +25,6 @@ class MatchmakingButtons {
 			this.status = data.status;
 			this.timer = data.waitingTime;
 			this.game = data.game;
-			console.log("Matchmaking socket received data:", data);
 			if (this.status === 'game') {
 				console.log("already in game");
 				this.removeWaitingPage();
@@ -33,9 +32,7 @@ class MatchmakingButtons {
 
 			}
 			this.updateData();
-			console.log("Data updated.");
 			await this.checkstatus(data);
-			console.log("Status checked.");
 			const msg = {
 				"action": "queue_status",
 				"game": this.game,
