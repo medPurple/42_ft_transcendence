@@ -45,6 +45,45 @@ export class pokeMap {
         return 192 + (y - mainy) * 23;
     }
 
+    generateRandomName(){
+        const names = [
+            "Ash",
+            "Misty",
+            "Brock",
+            "Jessie",
+            "James",
+            "Gary",
+            "May",
+            "Dawn"
+        ];
+        const randomIndex = Math.floor(Math.random() * names.length);
+        return names[randomIndex];
+    }
+
+    generateRandomText() {
+        const texts = [
+            "Hello there!",
+            "How are you today?",
+            "Nice weather we're having, isn't it?",
+            "Have you seen any rare Pokémon around?",
+            "I heard there's a hidden treasure nearby.",
+            "Do you want to battle?",
+            "I can teach you a cool move if you're interested.",
+            "I'm looking for a specific Pokémon. Have you seen it?",
+            "Do you know any good training spots?",
+            "I'm on a quest to become the Pokémon Champion!",
+        ];
+        const randomIndex = Math.floor(Math.random() * texts.length);
+        return texts[randomIndex];
+    }
+
+    addPnjtalk(){
+        const chatbox = document.querySelector('.chatbox');
+        const username = this.generateRandomName();
+        const message = generateRandomText();
+        chatbox.innerHTML += `<span style="color: black;">${username}</span>: ${message}<br>`;
+        // Heal all pkms
+    }
 
     drawmap(data){
         let player = data.find(player => player.userID == this.userID);
@@ -52,10 +91,22 @@ export class pokeMap {
             console.warn("combat");
         if (player.player_status === 2)
             console.warn("talk");
+            this.addPnjtalk();
         if (player.player_map != 0)
             console.warn("map");
         const mapimage = new Image(520 , 510);
-        mapimage.src = './images/Maps/ext_grid.png';
+        switch (player.player_map){
+            case 0:
+                mapimage.src = './images/Maps/ext_grid.png';
+            case 1:
+                mapimage.src = './images/Maps/litte_house1_grid.png';
+            case 2:
+                mapimage.src = './images/Maps/litte_house2_grid.png';
+            case 3:
+                mapimage.src = './images/Maps/big_house1_grid.png';
+            case 4:
+                mapimage.src = './images/Maps/big_house2_grid.png';
+        }
         const img = new Image();
         img.src = this.asset_selection(player.orientation, player.player_skin);
         mapimage.onload = () => {

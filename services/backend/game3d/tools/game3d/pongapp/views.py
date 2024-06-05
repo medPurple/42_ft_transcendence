@@ -144,7 +144,7 @@ class GameMatchAPI(APIView):
 			user2, _ = GameUser.objects.get_or_create(userID=player2.get("id"), userName=player2.get("username"))
 		except GameUser.DoesNotExist:
 			return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-		match, created = GameMatch.objects.get_or_create(
+		match1, match1_created = GameMatch.objects.get_or_create(
 			player1=user1,
 			player2=user2,
 			defaults={
@@ -153,11 +153,27 @@ class GameMatchAPI(APIView):
 				"status": 0,
 			}
 		)
-		logger.info(f'Match: {match}')
-		logger.info(f'Created: {created}')
-		match_serializer = GameMatchSerializer(match)
-		logger.info(f'Match Serializer: {match_serializer}')
-		return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		match2, match2_created = GameMatch.objects.get_or_create(
+			player1=user2,
+			player2=user1,
+			defaults={
+				"player1_score": 0,
+				"player2_score": 0,
+				"status": 0,
+			}
+		)
+		if (match1_created and match2_created):
+			match2.delete()
+			match_serializer = GameMatchSerializer(match1)
+			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		elif (match1_created and not match2_created):
+			match1.delete()
+			match_serializer = GameMatchSerializer(match2)
+			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		elif (not match1_created and match2_created):
+			match2.delete()
+			match_serializer = GameMatchSerializer(match1)
+			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
 
 	def get(self, request, match_id=None):
 		# logger.info(f'Match ID: {match_id}')
