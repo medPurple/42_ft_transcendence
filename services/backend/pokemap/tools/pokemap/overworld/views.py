@@ -54,7 +54,7 @@ class playerAPI(APIView):
             return Response(instance.data, status=status.HTTP_200_OK)
         return Response(instance.errors, status=status.HTTP_400_BAD_REQUEST)
 
- 
+
 class editplayerskin(APIView):
     serializer_class = editplayerSkinModelSerializer
 

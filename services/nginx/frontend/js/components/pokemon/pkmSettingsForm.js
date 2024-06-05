@@ -106,10 +106,12 @@ export default class pkmSettingsForm extends HTMLElement {
 				} else if (selectedRadio.id === 'radio_james') {
 					skin = 2;
 				}
+				console.log(userId, skin)
 				const json = {
-                    "userID": userId,
+                    "userID": parseInt(await Iuser.getID(), 10),
                     "player_skin": skin,
                 }
+				console.log(JSON.stringify(json));
 				const response = await fetch(`api/pokemap/player/`, {
 					method: 'PUT',
 					body: JSON.stringify(json),

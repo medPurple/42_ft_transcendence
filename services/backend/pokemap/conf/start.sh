@@ -29,4 +29,4 @@ openssl x509 -in /usr/local/share/ca-certificates/server.crt -out /usr/local/sha
 
 # gunicorn --certfile=/tmp/server.crt --keyfile=/tmp/server.key pokemap.wsgi:application --bind 0.0.0.0:4430
 # gunicorn pokemap.wsgi:application --bind 0.0.0.0:4430 --worker-class uvicorn.workers.UvicornWorker --certfile=/tmp/server.crt --keyfile=/tmp/server.key
-uvicorn pokemap.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt
+uvicorn pokemap.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt --reload

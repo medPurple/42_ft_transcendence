@@ -87,35 +87,35 @@ export class pokeMap {
             case 0:
                 switch (orientation) {
                     case "N":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_03.png';
+                        return './images/Persos/Guards-Tileset/Guard_00.png';
                     case "S":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_05.png';
+                        return './images/Persos/Guards-Tileset/Guard_03.png';
                     case "E":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_09.png';
+                        return './images/Persos/Guards-Tileset/Guard_09.png';
                     case "W":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_07.png';
+                        return './images/Persos/Guards-Tileset/Guard_06.png';
                 }
             case 2:
                 switch (orientation) {
                     case "N":
-                        return './images/Persos/James-Tileset/James-Planche_00.png';
+                        return './images/Persos/James-Tileset/James_00.png';
                     case "S":
-                        return './images/Persos/James-Tileset/James-Planche_03.png';
+                        return './images/Persos/James-Tileset/James_03.png';
                     case "E":
-                        return './images/Persos/James-Tileset/James-Planche_09.png';
+                        return './images/Persos/James-Tileset/James_09.png';
                     case "W":
-                        return './images/Persos/James-Tileset/James-Planche_06.png';
+                        return './images/Persos/James-Tileset/James_06.png';
                 }
             case 1:
                 switch (orientation) {
                     case "N":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_03.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_00.png';
                     case "S":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_05.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_03.png';
                     case "E":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_09.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_09.png';
                     case "W":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_07.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_06.png';
                 }
         }
     }

@@ -25,8 +25,10 @@ import { pong_remoteplay, pong_localplay, pong_tournamentplay, pkm_remoteplay, p
 import pkmSettings from "./views/pokemon/pkmSettings.js";
 import p404 from "./views/p404.js";
 import Icookies from "./components/cookie/cookie.js";
+
 import statistics from "./views/user/statistics.js";
 import "./components/user/logoutForm.js";
+import Iuser from "./components/user/userInfo.js";
 
 // Define the routes
 const routes = {
@@ -160,12 +162,17 @@ function NavbarFooterVisibility() {
 	}
 }
 
-function updateNavbarDropdown() {
+async function updateNavbarDropdown() {
 	var dropdownMenu = document.getElementById("navbar-dropdown-menu");
-
+	var dropbutton = document.getElementById("navbar-dropdown-button");
 	var condition = checkConnected();
 
 	if (condition) {
+		const id = await Iuser.getID()
+		const users = await Iuser.getAllUsers();
+		let username = users.users.find(user => user.user_id === parseInt(id)).username;
+		dropbutton.innerHTML = `<strong>${username}</strong>`;
+
 		dropdownMenu.innerHTML = `
 			<li><a class="dropdown-item" href="/profile">profile</a></li>
 			<li><a class="dropdown-item" href="/friends">friends</a></li>
@@ -254,7 +261,7 @@ async function router() {
 		const pageTitle = "Transcendence";
 
 		NavbarFooterVisibility();
-		updateNavbarDropdown();
+		await updateNavbarDropdown();
 
 		if (view) {
 			document.title = pageTitle + " | " + view.title;

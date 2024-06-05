@@ -22,6 +22,6 @@ class editplayerModelSerializer(serializers.ModelSerializer):
 class editplayerSkinModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = player
-        read_only_fields = ['userID', 'posX', 'posY', 'lastPosX', 'lastPosY', 'orientation', 'active', 'player_skin', 'player_map', 'player_status']
+        read_only_fields = ['userID', 'posX', 'posY', 'lastPosX', 'lastPosY', 'orientation', 'active', 'player_map', 'player_status']
         fields = ['player_skin']
 
