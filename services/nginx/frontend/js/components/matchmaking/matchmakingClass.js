@@ -85,21 +85,46 @@ class MatchmakingButtons {
 	waitingPage() {
 		const waitingpage = document.createElement('div');
 		waitingpage.id = 'waiting-page';
+		waitingpage.classList.add('waiting-page', 'center', 'p-3', 'position-absolute', 'top-50', 'start-50', 'translate-middle', 'z-index-1');
+		
+		const waitinggif = document.createElement('div');
 
-		const waitingtitle = document.createElement('p');
-		waitingtitle.id = 'waiting-title';
-		waitingtitle.innerText = "status = " + this.status;
+		if (this.game === 'pong_multiplayer'){
+			waitinggif.classList.add('embed-responsive', 'embed-responsive-16by9');
+			const frame = document.createElement('iframe');
+			frame.src = "https://giphy.com/embed/Q0MrhO9BUSxKR8RdZC";
+			frame.classList.add('embed-responsive-item');
+			waitinggif.appendChild(frame);
+		} else if (this.game === 'pkm_multiplayer'){
+			waitinggif.style.width = "100%";
+			waitinggif.style.height = "0";
+			waitinggif.style.paddingBottom = "71%";
+			waitinggif.style.position = "relative";
+			
+			const frame = document.createElement('iframe');
+			frame.src = "https://giphy.com/embed/Ny6WEYvBuBvDW";
+			frame.style.width = "100%";
+			frame.style.height = "100%";
+			frame.style.position = "absolute";
+			frame.frameBorder = "0";
+			frame.classList.add('giphy-embed');
+			frame.allowFullscreen = true;
+			
+			waitinggif.appendChild(frame);
+		}
+
+
+		waitingpage.appendChild(waitinggif);
+
+
 
 		const timer = document.createElement('p');
 		timer.id = 'timer';
-		timer.innerText = "timer : " + this.timerCalculation();
-
-		const game = document.createElement('p');
-		game.id = 'game';
-		game.innerText = "game : " + this.game;
+		timer.innerText = this.timerCalculation();
+		timer.classList.add('timer', 'text-center', 'text-black', 'fs-3');
 
 		const cancelbutton = document.createElement('button');
-		cancelbutton.classList.add('cancel-button');
+		cancelbutton.classList.add('cancel-button', 'btn', 'btn-danger', 'text-white', 'fs-3');
 		cancelbutton.innerText = 'Cancel';
 		cancelbutton.onclick = async () => {
 			await this.removeUser();
@@ -107,9 +132,7 @@ class MatchmakingButtons {
 			window.location.href = '/home';
 		}
 
-		waitingpage.appendChild(waitingtitle);
 		waitingpage.appendChild(timer);
-		waitingpage.appendChild(game);
 		waitingpage.appendChild(cancelbutton);
 
 		return waitingpage;
@@ -121,23 +144,17 @@ class MatchmakingButtons {
 	}
 
 	updateData() {
-		const waitingtitle = document.querySelector('#waiting-title');
 		const timer = document.querySelector('#timer');
-		const game = document.querySelector('#game');
 
-		if (waitingtitle)
-			waitingtitle.innerText = "status = " + this.status;
 		if (timer){
 			const time = this.timerCalculation();
 			if (time > 60) {
-				timer.innerText = "timer : " + Math.floor(time / 60) + "m " + time % 60 + "s";
+				timer.innerText = Math.floor(time / 60) + "m " + time % 60 + "s";
 			}
 			else {
-				timer.innerText = "timer : " + time;
+				timer.innerText = time;
 			}
 		}
-		if (game)
-			game.innerText = "game : " + this.game;
 	}
 
 	async createParty(data) {
