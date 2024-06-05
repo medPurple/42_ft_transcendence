@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import gamer from "./gamerInfo.js"
 import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
-import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
+import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateSkybox } from "./populateMeshes.js"
 import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
@@ -62,8 +62,8 @@ export async function createScene() {
 	core.camera.position.z = 230;
 	
 	const controls = new OrbitControls(core.camera, c);
-	controls.minDistance = 100;
-	controls.maxDistance = 300;
+	controls.minDistance = 200;
+	controls.maxDistance = 1000;
 	
 	//Scene setup
 	
@@ -90,6 +90,10 @@ export async function createScene() {
 
 	lights.spotLight = populateSpotLight(0xffffff, 0, 0, 700, 0.7);
 
+  //Skybox setup
+
+	let skybox = populateSkybox();
+
   //Plane setup
 
 	decMesh.plane = populatePlane(0, 0);
@@ -97,13 +101,11 @@ export async function createScene() {
   //Paddle Setup
 	if (core.player_id == 1) {
 		playMesh.paddle1 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
-		console.log("Je cree le paddle 1");
 		playMesh.paddle2 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
 	}
 	else {
 		playMesh.paddle2 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
 		playMesh.paddle1 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
-		console.log("Je cree le paddle 1");
 	}
   //Table Setup
 
@@ -111,14 +113,13 @@ export async function createScene() {
 
   //Ground setup
 
-	decMesh.ground = populateFloor();
+	// decMesh.ground = populateFloor();
 
   // Wall setup
 
-	decMesh.wall = populateWall(core.player_id);
-	if (gameState.game_mode == "local")
-		decMesh.wall2 = populateWall(1);
-
+	// decMesh.wall = populateWall(core.player_id);
+	// if (gameState.game_mode == "local")
+	// 	decMesh.wall2 = populateWall(1);	
 
   // Props setup
 
@@ -142,12 +143,15 @@ export async function createScene() {
 	core.scene.add(playMesh.ball);
 	core.scene.add(decMesh.table);
 	core.scene.add(decMesh.plane);
-	core.scene.add(decMesh.wall);
-	if (gameState.game_mode == "local")
-		core.scene.add(decMesh.wall2);
-	core.scene.add(decMesh.ground);
-	core.scene.add(core.camera);
 
+	// core.scene.add(decMesh.wall);
+	// if (gameState.game_mode == "local")
+	// 	core.scene.add(decMesh.wall2);
+	// core.scene.add(decMesh.ground);
+
+	core.scene.add(skybox);
+
+	core.scene.add(core.camera);
 	core.renderer.shadowMapEnabled = true;
 
 }

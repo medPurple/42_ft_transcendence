@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
 import { constants, gameCustom, palette } from "./config.js"
 
 function setPhysicalMaterial(color, metalness, roughness, iridescence, iridescenceIOR, transmission) {
@@ -109,7 +106,6 @@ export function populateOtherPaddle(posX, posY) {
 	return paddle;
 }
 
-
 export function populateBall(posX, posY) {
 
 	var radius = 5, segments = 6, rings = 6;
@@ -181,94 +177,122 @@ export function populateTable(color, posX, posY, posZ) {
 	return table;
 }
 
-export function populateFloor() {
+export function populateSkybox() {
 
-	const groundTexLoader = new THREE.TextureLoader();
+	let materialArray = [];
+    let texture_ft = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_ft.jpg');
+    let texture_bk = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_bk.jpg');
+    let texture_up = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_up.jpg');
+    let texture_dn = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_dn.jpg');
+    let texture_rt = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_rt.jpg');
+    let texture_lf = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_lf.jpg');
+        
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
+    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
 
-	var path;
+    for (let i = 0; i < 6; i++)
+        materialArray[i].side = THREE.BackSide;
 
-	// console.log('SCENE in populate floor: ',gameCustom.map);///////////
+	let skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+	let skybox = new THREE.Mesh(skyboxGeometry, materialArray);
+	skybox.rotation.x = Math.PI / 2;
 
-	switch (gameCustom.map) {
-		case 0:
-			path = '../../../images/Floor/F-Playground.jpg';
-			break;
-		case 1:
-			path = '../../../images/Floor/F-Cornfield.jpg';
-			break;
-		default:
-			path = '../../../images/Floor/F-Concrete.jpg';
-			break;
-	}
-
-	var groundMaterial = new THREE.MeshLambertMaterial({
-		map: groundTexLoader.load(path,
-		function(texture) {
-			texture.wrapS = THREE.ClampToEdgeWrapping;
-			texture.wrapT = THREE.ClampToEdgeWrapping;
-			texture.minFilter = THREE.LinearFilter;
-			texture.magFilter = THREE.LinearFilter;
-			// const repeatX = 2200 / 512;
-			// const repeatY = 2200 / 512;
-			// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-			// texture.repeat.set(repeatX, repeatY);
-			// texture.minFilter = THREE.LinearFilter;
-			// texture.magFilter = THREE.LinearFilter;
-		})
-	});
-
-	var ground = new THREE.Mesh(new THREE.BoxGeometry(constants.groundWidth, constants.groundHeight, constants.groundQuality, 1, 1, 1), groundMaterial);
-	ground.position.z = -132;
-	ground.receiveShadow = true;
-
-	return ground;
+	return skybox;
 }
 
-export function populateWall(player_id) {
+	
+// export function populateFloor() {
 
-	const wallTexLoader = new THREE.TextureLoader();
+// 	const groundTexLoader = new THREE.TextureLoader();
 
-	var path;
+// 	var path;
 
-	// console.log('SCENE in populate wall :', gameCustom.map);///////////
+// 	// console.log('SCENE in populate floor: ',gameCustom.map);///////////
 
-	switch (gameCustom.map) {
-		case 0:
-			path = '../../../images/Walls/final/W-Playground.jpg';
-			break;
-		case 1:
-			path = '../../../images/Walls/final/W-Cornfield.jpg';
-			break;
-		default:
-			path = '../../../images/Walls/final/W-Tiled.png';
-			break;
-	}
+// 	switch (gameCustom.map) {
+// 		case 0:
+// 			path = '../../../images/Floor/F-Playground.jpg';
+// 			break;
+// 		case 1:
+// 			path = '../../../images/Floor/F-Cornfield.jpg';
+// 			break;
+// 		default:
+// 			path = '../../../images/Floor/F-Concrete.jpg';
+// 			break;
+// 	}
 
-	var wallMaterial = new THREE.MeshLambertMaterial({
-		map: wallTexLoader.load(path, function(texture) {
-			texture.wrapS = THREE.ClampToEdgeWrapping;
-			texture.wrapT = THREE.ClampToEdgeWrapping;
-			texture.minFilter = THREE.LinearFilter;
-			texture.magFilter = THREE.LinearFilter;
-		})
-	});
+// 	var groundMaterial = new THREE.MeshLambertMaterial({
+// 		map: groundTexLoader.load(path,
+// 		function(texture) {
+// 			texture.wrapS = THREE.ClampToEdgeWrapping;
+// 			texture.wrapT = THREE.ClampToEdgeWrapping;
+// 			texture.minFilter = THREE.LinearFilter;
+// 			texture.magFilter = THREE.LinearFilter;
+// 			// const repeatX = 2200 / 512;
+// 			// const repeatY = 2200 / 512;
+// 			// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+// 			// texture.repeat.set(repeatX, repeatY);
+// 			// texture.minFilter = THREE.LinearFilter;
+// 			// texture.magFilter = THREE.LinearFilter;
+// 		})
+// 	});
 
-	var wall = new THREE.Mesh(new THREE.BoxGeometry(constants.wallWidth, constants.wallHeight, constants.wallQuality, 1, 1, 1), wallMaterial);
+// 	var ground = new THREE.Mesh(new THREE.BoxGeometry(constants.groundWidth, constants.groundHeight, constants.groundQuality, 1, 1, 1), groundMaterial);
+// 	ground.position.z = -132;
+// 	ground.receiveShadow = true;
 
-	if (player_id == 1) {
-		wall.position.x = 500;
-	}
-	else {
-		wall.position.x = -500;
-	}
-	if (gameCustom.map == 2) {
-		wall.position.z = 100;
-	}
-	else
-		wall.position.z = 380;
-	wall.rotateY(Math.PI / 2);
-	wall.rotateZ(Math.PI / 2);
-	wall.receiveShadow = true;
+// 	return ground;
+// }
 
-	return wall;
-}
+// export function populateWall(player_id) {
+
+// 	const wallTexLoader = new THREE.TextureLoader();
+
+// 	var path;
+
+// 	// console.log('SCENE in populate wall :', gameCustom.map);///////////
+
+// 	switch (gameCustom.map) {
+// 		case 0:
+// 			path = '../../../images/Walls/final/W-Playground.jpg';
+// 			break;
+// 		case 1:
+// 			path = '../../../images/Walls/final/W-Cornfield.jpg';
+// 			break;
+// 		default:
+// 			path = '../../../images/Walls/final/W-Tiled.png';
+// 			break;
+// 	}
+
+// 	var wallMaterial = new THREE.MeshLambertMaterial({
+// 		map: wallTexLoader.load(path, function(texture) {
+// 			texture.wrapS = THREE.ClampToEdgeWrapping;
+// 			texture.wrapT = THREE.ClampToEdgeWrapping;
+// 			texture.minFilter = THREE.LinearFilter;
+// 			texture.magFilter = THREE.LinearFilter;
+// 		})
+// 	});
+
+// 	var wall = new THREE.Mesh(new THREE.BoxGeometry(constants.wallWidth, constants.wallHeight, constants.wallQuality, 1, 1, 1), wallMaterial);
+
+// 	if (player_id == 1) {
+// 		wall.position.x = 500;
+// 	}
+// 	else {
+// 		wall.position.x = -500;
+// 	}
+// 	if (gameCustom.map == 2) {
+// 		wall.position.z = 100;
+// 	}
+// 	else
+// 		wall.position.z = 380;
+// 	wall.rotateY(Math.PI / 2);
+// 	wall.rotateZ(Math.PI / 2);
+// 	wall.receiveShadow = true;
+
+// 	return wall;
+// }

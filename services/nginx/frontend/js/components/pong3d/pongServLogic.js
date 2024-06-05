@@ -31,7 +31,8 @@ function draw() {
 	// else {
 	// 	cameraLogic2d();
 	// }
-	core.renderer.render(core.scene, core.camera);
+	if (core.scene)
+		core.renderer.render(core.scene, core.camera);
 }
 
 async function setup(gameMode) {
