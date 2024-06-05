@@ -35,9 +35,9 @@ COPY /conf/start.sh /home/
 RUN chmod 777 /home/start.sh
 
 ### Launch redis-server
-
 #RUN redis-server --daemonize yes
 
+ENV WATCHFILES_FORCE_POLLING=true
 
 ### Expose on port 4430
 EXPOSE 4430

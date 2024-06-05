@@ -47,19 +47,13 @@ a:hover {
 	display: none;
 }
 
-/* #app {
-	padding-top: 5em;
-	padding-bottom: 5em;
-} */
-
 #app-general-container {
 	padding-top: 10em;
 	padding-bottom: 10em;
 }
 
-
 /********** MENU BAR ***********/
-.container-fluid {
+/* .container-fluid {
 	position: fixed;
 	font-family: 'Courier New', Courier, monospace;
 	background-color: #7b8787;
@@ -70,7 +64,7 @@ a:hover {
 
 .container-fluid.hidden {
     display: none;
-}
+} */
 
 /********** HOME CARD PAGE ***********/
 .image-container {
@@ -121,41 +115,25 @@ a:hover {
     background-color: #b32c6f;
 } 
 
-
-/********** LOGIN PAGE ***********/
-/* #login-form {
-	width: 300px;
-	margin: 0 auto;
-	padding: 20px;
-}
-
-#login-form input[type="text"],
-#login-form input[type="password"],
-#login-form input[type="submit"] {
-	width: 100%;
-	padding: 10px;
-	margin: 5px 0;
-	border-radius: 3px;
-	border: 1px solid #7b8787;
-	box-sizing: border-box;
-}
-
-@media screen and (max-width: 600px) {
-#login-form {
-	width: 80%;
-	}
-} */
-
-
 /********** PONG ***********/
 #pong-renderer {
-	display: flex;
-	justify-content: center;
+	/* display: flex;
+	justify-content: center; */
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+}
+
+#pong-score {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 2em;
+	
+	color: #7b8787;
 }
 
 #custom-endgame {
-	max-width: 900px;
-	max-height: 600px;
+	max-width: 50vw;
+	max-height: auto;
 }
 
 .scoreboard {
@@ -169,7 +147,6 @@ a:hover {
 }
 
 /********** POKEMAP ***********/
-
 .PokeGB {
 	position: relative;
 	margin: 0;
@@ -180,7 +157,9 @@ a:hover {
 
 .game-boy-background {
 	display: flex;
-	width: 50vw;
+	width: 52vw;
+	z-index: 2;
+	position: relative;
 }
 
 .pokecanva {
@@ -188,72 +167,12 @@ a:hover {
 	top: 12%; /* Position of the rectangle inside the image */
 	left: 50%;
 	transform: translate(-50%, 0);
-	width: 43%; /* Size of the rectangle inside the image */
+	width: 50%; /* Size of the rectangle inside the image */
 	height: auto;
+	z-index: 1;
+	/* background-color: #7b8787; */
 }
 
-/* CSS FOR THE MATCHMAKING PAGE */
-.matchmakingdiv {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-between;
-}
 
-.matchmakingdiv .title-div .matchmaking-title {
-	margin-top: 50px;
-}
 
-.matchmakingdiv .radio-buttons {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
-}
-
-.matchmakingdiv .radio-buttons .queue-checkbox {
-	appearance: none;
-	background-color: #fafafa;
-	border: 2px solid #7b8787;
-	border-radius: 50%;
-	display: inline-block;
-	position: relative;
-	height: 100px;
-	width: 100px;
-	margin: 20px;
-	transition: border .5s;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: 70%;
-}
-
-.matchmakingdiv .radio-buttons .queue-checkbox:checked {
-	border: 2px solid #b32c6f;
-}
-
-.matchmakingdiv .radio-buttons .queue-label {
-	display: block;
-	text-align: center;
-	padding-top: 10px;
-}
-
-.matchmakingdiv .button-div .queue-button {
-	margin-top: 50px;
-}
-
-#navbar.hidden {
-    display: none;
-}
-
-.chat-popup {
-	display: none;
-	position: fixed;
-	bottom: 20px; /* Adjust this value as needed */
-	right: 20px;
-	width: 300px;
-	background-color: #f1f1f1;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	padding: 10px;
-	z-index: 999;
-}
 

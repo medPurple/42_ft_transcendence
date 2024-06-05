@@ -1,8 +1,12 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 import { objMesh, core, gameCustom } from './config.js'
 
 function populateReferee() {
 
-  var objLoader = new THREE.GLTFLoader();
+  var objLoader = new GLTFLoader();
 
   objLoader.load('../../../images/3D/Lightweight/referee.glb', function(gltf) {
     objMesh.referee = gltf.scene;
@@ -15,7 +19,7 @@ function populateReferee() {
 
 function populateDoll() {
 
-  var objLoader = new THREE.GLTFLoader();
+  var objLoader = new GLTFLoader();
 
   objLoader.load('../../../images/3D/Lightweight/squid_game_doll.glb', function(gltf) {
     objMesh.firstAsset = gltf.scene;
@@ -38,7 +42,7 @@ function populateDoll() {
 
 function populateTree() {
 
-  var objLoader = new THREE.GLTFLoader();
+  var objLoader = new GLTFLoader();
 
   objLoader.load('../../../images/3D/Lightweight/low_poly_dead_tree.glb', function(gltf) {
     objMesh.secondAsset = gltf.scene;
@@ -61,7 +65,7 @@ function populateTree() {
 
 function populateSlide() {
 
-  var objLoader = new THREE.GLTFLoader();
+  var objLoader = new GLTFLoader();
 
   objLoader.load('../../../images/3D/Lightweight/slide.glb', function(gltf) {
     objMesh.firstAsset = gltf.scene;
@@ -103,7 +107,7 @@ function populateRowBed(count, positionX, positionY, height) {
 
 function populateBeds() {
 
-  var objLoader = new THREE.GLTFLoader();
+  var objLoader = new GLTFLoader();
   objLoader.load('../../../images/3D/Lightweight/bed.glb', function(gltf) {
     const loadedBed = gltf.scene;
     //
