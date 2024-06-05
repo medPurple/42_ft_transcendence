@@ -31,8 +31,17 @@ function draw() {
 	// else {
 	// 	cameraLogic2d();
 	// }
-	if (core.scene)
+	if (core.scene){
+		core.camera.aspect = window.innerWidth / window.innerHeight;
+		core.camera.updateProjectionMatrix();
+		window.addEventListener('resize', function () {
+			core.renderer.setSize(window.innerWidth, window.innerHeight);
+			core.camera.aspect = window.innerWidth / window.innerHeight;
+			core.camera.updateProjectionMatrix();
+		});
+
 		core.renderer.render(core.scene, core.camera);
+	}
 }
 
 async function setup(gameMode) {

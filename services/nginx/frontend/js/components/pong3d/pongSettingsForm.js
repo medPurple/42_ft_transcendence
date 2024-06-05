@@ -2,7 +2,6 @@ import gamer from "./gamerInfo.js"
 import Icookies from "../cookie/cookie.js";
 import Iuser from "../user/userInfo.js";
 
-
 export default class pongSettingsForm extends HTMLElement {
 	constructor(){
 		super();
@@ -12,7 +11,7 @@ export default class pongSettingsForm extends HTMLElement {
 	async connectedCallback(){
 		const editSettings = document.createElement('div');
 		editSettings.id = 'pong-settings';
-		this.shadowRoot.appendChild(editSettings);
+		this.shadowRoot.appendChild(editSettings);const userId = await Iuser.getID();
 		await this.initGamerInfo();
 		await this.initFormSubmit();
 

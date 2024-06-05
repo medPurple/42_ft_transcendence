@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
 import gamer from "./gamerInfo.js"
 import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
@@ -12,7 +11,6 @@ import { populatePowerUps } from "./populatePowerUps.js";
 async function setupSettings() {
 	try {
 		const data = await gamer.getGamerSettings();
-		// console.log('DATA: ', data);
 		gameCustom.ownPaddle = data.paddle;
 		gameCustom.otherPaddle = 4;
 		gameCustom.ball = data.ball;
@@ -21,10 +19,7 @@ async function setupSettings() {
 		gameCustom.powerup = data.powerups;
 		gameCustom.score_limit = data.score;
 		gameCustom.score_limit = gameState.score_limit;
-		//console.log('GAMECUSTOM filled: ', gameCustom);
-		//console.log('GAMESTATE filled: ', gameState);
 	} catch (error) {
-		console.error('Error: setupSettings', error)
 		alert('You should be logged to play');
 		window.location.href = '/pongService';
 	}
@@ -34,11 +29,8 @@ export async function createScene() {
 
 	await setupSettings();
 
-	// console.log("Scene is created");
 	core.renderer = new THREE.WebGLRenderer();
-
 	core.renderer.setSize(window.innerWidth, window.innerHeight);
-
 	var c = document.getElementById("pong-renderer");
 
 	if (!c) {
@@ -60,6 +52,7 @@ export async function createScene() {
 	
 	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
 	core.camera.position.z = 230;
+	core.camera.position.y = -230;	
 	
 	const controls = new OrbitControls(core.camera, c);
 	controls.minDistance = 200;
