@@ -9,10 +9,8 @@ import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
 function draw() {
 
-	// console.log("Frame is drawn")
-
-	// if (core.camera == 0)
-	// 	return;
+	if (core.scene == 0)
+		return;
 
 	// if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
 	// 	cameraLogic();
@@ -31,17 +29,17 @@ function draw() {
 	// else {
 	// 	cameraLogic2d();
 	// }
-	if (core.scene){
+	
+	core.camera.aspect = window.innerWidth / window.innerHeight;
+	core.camera.updateProjectionMatrix();
+	window.addEventListener('resize', function () {
+		core.renderer.setSize(window.innerWidth, window.innerHeight);
 		core.camera.aspect = window.innerWidth / window.innerHeight;
 		core.camera.updateProjectionMatrix();
-		window.addEventListener('resize', function () {
-			core.renderer.setSize(window.innerWidth, window.innerHeight);
-			core.camera.aspect = window.innerWidth / window.innerHeight;
-			core.camera.updateProjectionMatrix();
-		});
+	});
 
-		core.renderer.render(core.scene, core.camera);
-	}
+	core.renderer.render(core.scene, core.camera);
+	
 }
 
 async function setup(gameMode) {

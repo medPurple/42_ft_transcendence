@@ -180,26 +180,55 @@ export function populateTable(color, posX, posY, posZ) {
 export function populateSkybox() {
 
 	let materialArray = [];
-    let texture_ft = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_ft.jpg');
-    let texture_bk = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_bk.jpg');
-    let texture_up = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_up.jpg');
-    let texture_dn = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_dn.jpg');
-    let texture_rt = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_rt.jpg');
-    let texture_lf = new THREE.TextureLoader().load( '../../../images/Skybox/02/divine_lf.jpg');
-        
-    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
-    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
-    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
-    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
-    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
-    materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
+	
+	let name_file;
+	switch (gameCustom.map) {
+		case 0:
+			name_file = "../../../images/Skybox/01/playground";
+			break;
+		case 1:
+			name_file = "../../../images/Skybox/02/cornfield";
+			break;
+		case 2:
+			name_file = "../../../images/Skybox/03/arid";
+			break;
+	}
 
-    for (let i = 0; i < 6; i++)
-        materialArray[i].side = THREE.BackSide;
+	console.log('SKYBOX in populate skybox: ', name_file);///////////
 
-	let skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+	let texture_ft = new THREE.TextureLoader().load(name_file + '_ft.jpg');
+	let texture_bk = new THREE.TextureLoader().load(name_file + '_bk.jpg');
+	let texture_up = new THREE.TextureLoader().load(name_file + '_up.jpg');
+	let texture_dn = new THREE.TextureLoader().load(name_file + '_dn.jpg');
+	let texture_rt = new THREE.TextureLoader().load(name_file + '_rt.jpg');
+	let texture_lf = new THREE.TextureLoader().load(name_file + '_lf.jpg');
+
+	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
+	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
+
+	for (let i = 0; i < 6; i++)
+		materialArray[i].side = THREE.BackSide;
+
+	let skyboxGeometry;
+	switch (gameCustom.map) {
+		case 0:
+			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+			break;
+		case 1:
+			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+			break;
+		case 2:
+			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+			break;
+	}
+	
 	let skybox = new THREE.Mesh(skyboxGeometry, materialArray);
 	skybox.rotation.x = Math.PI / 2;
+	skybox.position.z += 400;
 
 	return skybox;
 }
