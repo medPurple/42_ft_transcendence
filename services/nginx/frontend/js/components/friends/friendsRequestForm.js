@@ -98,11 +98,6 @@ export class Friends {
 		socket.onerror = function(error) {
 			console.log(`[error] ${error.message}`);
 		};
-
-		window.addEventListener('beforeunload', () => {
-			socket.close();
-		});
-
 		return socket;
 	}
 
@@ -189,7 +184,7 @@ export class Friends {
 						const hasSendRequest = requestFriend.sent_requests.some(request => {
 							return request.from_user === user.user_id || request.to_user === user.user_id;
 						});
-						
+
 						const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
 						if (isFriends != otherUser.isFriends) {
 							if (isFriends) {

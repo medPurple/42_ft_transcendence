@@ -23,7 +23,7 @@ class friendsInfo {
 				return data;
 			}
 		} catch (error) {
-			console.error('Error', error);
+			return {friends: []};
 		}
 	}
 
