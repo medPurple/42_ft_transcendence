@@ -1,5 +1,6 @@
 
 import Icookies from "../cookie/cookie.js";
+import Iuser from "../user/userInfo.js";
 
 export default class updatePasswordForm extends HTMLElement {
 	constructor(){
@@ -32,33 +33,68 @@ export default class updatePasswordForm extends HTMLElement {
 		</div>
 		`;
 	}
+
+	showAlert(message, type = 'danger') {
+		const alertContainer = this.shadowRoot.getElementById('alert-container');
+		alertContainer.innerHTML = `
+			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+				${message}
+			</div>`;
+
+	}
+
+	validateForm(formData) {
+		// Get the form data
+		const password1 = formData.get('password1');
+		const password2 = formData.get('password2');
+
+		// Check if passwords match
+		if (password1 !== password2) {
+			this.showAlert('Passwords do not match');
+			return false;
+		}
+
+		// Check if new password has at least 8 characters
+		if (password1.length < 8) {
+			this.showAlert('New password should be at least 8 characters long');
+			return false;
+		}
+
+		return true;
+	}
+
 	connectedCallback() {
 		const pwdForm = this.shadowRoot.getElementById('update-password-form');
-		pwdForm.addEventListener('submit', function(event) {
+		const showAlert = this.showAlert.bind(this);
+		const validateForm = this.validateForm.bind(this);
+		pwdForm.addEventListener('submit', async function(event) {
 			event.preventDefault();
 			let jwtToken = Icookies.getCookie('token');
 			let csrfToken = Icookies.getCookie('csrftoken');
-			const formData = new FormData(pwdForm);
-			fetch('api/profiles/update-password/', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'Authorization': jwtToken,
-					'X-CSRFToken': csrfToken
+
+			try {
+				const formData = new FormData(pwdForm);
+				if (!validateForm(formData)) {
+					return;
 				}
-			})
-			.then(response => response.json())
-			.then(data => {
+				const response = await fetch('api/profiles/update-password/', {
+					method: 'POST',
+					body: formData,
+					headers: {
+						'Authorization': jwtToken,
+						'X-CSRFToken': csrfToken
+					}
+				});
+				const data = await response.json();
 				if (data.success) {
-					console.log('Password updated successfully');
+					// console.log('Password updated successfully');
 					window.location.href = '/home';
 				} else {
-					alert('An error occurred. Please try again.');
+					showAlert('An error occurred. Please try again.');
 				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-			});
+			} catch(error) {
+				showAlert('Error:', error);
+			}
 		});
 	}
 }

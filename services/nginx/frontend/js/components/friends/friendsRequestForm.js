@@ -98,11 +98,6 @@ export class Friends {
 		socket.onerror = function(error) {
 			console.log(`[error] ${error.message}`);
 		};
-
-		window.addEventListener('beforeunload', () => {
-			socket.close();
-		});
-
 		return socket;
 	}
 
@@ -181,51 +176,51 @@ export class Friends {
 				if (currentUser != user.username) {
 					const otherUser = this.variablesArray.find(u => u.name === user.username);
 					const cardElement = document.querySelector('#user_' + user.username);
+					if (cardElement) {
+						const hasFriendRequest = requestFriend.received_requests.some(request => {
+							return request.from_user === user.user_id || request.to_user === user.user_id;
+						});
 
-					const hasFriendRequest = requestFriend.received_requests.some(request => {
-						return request.from_user === user.user_id || request.to_user === user.user_id;
-					});
+						const hasSendRequest = requestFriend.sent_requests.some(request => {
+							return request.from_user === user.user_id || request.to_user === user.user_id;
+						});
 
-					const hasSendRequest = requestFriend.sent_requests.some(request => {
-						return request.from_user === user.user_id || request.to_user === user.user_id;
-					});
-
-					const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
-
-					if (isFriends != otherUser.isFriends) {
-						if (isFriends) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							this.manageFriend(cardBody.querySelector('.card-footer'), user.username);
-							cardElement.appendChild(cardBody);
-						}
-						otherUser.isFriends = isFriends;
-						otherUser.addFriend = false;
-					} else if (hasFriendRequest != otherUser.hasFriendRequest) {
-						if (hasFriendRequest) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							this.manageFriendRequest(cardBody.querySelector('.card-footer'), user.username);
-							cardElement.appendChild(cardBody);
-						}
-						otherUser.hasFriendRequest = hasFriendRequest;
-						otherUser.addFriend = false;
-					} else if (hasSendRequest != otherUser.hasSendRequest) {
-						if (hasSendRequest) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							cardBody.querySelector('.card-footer').appendChild(this.friendsButton.requestSentButton());
-							cardElement.appendChild(cardBody);
-						}
-						otherUser.hasSendRequest = hasSendRequest;
-						otherUser.addFriend = false;
-					} else {
-						if (!otherUser.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							this.sendFriendRequest(cardBody.querySelector('.card-footer'), user.username);
-							cardElement.appendChild(cardBody);
-							otherUser.addFriend = true;
+						const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
+						if (isFriends != otherUser.isFriends) {
+							if (isFriends) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								this.manageFriend(cardBody.querySelector('.card-footer'), user.username);
+								cardElement.appendChild(cardBody);
+							}
+							otherUser.isFriends = isFriends;
+							otherUser.addFriend = false;
+						} else if (hasFriendRequest != otherUser.hasFriendRequest) {
+							if (hasFriendRequest) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								this.manageFriendRequest(cardBody.querySelector('.card-footer'), user.username);
+								cardElement.appendChild(cardBody);
+							}
+							otherUser.hasFriendRequest = hasFriendRequest;
+							otherUser.addFriend = false;
+						} else if (hasSendRequest != otherUser.hasSendRequest) {
+							if (hasSendRequest) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								cardBody.querySelector('.card-footer').appendChild(this.friendsButton.requestSentButton());
+								cardElement.appendChild(cardBody);
+							}
+							otherUser.hasSendRequest = hasSendRequest;
+							otherUser.addFriend = false;
+						} else {
+							if (!otherUser.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								this.sendFriendRequest(cardBody.querySelector('.card-footer'), user.username);
+								cardElement.appendChild(cardBody);
+								otherUser.addFriend = true;
+							}
 						}
 					}
 				}
@@ -273,7 +268,7 @@ export class Friends {
 					this.ulElement.appendChild(cardElement);
 
 					const column = document.createElement('div');
-					column.classList.add('col-md-4'); // Définir la taille de la colonne Bootstrap
+					column.classList.add('col-md-4');
 					column.appendChild(cardElement);
 
 					this.ulElement.appendChild(column);
@@ -378,7 +373,7 @@ export class Friends {
 	seeFriend(username){
 		const linkToFriendsProfile = document.createElement('a');
 		linkToFriendsProfile.textContent = 'See profile';
-		linkToFriendsProfile.href = `/friend-profile/${username}`;
+		linkToFriendsProfile.href = `/friends/${username}`;
 		linkToFriendsProfile.setAttribute('data-link', '');
 		return linkToFriendsProfile;
 	}

@@ -20,10 +20,10 @@ class friendsInfo {
 			if (data.success) {
 				return data;
 			} else {
-				alert('Failed to get friends');
+				return data;
 			}
 		} catch (error) {
-			console.error('Error', error);
+			return {friends: []};
 		}
 	}
 

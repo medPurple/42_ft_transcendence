@@ -107,7 +107,7 @@ const routes = {
 		title: "Friends",
 		render: friendsRequest
 	},
-    '/friend-profile/:username': {
+    '/friends/:username': {
         title: "Friends profile",
         render: async (params) => {
             let username = params.username;

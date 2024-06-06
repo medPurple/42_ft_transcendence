@@ -152,6 +152,7 @@ clean : down
 
 	@ docker system prune -af
 	@ docker volume prune -f
+	@ docker volume rm secret_volume
 
 	@ docker volume rm secret_volume
 	

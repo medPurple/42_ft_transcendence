@@ -80,13 +80,18 @@ logger = logging.getLogger(__name__)
 class FriendsView(APIView):
 	authentication_classes = [JWTAuthentication]
 	def get(self, request, username=None):
-		if username:
-			friend = get_object_or_404(request.user.friends, username=username)
-			serializer = FriendsSerializer(friend)
-		else:
-			friends = request.user.friends.all()
-			serializer = FriendsSerializer(friends, many=True)
-		return Response({'success': True, 'friends': serializer.data}, status=status.HTTP_200_OK)
+		try:
+			if username:
+				friend = get_object_or_404(request.user.friends, username=username)
+				serializer = FriendsSerializer(friend)
+			else:
+				friends = request.user.friends.all()
+				if not friends:
+					return Response({'success': True, 'friends': []}, status=status.HTTP_200_OK)
+				serializer = FriendsSerializer(friends, many=True)
+			return Response({'success': True, 'friends': serializer.data}, status=status.HTTP_200_OK)
+		except Exception as e:
+			return Response({'success': False}, status=status.HTTP_404_NOT_FOUND)
 	# delete friend
 	# def delete(self, request):
 	# 	from_user = request.user

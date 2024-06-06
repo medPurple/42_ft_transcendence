@@ -22,10 +22,7 @@ export default class userInfo {
 			} else {
 				throw new Error('Failed to get username');
 			}
-		} catch (error) {
-			// console.error('Error:', error);
-			throw error; // share the error
-		}
+		} catch (error) {}
 	}
 
 	async getAllUserInfo() {
@@ -90,10 +87,7 @@ export default class userInfo {
 			} else {
 				throw new Error('Failed to get user info');
 			}
-		} catch (error) {
-			// console.error('Error', error);
-			throw error;
-		}
+		} catch (error) {}
 
 	}
 }
