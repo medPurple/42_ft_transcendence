@@ -9,6 +9,10 @@ export class pokeMap {
 		this.map = 0;
 		this.ctxMAP = null;
 		this.ctxAllCharacters = null;
+        this.eventcmbt = false;
+        this.eventtalk = false;
+
+
 	}
 
 	divmapCreation() {
@@ -80,32 +84,46 @@ export class pokeMap {
     addPnjtalk(){
         const chatbox = document.querySelector('.chatbox');
         const username = this.generateRandomName();
-        const message = generateRandomText();
+        const message = this.generateRandomText();
         chatbox.innerHTML += `<span style="color: black;">${username}</span>: ${message}<br>`;
         // Heal all pkms
     }
 
     drawmap(data){
         let player = data.find(player => player.userID == this.userID);
-        if (player.player_status === 1)
-            console.warn("combat");
-        if (player.player_status === 2)
-            console.warn("talk");
-            this.addPnjtalk();
-        if (player.player_map != 0)
-            console.warn("map");
+        if (player.player_status === 0){
+            this.eventcmbt = false;
+            this.eventtalk = false;
+        }
+        if (player.player_status === 1){
+            if (this.eventcmbt === false){
+                console.warn("combat");
+                this.eventcmbt = true;}
+        }
+        if (player.player_status === 2){
+            if (this.eventtalk === false){
+                console.warn("talk");
+                this.addPnjtalk();
+                this.eventtalk = true;}
+        }
+
         const mapimage = new Image(520 , 510);
         switch (player.player_map){
             case 0:
-                mapimage.src = './images/Maps/ext_grid.png';
+                mapimage.src = './images/Maps/ext.png';
+                break;
             case 1:
-                mapimage.src = './images/Maps/litte_house1_grid.png';
+                mapimage.src = './images/Maps/litte_house1.png';
+                break;
             case 2:
-                mapimage.src = './images/Maps/litte_house2_grid.png';
+                mapimage.src = './images/Maps/litte_house2.png';
+                break;
             case 3:
-                mapimage.src = './images/Maps/big_house1_grid.png';
+                mapimage.src = './images/Maps/big_house1.png';
+                break;
             case 4:
-                mapimage.src = './images/Maps/big_house2_grid.png';
+                mapimage.src = './images/Maps/big_house2.png';
+                break;
         }
         const img = new Image();
         img.src = this.asset_selection(player.orientation, player.player_skin);
@@ -114,6 +132,8 @@ export class pokeMap {
             let mainy = (player.posY - (19/2)) * 16;
             let pmainx = player.posX;
             let pmainy = player.posY;
+            this.ctxMAP.fillStyle = 'black';
+            this.ctxMAP.fillRect(0, 0, 520, 510);
             this.ctxMAP.drawImage(mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
             data.forEach(player => {
                 if (player.userID != this.userID && player.active && player.player_map == this.map) {

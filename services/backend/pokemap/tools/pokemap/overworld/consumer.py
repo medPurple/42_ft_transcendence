@@ -16,6 +16,7 @@ class PlayerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         logger.info("connected")
+        self.map_changed = False
         self.send_message_task = asyncio.create_task(self.send_message())
 
 
@@ -76,6 +77,7 @@ class PlayerConsumer(AsyncWebsocketConsumer):
                 data_json_load = json.loads(json_data)
                 if data_json_load.get("event") is not None:
                     await change_status(playerobj, data_json_load)
+
                 else:
                     await reset_status(playerobj)
                 
@@ -434,6 +436,7 @@ async def change_status(playerobj, json_data):
     elif json_data.get("event") == "people":
         basejson["player_status"] = player.StatusChoices.TALK
     elif json_data.get("event") == "door":
+
         if basejson["player_map"] == player.MapChoices.DEFAULT:
             basejson = await change_default_map(basejson)
         else:
@@ -456,7 +459,6 @@ async def reset_status(playerobj):
         "active": playerobj.active,
     }
     basejson["player_status"] = player.StatusChoices.DEFAULT
-    basejson["player_map"] = player.MapChoices.DEFAULT
     instance = editplayerModelSerializer(playerobj, data=basejson)
     if instance.is_valid():
         await sync_to_async(instance.save,)()
