@@ -9,10 +9,6 @@ export default class pongSettingsForm extends HTMLElement {
 	}
 
 	async connectedCallback(){
-		if (!Icookies.getCookie('token')) {
-			alert('You should be logged in to change the settings');
-			window.location.href = '/home';
-		}
 		const editSettings = document.createElement('div');
 		editSettings.id = 'pong-settings';
 		this.shadowRoot.appendChild(editSettings);

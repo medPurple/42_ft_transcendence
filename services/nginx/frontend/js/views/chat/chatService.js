@@ -1,4 +1,5 @@
-import {chat} from "../../components/chat/chatClass.js"
+import { chat } from "../../components/chat/chatClass.js"
+import Icookies from "../../components/cookie/cookie.js"
 
 export default () => {
     if (Icookies.getCookie('token')) {
