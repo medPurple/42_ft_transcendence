@@ -66,6 +66,8 @@ class   gameStateC:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.game_mode = 0
+        self.player1_user_id = 0 
+        self.player2_User_id = 0
         self.group_name = 0
         self.players_nb = 0
         self.player1Score = iv.PADDLE1_SCORE
@@ -73,6 +75,7 @@ class   gameStateC:
 		######## HERE recuperer le USERID correct!!!!!! ########
         # self.limitScore = GameSettings.objects.get(user=1).score
         self.limitScore = 7
+        self.paddle1 = 0
         self.paddle2 = 0
         self.ball = ballC()
         self.powerUpTimer = 0
@@ -80,19 +83,20 @@ class   gameStateC:
         self.powerUpPositionX = iv.DEFAULT_PU_LOC 
         self.powerUpPositionY = iv.DEFAULT_PU_LOC 
         self.activePowerUp = iv.NONE_PU
-        self.active = 0
+        self.status = iv.NOT_STARTED
         self._lock = threading.Lock()
 
     async def run_game_loop(self):
-        self.active = 1 
-        while self.active:
+        self.status = iv.RUNNING
+        while (self.status == iv.RUNNING or self.status == iv.PAUSED):
             with self._lock:
-                self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
-                self.ballPhysics(self.ball)
-                self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
-                self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
-                self.paddle1Movement(self.paddle1)
-                self.paddle2Movement(self.paddle2)
+                if (self.status == iv.RUNNING):
+                    self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
+                    self.ballPhysics(self.ball)
+                    self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
+                    self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
+                    self.paddle1Movement(self.paddle1)
+                    self.paddle2Movement(self.paddle2)
 
             await asyncio.sleep(0.032)
             #self.logObject()
@@ -198,7 +202,7 @@ class   gameStateC:
 
     def checkForScore(self):
         if (self.player1Score == self.limitScore or self.player2Score == self.limitScore):
-            self.active = 0
+            self.status = 0
 
     def paddlePhysics(self, ball, paddle1, paddle2):
         if (ball.positionX <= paddle1.positionX + paddle1.width and ball.positionX >= paddle1.positionX):
@@ -270,7 +274,7 @@ class   gameStateC:
                     "powerup.positionX": self.powerUpPositionX,
                     "powerup.positionY": self.powerUpPositionY,
                     "powerup.active": self.activePowerUp,
-                    "active": self.active
+                    "active": self.status
                 }
             }
         )

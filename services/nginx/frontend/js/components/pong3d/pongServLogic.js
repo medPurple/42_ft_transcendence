@@ -42,7 +42,8 @@ async function setup(gameMode) {
   switch (gameState.game_mode) {
     case "remote":
       const user_id = await Iuser.getID();
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/');
+      const user_name = await Iuser.getUsername();
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
       break;
     case "local":
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local');
