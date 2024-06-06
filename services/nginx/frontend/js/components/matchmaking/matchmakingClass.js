@@ -93,26 +93,26 @@ class MatchmakingButtons {
 
 		if (this.game === 'pong_multiplayer'){
 			waitinggif.classList.add('embed-responsive', 'embed-responsive-16by9');
-			const frame = document.createElement('iframe');
-			frame.src = "https://giphy.com/embed/Q0MrhO9BUSxKR8RdZC";
-			frame.classList.add('embed-responsive-item');
-			waitinggif.appendChild(frame);
+			const img = new Image();
+			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGwwM2lwdm8zNTFiYng2ZzJhODVpdnQya3lxMDloY3dzNHk1cDB2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Q0MrhO9BUSxKR8RdZC/giphy.gif";
+			img.classList.add('embed-responsive-item');
+			waitinggif.appendChild(img);
 		} else if (this.game === 'pkm_multiplayer'){
 			waitinggif.style.width = "100%";
 			waitinggif.style.height = "0";
 			waitinggif.style.paddingBottom = "71%";
 			waitinggif.style.position = "relative";
 			
-			const frame = document.createElement('iframe');
-			frame.src = "https://giphy.com/embed/Ny6WEYvBuBvDW";
-			frame.style.width = "100%";
-			frame.style.height = "100%";
-			frame.style.position = "absolute";
-			frame.frameBorder = "0";
-			frame.classList.add('giphy-embed');
-			frame.allowFullscreen = true;
+			const img = new Image();
+			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2ZnaGJod21veWJlNXo1Y2Y5NWZxdXZieTA3dnQ0bXQ4amk3M3kwZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Ny6WEYvBuBvDW/giphy.gif";
+			img.style.width = "100%";
+			img.style.height = "100%";
+			img.style.position = "absolute";
+			img.frameBorder = "0";
+			img.classList.add('giphy-embed');
+			img.allowFullscreen = true;
 			
-			waitinggif.appendChild(frame);
+			waitinggif.appendChild(img);
 		}
 
 

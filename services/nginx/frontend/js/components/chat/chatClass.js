@@ -227,17 +227,17 @@ export class chat {
 	createNonediv(){
 		const Nonediv = document.createElement('div');
 		Nonediv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded', 'Nonediv');
-		Nonediv.classList.add('embed-responsive', 'embed-responsive-16by9');
-		const frame = document.createElement('iframe');
-		frame.src = "https://giphy.com/embed/GnNi4XFTOIkUe9giJl";
-		frame.classList.add('embed-responsive-item');
-		frame.style.width = "100%";
-		frame.style.height = "100%";
-		frame.style.position = "absolute";
-		frame.frameBorder = "0";
-		frame.classList.add('giphy-embed');
-		frame.allowFullscreen = true;
-		Nonediv.appendChild(frame);
+		Nonediv.style.width = '100%'; // Set the width to 100%
+		Nonediv.style.height = '100%'; // Set the height to 100%
+		Nonediv.style.display = 'flex'; // Set display to flex
+		Nonediv.style.justifyContent = 'center'; // Center along the main axis
+		Nonediv.style.alignItems = 'center'; // Center along the cross axis
+	
+		const img = new Image();
+		img.classList.add('w-100', 'h-100'); // Set width and height to 100%
+		img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmNpc25kc3d3dncxMHVsaDYyaDR4MzJrZzN6cDR3eGg4eGl2djU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GnNi4XFTOIkUe9giJl/giphy.gif";
+	
+		Nonediv.appendChild(img);
 		Nonediv.style.flex = '3';
 		return Nonediv;
 	}

@@ -12,11 +12,8 @@ export default () => {
 			<delete-account-form></delete-account-form>
 		</div>`
 	} else {
-		const logdiv = document.createElement('div');
-		logdiv.classList.add('not-logged');
-		logdiv.innerText = 'You need to be logged in to delete your profile';
-		document.body.appendChild(logdiv);
-		return logdiv;
+		alert("You need to be logged in to delete your account");
+		window.location.href = '/home';
 	}
 	return content;
 }
