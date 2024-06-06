@@ -190,11 +190,9 @@ export function populateSkybox() {
 			name_file = "../../../images/Skybox/02/cornfield";
 			break;
 		case 2:
-			name_file = "../../../images/Skybox/03/arid";
+			name_file = "../../../images/Skybox/03/OpenWorld";
 			break;
 	}
-
-	console.log('SKYBOX in populate skybox: ', name_file);///////////
 
 	let texture_ft = new THREE.TextureLoader().load(name_file + '_ft.jpg');
 	let texture_bk = new THREE.TextureLoader().load(name_file + '_bk.jpg');
