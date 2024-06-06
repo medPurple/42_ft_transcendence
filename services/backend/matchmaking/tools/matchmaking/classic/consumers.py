@@ -22,10 +22,21 @@ class QueueConsumer(WebsocketConsumer):
 
 
     def disconnect(self, close_code):
-        pass
+        logger.info('Disconnected')
+        try:
+            userexist = get_object_or_404(WaitingModel, userID=self.id)
+            if userexist and userexist.status == 'searching':
+                if userexist.game == 'pkm_multiplayer':
+                    pokemon_queue.remove(userexist)
+                if userexist.game == 'pong_multiplayer':
+                    pong_queue.remove(userexist)
+                userexist.delete()
+                logger.info('User removed from queue')
+        except Exception as e:
+            pass
+
 
     def receive(self, text_data):
-        logger.info(text_data)
         try:
             text_data_json = json.loads(text_data)
             action = text_data_json['action']
@@ -54,22 +65,26 @@ class QueueConsumer(WebsocketConsumer):
         try:
             userexist = get_object_or_404(WaitingModel, userID=data['id'])
             if userexist:
+                logger.info('User found')
                 if userexist.status == 'found':
                     serializer = self.serializer_class(userexist)
                     self.send(json.dumps(serializer.data))
                     return
                 elif userexist.status == 'searching':
+                    logger.info('User already in queue')
                     if userexist.game == 'pkm_multiplayer':
                         pokemon_queue.remove(userexist)
                     elif userexist.game == 'pong_multiplayer':
                         pong_queue.remove(userexist)
                     userexist.delete()
+                    logger.info('User removed from queue')
         except Exception as e:
             pass
         try:
             serializer = self.serializer_class(data=new_data)
             if serializer.is_valid():
                 instance = serializer.save()
+                self.id = instance.userID
                 if instance.game == 'pkm_multiplayer':
                     pokemon_queue.append(instance)
                 elif instance.game == 'pong_multiplayer':
