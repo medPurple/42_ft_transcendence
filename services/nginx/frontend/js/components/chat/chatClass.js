@@ -227,10 +227,18 @@ export class chat {
 	createNonediv(){
 		const Nonediv = document.createElement('div');
 		Nonediv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded', 'Nonediv');
+		Nonediv.style.width = '100%'; // Set the width to 100%
+		Nonediv.style.height = '100%'; // Set the height to 100%
+		Nonediv.style.display = 'flex'; // Set display to flex
+		Nonediv.style.justifyContent = 'center'; // Center along the main axis
+		Nonediv.style.alignItems = 'center'; // Center along the cross axis
+	
+		const img = new Image();
+		img.classList.add('w-100', 'h-100'); // Set width and height to 100%
+		img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmNpc25kc3d3dncxMHVsaDYyaDR4MzJrZzN6cDR3eGg4eGl2djU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GnNi4XFTOIkUe9giJl/giphy.gif";
+	
+		Nonediv.appendChild(img);
 		Nonediv.style.flex = '3';
-		Nonediv.innerText = "Nobody selected"
-
-
 		return Nonediv;
 	}
 

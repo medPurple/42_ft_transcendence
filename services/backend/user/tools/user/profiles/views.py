@@ -93,13 +93,16 @@ class JWTAuthentication(BaseAuthentication):
 class AllCustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]
 	def get(self, request, user_id=None):
-		if user_id:
-			user = get_object_or_404(CustomUser, user_id=user_id)
-			serializer = CustomUserSerializer(user)
-		else:
-			users = CustomUser.objects.all()
-			serializer = CustomUserSerializer(users, many=True)
-		return (Response({'success': True, 'users': serializer.data}, status=status.HTTP_200_OK))
+		try:
+			if user_id:
+				user = get_object_or_404(CustomUser, user_id=user_id)
+				serializer = CustomUserSerializer(user)
+			else:
+				users = CustomUser.objects.all()
+				serializer = CustomUserSerializer(users, many=True)
+			return (Response({'success': True, 'users': serializer.data}, status=status.HTTP_200_OK))
+		except CustomUser.DoesNotExist:
+			return Response({'error': 'User not found'}, status=status.HTTP_200_OK)
 
 class CustomUserRegister(APIView):
 	permission_classes = (permissions.AllowAny,)
@@ -119,11 +122,11 @@ class CustomUserRegister(APIView):
 					login(request, user)
 					return Response({'success': True, 'token' : token}, status=status.HTTP_201_CREATED)
 				else:
-					return Response({'error': 'API Error'}, status=status.HTTP_400_BAD_REQUEST)
+					return Response({'error': 'API Error'}, status=status.HTTP_200_OK)
 			else:
-				return Response({'error': 'Error creating token'}, status=status.HTTP_400_BAD_REQUEST)
+				return Response({'error': 'Error creating token'}, status=status.HTTP_200_OK)
 		else:
-			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+			return Response(form.errors, status=status.HTTP_200_OK)
 
 class CustomUserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)
@@ -152,7 +155,7 @@ class CustomUserLogin(APIView):
 				return Response({'success': True, 'token' : token, 'two_fa': False},
 					status=201)
 		else:
-			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+			return Response(form.errors, status=status.HTTP_200_OK)
 
 class CustomUserVerify(APIView):
 	permission_classes = (permissions.AllowAny,)
@@ -174,9 +177,9 @@ class CustomUserVerify(APIView):
 				return Response({'success': True, 'token' : token},
 						status=201)
 			else:
-				return Response({'success': False, 'detail': 'Wrong code.'}, status=status.HTTP_404_NOT_FOUND)
+				return Response({'success': False, 'detail': 'Wrong code.'}, status=status.HTTP_200_OK)
 		except CustomUser.DoesNotExist:
-			return Response({'success': False}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'success': False}, status=status.HTTP_200_OK)
 
 
 class CustomUserLogout(APIView):
@@ -216,7 +219,7 @@ class CustomUserEditView(APIView):
 			form.save()
 			return Response({'success': True}, status=status.HTTP_201_CREATED)
 		else:
-			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+			return Response(form.errors, status=status.HTTP_200_OK)
 
 class CustomUserPasswordView(APIView):
 	authentication_classes = [JWTAuthentication]
@@ -227,7 +230,7 @@ class CustomUserPasswordView(APIView):
 			login(request, user)
 			return Response({'success': True}, status=status.HTTP_201_CREATED)
 		else:
-			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+			return Response(form.errors, status=status.HTTP_200_OK)
 
 class CustomUserDeleteView(APIView):
 	authentication_classes = [JWTAuthentication]
@@ -239,7 +242,7 @@ class CustomUserDeleteView(APIView):
 			delete_userID_microservices(request, user.user_id)
 			user.delete()
 		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({'error': 'User not found'}, status=status.HTTP_200_OK)
 		logout(request)
 		return Response({'success': True}, status=status.HTTP_200_OK)
 
