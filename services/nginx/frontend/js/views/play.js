@@ -3,6 +3,7 @@ import {pokeMap} from "../components/pokemon/pokemap.js";
 import {pokechat, pokebag} from "../components/pokemon/poketools.js";
 import Icookies from "../components/cookie/cookie.js"
 import { setup } from "../components/pong3d/pongServLogic.js";
+import { tournamentInput } from "../components/pong3d/tournamentInput.js";
 
 
 export function pong_localplay() {
@@ -57,7 +58,8 @@ export async function pong_remoteplay() {
 export async function pong_tournamentplay() {
         const gamediv = document.createElement('div');
 	if (Icookies.getCookie('token') != null) {
-                gamediv.appendChild(await pongTournamentMatchmaking.mainMatchmakingDiv());
+                gamediv.appendChild(await new tournamentInput.initTournamentInfo());
+                // gamediv.appendChild(await pongTournamentMatchmaking.mainMatchmakingDiv());
         } else {
                 gamediv.classList.add('not-logged');
                 alert("You need to be logged in to play in tournament");
@@ -105,7 +107,7 @@ export async function pokemap_interactive() {
                 const gamediv = document.createElement('div');
                 gamediv.classList.add('col-8');
                 gamediv.appendChild(new pokeMap().startingPokeverse());
-                
+
 				const toolsdiv = document.createElement('div');
                 toolsdiv.classList.add('col-4');
                 toolsdiv.style.display = 'flex';
@@ -121,7 +123,7 @@ export async function pokemap_interactive() {
 
                 maindiv.appendChild(gamediv);
                 maindiv.appendChild(toolsdiv);
-				
+
         } else {
                 maindiv.classList.add('not-logged');
                 alert("You need to be logged in to play in the pokeverse");
