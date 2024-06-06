@@ -6,28 +6,45 @@ import { setup } from "../components/pong3d/pongServLogic.js";
 
 
 export function pong_localplay() {
-    const generaldiv = document.createElement('div');
-    const gamediv = document.createElement('div');
-    gamediv.id = "pong-renderer"
-    const scorediv = document.createElement('div');
-    scorediv.id = "pong-score"
-    if (Icookies.getCookie('token') != null) {
-		setup("local");
-    } else {
-        generaldiv.classList.add('not-logged');
-        alert("You need to be logged in to play in local");
-		window.location.href = '/pongService';
-    }
-    generaldiv.appendChild(gamediv);
-    generaldiv.appendChild(scorediv);
-    document.body.appendChild(generaldiv);
-    return generaldiv;
+        const generaldiv = document.createElement('div');
+        const gamediv = document.createElement('div');
+        gamediv.id = "pong-renderer"
+        const scorediv = document.createElement('div');
+        scorediv.id = "pong-score"
+        if (Icookies.getCookie('token') != null) {
+                        setup("local");
+        } else {
+                generaldiv.classList.add('not-logged');
+                alert("You need to be logged in to play in local");
+                        window.location.href = '/pongService';
+        }
+        generaldiv.appendChild(gamediv);
+        generaldiv.appendChild(scorediv);
+        document.body.appendChild(generaldiv);
+        return generaldiv;
 }
 
 export async function pong_remoteplay() {
         const gamediv = document.createElement('div');
 	if (Icookies.getCookie('token') != null) {
                 gamediv.appendChild(await pongRemoteMatchmaking.mainMatchmakingDiv());
+                gamediv.addEventListener('beforunload', async () => {
+                        console.log("Removing user from queue.");
+                        const id = await Iuser.getID();
+                        const body = {
+                                "userID": id}
+                        const response = await fetch('https://localhost:4430/api/matchmaking/', {
+                                method: 'DELETE',
+                                headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': Icookies.getCookie('token'),
+                                        'X-CSRFToken': Icookies.getCookie('csrftoken')
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify(body)
+                        });
+                        console.log(response);
+                });
         } else {
                 gamediv.classList.add('not-logged');
                 alert("You need to be logged in to play in remote");
@@ -54,6 +71,23 @@ export async function pkm_remoteplay() {
         const gamediv = document.createElement('div');
 	if (Icookies.getCookie('token') != null) {
                 gamediv.appendChild(await pkmRemoteMatchmaking.mainMatchmakingDiv());
+                gamediv.addEventListener('beforunload', async () => {
+                        console.log("Removing user from queue.");
+                        const id = await Iuser.getID();
+                        const body = {
+                                "userID": id}
+                        const response = await fetch('https://localhost:4430/api/matchmaking/', {
+                                method: 'DELETE',
+                                headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': Icookies.getCookie('token'),
+                                        'X-CSRFToken': Icookies.getCookie('csrftoken')
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify(body)
+                        });
+                        console.log(response);
+                });
         } else {
                 gamediv.classList.add('not-logged');
                 alert("You need to be logged in to play in remote");

@@ -28,9 +28,14 @@ class MatchmakingButtons {
 			if (this.status === 'game') {
 				console.log("already in game");
 				this.removeWaitingPage();
-				window.location.href = "/gameService"
-
+				if (this.game === 'pong_multiplayer'){
+					window.location.href = "/gameService"
+				} else if (this.game === 'pkm_multiplayer'){
+					window.location.href = "/home"
+				}
+				return;
 			}
+			
 			this.updateData();
 			await this.checkstatus(data);
 			const msg = {

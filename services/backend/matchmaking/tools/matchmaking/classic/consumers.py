@@ -54,9 +54,16 @@ class QueueConsumer(WebsocketConsumer):
         try:
             userexist = get_object_or_404(WaitingModel, userID=data['id'])
             if userexist:
-                serializer = self.serializer_class(userexist)
-                self.send(json.dumps(serializer.data))
-                return
+                if userexist.status == 'found':
+                    serializer = self.serializer_class(userexist)
+                    self.send(json.dumps(serializer.data))
+                    return
+                elif userexist.status == 'searching':
+                    if userexist.game == 'pkm_multiplayer':
+                        pokemon_queue.remove(userexist)
+                    elif userexist.game == 'pong_multiplayer':
+                        pong_queue.remove(userexist)
+                    userexist.delete()
         except Exception as e:
             pass
         try:
