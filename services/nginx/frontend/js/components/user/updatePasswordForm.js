@@ -21,10 +21,10 @@ export default class updatePasswordForm extends HTMLElement {
 					<input type="text" style="display:none;" name="username" autocomplete="username">
 				</div>
 				<div class="mb-4">
-					<input type="password" class="form-control" name="password1" placeholder="Password" autocomplete="current-password" required>
+					<input type="password" class="form-control" name="new_password1" placeholder="Password" autocomplete="current-password" required>
 				</div>
 				<div class="mb-4">
-					<input type="password" class="form-control" name="password2" placeholder="New Password" autocomplete="new-password" required>
+					<input type="password" class="form-control" name="new_password2" placeholder="New Password" autocomplete="new-password" required>
 				</div>
 				<div class="mb-4">
 					<button type="submit" class="btn btn-dark">Save changes</button>
@@ -45,8 +45,8 @@ export default class updatePasswordForm extends HTMLElement {
 
 	validateForm(formData) {
 		// Get the form data
-		const password1 = formData.get('password1');
-		const password2 = formData.get('password2');
+		const password1 = formData.get('new_password1');
+		const password2 = formData.get('new_password2');
 
 		// Check if passwords match
 		if (password1 !== password2) {
@@ -87,7 +87,6 @@ export default class updatePasswordForm extends HTMLElement {
 				});
 				const data = await response.json();
 				if (data.success) {
-					// console.log('Password updated successfully');
 					window.location.href = '/home';
 				} else {
 					showAlert('An error occurred. Please try again.');

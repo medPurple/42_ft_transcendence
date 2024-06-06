@@ -30,7 +30,7 @@ class FriendsView(APIView):
 				serializer = FriendsSerializer(friends, many=True)
 			return Response({'success': True, 'friends': serializer.data}, status=status.HTTP_200_OK)
 		except Exception as e:
-			return Response({'success': False}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'success': False}, status=status.HTTP_200_OK)
 
 class BlockView(APIView):
 	authentication_classes = [JWTAuthentication]
