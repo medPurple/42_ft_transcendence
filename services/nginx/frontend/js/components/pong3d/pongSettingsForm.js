@@ -15,7 +15,7 @@ export default class pongSettingsForm extends HTMLElement {
 		}
 		const editSettings = document.createElement('div');
 		editSettings.id = 'pong-settings';
-		this.shadowRoot.appendChild(editSettings);const userId = await Iuser.getID();
+		this.shadowRoot.appendChild(editSettings);
 		await this.initGamerInfo();
 		await this.initFormSubmit();
 
