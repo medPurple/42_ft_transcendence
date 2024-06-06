@@ -64,15 +64,14 @@ export class Friends {
 
 		this.variablesArray = [];
 		this.lastusernumber = 0;
+		this.should_close = 0;
 	}
 
 
 	connect() {
 		let token = Icookies.getCookie('token');
 		const socket = new WebSocket(`wss://${window.location.host}/ws/friends/?token=${token}`);
-		socket.onopen = function(e) {
-			console.log("[open] Connection established");
-		};
+		socket.onopen = function(e) {};
 
 		socket.onmessage = async (event) => {
 			let data = JSON.parse(event.data);
@@ -88,82 +87,104 @@ export class Friends {
 		};
 
 		socket.onclose = function(event) {
-			if (event.wasClean) {
-				console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-			} else {
-				console.log('[close] Connection died');
-			}
+			this.should_close = 1;
+
+
 		};
 
 		socket.onerror = function(error) {
-			console.log(`[error] ${error.message}`);
+
 		};
 		return socket;
 	}
 
 
 	async sendRequest(friend_username) {
-		let message = JSON.stringify({
-			command: "send_request",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "send_request",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async acceptRequest(friend_username) {
-		let message = JSON.stringify({
-			command: "accept_request",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "accept_request",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async deleteRequest(friend_username) {
-		let message = JSON.stringify({
-			command: "delete_request",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "delete_request",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async getRequests() {
-		let message = JSON.stringify({
-			command: "get_requests"
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "get_requests"
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async deleteFriendSoc(friend_username) {
-		let message = JSON.stringify({
-			command: "delete_friend",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "delete_friend",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 
 	async updateView() {
+		if (this.should_close === 1)
+			return;
 		const dataUsers = await Iuser.getAllUsers();
+		if (!dataUsers)
+			return;
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
@@ -354,7 +375,6 @@ export class Friends {
 					buttonSendRequest.textContent = 'Request Sent';
 					buttonSendRequest.disabled = true;
 				}
-				console.log('Send request to: ' + username);
 			} catch (error) {
 				console.error('Error:', error);
 			}
@@ -368,12 +388,10 @@ export class Friends {
 		buttonDeleteFriend.onclick = async () => {
 			try {
 				const deleteFriend = await this.deleteFriendSoc(username);
-				console.log(deleteFriend);
 				if (deleteFriend.success === true) {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.sendFriendRequest(cardFooter, username);
 				}
-				console.log('Delete friend: ' + username);
 			} catch (error) {
 				console.error('Error:', error);
 			}
@@ -433,7 +451,6 @@ export class Friends {
 		buttonAcceptRequest.onclick = async () => {
 			try {
 				const acceptRequest = await this.acceptRequest(username);
-				console.log(acceptRequest);
 				if (acceptRequest.success === true) {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.manageFriend(cardFooter, username);
@@ -447,7 +464,6 @@ export class Friends {
 		buttonRejectRequest.onclick = async () => {
 			try {
 				const deleteRequest = await this.deleteRequest(username);
-				console.log(deleteRequest);
 				if (deleteRequest.success === true) {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.sendFriendRequest(cardFooter, username);

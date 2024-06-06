@@ -71,7 +71,7 @@ export default class LoginForm extends HTMLElement{
 				}
 			})
 			.catch(error => {
-				console.error('Error:', error);
+				showAlert(error);
                 // Handle API errors
 			});
 		});
