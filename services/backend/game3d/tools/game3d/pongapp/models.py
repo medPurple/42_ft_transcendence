@@ -19,6 +19,7 @@ class GameSettings(models.Model):
 		0: "Playground",
 		1: "Cornfield",
 		2: "Dorm",
+		3: "OpenWorld"
 	}
 
 	BALLS = {
@@ -48,7 +49,7 @@ class GameSettings(models.Model):
 	}
 
 	user = models.ForeignKey(GameUser, on_delete=models.CASCADE)
-	scene = models.IntegerField(choices=SCENES, default="Playground")
+	scene = models.IntegerField(choices=SCENES, default="OpenWorld")
 	ball = models.IntegerField(choices=BALLS, default=1)
 	paddle = models.IntegerField(choices=PADDLES, default=3)
 	table = models.IntegerField(choices=TABLES, default=1)

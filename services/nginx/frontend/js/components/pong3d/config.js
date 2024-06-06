@@ -34,7 +34,7 @@ export const gameCustom = {
 
 
 export var core = {
-	scene: 0,
+	scene: 3,
 	renderer: 0,
 	camera: 0,
 	gameSocket: 0,

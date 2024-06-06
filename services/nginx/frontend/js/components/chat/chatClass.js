@@ -98,7 +98,7 @@ export class chat {
 		const sendButton = document.createElement('button');
 		sendButton.id = 'sendButton';
 		sendButton.textContent = 'Send';
-		sendButton.classList.add('btn', 'btn-primary');
+		sendButton.classList.add('btn', 'btn-dark');
 
 		inputDiv.appendChild(input);
 		inputDiv.appendChild(sendButton);
@@ -293,7 +293,7 @@ export class chat {
 		const acceptButton = document.createElement('button');
 		acceptButton.id = 'acceptButton';
 		acceptButton.textContent = 'Accept';
-		acceptButton.classList.add('btn', 'btn-primary', 'mr-2');
+		acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
 
 		acceptButton.onclick = async (e) => {
 			console.log('accept');

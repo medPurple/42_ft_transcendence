@@ -115,6 +115,21 @@ a:hover {
     background-color: #b32c6f;
 } 
 
+/***** SETTINGS Forms ******/
+
+.image-radio {
+	display: none;
+}
+
+.image-label img {
+	opacity: 0.6;
+}
+
+.image-radio:checked + .image-label img {
+	opacity: 1;
+	border-color: #1b1b1c;
+}
+
 /********** PONG ***********/
 #pong-renderer {
 	/* display: flex;
