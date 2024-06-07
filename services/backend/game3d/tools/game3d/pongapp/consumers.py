@@ -92,13 +92,20 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             self.player_id = await self.find_player_id();
             logger.info(self.player_id)
             await self.accept()
-            if (self.player_id == 1):
-                self.gameState = await self.createRemoteParty()
-            elif (self.player_id == 2):
-                self.gameState = await self.joinRemoteParty()
+            logger.info("Je vais lancer joinRemote")
+            await self.joinRemoteParty()
+
+            # if (self.player_id == 1):
+            #     self.gameState = await self.createRemoteParty()
+            # elif (self.player_id == 2):
+            #     self.gameState = await self.joinRemoteParty()
 
     async def disconnect(self, close_code):
-        self.gameState.status == iv.PAUSED;
+
+        if (self.gameState != 0):
+            with self.gameState._lock:
+                self.gameState.status == iv.PAUSED
+                self.gameState.players_nb -= 1
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -119,6 +126,53 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
                     return 1 
         return 0
 
+    async def createPartyObject(self, match_object):
+        global remote_parties
+        logger.info("Un objet de jeu est cree")
+        newPart = gameStateC()
+        newPart.game_mode = "remote"
+        player1Id = await sync_to_async(lambda: match_object.player1.userID)()
+        player2Id = await sync_to_async(lambda: match_object.player2.userID)()
+        newPart.player1_user_id =  str(player1Id)
+        newPart.player2_user_id =  str(player2Id)
+        newPart.group_name = await self.generate_group_name()
+        newPart.powerUpTimer = time.time()
+        await self.logObject(newPart)
+        remote_parties.append(newPart)
+
+    async def IamInPartyObject(self):
+        global remote_parties
+        for party in remote_parties:
+            if (self.user_id == party.player1_user_id or self.user_id == party.player2_user_id):
+                logger.info("Je suis dans un objet de party")
+                return True 
+        return False
+
+    async def findMyParty(self):
+        global remote_parties
+        for party in remote_parties:
+            if (self.user_id == party.player1_user_id or self.user_id == party.player2_user_id):
+                logger.info("Je return une party")
+                return party 
+        return party
+     
+    async def joinRemoteParty(self):
+        logger.info("Je cherche a rejoindre un party")
+        while not await self.IamInPartyObject():
+            logger.info("Je boucle infini")
+            await asyncio.sleep(0.016)
+        self.gameState = await self.findMyParty()
+        await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
+        await self.send(text_data=json.dumps({"player": self.player_id}))
+        logger.info("Je vais rajouter un joueur")
+        with self.gameState._lock:
+            self.gameState.players_nb += 1 
+            if (self.gameState.players_nb == 2):
+                self.gameState.powerUpTimer = time.time()
+                await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
+                logger.info("Party will be launched")
+                asyncio.create_task(self.gameState.run_game_loop())
+
 
     def get_filtered_matches(self):
         return list(GameMatch.objects.filter(Q(status=0) & (Q(player1=self.user_id) | Q(player2=self.user_id))))
@@ -128,10 +182,10 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
         player1Id = await sync_to_async(lambda: match_models[0].player1.userID)()
         player2Id = await sync_to_async(lambda: match_models[0].player2.userID)()
         if (self.user_id == str(player1Id)):
-            await createPartyObject(self, match_objects[0])
-            return 1
+            await self.createPartyObject(match_models[0])
+            return str(1)
         elif (self.user_id == str(player2Id)):
-            return 2
+            return str(2)
         
     async def game_state(self,event):
         await self.send(text_data=json.dumps(event["game_state"]))
@@ -144,37 +198,33 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
                     return party
         return remote_parties[0]
 
-    async def createRemoteParty(self):
-        global remote_parties 
-        listLen = len(remote_parties)
-        newPart = gameStateC()
-        remote_parties.append(newPart)
-        remote_parties[listLen].paddle1 = paddleC(1)
-        await self.send(text_data=json.dumps({"player": self.player_id}))
-        self.gameState = newPart
-        self.gameState.player1_user_id = self.user_id
-        self.gameState.game_mode = "remote"
-        self.gameState.group_name = await self.generate_group_name()
-        remote_parties[listLen].players_nb = 1
-        await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
-        return newPart
-
-    async def joinRemoteParty(self):
-        global remote_parties
-        listLen = len(remote_parties)
-        remote_parties[listLen - 1].paddle2 = paddleC(2)
-        await self.send(text_data=json.dumps({"player": self.player_id}))
-        self.gameState = remote_parties[listLen - 1]
-        self.gameState.player2_user_id = self.user_id
-        self.gameState.players_nb = 2
-        await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
-        await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
-        self.gameState.powerUpTimer = time.time()
-        asyncio.create_task(self.gameState.run_game_loop())
-        return remote_parties[listLen - 1]
-
-    async def logObject(self):
-        logbuff = self.gameState
+    # async def createRemoteParty(self):
+    #     global remote_parties 
+    #     listLen = len(remote_parties)
+    #     newPart = gameStateC()
+    #     remote_parties.append(newPart)
+    #     remote_parties[listLen].paddle1 = paddleC(1)
+    #     self.gameState = newPart
+    #     self.gameState.player1_user_id = self.user_id
+    #     self.gameState.game_mode = "remote"
+    #     self.gameState.group_name = await self
+    #
+    # async def joinRemoteParty(self):
+    #     global remote_parties
+    #     listLen = len(remote_parties)
+    #     remote_parties[listLen - 1].paddle2 = paddleC(2)
+    #     await self.send(text_data=json.dumps({"player": self.player_id}))
+    #     self.gameState = remote_parties[listLen - 1]
+    #     self.gameState.player2_user_id = self.user_id
+    #     self.gameState.players_nb = 2
+    #     self.gameState.powerUpTimer = time.time()
+    #     asyncio.create_task(self.gameState.run_game_loop())
+    #     return remote_parties[listLen - 1]
+    #
+    async def logObject(self, gameState):
+        logbuff = gameState
+        logger.info("player1_user_id : %s" % (logbuff.player1_user_id))
+        logger.info("player2_user_id : %s" % (logbuff.player2_user_id))
         logger.info("group_name : %s" % (logbuff.group_name))
         logger.info("players_nb : %d" % (logbuff.players_nb))
         logger.info("player1Score : %d" % (logbuff.player1Score))

@@ -66,6 +66,7 @@ class   gameStateC:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.game_mode = 0
+        self.match_object = 0
         self.player1_user_id = 0 
         self.player2_User_id = 0
         self.group_name = 0
@@ -75,8 +76,8 @@ class   gameStateC:
 		######## HERE recuperer le USERID correct!!!!!! ########
         # self.limitScore = GameSettings.objects.get(user=1).score
         self.limitScore = 7
-        self.paddle1 = 0
-        self.paddle2 = 0
+        self.paddle1 = paddleC(1)
+        self.paddle2 = paddleC(2)
         self.ball = ballC()
         self.powerUpTimer = 0
         self.powerUpState = iv.PU_NO

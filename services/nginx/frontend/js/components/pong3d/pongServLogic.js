@@ -72,7 +72,7 @@ async function setup(gameMode) {
 
 const actions = new Map([
   ["party", async (value) => { if (value === 'active') { core.party = true; await createScene(); } }],
-  ["player", (value) => { core.player_id = value; }],
+  ["player", (value) => { core.player_id = value; console.log("Player_id :", core.player_id) }],
   ["player1Score", (value) => { gameState.player1Score = value; }],
   ["player2Score", (value) => { gameState.player2Score = value; }],
   ["limitScore", (value) => { gameState.score_limit = value; }],
