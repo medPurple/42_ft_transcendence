@@ -214,7 +214,7 @@ export function populateSkybox() {
 	let skyboxGeometry;
 	switch (gameCustom.map) {
 		case 0:
-			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+			skyboxGeometry = new THREE.BoxGeometry(2048, 1807, 2048);
 			break;
 		case 1:
 			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
