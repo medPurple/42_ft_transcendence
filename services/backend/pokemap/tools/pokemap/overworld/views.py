@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import player
 from django.shortcuts import get_object_or_404
-from .serializers import PlayerModelSerializer, editplayerModelSerializer
+from .serializers import PlayerModelSerializer, editplayerModelSerializer, editplayerSkinModelSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -54,4 +54,14 @@ class playerAPI(APIView):
             return Response(instance.data, status=status.HTTP_200_OK)
         return Response(instance.errors, status=status.HTTP_400_BAD_REQUEST)
 
- 
+
+class editplayerskin(APIView):
+    serializer_class = editplayerSkinModelSerializer
+
+    def put(self, request, *args, **kwargs):
+        playerobj = get_object_or_404(player, userID=request.data["userID"])
+        instance = editplayerSkinModelSerializer(playerobj, data=request.data)
+        if instance.is_valid():
+            instance.save()
+            return Response(instance.data, status=status.HTTP_200_OK)
+        return Response(instance.errors, status=status.HTTP_400_BAD_REQUEST)

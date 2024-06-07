@@ -1,64 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Three.js Fullscreen Scene</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-    canvas {
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
-  <script>
-    // Set up the scene, camera, and renderer
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Transcendence</title>
+		<!-- Link to Custom CSS -->
+		<link rel="stylesheet" href="../css/style.css"/>
+		<!-- Links to Images (logos or other) -->
+		<link rel="icon" href="../images/Favicons/favicon.png"/>
+	<!-- JS THREE Scripts -->
+		<script type="importmap">
+			{
+			"imports": {
+				"three": "https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.module.js",
+				"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.148.0/examples/jsm/"
+			}
+			}
+		</script>
+		
+	</head>
+  <body>
+    <script type="module">
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-    // Add a simple light to the scene
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(5, 5, 5).normalize();
-    scene.add(light);
+      let scene, camera, renderer;
 
-    // Add a cube to the scene
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+      function init() {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,45,30000);
+        camera.position.set(-900,-200,-900);
 
-    // Position the camera
-    camera.position.z = 5;
+        renderer = new THREE.WebGLRenderer({antialias:true});
+        renderer.setSize(window.innerWidth,window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-    // Add orbit controls
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    controls.dampingFactor = 0.25;
-    controls.screenSpacePanning = false;
-
-    // Adjust scene on window resize
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // Animation loop
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
-      renderer.render(scene, camera);
-    }
-    animate();
-  </script>
-</body>
+        let controls = new OrbitControls(camera, renderer.domElement);
+        controls.addEventListener('change', renderer);
+        controls.minDistance = 500;
+        controls.maxDistance = 1500;
+        
+        let materialArray = [];
+        let texture_ft = new THREE.TextureLoader().load( 'arid2_ft.jpg');
+        let texture_bk = new THREE.TextureLoader().load( 'arid2_bk.jpg');
+        let texture_up = new THREE.TextureLoader().load( 'arid2_up.jpg');
+        let texture_dn = new THREE.TextureLoader().load( 'arid2_dn.jpg');
+        let texture_rt = new THREE.TextureLoader().load( 'arid2_rt.jpg');
+        let texture_lf = new THREE.TextureLoader().load( 'arid2_lf.jpg');
+          
+        materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
+        materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
+        materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
+        materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
+        materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
+        materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
+   
+        for (let i = 0; i < 6; i++)
+           materialArray[i].side = THREE.BackSide;
+        let skyboxGeo = new THREE.BoxGeometry( 10000, 10000, 10000);
+        let skybox = new THREE.Mesh( skyboxGeo, materialArray );
+        scene.add( skybox );  
+        animate();
+      }
+      function animate() {
+        renderer.render(scene,camera);
+        requestAnimationFrame(animate);
+      }
+      init();
+    </script>
+  </body>
 </html>

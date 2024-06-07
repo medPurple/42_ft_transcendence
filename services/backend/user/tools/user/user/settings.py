@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from user.vault import VaultClient
+from dotenv import load_dotenv
+load_dotenv()
 import os
+
 
 # Create a Vault link
 vault = VaultClient()
@@ -213,7 +216,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
 
 STATICFILES_DIRS = [
-     BASE_DIR.joinpath('static'),
+    BASE_DIR.joinpath('static'),
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 
@@ -238,5 +241,5 @@ EMAIL_HOST = 'smtp.gmail.com'  # Remplacez par l'hôte SMTP de votre fournisseur
 EMAIL_PORT = 587  # Remplacez par le port SMTP de votre fournisseur de messagerie
 EMAIL_USE_TLS = True  # Active le TLS (Transport Layer Security) pour le chiffrement des communications SMTP
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'wilbanablo@gmail.com'  # Remplacez par votre adresse e-mail
-EMAIL_HOST_PASSWORD = 'xguf lgoy hdfo pzzw'  #
+EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))  # Remplacez par votre adresse e-mail
+EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))  #

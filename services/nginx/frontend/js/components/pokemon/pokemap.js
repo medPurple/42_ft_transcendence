@@ -9,6 +9,10 @@ export class pokeMap {
 		this.map = 0;
 		this.ctxMAP = null;
 		this.ctxAllCharacters = null;
+        this.eventcmbt = false;
+        this.eventtalk = false;
+
+
 	}
 
 	divmapCreation() {
@@ -45,17 +49,82 @@ export class pokeMap {
         return 192 + (y - mainy) * 23;
     }
 
+    generateRandomName(){
+        const names = [
+            "Ash",
+            "Misty",
+            "Brock",
+            "Jessie",
+            "James",
+            "Gary",
+            "May",
+            "Dawn"
+        ];
+        const randomIndex = Math.floor(Math.random() * names.length);
+        return names[randomIndex];
+    }
+
+    generateRandomText() {
+        const texts = [
+            "Hello there!",
+            "How are you today?",
+            "Nice weather we're having, isn't it?",
+            "Have you seen any rare Pokémon around?",
+            "I heard there's a hidden treasure nearby.",
+            "Do you want to battle?",
+            "I can teach you a cool move if you're interested.",
+            "I'm looking for a specific Pokémon. Have you seen it?",
+            "Do you know any good training spots?",
+            "I'm on a quest to become the Pokémon Champion!",
+        ];
+        const randomIndex = Math.floor(Math.random() * texts.length);
+        return texts[randomIndex];
+    }
+
+    addPnjtalk(){
+        const chatbox = document.querySelector('.chatbox');
+        const username = this.generateRandomName();
+        const message = this.generateRandomText();
+        chatbox.innerHTML += `<span style="color: black;">${username}</span>: ${message}<br>`;
+        // Heal all pkms
+    }
 
     drawmap(data){
         let player = data.find(player => player.userID == this.userID);
-        if (player.player_status === 1)
-            console.warn("combat");
-        if (player.player_status === 2)
-            console.warn("talk");
-        if (player.player_map != 0)
-            console.warn("map");
+        if (player.player_status === 0){
+            this.eventcmbt = false;
+            this.eventtalk = false;
+        }
+        if (player.player_status === 1){
+            if (this.eventcmbt === false){
+                console.warn("combat");
+                this.eventcmbt = true;}
+        }
+        if (player.player_status === 2){
+            if (this.eventtalk === false){
+                console.warn("talk");
+                this.addPnjtalk();
+                this.eventtalk = true;}
+        }
+
         const mapimage = new Image(520 , 510);
-        mapimage.src = './images/Maps/ext_grid.png';
+        switch (player.player_map){
+            case 0:
+                mapimage.src = './images/Maps/ext.png';
+                break;
+            case 1:
+                mapimage.src = './images/Maps/litte_house1.png';
+                break;
+            case 2:
+                mapimage.src = './images/Maps/litte_house2.png';
+                break;
+            case 3:
+                mapimage.src = './images/Maps/big_house1.png';
+                break;
+            case 4:
+                mapimage.src = './images/Maps/big_house2.png';
+                break;
+        }
         const img = new Image();
         img.src = this.asset_selection(player.orientation, player.player_skin);
         mapimage.onload = () => {
@@ -63,6 +132,8 @@ export class pokeMap {
             let mainy = (player.posY - (19/2)) * 16;
             let pmainx = player.posX;
             let pmainy = player.posY;
+            this.ctxMAP.fillStyle = 'black';
+            this.ctxMAP.fillRect(0, 0, 520, 510);
             this.ctxMAP.drawImage(mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
             data.forEach(player => {
                 if (player.userID != this.userID && player.active && player.player_map == this.map) {
@@ -84,42 +155,38 @@ export class pokeMap {
 
     asset_selection(orientation, skin) {
         switch (skin) {
-            case 1:
-                switch (orientation) {
-                    case "N":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_03.png';
-                    case "S":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_05.png';
-                    case "E":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_09.png';
-                    case "W":
-                        return './images/Persos/Guards-Tileset/Guards-Planche_07.png';
-                }
             case 0:
                 switch (orientation) {
                     case "N":
-                        return "./images/player_n.png";
-                        // return './images/Persos/James-Tileset/James-Planche_00.png';
+                        return './images/Persos/Guards-Tileset/Guard_00.png';
                     case "S":
-                        return "./images/player_s.png";
-                        // return './images/Persos/James-Tileset/James-Planche_03.png';
+                        return './images/Persos/Guards-Tileset/Guard_03.png';
                     case "E":
-                        return "./images/player_e.png";
-                        // return './images/Persos/James-Tileset/James-Planche_09.png';
+                        return './images/Persos/Guards-Tileset/Guard_09.png';
                     case "W":
-                        return "./images/player_w.png";
-                        // return './images/Persos/James-Tileset/James-Planche_06.png';
+                        return './images/Persos/Guards-Tileset/Guard_06.png';
+                }
+            case 2:
+                switch (orientation) {
+                    case "N":
+                        return './images/Persos/James-Tileset/James_00.png';
+                    case "S":
+                        return './images/Persos/James-Tileset/James_03.png';
+                    case "E":
+                        return './images/Persos/James-Tileset/James_09.png';
+                    case "W":
+                        return './images/Persos/James-Tileset/James_06.png';
                 }
             case 1:
                 switch (orientation) {
                     case "N":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_03.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_00.png';
                     case "S":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_05.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_03.png';
                     case "E":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_09.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_09.png';
                     case "W":
-                        return './images/Persos/Jessie-Tileset/Jessie-Planche_07.png';
+                        return './images/Persos/Jessie-Tileset/Jessie_06.png';
                 }
         }
     }

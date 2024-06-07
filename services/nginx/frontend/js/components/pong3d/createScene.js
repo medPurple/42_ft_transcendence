@@ -1,7 +1,9 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import gamer from "./gamerInfo.js"
 import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
-import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateFloor, populateWall } from "./populateMeshes.js"
+import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateSkybox } from "./populateMeshes.js"
 import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
@@ -9,7 +11,6 @@ import { populatePowerUps } from "./populatePowerUps.js";
 async function setupSettings() {
 	try {
 		const data = await gamer.getGamerSettings();
-		// console.log('DATA: ', data);
 		gameCustom.ownPaddle = data.paddle;
 		gameCustom.otherPaddle = 4;
 		gameCustom.ball = data.ball;
@@ -18,10 +19,7 @@ async function setupSettings() {
 		gameCustom.powerup = data.powerups;
 		gameCustom.score_limit = data.score;
 		gameCustom.score_limit = gameState.score_limit;
-		//console.log('GAMECUSTOM filled: ', gameCustom);
-		//console.log('GAMESTATE filled: ', gameState);
 	} catch (error) {
-		console.error('Error: setupSettings', error)
 		alert('You should be logged to play');
 		window.location.href = '/pongService';
 	}
@@ -31,11 +29,8 @@ export async function createScene() {
 
 	await setupSettings();
 
-	// console.log("Scene is created");
 	core.renderer = new THREE.WebGLRenderer();
-
 	core.renderer.setSize(window.innerWidth, window.innerHeight);
-
 	var c = document.getElementById("pong-renderer");
 
 	if (!c) {
@@ -57,10 +52,11 @@ export async function createScene() {
 	
 	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
 	core.camera.position.z = 230;
+	core.camera.position.y = -230;	
 	
-	// const controls = new THREE.OrbitControls(core.camera, c);
-	// controls.minDistance = 100;
-	// controls.maxDistance = 300;
+	const controls = new OrbitControls(core.camera, c);
+	controls.minDistance = 200;
+	controls.maxDistance = 1000;
 	
 	//Scene setup
 	
@@ -87,6 +83,10 @@ export async function createScene() {
 
 	lights.spotLight = populateSpotLight(0xffffff, 0, 0, 700, 0.7);
 
+  //Skybox setup
+
+	let skybox = populateSkybox();
+
   //Plane setup
 
 	decMesh.plane = populatePlane(0, 0);
@@ -94,13 +94,11 @@ export async function createScene() {
   //Paddle Setup
 	if (core.player_id == 1) {
 		playMesh.paddle1 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
-		console.log("Je cree le paddle 1");
 		playMesh.paddle2 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
 	}
 	else {
 		playMesh.paddle2 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
 		playMesh.paddle1 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
-		console.log("Je cree le paddle 1");
 	}
   //Table Setup
 
@@ -108,14 +106,13 @@ export async function createScene() {
 
   //Ground setup
 
-	decMesh.ground = populateFloor();
+	// decMesh.ground = populateFloor();
 
   // Wall setup
 
-	decMesh.wall = populateWall(core.player_id);
-	if (gameState.game_mode == "local")
-		decMesh.wall2 = populateWall(1);
-
+	// decMesh.wall = populateWall(core.player_id);
+	// if (gameState.game_mode == "local")
+	// 	decMesh.wall2 = populateWall(1);	
 
   // Props setup
 
@@ -139,12 +136,15 @@ export async function createScene() {
 	core.scene.add(playMesh.ball);
 	core.scene.add(decMesh.table);
 	core.scene.add(decMesh.plane);
-	core.scene.add(decMesh.wall);
-	if (gameState.game_mode == "local")
-		core.scene.add(decMesh.wall2);
-	core.scene.add(decMesh.ground);
-	core.scene.add(core.camera);
 
+	// core.scene.add(decMesh.wall);
+	// if (gameState.game_mode == "local")
+	// 	core.scene.add(decMesh.wall2);
+	// core.scene.add(decMesh.ground);
+
+	core.scene.add(skybox);
+
+	core.scene.add(core.camera);
 	core.renderer.shadowMapEnabled = true;
 
 }

@@ -58,32 +58,71 @@ export default class RegistrationForm extends HTMLElement {
 
 	}
 
+	validateForm(formData) {
+		// Get the form data
+		const username = formData.get('username');
+		const email = formData.get('email');
+		const password1 = formData.get('password1');
+		const password2 = formData.get('password2');
+
+		// Check if all fields are filled
+		if (!username || !email || !password1 || !password2) {
+			this.showAlert('All fields must be filled');
+			return false;
+		}
+
+		// Check if passwords match
+		if (password1 !== password2) {
+			this.showAlert('Passwords do not match');
+			return false;
+		}
+
+		// Check if password is not similar to username
+		if (password1.includes(username)) {
+			this.showAlert('Password should not be similar to the username');
+			return false;
+		}
+
+		// Check if password has at least 8 characters
+		if (password1.length < 8) {
+			this.showAlert('Password should be at least 8 characters long');
+			return false;
+		}
+
+		return true;
+	}
 	connectedCallback() {
 		const signupForm = this.shadowRoot.getElementById('signup-form'); // Use getElementById to find the form within the component
 		const showAlert = this.showAlert.bind(this);
-		signupForm.addEventListener('submit', function(event) {
+		const validateForm = this.validateForm.bind(this);
+		signupForm.addEventListener('submit', async function(event) {
 			event.preventDefault();
 
+
+
             // Get the form data
-			const formData = new FormData(signupForm);
+			try {
+				const formData = new FormData(signupForm);
+				if (!validateForm(formData)) {
+					return;
+				}
 
             // Send an AJAX request to submit the form
-			fetch('/api/profiles/register/', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'X-CSRFToken': formData.get('csrfmiddlewaretoken') // Get the CSRF token from the form data
-				}
-			})
-			.then(response => response.json())
-			.then(data => {
+				const response = await 	fetch('/api/profiles/register/', {
+					method: 'POST',
+					body: formData,
+					headers: {
+						'X-CSRFToken': formData.get('csrfmiddlewaretoken') // Get the CSRF token from the form data
+					}
+				});
+				const data = await response.json();
 				if (data.success) {
 					Icookies.setCookie('token', data.token, 90);
 					// Redirect to the home page
 					window.location.href = `/home`; // Change the URL to your home page URL
 
 				} else {
-					console.log(data);
+					// console.log(data);
 					if (data.password2){
 						showAlert(data.password2[0]);
 						return;
@@ -99,11 +138,10 @@ export default class RegistrationForm extends HTMLElement {
                     // Display validation errors or any other error message
 					showAlert('Registration failed. Please check the form and try again.');
 				}
-			})
-			.catch(error => {
+
+			} catch(error) {
 				showAlert('Error:', error);
-                // Handle API errors
-			});
+			}
 		});
 	}
 }

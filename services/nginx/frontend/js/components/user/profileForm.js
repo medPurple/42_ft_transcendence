@@ -21,14 +21,26 @@ export default class profileForm extends HTMLElement {
 		try {
 			const data = await Iuser.getAllUserInfo();
 			// Access other properties from data here
+			let statut = this.checkStatut(data.user.is_online);
 			let profilePictureData = data.user.profile_picture_data;
-			this.displayUserProfile(data, profilePictureData);
+			this.displayUserProfile(data, profilePictureData, statut);
 
 		} catch (error) {
 			console.error('Error:', error)
 		}
 	}
-	displayUserProfile(data, profilePictureData){
+
+	checkStatut(is_online) {
+		if(is_online === 0)
+			return {text: "Offline", color: "grey"};
+		else if (is_online === 1)
+			return {text: "Online", color: "green"};
+		else
+			return {text: "Playing", color: "yellow"};
+	}
+
+
+	displayUserProfile(data, profilePictureData, statut){
 		let profileContainer = this.shadowRoot.querySelector('#profile-container');
 		profileContainer.innerHTML = `
 
@@ -42,31 +54,22 @@ export default class profileForm extends HTMLElement {
 			<div class="card text-center" style="width: 21rem;">
 				<img src="data:image/jpeg;base64,${profilePictureData}" class="card-img-top profile-pic" alt="Profile Picture">
 				<div class="card-body">
-					<h5 class="card-title">${data.user.username}</h5>
+					<h5 class="card-title"><strong>${data.user.username}</strong></h5>
 					<h6 class="card-text">... thinks this is an outstanding project</h6>
 				</div>
 				<ul id="profile-content" class="list-group list-group-flush">
-					<li class="list-group-item">${data.user.first_name}</li>
-					<li class="list-group-item">${data.user.last_name}</li>
-					<li class="list-group-item">${data.user.email}</li>
+					<li class="list-group-item"><strong>First name</strong><br>${data.user.first_name}</li>
+					<li class="list-group-item"><strong>Last Name</strong><br>${data.user.last_name}</li>
+					<li class="list-group-item"><strong>Email</strong><br>${data.user.email}</li>
 					<li class="list-group-item">42 School</li>
 				</ul>
 				<div class="card-body">
-					<li class="list-group-item">${data.user.is_online}</li>
-
-					</ul>
-					<div class="card-body">
+				<a href="/statistics" class="card-link" data-link>My stats</a><br>
 					<a href="/edit-profile" class="card-link" data-link >Edit profile</a><br>
-					<a href="/update-password" class="card-link" data-link>Change password</a><br>
-					<a href="/statistics" class="card-link" data-link>My stats</a>
-				</div>
-				<div class="card-body">
-					<a href="/delete-account" class="btn btn-light">Delete Profile</a>
+					<a href="/update-password" class="card-link" data-link>Change password</a>
 				</div>
 				<div class="card-footer text-body-secondary">
-					<option value="0" ${data.user.is_online === 0 ? 'selected' : ''}>Offline</option>
-					<option value="1" ${data.user.is_online === 1 ? 'selected' : ''}>Online</option>
-					<option value="2" ${data.user.is_online === 2 ? 'selected' : ''}>Playing</option>
+				<h6> ${statut.text} <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: ${statut.color}; margin-left: 5px;"></span></h6>
 				</div>
 			</div>
 		</div>

@@ -153,7 +153,9 @@ clean : down
 	@ docker system prune -af
 	@ docker volume prune -f
 
-	@ docker volume rm secret_volume
+	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL_NAME); \
+	else echo "	vault Volume already deleted"; fi;
+	
 	
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 
