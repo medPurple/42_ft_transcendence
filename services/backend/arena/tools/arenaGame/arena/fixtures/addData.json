@@ -1,0 +1,499 @@
+[
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Flotte",
+            "attElemFlotte": 50,
+            "attElemFeuille": 50,
+            "attElemChaud": 200,
+            "attElemBrise": 100,
+            "attElemSable": 200,
+            "attElemBagarre": 100,
+            "attElemCaillou": 200,
+            "attElemBanal": 100,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Feuille",
+            "attElemFlotte": 200,
+            "attElemFeuille": 50,
+            "attElemChaud": 50,
+            "attElemBrise": 100,
+            "attElemSable": 100,
+            "attElemBagarre": 100,
+            "attElemCaillou": 100,
+            "attElemBanal": 100,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Chaud",
+            "attElemFlotte": 50,
+            "attElemFeuille": 200,
+            "attElemChaud": 50,
+            "attElemBrise": 200,
+            "attElemSable": 50,
+            "attElemBagarre": 100,
+            "attElemCaillou": 100,
+            "attElemBanal": 100,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Brise",
+            "attElemFlotte": 100,
+            "attElemFeuille": 100,
+            "attElemChaud": 50,
+            "attElemBrise": 50,
+            "attElemSable": 200,
+            "attElemBagarre": 100,
+            "attElemCaillou": 50,
+            "attElemBanal": 100,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Sable",
+            "attElemFlotte": 50,
+            "attElemFeuille": 100,
+            "attElemChaud": 200,
+            "attElemBrise": 50,
+            "attElemSable": 50,
+            "attElemBagarre": 100,
+            "attElemCaillou": 100,
+            "attElemBanal": 100,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Bagarre",
+            "attElemFlotte": 100,
+            "attElemFeuille": 100,
+            "attElemChaud": 100,
+            "attElemBrise": 100,
+            "attElemSable": 100,
+            "attElemBagarre": 50,
+            "attElemCaillou": 100,
+            "attElemBanal": 200,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Caillou",
+            "attElemFlotte": 50,
+            "attElemFeuille": 100,
+            "attElemChaud": 100,
+            "attElemBrise": 200,
+            "attElemSable": 100,
+            "attElemBagarre": 100,
+            "attElemCaillou": 50,
+            "attElemBanal": 100,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "fields": {
+            "name": "Banal",
+            "attElemFlotte": 100,
+            "attElemFeuille": 100,
+            "attElemChaud": 100,
+            "attElemBrise": 100,
+            "attElemSable": 100,
+            "attElemBagarre": 100,
+            "attElemCaillou": 100,
+            "attElemBanal": 50,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "pk": 1,
+        "fields": {
+            "name": "Tumeur",
+            "attElemFlotte": 100,
+            "attElemFeuille": 200,
+            "attElemChaud": 100,
+            "attElemBrise": 100,
+            "attElemSable": 100,
+            "attElemBagarre": 100,
+            "attElemCaillou": 100,
+            "attElemBanal": 100,
+            "attElemTumeur": 50,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "pk": 2,
+        "fields": {
+            "name": "Volt",
+            "attElemFlotte": 200,
+            "attElemFeuille": 100,
+            "attElemChaud": 100,
+            "attElemBrise": 100,
+            "attElemSable": 100,
+            "attElemBagarre": 100,
+            "attElemCaillou": 100,
+            "attElemBanal": 100,
+            "attElemTumeur": 100,
+            "attElemVolt": 100,
+            "attElemPsy": 100,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+    {
+        "model": "arena.elem",
+        "pk": 3,
+        "fields": {
+            "name": "Psy",
+            "attElemFlotte": 100,
+            "attElemFeuille": 100,
+            "attElemChaud": 100,
+            "attElemBrise": 100,
+            "attElemSable": 100,
+            "attElemBagarre": 200,
+            "attElemCaillou": 100,
+            "attElemBanal": 100,
+            "attElemTumeur": 200,
+            "attElemVolt": 100,
+            "attElemPsy": 50,
+            "attElemBou": 100,
+            "attElemSombre": 100,
+            "attElemFourmi": 100,
+            "attElemFroid": 100,
+            "attElemDragon": 100
+        }
+    },
+
+
+    {
+        "model": "arena.attack",
+        "fields": {
+            "name": "Bulle",
+            "elem": 1,
+            "power": 40,
+            "variety": 1
+        }
+    },
+    {
+        "model": "arena.attack",
+        "fields": {
+            "name": "Feu",
+            "elem": 2,
+            "power": 40,
+            "variety": 1
+        }
+    },
+    {
+        "model": "arena.attack",
+        "fields": {
+            "name": "Tige",
+            "elem": 3,
+            "power": 40,
+            "variety": 0
+        }
+    },
+    {
+        "model": "arena.attack",
+        "fields": {
+            "name": "Souffle",
+            "elem": "Brise",
+            "power": 40,
+            "variety": 1
+        }
+    },
+    {
+        "model": "arena.attack",
+        "fields": {
+            "name": "Tornado",
+            "elem": "Brise",
+            "power": 80,
+            "variety": 1
+        }
+    },
+    {
+        "model": "arena.attack",
+        "fields": {
+            "name": "Griffe",
+            "elem": "Banal",
+            "power": 35,
+            "variety": 0
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Carapuce",
+            "elem": "Flotte",
+            "hp": 44,
+            "at": 48,
+            "sa": 50,
+            "de": 65,
+            "sd": 64,
+            "sp": 43
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Carabaffe",
+            "elem": "Flotte", 
+            "hp": 59,
+            "at": 63,
+            "sa": 65,
+            "de": 80,
+            "sd": 80,
+            "sp": 58
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Tortank",
+            "elem": "Flotte",
+            "hp": 79,
+            "at": 83,
+            "sa": 85,
+            "de": 100,
+            "sd": 105,
+            "sp": 78
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Salameche",
+            "elem": "Chaud", 
+            "hp": 39,
+            "at": 52,
+            "sa": 60,
+            "de": 43,
+            "sd": 50,
+            "sp": 65
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Reptincel",
+            "elem": "Chaud",
+            "hp": 58,
+            "at": 64,
+            "sa": 80,
+            "de": 58,
+            "sd": 65,
+            "sp": 80
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Dracaufeu",
+            "elem": 1,  
+            "hp": 78,
+            "at": 84,
+            "sa": 109,
+            "de": 78,
+            "sd": 85,
+            "sp": 100
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Bulbizarre",
+            "elem": 2, 
+            "hp": 45,
+            "at": 49,
+            "sa": 65,
+            "de": 49,
+            "sd": 65,
+            "sp": 45
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Herbizarre",
+            "elem": 2,
+            "hp": 60,
+            "at": 62,
+            "sa": 80,
+            "de": 63,
+            "sd": 80,
+            "sp": 60
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Florizarre",
+            "elem": 3,
+            "hp": 80,
+            "at": 82,
+            "sa": 100,
+            "de": 83,
+            "sd": 100,
+            "sp": 80
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Roucoul",
+            "elem": 3,
+            "hp": 40,
+            "at": 45,
+            "sa": 35,
+            "de": 40,
+            "sd": 35,
+            "sp": 56
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Roucoups",
+            "elem": "Brise",
+            "hp": 63,
+            "at": 60,
+            "sa": 50,
+            "de": 55,
+            "sd": 50,
+            "sp": 71
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Roucarnage",
+            "elem": "Brise",
+            "hp": 83,
+            "at": 80,
+            "sa": 70,
+            "de": 75,
+            "sd": 70,
+            "sp": 101
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Rattata",
+            "elem": "Banal",
+            "hp": 30,
+            "at": 56,
+            "sa": 25,
+            "de": 35,
+            "sd": 35,
+            "sp": 72
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "Rattatac",
+            "elem": "Banal",
+            "hp": 55,
+            "at": 81,
+            "sa": 50,
+            "de": 60,
+            "sd": 70,
+            "sp": 97
+        }
+    },
+    {
+        "model": "arena.species",
+        "fields": {
+            "name": "NidoranM",
+            "elem": "Tumeur",
+            "hp": 46,
+            "at": 57,
+            "sa": 40,
+            "de": 40,
+            "sd": 40,
+            "sp": 50
+        }
+    }
+]

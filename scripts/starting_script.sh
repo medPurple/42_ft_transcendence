@@ -20,6 +20,7 @@ build_image() {
 # Distribue les clés
 key_distrib() {
 	docker exec -i vault sh -c "cat /vault/file/chat_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/chat/conf/.key
+	docker exec -i vault sh -c "cat /vault/file/arena_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/arena/conf/.key
 	docker exec -i vault sh -c "cat /vault/file/nginx_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/nginx/conf/.key
 	docker exec -i vault sh -c "cat /vault/file/pokemap_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/pokemap/conf/.key
 	docker exec -i vault sh -c "cat /vault/file/JWToken_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/JWToken/conf/.key
@@ -48,6 +49,7 @@ key_remove() {
 		"services/backend/matchmaking/conf/.key"
         "services/backend/user/conf/.key"
         "services/backend/game3d/conf/.key"
+		"services/backend/arena/conf/.key"
     )
 
     for file in "${files_to_delete[@]}"; do

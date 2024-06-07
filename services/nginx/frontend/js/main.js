@@ -6,9 +6,9 @@
 	import contact from "./views/contact.js";
 	import pongService from "./views/pong3d/pongService.js";
 	import game from "./views/game.js";
+	import pokegame from "./views/pokemon/pokegame.js";	
 	import pongSettings from "./views/pong3d/pongSettings.js";
 	import metaService from "./views/pokemon/metaService.js";
-	// import pokemap from "./views/pokemon/pokemap.js";
 	import code2FA from "./views/user/code2FA.js";
 	import chatService from "./views/chat/chatService.js";
 	import register from "./views/user/register.js";
@@ -136,6 +136,10 @@
 		'/pkmSettings': {
 			title: "Pokemon Settings",
 			render: pkmSettings
+		},
+		'/pokecombat': {
+			title: "Pokemon Combat",
+			render: pokegame
 		},
 		'/chat': {
 			title: "Chat",

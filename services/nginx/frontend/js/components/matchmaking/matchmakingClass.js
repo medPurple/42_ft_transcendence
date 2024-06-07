@@ -159,7 +159,7 @@ class MatchmakingButtons {
 		}
 	}
 
-	async createParty(data) {
+	async createParty_pong(data) {
 		console.log("Creating party with data:", data);
 		const users = await Iuser.getAllUsers();
 		let username1 = users.users.find(user => user.user_id === parseInt(data.player1)).username;
@@ -210,9 +210,13 @@ class MatchmakingButtons {
 	async checkstatus(data) {
 		if (this.status === 'found') {
 			this.removeWaitingPage();
-			await this.createParty(data);
 			await this.changeStatus();
-			window.location.href = "/gameService"
+			if (this.game === 'pong_multiplayer')
+				await this.createParty_pong(data);
+				window.location.href = "/gameService"
+			if (this.game === 'pong_multiplayer')
+				await this.createParty_pong(data);
+				window.location.href = "/pokecombat"
 		}
 	}
 
