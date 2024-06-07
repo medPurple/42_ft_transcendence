@@ -119,14 +119,16 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
                     return 1 
         return 0
 
+
     def get_filtered_matches(self):
         return list(GameMatch.objects.filter(Q(status=0) & (Q(player1=self.user_id) | Q(player2=self.user_id))))
         
     async def find_player_id(self):
-        match_objects = await sync_to_async(self.get_filtered_matches)()
-        player1Id = await sync_to_async(lambda: match_objects[0].player1.userID)()
-        player2Id = await sync_to_async(lambda: match_objects[0].player2.userID)()
+        match_models = await sync_to_async(self.get_filtered_matches)()
+        player1Id = await sync_to_async(lambda: match_models[0].player1.userID)()
+        player2Id = await sync_to_async(lambda: match_models[0].player2.userID)()
         if (self.user_id == str(player1Id)):
+            await createPartyObject(self, match_objects[0])
             return 1
         elif (self.user_id == str(player2Id)):
             return 2
