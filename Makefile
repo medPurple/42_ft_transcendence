@@ -1,6 +1,5 @@
 SHELL := /bin/bash
 
-
 #######	VARIABLES #######
 
 NAME = ft_transcendence
@@ -15,8 +14,8 @@ TK_NAME = jwtoken
 US_NAME = user
 VA_NAME = vault
 MA_NAME = matchmaking
-VA_VOL_NAME = secret_volume
 PM_NAME = pokemap
+VA_VOL_NAME = secret_volume
 
 NG_IMG = $(shell docker images | grep nginx | wc -l)
 G3_IMG = $(shell docker images | grep game3d | wc -l)
@@ -28,13 +27,13 @@ VA_IMG = $(shell docker images | grep vault | wc -l)
 VA_PS = $(shell docker ps | grep vault | wc -l)
 PM_IMG = $(shell docker images | grep pokemap | wc -l)
 
-
 US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
 MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
 CH_VOL = $(shell docker volume ls | grep chat | wc -l)
 PM_VOL = $(shell docker volume ls | grep pokemap | wc -l)
+
 #######	COLORS #######
 
 WHITE = \033[97;4m
@@ -147,14 +146,15 @@ clean : down
 	else echo "	MATCHMAKING Volume already deleted"; fi;
 	@ if [ $(CH_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(CH_NAME); \
 	else echo "	CHAT Volume already deleted"; fi;
-	@ if [ $(PM_VOL) = "1" ]; then docker volume rm services_$(PM_NAME); \
+	@ if [ $(PM_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(PM_NAME); \
 	else echo "	POKEMAP Volume already deleted"; fi;
 
-# Weird volumes created somewhere using secret volume?
 	@ docker system prune -af
 	@ docker volume prune -f
-# after prune, the secret volume is still there!
 
+	@ if [ $(VA_VOL) = "1" ]; then docker volume rm $(VA_VOL_NAME); \
+	else echo "	vault Volume already deleted"; fi;
+	
 	@ echo -e "$(GREEN)★ Images cleaned - Volumes cleaned ★$(CEND)\n"
 
 fclean : clean
@@ -168,4 +168,4 @@ piv:
 	@ docker images
 	@ docker volume ls
 
-.PHONY: all volumes up down clean fclean re re_ng re_g3 re_ch re_tk re_us
+.PHONY: all volumes up down clean fclean re piv run_script microservices re_ng re_g3 re_ch re_tk re_us re_ma re_pm

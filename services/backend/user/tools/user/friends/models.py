@@ -10,3 +10,12 @@ class FriendRequest(models.Model):
 	to_user = models.ForeignKey(
 		CustomUser, related_name='to_user', on_delete=models.CASCADE)
 # Create your models here.
+
+class BlockRequest(models.Model):
+	# it will have a foreignkey relation with a user(first user) who is sending this request,
+	blocked = models.ForeignKey(
+		CustomUser, related_name='blocked', on_delete=models.CASCADE)
+	# it will also have a foreignkey relation with another user(second user) to whom the first user is sending the request.
+	is_blocked = models.ForeignKey(
+		CustomUser, related_name='is_blocked', on_delete=models.CASCADE)
+# Create your models here.

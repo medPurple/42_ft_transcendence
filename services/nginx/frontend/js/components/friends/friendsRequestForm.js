@@ -64,110 +64,127 @@ export class Friends {
 
 		this.variablesArray = [];
 		this.lastusernumber = 0;
+		this.should_close = 0;
 	}
 
 
 	connect() {
 		let token = Icookies.getCookie('token');
 		const socket = new WebSocket(`wss://${window.location.host}/ws/friends/?token=${token}`);
-		socket.onopen = function(e) {
-			console.log("[open] Connection established");
-		};
+		socket.onopen = function(e) {};
 
 		socket.onmessage = async (event) => {
-			console.log(`[message] Data received from server: ${event.data}`);
 			let data = JSON.parse(event.data);
-			// console.error(data
-			// );
 			if (data.error) {
 				console.error(data.error);
 			} else if (data.success) {
-				console.log(data);
 				if (socket.onmessagecallback) {
 					socket.onmessagecallback(data);
 					socket.onmessagecallback = null;
 				}
 			}
-			if (this.socket.readyState === WebSocket.OPEN)
-				await this.updateView();
+			await this.updateView();
 		};
 
 		socket.onclose = function(event) {
-			if (event.wasClean) {
-				console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-			} else {
-				console.log('[close] Connection died');
-			}
+			this.should_close = 1;
+
+
 		};
 
 		socket.onerror = function(error) {
-			console.log(`[error] ${error.message}`);
-		};
 
+		};
 		return socket;
 	}
 
-	async sendRequest(friend_username) {
-		let message = JSON.stringify({
-			command: "send_request",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+	async sendRequest(friend_username) {
+		try {
+			let message = JSON.stringify({
+				command: "send_request",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
+
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async acceptRequest(friend_username) {
-		let message = JSON.stringify({
-			command: "accept_request",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "accept_request",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async deleteRequest(friend_username) {
-		let message = JSON.stringify({
-			command: "delete_request",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "delete_request",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async getRequests() {
-		let message = JSON.stringify({
-			command: "get_requests"
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "get_requests"
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
 	async deleteFriendSoc(friend_username) {
-		let message = JSON.stringify({
-			command: "delete_friend",
-			friend_username: friend_username
-		});
-		this.socket.send(message);
+		try {
+			let message = JSON.stringify({
+				command: "delete_friend",
+				friend_username: friend_username
+			});
+			this.socket.send(message);
 
-		return new Promise((resolve, reject) => {
-			this.socket.onmessagecallback = resolve;
-		});
+			return new Promise((resolve, reject) => {
+				this.socket.onmessagecallback = resolve;
+			});
+		} catch (error) {
+			console.error('An error occurred:', error);
+		}
 	}
 
+
 	async updateView() {
+		if (this.should_close === 1)
+			return;
 		const dataUsers = await Iuser.getAllUsers();
+		if (!dataUsers)
+			return;
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
@@ -178,53 +195,53 @@ export class Friends {
 		} else if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(async (user) => {
 				if (currentUser != user.username) {
-					const bob = this.variablesArray.find(u => u.name === user.username);
+					const otherUser = this.variablesArray.find(u => u.name === user.username);
 					const cardElement = document.querySelector('#user_' + user.username);
+					if (cardElement) {
+						const hasFriendRequest = requestFriend.received_requests.some(request => {
+							return request.from_user === user.user_id || request.to_user === user.user_id;
+						});
 
-					const hasFriendRequest = requestFriend.received_requests.some(request => {
-						return request.from_user === user.user_id || request.to_user === user.user_id;
-					});
+						const hasSendRequest = requestFriend.sent_requests.some(request => {
+							return request.from_user === user.user_id || request.to_user === user.user_id;
+						});
 
-					const hasSendRequest = requestFriend.sent_requests.some(request => {
-						return request.from_user === user.user_id || request.to_user === user.user_id;
-					});
-
-					const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
-
-					if (isFriends != bob.isFriends) {
-						if (isFriends) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							this.manageFriend(cardBody.querySelector('.card-footer'), user.username);
-							cardElement.appendChild(cardBody);
-						}
-						bob.isFriends = isFriends;
-						bob.addFriend = false;
-					} else if (hasFriendRequest != bob.hasFriendRequest) {
-						if (hasFriendRequest) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							this.manageFriendRequest(cardBody.querySelector('.card-footer'), user.username);
-							cardElement.appendChild(cardBody);
-						}
-						bob.hasFriendRequest = hasFriendRequest;
-						bob.addFriend = false;
-					} else if (hasSendRequest != bob.hasSendRequest) {
-						if (hasSendRequest) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							cardBody.querySelector('.card-footer').appendChild(this.friendsButton.requestSentButton());
-							cardElement.appendChild(cardBody);
-						}
-						bob.hasSendRequest = hasSendRequest;
-						bob.addFriend = false;
-					} else {
-						if (!bob.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
-							cardElement.innerHTML = ''; // Clear card content
-							const cardBody = this.createCardBody(user, isFriends);
-							this.sendFriendRequest(cardBody.querySelector('.card-footer'), user.username);
-							cardElement.appendChild(cardBody);
-							bob.addFriend = true;
+						const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
+						if (isFriends != otherUser.isFriends) {
+							if (isFriends) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								this.manageFriend(cardBody.querySelector('.card-footer'), user.username);
+								cardElement.appendChild(cardBody);
+							}
+							otherUser.isFriends = isFriends;
+							otherUser.addFriend = false;
+						} else if (hasFriendRequest != otherUser.hasFriendRequest) {
+							if (hasFriendRequest) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								this.manageFriendRequest(cardBody.querySelector('.card-footer'), user.username);
+								cardElement.appendChild(cardBody);
+							}
+							otherUser.hasFriendRequest = hasFriendRequest;
+							otherUser.addFriend = false;
+						} else if (hasSendRequest != otherUser.hasSendRequest) {
+							if (hasSendRequest) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								cardBody.querySelector('.card-footer').appendChild(this.friendsButton.requestSentButton());
+								cardElement.appendChild(cardBody);
+							}
+							otherUser.hasSendRequest = hasSendRequest;
+							otherUser.addFriend = false;
+						} else {
+							if (!otherUser.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
+								cardElement.innerHTML = ''; // Clear card content
+								const cardBody = this.createCardBody(user, isFriends);
+								this.sendFriendRequest(cardBody.querySelector('.card-footer'), user.username);
+								cardElement.appendChild(cardBody);
+								otherUser.addFriend = true;
+							}
 						}
 					}
 				}
@@ -240,7 +257,6 @@ export class Friends {
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
-		// console.error(dataUsers);
 
 		this.ulElement.innerHTML = ''; // Clear the list before populating it
 
@@ -273,7 +289,7 @@ export class Friends {
 					this.ulElement.appendChild(cardElement);
 
 					const column = document.createElement('div');
-					column.classList.add('col-md-4'); // Définir la taille de la colonne Bootstrap
+					column.classList.add('col-md-4');
 					column.appendChild(cardElement);
 
 					this.ulElement.appendChild(column);
@@ -285,16 +301,26 @@ export class Friends {
 						isFriends: isFriends,
 						addFriend: true
 					});
-
-					console.log(this.variablesArray);
 				}
 			});
+			this.usersList.appendChild(this.ulElement);
 		} else {
-			const liElement = document.createElement('li');
-			liElement.textContent = 'There are no other users. You are alone.';
-			this.ulElement.appendChild(liElement);
+			const Nonediv = document.createElement('div');
+			Nonediv.classList.add('d-flex', 'flex-column', 'Nonediv');
+			Nonediv.style.width = '100%'; // Set the width to 100%
+			Nonediv.style.height = '100%'; // Set the height to 100%
+			Nonediv.style.display = 'flex'; // Set display to flex
+			Nonediv.style.justifyContent = 'center'; // Center along the main axis
+			Nonediv.style.alignItems = 'center'; // Center along the cross axis
+		
+			const img = new Image();
+			img.classList.add('w-50', 'h-50'); // Set width and height to 100%
+			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmNpc25kc3d3dncxMHVsaDYyaDR4MzJrZzN6cDR3eGg4eGl2djU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GnNi4XFTOIkUe9giJl/giphy.gif";
+		
+			Nonediv.appendChild(img);
+			return Nonediv;
+			this.usersList.appendChild(Nonediv);
 		}
-		this.usersList.appendChild(this.ulElement);
 		document.body.appendChild(this.usersList);
 		return this.usersList;
 	}
@@ -345,12 +371,10 @@ export class Friends {
 		buttonSendRequest.onclick = async () => {
 			try {
 				const requestIsValid = await this.sendRequest(username);
-				console.log(requestIsValid);
 				if (requestIsValid.success === true) {
 					buttonSendRequest.textContent = 'Request Sent';
 					buttonSendRequest.disabled = true;
 				}
-				console.log('Send request to: ' + username);
 			} catch (error) {
 				console.error('Error:', error);
 			}
@@ -364,12 +388,10 @@ export class Friends {
 		buttonDeleteFriend.onclick = async () => {
 			try {
 				const deleteFriend = await this.deleteFriendSoc(username);
-				console.log(deleteFriend);
 				if (deleteFriend.success === true) {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.sendFriendRequest(cardFooter, username);
 				}
-				console.log('Delete friend: ' + username);
 			} catch (error) {
 				console.error('Error:', error);
 			}
@@ -381,11 +403,8 @@ export class Friends {
 	seeFriend(username){
 		const linkToFriendsProfile = document.createElement('a');
 		linkToFriendsProfile.textContent = 'See profile';
-		linkToFriendsProfile.href = `/friend-profile/${username}`;
+		linkToFriendsProfile.href = `/friends/${username}`;
 		linkToFriendsProfile.setAttribute('data-link', '');
-		// linkToFriendsProfile.addEventListener('click', () => {
-		// 	this.disconnect();
-		// });
 		return linkToFriendsProfile;
 	}
 
@@ -419,7 +438,7 @@ export class Friends {
 		messageLink.textContent = this.getRandomSquidGamePhrase();
 		messageLink.href = '';
 		messageLink.className = 'card-link';
-		messageLink.setAttribute('data-link', '');
+		messageLink.setAttribute('nothing', '');
 		messageLink.addEventListener('click', (event) => {
 			event.preventDefault();
 		});
@@ -432,7 +451,6 @@ export class Friends {
 		buttonAcceptRequest.onclick = async () => {
 			try {
 				const acceptRequest = await this.acceptRequest(username);
-				console.log(acceptRequest);
 				if (acceptRequest.success === true) {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.manageFriend(cardFooter, username);
@@ -446,7 +464,6 @@ export class Friends {
 		buttonRejectRequest.onclick = async () => {
 			try {
 				const deleteRequest = await this.deleteRequest(username);
-				console.log(deleteRequest);
 				if (deleteRequest.success === true) {
 					cardFooter.innerHTML = ''; // Clear footer content
 					this.sendFriendRequest(cardFooter, username);

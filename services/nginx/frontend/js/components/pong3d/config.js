@@ -29,12 +29,12 @@ export const gameCustom = {
 	map: 0,
 	table: 1,
 	powerup: 0,
-	score_limit: 7
+	score_limit: 1
 }
 
 
 export var core = {
-	scene: 0,
+	scene: 3,
 	renderer: 0,
 	camera: 0,
 	gameSocket: 0,
@@ -88,9 +88,9 @@ export var pUpState = {
 }
 
 export const constants = {
-	WIDTH: 1280, 
-	HEIGHT: 600,
-	ASPECT: 1280 / 600,
+	// WIDTH: 1280, 
+	// HEIGHT: 600,
+	// ASPECT: 2 / 1,
 	VIEW_ANGLE: 75,
 	NEAR: 0.1,
 	FAR: 10000,

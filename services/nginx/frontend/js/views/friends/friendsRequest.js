@@ -1,14 +1,14 @@
-import {Friends} from "../../components/friends/friendsRequestForm.js";
+import { Friends } from "../../components/friends/friendsRequestForm.js";
 import Icookies from "../../components/cookie/cookie.js"
 
 export default async () => {
-	const logdiv = document.createElement('div');
 	if (Icookies.getCookie('token')) {
+		const logdiv = document.createElement('div');
 		logdiv.appendChild(await new Friends().viewUsers());
+		document.body.appendChild(logdiv);
 	} else {
-		logdiv.classList.add('not-logged');
-		logdiv.innerText = "You need to be logged in to see your friends"
+		alert("You need to be logged in to see your friends");
+        window.location.href = '/home';
 	}
-	document.body.appendChild(logdiv);
-	return logdiv;
+	return logdiv; /// ATTENTION CONSOLE ERROR in browser: Reference error: logdiv is not defined
 }

@@ -11,7 +11,7 @@ export default async function pong_remoteplay() {
         await setup("remote");
     } else {
         generaldiv.classList.add('not-logged');
-        generaldiv.innerText = 'You need to be logged in to play';
+        alert("You need to be logged in to play in remote");
     }
     generaldiv.appendChild(gamediv);
     generaldiv.appendChild(scorediv);

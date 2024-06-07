@@ -23,7 +23,7 @@ class GameSettingsAPI(APIView):
 		game_settings, created = GameSettings.objects.get_or_create(
 			user=user,
 			defaults={
-				"scene": 0,
+				"scene": 3,
 				"ball": 1,
 				"paddle": 3,
 				"table": 1,
@@ -136,11 +136,44 @@ class GameUserAPI(APIView):
 class GameMatchAPI(APIView):
 	def post(self, request):
 		# logger.info(f'Match ID: {match_id}')
-		match_serializer = GameMatchSerializer(data=request.data)
-		if match_serializer.is_valid():
-			match_serializer.save()
+		player1 = request.data.get('player1')
+		player2 = request.data.get('player2')
+		
+		try:
+			user1, _ = GameUser.objects.get_or_create(userID=player1.get("id"), userName=player1.get("username"))
+			user2, _ = GameUser.objects.get_or_create(userID=player2.get("id"), userName=player2.get("username"))
+		except GameUser.DoesNotExist:
+			return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+		match1, match1_created = GameMatch.objects.get_or_create(
+			player1=user1,
+			player2=user2,
+			defaults={
+				"player1_score": 0,
+				"player2_score": 0,
+				"status": 0,
+			}
+		)
+		match2, match2_created = GameMatch.objects.get_or_create(
+			player1=user2,
+			player2=user1,
+			defaults={
+				"player1_score": 0,
+				"player2_score": 0,
+				"status": 0,
+			}
+		)
+		if (match1_created and match2_created):
+			match2.delete()
+			match_serializer = GameMatchSerializer(match1)
 			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
-		return Response(match_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		elif (match1_created and not match2_created):
+			match1.delete()
+			match_serializer = GameMatchSerializer(match2)
+			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		elif (not match1_created and match2_created):
+			match2.delete()
+			match_serializer = GameMatchSerializer(match1)
+			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
 
 	def get(self, request, match_id=None):
 		# logger.info(f'Match ID: {match_id}')

@@ -1,5 +1,5 @@
 export default () => `
-
+	<div id="app-general-container">
 		<p>This project marks the culmination of the 42 School main curriculum.</p>
 
 		<p>Our goal was to create an engaging online platform for the Classic Pong game, 
@@ -25,5 +25,5 @@ export default () => `
 
 		<p>To further enhance the user experience, we introduced a second game: the Metaverse, a 2D Pokémon-like game 
 			with multiplayer functionality and all the features of the main project game.</p>
-
+	</div>
 	`;

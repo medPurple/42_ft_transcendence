@@ -12,19 +12,21 @@ export default class LoginForm extends HTMLElement{
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
-		<div id="alert-container"></div>
-
-		<form id="login-form" method="post" action="" class="container">
-		<div class="mb-4">
-			<input type="text" name="username" placeholder="Username">
+		<div id="app-general-container">
+			<div id="alert-container"></div>
+				<form id="login-form" method="post" action="" class="container" style="width: 21rem; padding: 18px;">
+					<div class="mb-4">
+						<input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" required>
+					</div>
+					<div class="mb-4">
+						<input type="password" class="form-control" name="password" placeholder="Password" autocomplete="password" required>
+						<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+					</div>
+					<div class="mb-4">
+						<button type="submit" class="btn btn-dark">Log in</button>
+					</div>
+				</form>
 		</div>
-		<div class="mb-4">
-			<input type="password" class="form-control" name="password" placeholder="Password">
-		</div>
-		<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-		<button type="submit" class="btn btn-dark">Log in</button>
-		</form>
-
 		`;
 	}
 
@@ -59,7 +61,7 @@ export default class LoginForm extends HTMLElement{
 				if (data.two_fa) {
 					window.location.href = '/code2FA';
 				}
-				if (data.success) {
+				else if (data.success) {
 					Icookies.setCookie('token', data.token, 90);
 					window.location.href = '/home'; // Change the URL to your home page URL
 
@@ -69,7 +71,7 @@ export default class LoginForm extends HTMLElement{
 				}
 			})
 			.catch(error => {
-				console.error('Error:', error);
+				showAlert(error);
                 // Handle API errors
 			});
 		});

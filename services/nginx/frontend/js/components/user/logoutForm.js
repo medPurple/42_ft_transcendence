@@ -7,7 +7,7 @@ export default class LogoutForm extends HTMLElement {
         link.setAttribute('id', 'logout-link');
         link.setAttribute('class', 'dropdown-item');
         link.textContent = 'log out';
-        link.href = '#'; 
+        link.href = '#';
         this.appendChild(link);
     }
 
@@ -32,7 +32,6 @@ export default class LogoutForm extends HTMLElement {
             .then(response =>response.json())
             .then(data => {
 				if (data.success) {
-                	console.log(data);
                 	Icookies.clearAllCookies();
                 	window.location.href = '/home'; // Change the URL to your home page URL
 				} else {
@@ -41,7 +40,7 @@ export default class LogoutForm extends HTMLElement {
 				}
 			})
             .catch(error => {
-                console.error('Error:', error);
+                // console.error('Error:', error);
                 // Handle API errors
             });
         });
