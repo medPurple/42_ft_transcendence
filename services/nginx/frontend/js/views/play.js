@@ -26,16 +26,22 @@ export function pong_localplay() {
 }
 
 export async function pong_remoteplay() {
+  const generaldiv = document.createElement('div');
   const gamediv = document.createElement('div');
+  gamediv.id = "pong-renderer"
+  const scorediv = document.createElement('div');
+  scorediv.id = "pong-score"
   if (Icookies.getCookie('token') != null) {
-    gamediv.appendChild(await pongRemoteMatchmaking.mainMatchmakingDiv());
+    setup("remote");
   } else {
     gamediv.classList.add('not-logged');
     alert("You need to be logged in to play in remote");
     window.location.href = '/pongService';
   }
-  document.body.appendChild(gamediv);
-  return gamediv;
+  generaldiv.appendChild(gamediv);
+  generaldiv.appendChild(scorediv);
+  document.body.appendChild(generaldiv);
+  return generaldiv;
 }
 
 export async function pong_tournamentplay() {

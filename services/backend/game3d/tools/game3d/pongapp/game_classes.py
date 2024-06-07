@@ -80,6 +80,7 @@ class   gameStateC:
         self.paddle2 = paddleC(2)
         self.ball = ballC()
         self.powerUpTimer = 0
+        self.pauseTimer = 0
         self.powerUpState = iv.PU_NO
         self.powerUpPositionX = iv.DEFAULT_PU_LOC 
         self.powerUpPositionY = iv.DEFAULT_PU_LOC 
