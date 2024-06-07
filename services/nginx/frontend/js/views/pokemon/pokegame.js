@@ -6,6 +6,7 @@ export default async function pkm_remoteplay() {
     if (Icookies.getCookie('token') != null) {
         const gamediv = document.createElement('div');
         gamediv.innerText = "Pokemon Game";
+        gave
         generaldiv.appendChild(gamediv);
         
     } else {
