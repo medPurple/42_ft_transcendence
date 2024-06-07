@@ -89,7 +89,7 @@ class GameSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
-# est-ce que ces serializers sont ok ?
+# est-ce que ces serializers sont ok ? Non
 class GameUserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Game

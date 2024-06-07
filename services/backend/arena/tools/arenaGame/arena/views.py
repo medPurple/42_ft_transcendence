@@ -227,11 +227,11 @@ class GameMatchAPI(APIView):
 			player2 = request.data.get('player2')
 			
 			try:
-				user1, _ = .objects.get_or_create(userID=player1.get("id"), userName=player1.get("username"))
-				user2, _ = GameUserAPI.objects.get_or_create(userID=player2.get("id"), userName=player2.get("username"))
-			except GameUser.DoesNotExist:
+				user1, _ = Player.objects.get_or_create(userID=player1.get("id"))
+				user2, _ = Player.objects.get_or_create(userID=player2.get("id"))
+			except Player.DoesNotExist:
 				return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-			match1, match1_created = GameMatch.objects.get_or_create(
+			match1, match1_created = Game.objects.get_or_create(
 				player1=user1,
 				player2=user2,
 				defaults={

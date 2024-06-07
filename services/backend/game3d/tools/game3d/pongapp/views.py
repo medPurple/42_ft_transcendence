@@ -163,17 +163,22 @@ class GameMatchAPI(APIView):
 			}
 		)
 		if (match1_created and match2_created):
+			logger.info("case 0")
 			match2.delete()
 			match_serializer = GameMatchSerializer(match1)
 			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
 		elif (match1_created and not match2_created):
+			logger.info("case 1")
 			match1.delete()
 			match_serializer = GameMatchSerializer(match2)
 			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
 		elif (not match1_created and match2_created):
+			logger.info("case 2")
 			match2.delete()
 			match_serializer = GameMatchSerializer(match1)
 			return Response(match_serializer.data, status=status.HTTP_201_CREATED)
+		logger.info("case 3")
+		return Response({"error": "error"}, status=status.HTTP_400_BAD_REQUEST)
 
 	def get(self, request, match_id=None):
 		# logger.info(f'Match ID: {match_id}')
