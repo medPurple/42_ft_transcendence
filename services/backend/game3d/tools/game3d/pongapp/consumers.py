@@ -9,15 +9,15 @@ from . import initvalues
 
 from django.db.models import Q
 from channels.generic.websocket import AsyncWebsocketConsumer
-from pongapp.game_classes import paddleC, ballC, gameStateC
+from pongapp.game_classes import paddleC, ballC, gameStateC, remote_parties, local_parties
 from . import initvalues as iv
 from .models import GameMatch
 from .serializers import GameMatchSerializer
 from asgiref.sync import async_to_sync, sync_to_async
 
 logger = logging.getLogger(__name__)
-remote_parties = []
-local_partie = []
+# remote_parties = []
+# local_parties = []
 group_names = []
 group_members = 0
 
@@ -35,7 +35,9 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
 
     async def findLocalParty(self):
+        global local_parties
         self.gameState = gameStateC()
+        local_parties.append(self.gameState)
         self.gameState.game_mode = "local"
         self.gameState.group_name = await self.generate_local_name()
         await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
@@ -85,7 +87,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
         self.user_name = self.scope["url_route"]["kwargs"]["user_name"]
-        if (await self.checkForReconnexion() == 1):
+        if await self.checkForReconnexion():
             await self.accept()
             self.gameState = await self.rejoinRemoteParty()
             self.gameState.status = iv.RUNNING
@@ -97,9 +99,9 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
 
         if (self.gameState != 0):
-            with self.gameState._lock:
-                self.gameState.status == iv.PAUSED
-                self.gameState.players_nb -= 1
+            self.gameState.status == 2
+            self.gameState.players_nb -= 1
+            logger.info("je ferme un socket")
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
 
     async def receive(self, text_data):
@@ -129,15 +131,13 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             return newPart
         else:
             self.player_id = 2 
-            await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = remote_parties[listLen - 1]
             self.gameState.player2_user_id = self.user_id 
             self.gameState.players_nb = 2
-            await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
-            await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
             self.gameState.powerUpTimer = time.time()
             self.gameState.pauseTimer = time.time()
-            asyncio.create_task(self.gameState.run_game_loop())
+            await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
+            self.task = asyncio.create_task(self.gameState.run_game_loop())
             return remote_parties[listLen - 1]
 
     async def checkForReconnexion(self):
@@ -145,8 +145,28 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
         for party in remote_parties:
             if (party.status == iv.PAUSED):
                 if (party.player1_user_id == self.user_id or party.player2_user_id == self.user_id):
-                    return 1 
-        return 0
+                    return True
+        return False
+
+    async def game_state(self,event):
+        await self.send(text_data=json.dumps(event["game_state"]))
+
+    async def rejoinRemoteParty(self):
+        global remote_parties
+        for party in remote_parties:
+            if (party.status == iv.PAUSED):
+                if (party.player1_user_id == self.user_id or party.player2_user_id == self.user_id):
+                    await self.channel_layer.group_add(party.group_name, self.channel_name)
+                    await self.send(text_data=json.dumps({"party": "active"}))
+                    if (party.player1_user_id == self.user_id):
+                        self.player_id = 1
+                        await self.send(text_data=json.dumps({"player": self.player_id}))
+                    else:
+                        self.player_id = 2
+                        await self.send(text_data=json.dumps({"player": self.player_id}))
+                    return party
+        return remote_parties[0]
+
     #
     # async def createPartyObject(self, match_object):
     #     global remote_parties
@@ -209,17 +229,6 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
     #     elif (self.user_id == str(player2Id)):
     #         return str(2)
     #
-
-    async def game_state(self,event):
-        await self.send(text_data=json.dumps(event["game_state"]))
-
-    # async def rejoinRemoteParty(self):
-    #     global remote_parties
-    #     for party in remote_parties:
-    #         if (party.status == iv.PAUSED):
-    #             if (party.player1_user_id == self.user_id or party.player2_user_id == self.user_id):
-    #                 return party
-    #     return remote_parties[0]
 
     # async def createRemoteParty(self):
     #     global remote_parties 

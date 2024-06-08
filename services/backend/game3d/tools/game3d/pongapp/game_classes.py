@@ -22,6 +22,9 @@ map_locations = {
     iv.SOUTH_EAST: [-100, -50]
 }
 
+remote_parties = []
+local_parties = []
+
 class   paddleC:
 
     def __init__(self, player, *args, **kwargs):
@@ -66,6 +69,7 @@ class   gameStateC:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.game_mode = 0
+        self.task = 0
         self.match_object = 0
         self.player1_user_id = 0 
         self.player2_User_id = 0
@@ -93,6 +97,7 @@ class   gameStateC:
         while (self.status == iv.RUNNING or self.status == iv.PAUSED):
             with self._lock:
                 if (self.status == iv.RUNNING):
+                    logger.info(self.status)
                     self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
                     self.ballPhysics(self.ball)
                     self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
@@ -103,6 +108,16 @@ class   gameStateC:
             await asyncio.sleep(0.032)
             #self.logObject()
             await self.broadcastGameState()
+        if (self.status == iv.FINISHED):
+            await self.stopGame()
+
+    async def stopGame(self):
+        if (self.game_mode == 'remote'):
+            global remote_parties
+            self.task.cancel()
+            remote_parties.remove(self)
+            
+
 
     def popPowerUp(self):
         global map_locations
@@ -204,7 +219,7 @@ class   gameStateC:
 
     def checkForScore(self):
         if (self.player1Score == self.limitScore or self.player2Score == self.limitScore):
-            self.status = 0
+            self.status = iv.FINISHED
 
     def paddlePhysics(self, ball, paddle1, paddle2):
         if (ball.positionX <= paddle1.positionX + paddle1.width and ball.positionX >= paddle1.positionX):
