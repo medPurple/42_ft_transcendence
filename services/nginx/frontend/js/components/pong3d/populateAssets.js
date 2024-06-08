@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import { objMesh, core, gameCustom } from './config.js'
@@ -124,18 +123,21 @@ function populateBeds() {
 
 
 export function populateAssets() {
-	populateReferee();
 
 	switch (gameCustom.map) {
 		case 0:
+      populateReferee();
 			populateSlide();
 			break;
 		case 1:
 			populateDoll();
-			populateTree();
+			// populateTree();
 			break;
+    case 2:
+      populateReferee();
+      populateBeds();
+      break;      
 		default:
-			populateBeds();
 			break;
 	}
 }

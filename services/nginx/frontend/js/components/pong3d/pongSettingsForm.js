@@ -52,8 +52,8 @@ export default class pongSettingsForm extends HTMLElement {
 					<input type="radio" class="image-radio" id="dormitory" name="scene" value="2" ${data.scene === 2 ? 'checked' : ''}>
 					<label for="dormitory" class="image-label border rounded"><img src="./images/Thumbnails/BG-Dormitory.png" alt="Dormitory"></label>
 
-					<input type="radio" class="image-radio" id="open-world" name="scene" value="2" ${data.scene === 3 ? 'checked' : ''}>
-					<label for="open-world" class="image-label border rounded"><img src="./images/Thumbnails/BG-OpenWorld.png" alt="Open-World"></label>
+					<input type="radio" class="image-radio" id="ow" name="scene" value="3" ${data.scene === 3 ? 'checked' : ''}>
+					<label for="ow" class="image-label border rounded"><img src="./images/Thumbnails/BG-OpenWorld.png" alt="Open-World"></label>
 				</div>
 			</div>
 
