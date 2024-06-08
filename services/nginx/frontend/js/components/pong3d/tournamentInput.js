@@ -1,4 +1,5 @@
 import Iuser from "../user/userInfo.js";
+import { setup } from "./pongServLogic.js";
 
 export class tournamentInput {
 
@@ -60,7 +61,7 @@ export class tournamentInput {
 
       console.log(players);
       this.players = players;
-
+      setup("local", players);
     });
 
     return tournamentContainer;

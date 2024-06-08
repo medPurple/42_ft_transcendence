@@ -13,7 +13,7 @@ export function pong_localplay() {
   const scorediv = document.createElement('div');
   scorediv.id = "pong-score"
   if (Icookies.getCookie('token') != null) {
-    setup("local");
+    setup("local", null);
   } else {
     generaldiv.classList.add('not-logged');
     alert("You need to be logged in to play in local");
@@ -32,7 +32,7 @@ export async function pong_remoteplay() {
   const scorediv = document.createElement('div');
   scorediv.id = "pong-score"
   if (Icookies.getCookie('token') != null) {
-    setup("remote");
+    setup("remote", null);
   } else {
     gamediv.classList.add('not-logged');
     alert("You need to be logged in to play in remote");
@@ -45,17 +45,25 @@ export async function pong_remoteplay() {
 }
 
 export async function pong_tournamentplay() {
-  const gamediv = document.createElement('div');
+  const generaldiv = document.createElement('div');
+  let gamediv = document.createElement('div');
+  let scorediv = document.createElement('div');
   if (Icookies.getCookie('token') != null) {
-    gamediv.appendChild(await new tournamentInput.initTournamentInfo());
+    let turgecence = new tournamentInput();
+    generaldiv.appendChild(await turgecence.initTournamentInfo());
+    //generaldiv.removeChild(generaldiv.lastChild);
+    gamediv.id = "pong-renderer"
+    scorediv.id = "pong-score"
     // gamediv.appendChild(await pongTournamentMatchmaking.mainMatchmakingDiv());
   } else {
     gamediv.classList.add('not-logged');
     alert("You need to be logged in to play in tournament");
     window.location.href = '/pongService';
   }
-  document.body.appendChild(gamediv);
-  return gamediv;
+  generaldiv.appendChild(gamediv);
+  generaldiv.appendChild(scorediv);
+  document.body.appendChild(generaldiv);
+  return generaldiv;
 }
 
 export async function pkm_remoteplay() {
