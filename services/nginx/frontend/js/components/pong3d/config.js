@@ -18,8 +18,9 @@ export var gameState = {
   powerup_positionY: 0,
   powerup_status: 0,
   powerup_type: 0,
+  powerup_shouldHandle: 0,
   game_mode: 0,
-  active: 0
+  status: 0
 }
 
 export const gameCustom = {
@@ -39,7 +40,9 @@ export var core = {
   camera: 0,
   gameSocket: 0,
   party: 0,
-  player_id: 0
+  player_id: 0,
+  player1_userid: 0,
+  player2_userid: 0
 }
 
 export var playMesh = {

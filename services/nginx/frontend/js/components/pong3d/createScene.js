@@ -18,7 +18,6 @@ async function setupSettings() {
     gameCustom.table = data.table;
     gameCustom.powerup = data.powerups;
     gameCustom.score_limit = data.score;
-    gameCustom.score_limit = gameState.score_limit;
   } catch (error) {
     alert('You should be logged to play');
     window.location.href = '/pongService';
@@ -122,7 +121,8 @@ export async function createScene() {
 
   // Powerups setup
 
-  populatePowerUps();
+  if (gameCustom.powerup)
+    populatePowerUps();
 
   //Add all to the scene
 

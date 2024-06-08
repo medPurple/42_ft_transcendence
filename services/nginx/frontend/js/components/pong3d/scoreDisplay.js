@@ -22,7 +22,7 @@ async function removeUser() {
 
 }
 
-export async function displayScore() {
+export async function displayScore(winnerName) {
 
   var endgame = document.getElementById("pong-renderer");
   var scoreDiv = document.getElementById("pong-score");
@@ -50,6 +50,10 @@ export async function displayScore() {
 	`
 
   if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
+    if (gameState.player1Score == gameState.score_limit)
+      winnerName = "player1";
+    else
+      winnerName = "player2";
     await removeUser();
     scoreDiv.innerHTML = '';
     if (gameState.player1Score == gameState.score_limit) {

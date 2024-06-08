@@ -11,7 +11,7 @@ from django.db.models import Q
 from channels.generic.websocket import AsyncWebsocketConsumer
 from pongapp.game_classes import paddleC, ballC, gameStateC, remote_parties, local_parties
 from . import initvalues as iv
-from .models import GameMatch
+from .models import GameMatch, GameSettings
 from .serializers import GameMatchSerializer
 from asgiref.sync import async_to_sync, sync_to_async
 
@@ -26,8 +26,10 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.gameState = 0
+        self.user_id = 0
 
     async def connect(self):
+        self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
         await self.accept()
         self.gameState = await self.findLocalParty()
 
@@ -43,6 +45,10 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
         self.gameState.paddle1 = paddleC(1)
         self.gameState.paddle2 = paddleC(2)
+        self.gameState.limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).score)()
+        logger.info("Player1 limitScore %d", self.gameState.limitScore)
+        self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).powerups)()
+        logger.info("Player1 powerups %d", self.gameState.shouldHandlePowerUp)
         self.gameState.players_nb = 2
         await self.send(text_data=json.dumps({"party": "active"})) 
         self.gameState.powerUpTimer = time.time()
@@ -80,7 +86,6 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.player_id = 0
-        self.user_id = 0
         self.user_name = 0
         self.gameState = 0
 
@@ -102,7 +107,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
 
         if (self.gameState != 0):
             self.gameState.status = iv.PAUSED
-            #self.gameState.players_nb -= 1
+            self.gameState.pauseTimer = time.time()
             logger.info("%d je ferme un socket", self.gameState.status)
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
 
@@ -129,6 +134,10 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             self.gameState.game_mode = "remote"
             self.gameState.group_name = await self.generate_group_name()
             remote_parties[listLen].players_nb = 1
+            self.gameState.limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).score)()
+            logger.info("Player1 limitScore %d", self.gameState.limitScore)
+            self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).powerups)()
+            logger.info("Player1 powerups %d", self.gameState.shouldHandlePowerUp)
             self.gameState.player1_user_id = self.user_id 
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             return newPart
@@ -142,6 +151,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             self.gameState.powerUpTimer = time.time()
             self.gameState.pauseTimer = time.time()
             await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
+            
             self.task = asyncio.create_task(self.gameState.run_game_loop())
             return remote_parties[listLen - 1]
 

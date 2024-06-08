@@ -72,13 +72,11 @@ class   gameStateC:
         self.task = 0
         self.match_object = 0
         self.player1_user_id = 0 
-        self.player2_User_id = 0
+        self.player2_user_id = 0
         self.group_name = 0
         self.players_nb = 0
         self.player1Score = iv.PADDLE1_SCORE
         self.player2Score = iv.PADDLE2_SCORE
-		######## HERE recuperer le USERID correct!!!!!! ########
-        # self.limitScore = GameSettings.objects.get(user=1).score
         self.limitScore = 7
         self.paddle1 = paddleC(1)
         self.paddle2 = paddleC(2)
@@ -89,6 +87,7 @@ class   gameStateC:
         self.powerUpPositionX = iv.DEFAULT_PU_LOC 
         self.powerUpPositionY = iv.DEFAULT_PU_LOC 
         self.activePowerUp = iv.NONE_PU
+        self.shouldHandlePowerUp = 0
         self.status = iv.NOT_STARTED
         self._lock = threading.Lock()
 
@@ -96,11 +95,15 @@ class   gameStateC:
         self.status = iv.RUNNING
         while (self.status == iv.RUNNING or self.status == iv.PAUSED):
             with self._lock:
+                if(self.status == iv.PAUSED):
+                    self.checkPauseTimer()
                 if (self.status == iv.RUNNING):
                     #logger.info(self.status)
-                    self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
+                    if (self.shouldHandlePowerUp):
+                        self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
                     self.ballPhysics(self.ball)
-                    self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
+                    if (self.shouldHandlePowerUp):
+                        self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
                     self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
                     self.paddle1Movement(self.paddle1)
                     self.paddle2Movement(self.paddle2)
@@ -118,6 +121,9 @@ class   gameStateC:
             remote_parties.remove(self)
             
 
+    def checkPauseTimer(self):
+        if (time.time() - self.pauseTimer > 5):
+            self.status = iv.FINISHED
 
     def popPowerUp(self):
         global map_locations
@@ -274,6 +280,8 @@ class   gameStateC:
             {
                 "type": "game.state",
                 "game_state": {
+                    "player1_user_id": self.player1_user_id,
+                    "player2_user_id": self.player2_user_id,
                     "player1Score": self.player1Score,
                     "player2Score": self.player2Score,
                     "limitScore": self.limitScore,
@@ -291,7 +299,7 @@ class   gameStateC:
                     "powerup.positionX": self.powerUpPositionX,
                     "powerup.positionY": self.powerUpPositionY,
                     "powerup.active": self.activePowerUp,
-                    "active": self.status
+                    "status": self.status
                 }
             }
         )
