@@ -97,7 +97,7 @@ class   gameStateC:
         while (self.status == iv.RUNNING or self.status == iv.PAUSED):
             with self._lock:
                 if (self.status == iv.RUNNING):
-                    logger.info(self.status)
+                    #logger.info(self.status)
                     self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
                     self.ballPhysics(self.ball)
                     self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
@@ -109,12 +109,12 @@ class   gameStateC:
             #self.logObject()
             await self.broadcastGameState()
         if (self.status == iv.FINISHED):
+            logger.info("J'arrete la partie")
             await self.stopGame()
 
     async def stopGame(self):
         if (self.game_mode == 'remote'):
             global remote_parties
-            self.task.cancel()
             remote_parties.remove(self)
             
 
