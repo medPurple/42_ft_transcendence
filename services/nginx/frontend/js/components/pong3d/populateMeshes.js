@@ -190,7 +190,10 @@ export function populateSkybox() {
 			name_file = "../../../images/Skybox/02/cornfield";
 			break;
 		case 2:
-			name_file = "../../../images/Skybox/03/OpenWorld";
+			name_file = "../../../images/Skybox/03/dormitory";
+			break;
+		case 3:
+			name_file = "../../../images/Skybox/04/ow";
 			break;
 	}
 
@@ -221,6 +224,9 @@ export function populateSkybox() {
 			break;
 		case 2:
 			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+			break;
+		case 3:
+			skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
 			break;
 	}
 	
