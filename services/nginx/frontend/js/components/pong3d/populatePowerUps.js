@@ -55,11 +55,7 @@ function populateShape(shape, color) {
 	var geometry = new THREE.ShapeGeometry(shape);
 	var material = new THREE.MeshBasicMaterial({ color: color });
 	var mesh = new THREE.Mesh(geometry, material);
-	if (gameState.game_mode == "remote") {
-		mesh.rotateX(Math.PI / 2);
-		mesh.rotateY(Math.PI / 2);
-	}
-	mesh.position.z = 5;
+	mesh.position.z = 10;
 	return mesh;
 }
 

@@ -2,34 +2,22 @@ import { gameState, core, playMesh } from "./config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
 import { displayScore } from './scoreDisplay.js'
-import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
-
-// window.addEventListener('keydown', onKeyDown, false);
-// window.addEventListener('keyup', onKeyUp, false);
+import { cameraPlayer1, cameraPlayer2 } from './cameraLogic.js'
 
 function draw() {
 
 	if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
 		return;
+		
+	if (gameState.game_mode == "remote") {
+		if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
+			cameraPlayer1();
+		}
+		else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
+			cameraPlayer2();
+		}
+	}
 
-	// if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
-	// 	cameraLogic();
-	// }
-	// else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
-	// 	cameraLogic2();
-	// }
-	// else if (gameState.game_mode != "remote") {
-	// 	if (gameState.paddle1_powerup == 3)
-	// 		cameraLogic();
-	// 	else if (gameState.paddle2_powerup == 3)
-	// 		cameraLogic2();
-	// 	else
-	// 		cameraLogic2d();
-	// }
-	// else {
-	// 	cameraLogic2d();
-	// }
-	
 	core.camera.aspect = window.innerWidth / window.innerHeight;
 	core.camera.updateProjectionMatrix();
 	window.addEventListener('resize', function () {
@@ -39,7 +27,6 @@ function draw() {
 	});
 
 	core.renderer.render(core.scene, core.camera);
-	
 }
 
 async function setup(gameMode) {

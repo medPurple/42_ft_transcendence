@@ -31,35 +31,12 @@ function populateDoll() {
 		}
 		else {
 			objMesh.firstAsset.position.x = 800;
-			objMesh.firstAsset.rotateY(Math.PI / 2);
+			// objMesh.firstAsset.rotateY(Math.PI / 2);
 		}
 
 		core.scene.add(objMesh.firstAsset);
 	})
 }
-
-// function populateTree() {
-
-//   var objLoader = new GLTFLoader();
-
-//   objLoader.load('../../../images/3D/Lightweight/low_poly_dead_tree.glb', function(gltf) {
-//	 objMesh.secondAsset = gltf.scene;
-//	 objMesh.secondAsset.scale.set(4, 4, 4);
-//	 objMesh.secondAsset.position.y = -350;
-//	 objMesh.secondAsset.position.z = -125;
-//	 objMesh.secondAsset.rotateX(Math.PI / 2);
-//	 if (core.player_id == 2) {
-//	   objMesh.secondAsset.position.x = -400;
-//	   objMesh.secondAsset.rotateY(THREE.MathUtils.degToRad(135));
-//	 }
-//	 else {
-//	   objMesh.secondAsset.position.x = 400;
-//	   objMesh.secondAsset.rotateY(THREE.MathUtils.degToRad(250));
-
-//	 }
-//	 core.scene.add(objMesh.secondAsset);
-//   })
-// }
 
 function populateSlide() {
 	var objLoader = new GLTFLoader();

@@ -7,6 +7,7 @@ import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, p
 import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
+import { cameraLocal } from './cameraLogic.js'
 
 async function setupSettings() {
 	try {
@@ -50,23 +51,21 @@ export async function createScene() {
 	//Camera setup
 	
 	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
-	core.camera.position.z = 230;
-	core.camera.position.y = -230;
-	
-	const controls = new OrbitControls(core.camera, c);
-	controls.minDistance = 200;
-	controls.maxDistance = 1250;
-	
+
+	if (gameState.game_mode == "local") {
+		cameraLocal();
+		const controls = new OrbitControls(core.camera, c);
+		controls.minDistance = 200;
+		controls.maxDistance = 1250;
+	}
+
 	//Scene setup
-	
 	core.scene = new THREE.Scene();
 
 	//Ball setup
-
 	playMesh.ball = populateBall(0, 0);
 
 	// PointLight setup
-
 	lights.pointLight = populatePointLight(0xffffff, 1000, 0, 500, 0.75, 10000);
 	lights.pointLight2 = populatePointLight(0xffffff, -1000, 0, 500, 0.75, 10000);
 	lights.pointLight3 = populatePointLight(0xffffff, 0, 0, 500, 0.75, 10000);
