@@ -7,27 +7,27 @@ import Iuser from "../user/userInfo.js";
 
 function draw() {
 
-	if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
-		return;
-		
-	if (gameState.game_mode == "remote") {
-		if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
-			cameraPlayer1();
-		}
-		else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
-			cameraPlayer2();
-		}
-	}
+  if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
+    return;
 
-	core.camera.aspect = window.innerWidth / window.innerHeight;
-	core.camera.updateProjectionMatrix();
-	window.addEventListener('resize', function () {
-		core.renderer.setSize(window.innerWidth, window.innerHeight);
-		core.camera.aspect = window.innerWidth / window.innerHeight;
-		core.camera.updateProjectionMatrix();
-	});
+  if (gameState.game_mode == "remote") {
+    if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
+      cameraPlayer1();
+    }
+    else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
+      cameraPlayer2();
+    }
+  }
 
-	core.renderer.render(core.scene, core.camera);
+  core.camera.aspect = window.innerWidth / window.innerHeight;
+  core.camera.updateProjectionMatrix();
+  window.addEventListener('resize', function() {
+    core.renderer.setSize(window.innerWidth, window.innerHeight);
+    core.camera.aspect = window.innerWidth / window.innerHeight;
+    core.camera.updateProjectionMatrix();
+  });
+
+  core.renderer.render(core.scene, core.camera);
 }
 
 async function setup(gameMode, players) {
@@ -51,17 +51,17 @@ async function setup(gameMode, players) {
     console.log('Connected');
   };
 
-	core.gameSocket.onerror = function(e) {
-		console.log('Error');
-	};
+  core.gameSocket.onerror = function(e) {
+    console.log('Error');
+  };
 
   core.gameSocket.onclose = function(e) {
     console.log('Closed');
   };
 
-	core.gameSocket.onmessage = async function(event) {
-		await handleServerMessage(event.data);
-	}
+  core.gameSocket.onmessage = async function(event) {
+    await handleServerMessage(event.data);
+  }
 }
 
 const actions = new Map([
