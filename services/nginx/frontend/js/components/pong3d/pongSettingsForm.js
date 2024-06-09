@@ -75,16 +75,16 @@ export default class pongSettingsForm extends HTMLElement {
 				<div id="paddle" name="paddle">
 					<label class="container mb-3" for="paddle">Paddle</label>
 					<input type="radio" class="image-radio" id="guardA" name="paddle" value="0" ${data.paddle === 0 ? 'checked' : ''}>
-					<label for="guardA" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-PlayerA.png" alt="Guard A"></label>
+					<label for="guardA" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-GuardA.png" alt="Guard A"></label>
 			
 					<input type="radio" class="image-radio" id="guardB" name="paddle" value="1" ${data.paddle === 1 ? 'checked' : ''}>
-					<label for="guardB" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-PlayerB.png" alt="Guard B"></label>
+					<label for="guardB" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-GuardB.png" alt="Guard B"></label>
 			
 					<input type="radio" class="image-radio" id="playerA" name="paddle" value="2" ${data.paddle === 2 ? 'checked' : ''}>
-					<label for="playerA" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-GuardA.png" alt="Player A"></label>
+					<label for="playerA" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-PlayerA.png" alt="Player A"></label>
 			
 					<input type="radio" class="image-radio" id="playerB" name="paddle" value="3" ${data.paddle === 3 ? 'checked' : ''}>
-					<label for="playerB" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-GuardB.png" alt="Player B"></label>
+					<label for="playerB" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-PlayerB.png" alt="Player B"></label>
 			
 					<input type="radio" class="image-radio" id="boss" name="paddle" value="4" ${data.paddle === 4 ? 'checked' : ''}>
 					<label for="boss" class="image-label border rounded" ><img src="./images/Thumbnails/PAD-Boss.png" alt="Boss"></label>
@@ -95,7 +95,7 @@ export default class pongSettingsForm extends HTMLElement {
 				<div id="table" name="table">
 					<label class="container mb-3" for="table">Table</label>
 					<input type="radio" class="image-radio" id="metal" name="table" value="0" ${data.table === 0 ? 'checked' : ''}>
-					<label for="matal" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Sunrise.png" alt="Sunrise"></label>
+					<label for="metal" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Sunrise.png" alt="Sunrise"></label>
 			
 					<input type="radio" class="image-radio" id="concrete" name="table" value="1" ${data.table === 1 ? 'checked' : ''}>
 					<label for="concrete" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Concrete.png" alt="Concrete"></label>

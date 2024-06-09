@@ -9,7 +9,7 @@ import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
 
 function draw() {
 
-	if (core.scene == 0)
+	if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
 		return;
 
 	// if (core.player_id == 1 && gameState.paddle2_powerup != 3) {

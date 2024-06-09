@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import gamer from "./gamerInfo.js"
 import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
 import { populatePointLight, populateSpotLight } from "./populateLights.js";
-import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateSkybox } from "./populateMeshes.js"
+import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateSkybox, populateLine, populateHorizontalLine } from "./populateMeshes.js"
 import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
 import { populatePowerUps } from "./populatePowerUps.js";
@@ -100,6 +100,10 @@ export async function createScene() {
 	
 	decMesh.table = populateTable(0, 0, -7);
 	decMesh.plane = populatePlane(0, 0);
+	decMesh.lineA = populateLine(-190, 0);
+	decMesh.lineB = populateLine(190, 0);
+	decMesh.lineUp = populateHorizontalLine(0, 95);
+	decMesh.lineDown = populateHorizontalLine(0, -95);
 
   // Props setup
 
@@ -111,24 +115,20 @@ export async function createScene() {
 
   //Add all to the scene
 
-  //core.scene.add(lights.ambientLight);
+	core.scene.add(skybox);
 	core.scene.add(lights.pointLight);
 	core.scene.add(lights.pointLight2);
 	core.scene.add(lights.pointLight3);
-  //core.scene.add(lights.pointLight4);
-  //core.scene.add(lights.spotLight);
+
 	core.scene.add(playMesh.paddle1);
 	core.scene.add(playMesh.paddle2);
 	core.scene.add(playMesh.ball);
 	core.scene.add(decMesh.table);
 	core.scene.add(decMesh.plane);
-
-	// core.scene.add(decMesh.wall);
-	// if (gameState.game_mode == "local")
-	// 	core.scene.add(decMesh.wall2);
-	// core.scene.add(decMesh.ground);
-
-	core.scene.add(skybox);
+	core.scene.add(decMesh.lineA);
+	core.scene.add(decMesh.lineB);
+	core.scene.add(decMesh.lineUp);
+	core.scene.add(decMesh.lineDown);
 
 	core.scene.add(core.camera);
 	core.renderer.shadowMapEnabled = true;

@@ -100,7 +100,7 @@ export const constants = {
 	paddleHeight: 30,
 	paddleDepth: 10,
 	paddleQuality: 1,
-	planeWidth: 5,
+	planeWidth: 3,
 	planeHeight: 200,
 	planeQuality: 10,
 	tableWidth: 400 * 1.05,

@@ -13,7 +13,7 @@ body {
 
 p {
 	text-align: justify;
-    margin-top: 3em;
+	margin-top: 3em;
 	margin-left: 5em;
 	margin-right: 5em;
 	display: flex;
@@ -52,46 +52,32 @@ a:hover {
 	padding-bottom: 10em;
 }
 
-/********** MENU BAR ***********/
-/* .container-fluid {
-	position: fixed;
-	font-family: 'Courier New', Courier, monospace;
-	background-color: #7b8787;
-	border-radius: 10px;
-	margin: 1.5em;
-	z-index: 1000;
-}
-
-.container-fluid.hidden {
-    display: none;
-} */
-
 /********** HOME CARD PAGE ***********/
 .image-container {
-    position: relative;
-    width: 300px;
-    height: 200px;
-    overflow: hidden;
-    margin: 0 auto;
+	position: relative;
+	width: 300px;
+	height: 200px;
+	overflow: hidden;
+	margin: 0 auto;
 }
 
 .original-image,
 .hover-image {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 100%;
-    max-height: 100%;
-    transition: opacity 0.3s ease;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	max-width: 100%;
+	max-height: 100%;
+	transition: opacity 0.3s ease;
 }
 
 .hover-image {
-    opacity: 0; /* Initially hidden */
+	opacity: 0;
 }
 
 .image-container:hover .hover-image {
-    opacity: 1; /* Visible on hover */
+	opacity: 1;
 }
 
 .buttons-container {
@@ -103,37 +89,36 @@ a:hover {
 }
 
 .buttons-container button {
-    padding: 8px 20px;
+	padding: 8px 20px;
 	border-radius: 7px;
-    border: none;
-    background-color: #1b1b1c;
-    color: #fff;
-    transition: background-color 0.3s;
+	border: none;
+	background-color: #1b1b1c;
+	color: #fff;
+	transition: background-color 0.3s;
 }
 
 .buttons-container button:hover {
-    background-color: #b32c6f;
+	background-color: #b32c6f;
 } 
 
 /***** SETTINGS Forms ******/
-
 .image-radio {
 	display: none;
 }
 
 .image-label img {
-	opacity: 0.6;
+	opacity: 0.5;
+	border-radius: 3px;
 }
 
 .image-radio:checked + .image-label img {
 	opacity: 1;
-	border-color: #1b1b1c;
+	border: 2px solid #a1a1a1;
+	border-radius: 3px;
 }
 
 /********** PONG ***********/
 #pong-renderer {
-	/* display: flex;
-	justify-content: center; */
 	width: 100vw;
 	height: 100vh;
 	margin: 0;
@@ -190,7 +175,3 @@ a:hover {
 	height: auto;
 	z-index: 1;
 }
-
-
-
-
