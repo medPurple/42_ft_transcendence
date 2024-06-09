@@ -52,7 +52,7 @@ export async function createScene() {
 	
 	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
 	core.camera.position.z = 230;
-	core.camera.position.y = -230;	
+	core.camera.position.y = -230;
 	
 	const controls = new OrbitControls(core.camera, c);
 	controls.minDistance = 200;
@@ -87,11 +87,8 @@ export async function createScene() {
 
 	let skybox = populateSkybox();
 
-  //Plane setup
-
-	decMesh.plane = populatePlane(0, 0);
-
-  //Paddle Setup
+	
+	//Paddle Setup
 	if (core.player_id == 1) {
 		playMesh.paddle1 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
 		playMesh.paddle2 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
@@ -100,23 +97,12 @@ export async function createScene() {
 		playMesh.paddle2 = populateSelfPaddle(-constants.fieldWidth / 2 + constants.paddleWidth, 0);
 		playMesh.paddle1 = populateOtherPaddle(constants.fieldWidth / 2 + constants.paddleWidth, 0);
 	}
-  //Table Setup
-
-	decMesh.table = populateTable(0x3e2f2f, 0, 0, -7);
-
-  //Ground setup
-
-	// decMesh.ground = populateFloor();
-
-  // Wall setup
-
-	// decMesh.wall = populateWall(core.player_id);
-	// if (gameState.game_mode == "local")
-	// 	decMesh.wall2 = populateWall(1);	
+	
+	decMesh.table = populateTable(0, 0, -7);
+	decMesh.plane = populatePlane(0, 0);
 
   // Props setup
 
-  //if (gameState.game_mode == "remote")
 	populateAssets();
 
   // Powerups setup

@@ -94,14 +94,14 @@ export default class pongSettingsForm extends HTMLElement {
 			<div class="row mt-3">
 				<div id="table" name="table">
 					<label class="container mb-3" for="table">Table</label>
-					<input type="radio" class="image-radio" id="sunrise" name="table" value="0" ${data.table === 0 ? 'checked' : ''}>
-					<label for="sunrise" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Sunrise.png" alt="Sunrise"></label>
+					<input type="radio" class="image-radio" id="metal" name="table" value="0" ${data.table === 0 ? 'checked' : ''}>
+					<label for="matal" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Sunrise.png" alt="Sunrise"></label>
 			
 					<input type="radio" class="image-radio" id="concrete" name="table" value="1" ${data.table === 1 ? 'checked' : ''}>
 					<label for="concrete" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Concrete.png" alt="Concrete"></label>
 			
-					<input type="radio" class="image-radio" id="wooden" name="table" value="2" ${data.table === 2 ? 'checked' : ''}>
-					<label for="wooden" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Wood.png" alt="Wooden"></label>
+					<input type="radio" class="image-radio" id="wood" name="table" value="2" ${data.table === 2 ? 'checked' : ''}>
+					<label for="wood" class="image-label border rounded" ><img src="./images/Thumbnails/TAB-Wood.png" alt="Wooden"></label>
 				</div>
 			</div>
 

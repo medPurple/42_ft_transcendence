@@ -138,23 +138,8 @@ export function populateBall(posX, posY) {
 
 export function populatePlane(posX, posY) {
 
-	var planeMaterial;
-
-	// console.log('TABLE in populate plane: ',gameCustom.table);///////////
-
-	switch (gameCustom.table) {
-		case 0:
-			planeMaterial = setPhysicalMaterial(palette.kaki, 1, 0.7, 0, 0, 0);
-			break;
-		case 1:
-			planeMaterial = setPhysicalMaterial(palette.grey, 1, 0.7, 0, 0, 0);
-			break;
-		default:
-			planeMaterial = setPhysicalMaterial(palette.brown, 1, 0.7, 1, 1.7, 0);
-			break;
-	}
-
-	var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight, constants.planeQuality, constants.planeQuality), planeMaterial);
+	var planeMaterial = setPhysicalMaterial(palette.white, 1, 0.7, 0, 0, 0);
+	var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth, constants.planeHeight * 0.95, constants.planeQuality, constants.planeQuality), planeMaterial);
 
 	plane.position.x = posX;
 	plane.position.y = posY;
@@ -163,16 +148,29 @@ export function populatePlane(posX, posY) {
 	return plane;
 }
 
-export function populateTable(color, posX, posY, posZ) {
+export function populateTable(posX, posY, posZ) {
 
-	var tableMaterial = new THREE.MeshLambertMaterial({ color: color });
+	switch (gameCustom.map) {
+		case 0:
+			var texturePath = "../../../images/Textures/Metal.jpeg";
+			break;
+		case 1:
+			var texturePath = "../../../images/Textures/Concrete.jpeg";
+			break;
+		default:
+			var texturePath = "../../../images/Textures/Wood.jpeg";
+			break;
+	}
+
+	var tableTexture = new THREE.TextureLoader().load(texturePath);
+	var tableMaterial = new THREE.MeshBasicMaterial({ map: tableTexture });
 
 	var table = new THREE.Mesh(new THREE.BoxGeometry(constants.tableWidth, constants.tableHeight, constants.tableQuality, constants.tableQuality, 1), tableMaterial);
 	table.position.x = posX;
 	table.position.y = posY;
 	table.position.z = posZ;
 	table.receiveShadow = true;
-	//table.castShadow = true;
+	table.castShadow = true;
 
 	return table;
 }
