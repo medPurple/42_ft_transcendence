@@ -124,7 +124,7 @@ class   gameStateC:
         self.player1_user_id = 0 
         self.player2_user_id = 0
         self.group_name = 0
-        self.players_nb = 0
+        self.players_nb = 0    # - pongapp:/app
         self.player1Score = iv.PADDLE1_SCORE
         self.player2Score = iv.PADDLE2_SCORE
         self.limitScore = 7
@@ -172,7 +172,7 @@ class   gameStateC:
         elif (self.game_mode == 'local'):
             global local_parties
             local_parties.remove(self)
-        else:
+        else:    # - pongapp:/app
             global tournaments
             if self.player1Score > self.player2Score:
                 tournaments[-1].winners.append(self.player1_user_id)
@@ -272,9 +272,11 @@ class   gameStateC:
 
         if (index == 1):
             self.player1Score += 1
+			#MAJ le score du player 1 getMatch
             ball.dirX = -1
         else:
             self.player2Score += 1
+			#MAJ le score du player 1 getMatch
             ball.dirX = 1
         ball.dirY = 1
         if (ball.boosted == 1):
