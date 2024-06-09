@@ -62,6 +62,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
             return group_name
 
     async def game_state(self,event):
+        logger.info("Depuis le tournoi je vais envoyer au websocket")
         await self.send(text_data=json.dumps(event["game_state"]))
 
 class PongLocalConsumer(AsyncWebsocketConsumer):
@@ -105,6 +106,7 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
                     self.gameState.paddle2.move = text_data_json["paddleMov2"]
 
     async def game_state(self,event):
+        logger.info("Depuis le local je vais envoyer au websocket")
         await self.send(text_data=json.dumps(event["game_state"]))
      
     async def generate_local_name(self, length=8):

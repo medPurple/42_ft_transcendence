@@ -47,16 +47,14 @@ class   Tournament:
         self.matches_played = 0
         self.match_is_running = False
         while (self.matches_played < 3):
+            asyncio
             if not self.match_is_running:
                 await self.initiate_match(self.matches_played)
                 asyncio.create_task(self.tournament_matches[self.matches_played].run_game_loop())
                 logger.info("match.group_name %s", self.tournament_matches[self.matches_played].group_name)
-                while(self.match_is_running == True):
-                    #logger.info("Je boucle a l infini")
-                    await asyncio.sleep(0.032)
                 self.matches_played += 1
 
-    async def updatePlayerName(self):
+    def updatePlayerName(self):
         if (self.matches_played == 0):
             self.tournament_matches[0].player1_user_id = self.players[0]
             self.tournament_matches[0].player2_user_id = self.players[1]
@@ -71,10 +69,10 @@ class   Tournament:
         self.match_is_running = True
         self.tournament_matches[match_number].game_mode = 'tournament'
         self.tournament_matches[match_number].group_name = self.group_name
-        # self.tournament_matches[match_number].limitScore = GameSettings.objects.get(user=self.user_id).score
+        self.tournament_matches[match_number].limitScore = GameSettings.objects.get(user=self.user_id).score
         self.tournament_matches[match_number].limitScore = 7
         self.powerUpTimer = time.time()
-        await self.updatePlayerName()
+        self.updatePlayerName()
 
 
 class   paddleC:
@@ -331,6 +329,7 @@ class   gameStateC:
 
     async def broadcastGameState(self):
         channel_layer = get_channel_layer()
+        logger.info("Depuis le match j'envoie au groupe %s", self.group_name)
         await channel_layer.group_send(
             self.group_name,
             {
