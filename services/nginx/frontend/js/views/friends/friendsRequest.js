@@ -1,4 +1,4 @@
-import {Friends} from "../../components/friends/friendsRequestForm.js";
+import { Friends } from "../../components/friends/friendsRequestForm.js";
 import Icookies from "../../components/cookie/cookie.js"
 
 export default async () => {
@@ -10,5 +10,5 @@ export default async () => {
 		alert("You need to be logged in to see your friends");
         window.location.href = '/home';
 	}
-	return logdiv;
+	return logdiv; /// ATTENTION CONSOLE ERROR in browser: Reference error: logdiv is not defined
 }

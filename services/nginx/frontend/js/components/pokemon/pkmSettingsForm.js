@@ -31,7 +31,7 @@ export default class pkmSettingsForm extends HTMLElement {
 			this.displaypongSettingsForm(id, username);
 		} catch (error) {
 			alert('You should be logged in to change the settings');
-			// window.location.href = '/home';
+			window.location.href = '/metaService';
 		}
 	}
 
@@ -45,19 +45,6 @@ export default class pkmSettingsForm extends HTMLElement {
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
-		<style>
-			.image-radio {
-				display: none;
-			}
-
-			.image-label img {
-				opacity: 0.6;
-			}
-
-			.image-radio:checked + .image-label img {
-				opacity: 1;
-			}
-		</style>
 		<div id="app-general-container" class="container d-flex flex-column justify-content-center align-items-center vh-100">
 		<form id="settings-form" method="put" action="" class="container">
 		<h4 class="text-center">Welcome <strong>${username}</strong>,<br> who are you playing today ?</h3>

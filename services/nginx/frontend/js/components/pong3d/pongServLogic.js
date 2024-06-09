@@ -2,47 +2,39 @@ import { gameState, gameCustom, core, playMesh } from "./config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
 import { displayScore } from './scoreDisplay.js'
-import { cameraLogic, cameraLogic2, cameraLogic2d } from './cameraLogic.js'
+import { cameraPlayer1, cameraPlayer2 } from './cameraLogic.js'
 import Iuser from "../user/userInfo.js";
-
-// window.addEventListener('keydown', onKeyDown, false);
-// window.addEventListener('keyup', onKeyUp, false);
 
 function draw() {
 
-  // console.log("Frame is drawn")
+	if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
+		return;
+		
+	if (gameState.game_mode == "remote") {
+		if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
+			cameraPlayer1();
+		}
+		else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
+			cameraPlayer2();
+		}
+	}
 
-  if (core.camera == 0)
-    return;
+	core.camera.aspect = window.innerWidth / window.innerHeight;
+	core.camera.updateProjectionMatrix();
+	window.addEventListener('resize', function () {
+		core.renderer.setSize(window.innerWidth, window.innerHeight);
+		core.camera.aspect = window.innerWidth / window.innerHeight;
+		core.camera.updateProjectionMatrix();
+	});
 
-  if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
-    cameraLogic();
-  }
-  else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
-    cameraLogic2();
-  }
-  else if (gameState.game_mode != "remote") {
-    if (gameState.paddle1_powerup == 3)
-      cameraLogic();
-    else if (gameState.paddle2_powerup == 3)
-      cameraLogic2();
-    else
-      cameraLogic2d();
-  }
-  else {
-    cameraLogic2d();
-  }
-  core.renderer.render(core.scene, core.camera);
+	core.renderer.render(core.scene, core.camera);
 }
 
 async function setup(gameMode, players) {
-
   gameState.game_mode = gameMode;
   const user_id = await Iuser.getID();
   const user_name = await Iuser.getUsername();
 
-  const user_id = await Iuser.getID();
-  const user_name = await Iuser.getUsername();
   switch (gameState.game_mode) {
     case "remote":
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
@@ -59,17 +51,17 @@ async function setup(gameMode, players) {
     console.log('Connected');
   };
 
-  core.gameSocket.onerror = function(e) {
-    console.log('Error');
-  };
+	core.gameSocket.onerror = function(e) {
+		console.log('Error');
+	};
 
   core.gameSocket.onclose = function(e) {
     console.log('Closed');
   };
 
-  core.gameSocket.onmessage = async function(event) {
-    await handleServerMessage(event.data, winnerName);
-  }
+	core.gameSocket.onmessage = async function(event) {
+		await handleServerMessage(event.data);
+	}
 }
 
 const actions = new Map([
@@ -98,7 +90,7 @@ const actions = new Map([
   ["status", (value) => { gameState.status = value; }],
 ]);
 
-async function handleServerMessage(message, winnerName) {
+async function handleServerMessage(message) {
   const map = new Map(Object.entries(JSON.parse(message)));
 
   for (let [key, value] of map.entries()) {
@@ -109,7 +101,7 @@ async function handleServerMessage(message, winnerName) {
   }
   if (gameCustom.powerup)
     handlePowerUp();
-  await displayScore(winnerName);
+  await displayScore();
   draw();
 }
 

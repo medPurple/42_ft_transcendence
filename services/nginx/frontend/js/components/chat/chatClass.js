@@ -95,10 +95,10 @@ export class chat {
     input.id = 'messageInput';
     input.classList.add('form-control', 'mr-2');
 
-    const sendButton = document.createElement('button');
-    sendButton.id = 'sendButton';
-    sendButton.textContent = 'Send';
-    sendButton.classList.add('btn', 'btn-primary');
+		const sendButton = document.createElement('button');
+		sendButton.id = 'sendButton';
+		sendButton.textContent = 'Send';
+		sendButton.classList.add('btn', 'btn-dark');
 
     inputDiv.appendChild(input);
     inputDiv.appendChild(sendButton);
@@ -297,11 +297,11 @@ export class chat {
     inputdiv.appendChild(this.createRefuseButton());
   }
 
-  createAcceptButton() {
-    const acceptButton = document.createElement('button');
-    acceptButton.id = 'acceptButton';
-    acceptButton.textContent = 'Accept';
-    acceptButton.classList.add('btn', 'btn-primary', 'mr-2');
+	createAcceptButton(){
+		const acceptButton = document.createElement('button');
+		acceptButton.id = 'acceptButton';
+		acceptButton.textContent = 'Accept';
+		acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
 
     acceptButton.onclick = async (e) => {
       console.log('accept');

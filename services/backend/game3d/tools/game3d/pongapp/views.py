@@ -23,7 +23,7 @@ class GameSettingsAPI(APIView):
 		game_settings, created = GameSettings.objects.get_or_create(
 			user=user,
 			defaults={
-				"scene": 0,
+				"scene": 3,
 				"ball": 1,
 				"paddle": 3,
 				"table": 1,
