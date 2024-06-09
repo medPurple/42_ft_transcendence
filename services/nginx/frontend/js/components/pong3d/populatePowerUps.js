@@ -1,103 +1,66 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
 import { gameState, pUpMesh, palette } from './config.js'
 
 function populateCircleShape(color) {
 	var radius = 10;
-	var segments = 64;
-	var vertices = [];
-	var angleIncrement = (Math.PI * 2) / segments;
-
-	for (var i = 0; i <= segments; i++) {
-		var angle = angleIncrement * i;
+	var numPoints = 20;
+	var shape = new THREE.Shape();
+	shape.moveTo(radius, 0);
+	for (var i = 1; i <= numPoints; i++) {
+		var angle = (i / numPoints) * 2 * Math.PI;
 		var x = radius * Math.cos(angle);
 		var y = radius * Math.sin(angle);
-		vertices.push(new THREE.Vector3(x, y, 0));
+		shape.lineTo(x, y);
 	}
-
-	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-
-	var material = new THREE.LineBasicMaterial({ color: color });
-
-	var circleMesh = new THREE.LineLoop(geometry, material);
-
-	if (gameState.game_mode == "remote") {
-		circleMesh.rotateX(Math.PI / 2);
-		circleMesh.rotateY(Math.PI / 2);
-	}
-	circleMesh.position.z = 20;
-	return circleMesh;
+	return populateShape(shape, color);
 }
 
 function populateTriangleShape(color) {
-
-	var size = 15;
-	var vertices = [
-		new THREE.Vector3(0, size / Math.sqrt(3), 0),
-		new THREE.Vector3(-size / 2, -size / (2 * Math.sqrt(3)), 0),
-		new THREE.Vector3(size / 2, -size / (2 * Math.sqrt(3)), 0)
-	];
-	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-	var material = new THREE.LineBasicMaterial({ color: color });
-	var triangleMesh = new THREE.LineLoop(geometry, material);
-
-	if (gameState.game_mode == "remote") {
-		triangleMesh.rotateX(Math.PI / 2);
-		triangleMesh.rotateY(Math.PI / 2);
-	}
-	triangleMesh.position.z = 20;
-	return triangleMesh;
+	var size = 10;
+	var shape = new THREE.Shape();
+	shape.moveTo(0, size);
+	shape.lineTo(size, -size);
+	shape.lineTo(-size, -size);
+	shape.lineTo(0, size);
+	return populateShape(shape, color);
 }
 
 function populateStarShape(color) {
-
 	var size = 10;
 	var numPoints = 5;
-	var vertices = [];
-
-	for (var i = 0; i < numPoints * 2; i++) {
+	var shape = new THREE.Shape();
+	shape.moveTo(size, 0);
+	for (var i = 1; i <= numPoints * 2; i++) {
 		var angle = (i / numPoints) * Math.PI;
 		var r = (i % 2 === 0) ? size : size / 2;
 		var x = r * Math.cos(angle);
 		var y = r * Math.sin(angle);
-		vertices.push(new THREE.Vector3(x, y, 0));
+		shape.lineTo(x, y);
 	}
-
-	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-	var material = new THREE.LineBasicMaterial({ color: color });
-	var starMesh = new THREE.LineLoop(geometry, material);
-
-	if (gameState.game_mode == "remote") {
-		starMesh.rotateX(Math.PI / 2);
-		starMesh.rotateY(Math.PI / 2);
-		starMesh.rotateZ(Math.PI / 10);
-	}
-	starMesh.position.z = 20;
-	return starMesh;
+	return populateShape(shape, color);
 }
 
 function populateSquareShape(color) {
+	var size = 10;
+	var shape = new THREE.Shape();
+	shape.moveTo(-size, size);
+	shape.lineTo(size, size);
+	shape.lineTo(size, -size);
+	shape.lineTo(-size, -size);
+	shape.lineTo(-size, size);
+	return populateShape(shape, color);
+}
 
-	var size = 15;
-	var vertices = [
-		new THREE.Vector3(-size / 2, size / 2, 0),
-		new THREE.Vector3(size / 2, size / 2, 0),
-		new THREE.Vector3(size / 2, -size / 2, 0),
-		new THREE.Vector3(-size / 2, -size / 2, 0),
-		new THREE.Vector3(-size / 2, size / 2, 0)
-	];
-	var geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-	var material = new THREE.LineBasicMaterial({ color: color });
-	var squareMesh = new THREE.LineLoop(geometry, material);
-
+function populateShape(shape, color) {
+	var geometry = new THREE.ShapeGeometry(shape);
+	var material = new THREE.MeshBasicMaterial({ color: color });
+	var mesh = new THREE.Mesh(geometry, material);
 	if (gameState.game_mode == "remote") {
-		squareMesh.rotateX(Math.PI / 2);
-		squareMesh.rotateY(Math.PI / 2);
+		mesh.rotateX(Math.PI / 2);
+		mesh.rotateY(Math.PI / 2);
 	}
-	squareMesh.position.z = 20;
-	return squareMesh;
+	mesh.position.z = 5;
+	return mesh;
 }
 
 export function populatePowerUps() {

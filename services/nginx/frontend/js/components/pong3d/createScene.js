@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import gamer from "./gamerInfo.js"
 import { core, playMesh, decMesh, gameCustom, gameState, lights, constants } from "./config.js"
-import { populatePointLight, populateSpotLight } from "./populateLights.js";
+import { populateAmbientLight, populatePointLight, populateSpotLight } from "./populateLights.js";
 import { populateBall, populateSelfPaddle, populateOtherPaddle, populatePlane, populateTable, populateSkybox, populateLine, populateHorizontalLine } from "./populateMeshes.js"
 import { onKeyUpRemote, onKeyDownRemote, onKeyUpLocal, onKeyDownLocal } from './inputEvents.js'
 import { populateAssets } from './populateAssets.js'
@@ -26,7 +26,6 @@ async function setupSettings() {
 }
 
 export async function createScene() {
-
 	await setupSettings();
 
 	core.renderer = new THREE.WebGLRenderer();
@@ -56,30 +55,27 @@ export async function createScene() {
 	
 	const controls = new OrbitControls(core.camera, c);
 	controls.minDistance = 200;
-	controls.maxDistance = 1000;
+	controls.maxDistance = 1250;
 	
 	//Scene setup
 	
 	core.scene = new THREE.Scene();
 
-  //Ball setup
+	//Ball setup
 
 	playMesh.ball = populateBall(0, 0);
 
-  // AmbientLight setup
+	// PointLight setup
 
-  //  lights.ambientLight = new THREE.AmbientLight(0xF8d898, 0.5);
-
-  // PointLight setup
-
-  //lights.pointLight = populatePointLight(0xffffff, 0, 0, 500, 1.5, 10000);
 	lights.pointLight = populatePointLight(0xffffff, 1000, 0, 500, 0.75, 10000);
 	lights.pointLight2 = populatePointLight(0xffffff, -1000, 0, 500, 0.75, 10000);
 	lights.pointLight3 = populatePointLight(0xffffff, 0, 0, 500, 0.75, 10000);
-  //lights.pointLight4 = populatePointLight(0xffffff, 0, -200, 500, 0.5, 10000);
-  //lights.pointLight2 = populatePointLight(0xffffff, 1000, 0, 1000, 1, 8000);
 
-  //Spotlight setup
+	// AmbientLight setup
+
+	lights.ambientLight = populateAmbientLight(0x404040, 2);
+
+	//Spotlight setup
 
 	lights.spotLight = populateSpotLight(0xffffff, 0, 0, 700, 0.7);
 
@@ -119,6 +115,7 @@ export async function createScene() {
 	core.scene.add(lights.pointLight);
 	core.scene.add(lights.pointLight2);
 	core.scene.add(lights.pointLight3);
+	core.scene.add(lights.ambientLight);
 
 	core.scene.add(playMesh.paddle1);
 	core.scene.add(playMesh.paddle2);
