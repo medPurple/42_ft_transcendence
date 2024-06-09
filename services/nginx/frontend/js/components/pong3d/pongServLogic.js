@@ -69,6 +69,8 @@ const actions = new Map([
   ["player", (value) => { core.player_id = value; console.log("Player_id :", core.player_id) }],
   ["player1_user_id", (value) => { core.player1_userid = value }],
   ["player2_user_id", (value) => { core.player2_userid = value }],
+  ["player1_user_name", (value) => { core.player1_user_name = value }],
+  ["player2_user_name", (value) => { core.player2_user_name = value }],
   ["player1Score", (value) => { gameState.player1Score = value; }],
   ["player2Score", (value) => { gameState.player2Score = value; }],
   ["limitScore", (value) => { gameState.score_limit = value; }],

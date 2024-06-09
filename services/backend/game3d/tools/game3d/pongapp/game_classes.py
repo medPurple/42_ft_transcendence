@@ -38,7 +38,6 @@ class   Tournament:
         self.players = []
         for i in players:
             self.players.append(i)
-        # self.players = players.split
         self.winners = []
 
     
@@ -123,6 +122,8 @@ class   gameStateC:
         self.match_object = 0
         self.player1_user_id = 0 
         self.player2_user_id = 0
+        self.player1_user_name = 0 
+        self.player2_user_name = 0
         self.group_name = 0
         self.players_nb = 0
         self.player1Score = iv.PADDLE1_SCORE
@@ -343,6 +344,8 @@ class   gameStateC:
                 "game_state": {
                     "player1_user_id": self.player1_user_id,
                     "player2_user_id": self.player2_user_id,
+                    "player1_user_name": self.player1_user_name,
+                    "player2_user_name": self.player2_user_name,
                     "player1Score": self.player1Score,
                     "player2Score": self.player2Score,
                     "limitScore": self.limitScore,
