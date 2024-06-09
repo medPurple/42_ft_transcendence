@@ -61,9 +61,7 @@ export class tournamentInput {
 
       console.log(players);
       this.players = players;
-      let winnerName = 0;
-      setup("local", winnerName);
-      console.log(winnerName)
+      setup("tournament", players);
     });
 
     return tournamentContainer;

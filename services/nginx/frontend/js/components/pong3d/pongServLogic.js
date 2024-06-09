@@ -35,12 +35,14 @@ function draw() {
   core.renderer.render(core.scene, core.camera);
 }
 
-async function setup(gameMode, winnerName) {
+async function setup(gameMode, players) {
 
   gameState.game_mode = gameMode;
   const user_id = await Iuser.getID();
   const user_name = await Iuser.getUsername();
 
+  const user_id = await Iuser.getID();
+  const user_name = await Iuser.getUsername();
   switch (gameState.game_mode) {
     case "remote":
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
@@ -49,7 +51,7 @@ async function setup(gameMode, winnerName) {
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/');
       break;
     default:
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament');
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/');
       break;
   }
 
@@ -71,7 +73,7 @@ async function setup(gameMode, winnerName) {
 }
 
 const actions = new Map([
-  ["party", async (value) => { if (value === 'active') { core.party = true; await createScene(); } }],
+  ["party", async (value) => { if (value === 'active') { core.party = true; await createScene(); await draw() } }],
   ["player", (value) => { core.player_id = value; console.log("Player_id :", core.player_id) }],
   ["player1_user_id", (value) => { core.player1_userid = value }],
   ["player2_user_id", (value) => { core.player2_userid = value }],

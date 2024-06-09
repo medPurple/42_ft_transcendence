@@ -9,7 +9,7 @@ from . import initvalues
 
 from django.db.models import Q
 from channels.generic.websocket import AsyncWebsocketConsumer
-from pongapp.game_classes import paddleC, ballC, gameStateC, remote_parties, local_parties
+from pongapp.game_classes import paddleC, ballC, gameStateC, remote_parties, local_parties, tournaments, Tournament
 from . import initvalues as iv
 from .models import GameMatch, GameSettings
 from .serializers import GameMatchSerializer
@@ -20,6 +20,50 @@ logger = logging.getLogger(__name__)
 # local_parties = []
 group_names = []
 group_members = 0
+
+class PongTournamentConsumer(AsyncWebsocketConsumer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.group_name = 0
+
+    async def connect(self):
+        self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
+        self.user1 = self.scope["url_route"]["kwargs"]["user1"]
+        self.user2 = self.scope["url_route"]["kwargs"]["user2"]
+        self.user3 = self.scope["url_route"]["kwargs"]["user3"]
+        self.user4 = self.scope["url_route"]["kwargs"]["user4"]
+        self.players = [self.user1, self.user2, self.user3, self.user4]
+        await self.accept()
+        self.group_name = await self.generate_tournament_name()
+        logger.info("Group Name consumer : %s", self.group_name)
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.tournamentLoop()
+
+    async def disconnect(self, close_code):
+        tournaments.remove(self.tournament)
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+    async def tournamentLoop(self):
+        global tournaments
+        self.tournament = Tournament(players = self.players, group_name=self.group_name, user_id=self.user_id)
+        tournaments.append(self.tournament)
+        await self.send(text_data=json.dumps({"party": "active"})) 
+        await self.tournament.tournamentLoop()
+
+    async def generate_tournament_name(self, length=8):
+        global group_names
+        characters = string.ascii_letters + string.digits
+        group_name = ''.join(random.choice(characters) for _ in range(length))
+        if (group_name in group_names):
+            await self.generate_tournament_name()
+        else:
+            group_names.append(group_name)
+            return group_name
+
+    async def game_state(self,event):
+        logger.info("Depuis le tournoi je vais envoyer au websocket")
+        await self.send(text_data=json.dumps(event["game_state"]))
 
 class PongLocalConsumer(AsyncWebsocketConsumer):
 
@@ -68,6 +112,7 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
                     self.gameState.paddle2.move = text_data_json["paddleMov2"]
 
     async def game_state(self,event):
+        logger.info("Depuis le local je vais envoyer au websocket")
         await self.send(text_data=json.dumps(event["game_state"]))
      
     async def generate_local_name(self, length=8):

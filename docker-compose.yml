@@ -44,7 +44,7 @@ services:
     networks:
     - microservices
     volumes:
-      - frontend:/usr/share/nginx/html/
+    - frontend:/usr/share/nginx/html/
     build: services/nginx
     image: nginx
     ports:

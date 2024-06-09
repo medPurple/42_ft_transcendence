@@ -13,7 +13,7 @@ export function pong_localplay() {
   const scorediv = document.createElement('div');
   scorediv.id = "pong-score"
   if (Icookies.getCookie('token') != null) {
-    setup("local");
+    setup("local", null);
   } else {
     generaldiv.classList.add('not-logged');
     alert("You need to be logged in to play in local");
@@ -32,7 +32,7 @@ export async function pong_remoteplay() {
   const scorediv = document.createElement('div');
   scorediv.id = "pong-score"
   if (Icookies.getCookie('token') != null) {
-    setup("remote");
+    setup("remote", null);
   } else {
     gamediv.classList.add('not-logged');
     alert("You need to be logged in to play in remote");
