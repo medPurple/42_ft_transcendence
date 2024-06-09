@@ -50,7 +50,9 @@ class   Tournament:
             if not self.match_is_running:
                 await self.initiate_match(self.matches_played)
                 asyncio.create_task(self.tournament_matches[self.matches_played].run_game_loop())
+                logger.info("match.group_name %s", self.tournament_matches[self.matches_played].group_name)
                 while(self.match_is_running == True):
+                    #logger.info("Je boucle a l infini")
                     await asyncio.sleep(0.032)
                 self.matches_played += 1
 
@@ -172,10 +174,10 @@ class   gameStateC:
         else:
             global tournaments
             if self.player1Score > self.player2Score:
-                tournaments.last().winners.append(self.player1_user_id)
+                tournaments[-1].winners.append(self.player1_user_id)
             else:
-                tournaments.last().winners.append(self.player2_user_id)
-            tournaments.last().match_is_running = False
+                tournaments[-1].winners.append(self.player2_user_id)
+            tournaments[-1].match_is_running = False
             
 
 

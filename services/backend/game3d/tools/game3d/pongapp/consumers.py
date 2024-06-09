@@ -25,6 +25,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.group_name = 0
 
     async def connect(self):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
@@ -35,23 +36,18 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         self.players = [self.user1, self.user2, self.user3, self.user4]
         await self.accept()
         self.group_name = await self.generate_tournament_name()
-        tournaments.append(Tournament(self.players, self.group_name, self.user_id))
-        # logger.info("%s", self.user1)
-        # logger.info("%s", self.user2)
-        # logger.info("%s", self.user3)
-        # logger.info("%s", self.user4)
+        logger.info("Group Name consumer : %s", self.group_name)
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.tournamentLoop()
-        # self.gameState = await self.findLocalParty()
 
     async def disconnect(self, close_code):
         tournaments.remove(self.tournament)
-        await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def tournamentLoop(self):
         global tournaments
-        self.tournament = Tournament(self.user1, self.user2, self.user3, self.user4)
+        self.tournament = Tournament(players = self.players, group_name=self.group_name, user_id=self.user_id)
         tournaments.append(self.tournament)
-        await self.channel_layer.group_add(self.tournament.group_name, self.channel_name)
         await self.send(text_data=json.dumps({"party": "active"})) 
         await self.tournament.tournamentLoop()
 
@@ -65,21 +61,8 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
             group_names.append(group_name)
             return group_name
 
-    # modele a supprimer
-    async def findLocalParty(self):
-        global local_parties
-        self.gameState = gameStateC()
-        local_parties.append(self.gameState)
-        self.gameState.game_mode = "local"
-        self.gameState.group_name = await self.generate_local_name()
-        await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
-        self.gameState.paddle1 = paddleC(1)
-        self.gameState.paddle2 = paddleC(2)
-        self.gameState.players_nb = 2
-        await self.send(text_data=json.dumps({"party": "active"})) 
-        self.gameState.powerUpTimer = time.time()
-        asyncio.create_task(self.gameState.run_game_loop())
-        return self.gameState
+    async def game_state(self,event):
+        await self.send(text_data=json.dumps(event["game_state"]))
 
 class PongLocalConsumer(AsyncWebsocketConsumer):
 
