@@ -9,7 +9,7 @@ from . import initvalues
 
 from django.db.models import Q
 from channels.generic.websocket import AsyncWebsocketConsumer
-from pongapp.game_classes import paddleC, ballC, gameStateC, remote_parties, local_parties
+from pongapp.game_classes import paddleC, ballC, gameStateC, remote_parties, local_parties, tournaments, Tournament
 from . import initvalues as iv
 from .models import GameMatch
 from .serializers import GameMatchSerializer
@@ -20,6 +20,66 @@ logger = logging.getLogger(__name__)
 # local_parties = []
 group_names = []
 group_members = 0
+
+class PongTournamentConsumer(AsyncWebsocketConsumer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    async def connect(self):
+        self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
+        self.user1 = self.scope["url_route"]["kwargs"]["user1"]
+        self.user2 = self.scope["url_route"]["kwargs"]["user2"]
+        self.user3 = self.scope["url_route"]["kwargs"]["user3"]
+        self.user4 = self.scope["url_route"]["kwargs"]["user4"]
+        self.players = [self.user1, self.user2, self.user3, self.user4]
+        await self.accept()
+        self.group_name = await self.generate_tournament_name()
+        tournaments.append(Tournament(self.players, self.group_name, self.user_id))
+        # logger.info("%s", self.user1)
+        # logger.info("%s", self.user2)
+        # logger.info("%s", self.user3)
+        # logger.info("%s", self.user4)
+        await self.tournamentLoop()
+        # self.gameState = await self.findLocalParty()
+
+    async def disconnect(self, close_code):
+        tournaments.remove(self.tournament)
+        await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
+
+    async def tournamentLoop(self):
+        global tournaments
+        self.tournament = Tournament(self.user1, self.user2, self.user3, self.user4)
+        tournaments.append(self.tournament)
+        await self.channel_layer.group_add(self.tournament.group_name, self.channel_name)
+        await self.send(text_data=json.dumps({"party": "active"})) 
+        await self.tournament.tournamentLoop()
+
+    async def generate_tournament_name(self, length=8):
+        global group_names
+        characters = string.ascii_letters + string.digits
+        group_name = ''.join(random.choice(characters) for _ in range(length))
+        if (group_name in group_names):
+            await self.generate_tournament_name()
+        else:
+            group_names.append(group_name)
+            return group_name
+
+    # modele a supprimer
+    async def findLocalParty(self):
+        global local_parties
+        self.gameState = gameStateC()
+        local_parties.append(self.gameState)
+        self.gameState.game_mode = "local"
+        self.gameState.group_name = await self.generate_local_name()
+        await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
+        self.gameState.paddle1 = paddleC(1)
+        self.gameState.paddle2 = paddleC(2)
+        self.gameState.players_nb = 2
+        await self.send(text_data=json.dumps({"party": "active"})) 
+        self.gameState.powerUpTimer = time.time()
+        asyncio.create_task(self.gameState.run_game_loop())
+        return self.gameState
 
 class PongLocalConsumer(AsyncWebsocketConsumer):
 

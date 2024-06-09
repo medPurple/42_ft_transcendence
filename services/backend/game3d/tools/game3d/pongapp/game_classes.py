@@ -24,6 +24,56 @@ map_locations = {
 
 remote_parties = []
 local_parties = []
+tournaments = []
+
+class   Tournament:
+    
+    def __init__(self, players, group_name, user_id, *args, **kwargs):
+        self.tournament_matches = []
+        for i in range(3):
+            self.tournament_matches.append(gameStateC())
+        self.user_id = user_id
+        self.group_name = group_name
+        logger.info("user_id : %s" % (self.user_id))
+        self.players = []
+        for i in players:
+            self.players.append(i)
+        # self.players = players.split
+        self.winners = []
+
+    
+    async def tournamentLoop(self):
+        global tournament_match_is_running
+        self.matches_played = 0
+        self.match_is_running = False
+        while (self.matches_played < 3):
+            if not self.match_is_running:
+                await self.initiate_match(self.matches_played)
+                asyncio.create_task(self.tournament_matches[self.matches_played].run_game_loop())
+                while(self.match_is_running == True):
+                    await asyncio.sleep(0.032)
+                self.matches_played += 1
+
+    async def updatePlayerName(self):
+        if (self.matches_played == 0):
+            self.tournament_matches[0].player1_user_id = self.players[0]
+            self.tournament_matches[0].player2_user_id = self.players[1]
+        elif (self.matches_played == 1):
+            self.tournament_matches[1].player1_user_id = self.players[2]
+            self.tournament_matches[1].player2_user_id = self.players[3]
+        else:
+            self.tournament_matches[2].player1_user_id = self.winners[0]
+            self.tournament_matches[2].player2_user_id = self.winners[1]
+
+    async def initiate_match(self, match_number):
+        self.match_is_running = True
+        self.tournament_matches[match_number].game_mode = 'tournament'
+        self.tournament_matches[match_number].group_name = self.group_name
+        # self.tournament_matches[match_number].limitScore = GameSettings.objects.get(user=self.user_id).score
+        self.tournament_matches[match_number].limitScore = 7
+        self.powerUpTimer = time.time()
+        await self.updatePlayerName()
+
 
 class   paddleC:
 
@@ -116,6 +166,16 @@ class   gameStateC:
         if (self.game_mode == 'remote'):
             global remote_parties
             remote_parties.remove(self)
+        elif (self.game_mode == 'local'):
+            global local_parties
+            local_parties.remove(self)
+        else:
+            global tournaments
+            if self.player1Score > self.player2Score:
+                tournaments.last().winners.append(self.player1_user_id)
+            else:
+                tournaments.last().winners.append(self.player2_user_id)
+            tournaments.last().match_is_running = False
             
 
 

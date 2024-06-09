@@ -35,21 +35,21 @@ function draw() {
   core.renderer.render(core.scene, core.camera);
 }
 
-async function setup(gameMode) {
+async function setup(gameMode, players) {
 
   gameState.game_mode = gameMode;
 
+  const user_id = await Iuser.getID();
+  const user_name = await Iuser.getUsername();
   switch (gameState.game_mode) {
     case "remote":
-      const user_id = await Iuser.getID();
-      const user_name = await Iuser.getUsername();
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
       break;
     case "local":
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local');
       break;
     default:
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament');
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/');
       break;
   }
 

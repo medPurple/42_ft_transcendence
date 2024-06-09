@@ -61,7 +61,7 @@ export class tournamentInput {
 
       console.log(players);
       this.players = players;
-      setup("local", players);
+      setup("tournament", players);
     });
 
     return tournamentContainer;
