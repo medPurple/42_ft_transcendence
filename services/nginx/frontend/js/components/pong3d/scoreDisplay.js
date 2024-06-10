@@ -22,7 +22,6 @@ import Iuser from "../user/userInfo.js";
 // }
 
 export async function displayScore() {
-export async function displayScore() {
 
   var endgame = document.getElementById("pong-renderer");
   var scoreDiv = document.getElementById("pong-score");
@@ -36,7 +35,7 @@ export async function displayScore() {
     player1Name = core.player2_user_name;
 
 
-	scoreDiv.innerHTML = `
+  scoreDiv.innerHTML = `
 	<div class="container mt-5">
 		<div class="row justify-content-center">
 			<div class="col-md-10">
