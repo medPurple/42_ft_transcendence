@@ -52,9 +52,9 @@ export async function createScene() {
 
 	if (gameState.game_mode == "local") {
 		cameraLocal();
-		const controls = new OrbitControls(core.camera, c);
-		controls.minDistance = 200;
-		controls.maxDistance = 1250;
+		core.controls = new OrbitControls(core.camera, c);
+		core.controls.minDistance = 200;
+		core.controls.maxDistance = 1250;
 	}
 
 	//Scene setup
