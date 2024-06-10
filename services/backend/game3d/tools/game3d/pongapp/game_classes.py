@@ -184,6 +184,7 @@ class   gameStateC:
         #elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
 
         # logger.info("Je commence lapartie")
+        await self.broadcastGameState()
         self.status = iv.RUNNING
         while (self.status == iv.RUNNING or self.status == iv.PAUSED):
             with self._lock:

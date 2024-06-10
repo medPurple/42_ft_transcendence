@@ -57,7 +57,7 @@ export async function displayScore() {
 	`
 
   if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
-    await removeUser();
+    //await removeUser();
     scoreDiv.innerHTML = '';
     if (gameState.player1Score == gameState.score_limit) {
       endgame.innerHTML = `

@@ -142,7 +142,9 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             await self.accept()
             logger.info("%s Je cherche a me reconnecter", self.user_name)
             self.gameState = await self.rejoinRemoteParty()
-            self.gameState.status = iv.RUNNING
+            self.gameState.players_nb += 1
+            if (self.gameState.players_nb == 2):
+                self.gameState.status = iv.RUNNING
         else :
             await self.accept()
             logger.info("%s Je cherche a creer/joindre une partie", self.user_name)
@@ -153,6 +155,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
 
         if (self.gameState != 0):
             self.gameState.status = iv.PAUSED
+            self.gameState.players_nb -= 1
             self.gameState.pauseTimer = time.time()
             logger.info("%d je ferme un socket", self.gameState.status)
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)

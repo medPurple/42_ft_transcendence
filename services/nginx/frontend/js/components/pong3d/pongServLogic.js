@@ -11,58 +11,58 @@ function draw() {
   if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
     return;
 
-	if (gameState.game_mode == "remote") {
-		if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
-		cameraPlayer1();
-		}
-		else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
-		cameraPlayer2();
-		}
-	}
+  if (gameState.game_mode == "remote") {
+    if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
+      cameraPlayer1();
+    }
+    else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
+      cameraPlayer2();
+    }
+  }
 
-	core.camera.aspect = window.innerWidth / window.innerHeight;
-	core.camera.updateProjectionMatrix();
-	window.addEventListener('resize', function() {
-		core.renderer.setSize(window.innerWidth, window.innerHeight);
-		core.camera.aspect = window.innerWidth / window.innerHeight;
-		core.camera.updateProjectionMatrix();
-	});
+  core.camera.aspect = window.innerWidth / window.innerHeight;
+  core.camera.updateProjectionMatrix();
+  window.addEventListener('resize', function() {
+    core.renderer.setSize(window.innerWidth, window.innerHeight);
+    core.camera.aspect = window.innerWidth / window.innerHeight;
+    core.camera.updateProjectionMatrix();
+  });
 
-	core.renderer.render(core.scene, core.camera);
+  core.renderer.render(core.scene, core.camera);
 }
 
 async function setup(gameMode, players) {
-	gameState.game_mode = gameMode;
-	const user_id = await Iuser.getID();
-	const user_name = await Iuser.getUsername();
+  gameState.game_mode = gameMode;
+  const user_id = await Iuser.getID();
+  const user_name = await Iuser.getUsername();
 
-	switch (gameState.game_mode) {
-		case "remote":
-			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
-			break;
-		case "local":
-			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/');
-			break;
-		default:
-			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/');
-			break;
-	}
+  switch (gameState.game_mode) {
+    case "remote":
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
+      break;
+    case "local":
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/');
+      break;
+    default:
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/');
+      break;
+  }
 
-	core.gameSocket.onopen = function(e) {
-		console.log('Connected');
-	};
+  core.gameSocket.onopen = function(e) {
+    console.log('Connected');
+  };
 
-	core.gameSocket.onerror = function(e) {
-		console.log('Error');
-	};
+  core.gameSocket.onerror = function(e) {
+    console.log('Error');
+  };
 
-	core.gameSocket.onclose = function(e) {
-		console.log('Closed');
-	};
+  core.gameSocket.onclose = function(e) {
+    console.log('Closed');
+  };
 
-	core.gameSocket.onmessage = async function(event) {
-		await handleServerMessage(event.data);
-	}
+  core.gameSocket.onmessage = async function(event) {
+    await handleServerMessage(event.data);
+  }
 }
 
 const actions = new Map([
@@ -89,23 +89,23 @@ const actions = new Map([
   ["powerup.positionY", (value) => { gameState.powerup_positionY = value; }],
   ["powerup.state", (value) => { gameState.powerup_status = value; }],
   ["powerup.active", (value) => { gameState.powerup_type = value; }],
-  ["powerup.shouldHandle", (value) => { gameState.powerup_shouldHandle = value; }],
+  ["powerup.shouldHandle", (value) => { gameCustom.powerup = value; }],
   ["status", (value) => { gameState.status = value; }],
 ]);
 
 async function handleServerMessage(message) {
-	const map = new Map(Object.entries(JSON.parse(message)));
+  const map = new Map(Object.entries(JSON.parse(message)));
 
-	for (let [key, value] of map.entries()) {
-		const action = actions.get(key);
-		if (action) {
-		action(value);
-		}
-	}
-	if (gameCustom.powerup)
-		handlePowerUp();
-	await displayScore();
-	draw();
+  for (let [key, value] of map.entries()) {
+    const action = actions.get(key);
+    if (action) {
+      action(value);
+    }
+  }
+  if (gameCustom.powerup)
+    handlePowerUp();
+  await displayScore();
+  draw();
 }
 
 export { setup };
