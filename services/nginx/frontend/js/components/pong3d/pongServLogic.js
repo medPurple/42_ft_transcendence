@@ -7,6 +7,7 @@ import Iuser from "../user/userInfo.js";
 
 function draw() {
 
+  console.log(gameCustom.powerup);
   if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
     return;
 

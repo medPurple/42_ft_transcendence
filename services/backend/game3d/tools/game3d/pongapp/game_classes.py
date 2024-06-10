@@ -163,8 +163,8 @@ class   gameStateC:
             #self.logObject()
             await self.broadcastGameState()
         if (self.status == iv.FINISHED):
-            logger.info("J'arrete la partie")
             await self.stopGame()
+            logger.info("J'arrete la partie")
 
     async def stopGame(self):
         if (self.game_mode == 'remote'):
@@ -336,7 +336,6 @@ class   gameStateC:
 
     async def broadcastGameState(self):
         channel_layer = get_channel_layer()
-        logger.info("Depuis le match j'envoie au groupe %s", self.group_name)
         await channel_layer.group_send(
             self.group_name,
             {
@@ -363,6 +362,7 @@ class   gameStateC:
                     "powerup.positionX": self.powerUpPositionX,
                     "powerup.positionY": self.powerUpPositionY,
                     "powerup.active": self.activePowerUp,
+                    "powerup.shouldHandle": self.shouldHandlePowerUp,
                     "status": self.status
                 }
             }
