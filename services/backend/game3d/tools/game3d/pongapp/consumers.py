@@ -86,6 +86,7 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         local_parties.append(self.gameState)
         self.gameState.game_mode = "local"
         self.gameState.group_name = await self.generate_local_name()
+        self.gameState.player1_user_id = self.user_id
         await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
         self.gameState.paddle1 = paddleC(1)
         self.gameState.paddle2 = paddleC(2)
@@ -112,9 +113,9 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
                     self.gameState.paddle2.move = text_data_json["paddleMov2"]
 
     async def game_state(self,event):
-        logger.info("Depuis le local je vais envoyer au websocket")
+        #logger.info("Depuis le local je vais envoyer au websocket")
         await self.send(text_data=json.dumps(event["game_state"]))
-     
+
     async def generate_local_name(self, length=8):
         global group_names
         characters = string.ascii_letters + string.digits

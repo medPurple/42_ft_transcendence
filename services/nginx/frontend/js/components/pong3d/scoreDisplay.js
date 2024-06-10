@@ -2,26 +2,26 @@ import { gameState, core } from './config.js'
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
 
-async function removeUser() {
-  console.log("Removing user from queue.");
-  const id = await Iuser.getID();
-  const body = {
-    "userID": id
-  }
-  const response = await fetch('https://localhost:4430/api/matchmaking/', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': Icookies.getCookie('token'),
-      'X-CSRFToken': Icookies.getCookie('csrftoken')
-    },
-    credentials: 'include',
-    body: JSON.stringify(body)
-  });
-  console.log(response);
+// async function removeUser() {
+//   console.log("Removing user from queue.");
+//   const id = await Iuser.getID();
+//   const body = {
+//     "userID": id
+//   }
+//   const response = await fetch('https://localhost:4430/api/matchmaking/', {
+//     method: 'DELETE',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Authorization': Icookies.getCookie('token'),
+//       'X-CSRFToken': Icookies.getCookie('csrftoken')
+//     },
+//     credentials: 'include',
+//     body: JSON.stringify(body)
+//   });
+//   console.log(response);
+// }
 
-}
-
+export async function displayScore() {
 export async function displayScore() {
 
   var endgame = document.getElementById("pong-renderer");
@@ -36,7 +36,7 @@ export async function displayScore() {
     player1Name = core.player2_user_name;
 
 
-  scoreDiv.innerHTML = `
+	scoreDiv.innerHTML = `
 	<div class="container mt-5">
 		<div class="row justify-content-center">
 			<div class="col-md-10">
