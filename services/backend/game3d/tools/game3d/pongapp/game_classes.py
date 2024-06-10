@@ -30,29 +30,33 @@ local_parties = []
 tournaments = []
 
 class   Tournament:
+
+    # la
+    def __init__(self, *args, **kwargs):
+        self.games = [gameStateC() for i in range(3)]
+
+    # def __init__(self, players, group_name, user_id, *args, **kwargs):
+    #     self.tournament_matches = []
+    #     for i in range(3):
+    #         self.tournament_matches.append(gameStateC())
+    #     self.user_id = user_id
+    #     self.group_name = group_name
+    #     logger.info("user_id : %s" % (self.user_id))
+    #     self.players = []
+    #     for i in players:
+    #         self.players.append(i)
+    #     self.winners = []
         
-    def __init__(self, players, group_name, user_id, *args, **kwargs):
-        self.tournament_matches = []
-        for i in range(3):
-            self.tournament_matches.append(gameStateC())
-        self.user_id = user_id
-        self.group_name = group_name
-        logger.info("user_id : %s" % (self.user_id))
-        self.players = []
-        for i in players:
-            self.players.append(i)
-        self.winners = []
-        
-    async def tournamentLoop(self):
-        global tournament_match_is_running
-        self.matches_played = 0
-        self.match_is_running = False
-        while (self.matches_played < 3):
-            if not self.match_is_running:
-                await self.initiate_match(self.matches_played)
-                asyncio.create_task(self.tournament_matches[self.matches_played].run_game_loop())
-                logger.info("match.group_name %s", self.tournament_matches[self.matches_played].group_name)
-                self.matches_played += 1
+    # async def tournamentLoop(self):
+    #     global tournament_match_is_running
+    #     self.matches_played = 0
+    #     self.match_is_running = False
+    #     while (self.matches_played < 3):
+    #         if not self.match_is_running:
+    #             await self.initiate_match(self.matches_played)
+    #             asyncio.create_task(self.tournament_matches[self.matches_played].run_game_loop())
+    #             logger.info("match.group_name %s", self.tournament_matches[self.matches_played].group_name)
+    #             self.matches_played += 1
 
     def updatePlayerName(self):
         if (self.matches_played == 0):
@@ -118,6 +122,7 @@ class   gameStateC:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.gameNbr = 0
         self.game_mode = 0
         self.task = 0
         self.match_object = 0
@@ -146,6 +151,7 @@ class   gameStateC:
         self._lock = threading.Lock()
 
     async def run_game_loop(self):
+        logger.info("Je rentre dans le game ")
         if (self.game_mode == 'remote'):
             try:
                 self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
@@ -159,7 +165,7 @@ class   gameStateC:
                 player2_score=0,
                 status=0,
             )
-        elif (self.game_mode == 'local'):
+        elif (self.game_mode == 'local' or self.game_mode == 'tournament'):
             try:
                 # logger.info("Je suis dans le local")
                 self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
@@ -174,6 +180,7 @@ class   gameStateC:
                 )
             except GameUser.DoesNotExist:
                 return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+            logger.info(self.game_user1, self.game_user2)
             self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
                 player1=self.game_user1,
                 player2=self.game_user2,
@@ -242,6 +249,8 @@ class   gameStateC:
         elif (self.game_mode == 'local'):
             global local_parties
             local_parties.remove(self)
+        elif (self.game_mode == 'tournament' and self.gameNbr != 2):
+            await self.loadAnotherGame()
         else:
             global tournaments
             if self.player1Score > self.player2Score:
@@ -406,7 +415,25 @@ class   gameStateC:
         paddle2.scaleZ += (1 - paddle2.scaleZ) * 0.2
         paddle2.positionY += paddle2.dirY
 
+    # la
+    async def loadAnotherGame(self):
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "load.game",
+                "load_game": {
+                    "player1_user_id": self.player1_user_id,
+                    "player2_user_id": self.player2_user_id,
+                    "player1Score": self.player1Score,
+                    "player2Score": self.player2Score,
+                    "gameNbr": self.gameNbr
+                }
+            }
+        )
+
     async def broadcastGameState(self):
+        logger.info("Depuis le match j'envoie le game state")
         channel_layer = get_channel_layer()
         await channel_layer.group_send(
             self.group_name,
