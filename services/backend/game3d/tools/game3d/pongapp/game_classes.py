@@ -160,30 +160,31 @@ class   gameStateC:
 				player2_score=0,
 				status=0,
 			)
-		elif (self.game_mode == 'local'): ####### a modifier, not working!!
+		elif (self.game_mode == 'local'):
 			try:
-				logger.info("Je suis dans le local")
+				# logger.info("Je suis dans le local")
 				self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
-				# self.game_user2 = await sync_to_async(Gameuser.objects.create, thread_sensitive=True)(
-				# 	userID=0,
-				# 	userName="LocalPlayer",
-				# 	gamesWon=0,
-				# 	gamesLost=0,
-				# 	gamesPlayed=0,
-				# )
-			except Exception as e:
-				logger.info(f"Error: {e}")
-			self.match_object, created = await sync_to_async(GameMatch.objects.get_or_create, thread_sensitive=True)(
+				self.game_user2, created = await sync_to_async(GameUser.objects.get_or_create, thread_sensitive=True)(
+					userID=self.game_user1.userID * 1000,
+					userName=self.game_user1.userName + " (local)",
+					defaults={
+						'gamesWon': 0,
+						'gamesLost': 0,
+						'gamesPlayed': 0,
+					}
+				)
+			except GameUser.DoesNotExist:
+				return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+			self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
 				player1=self.game_user1,
-				player2=self.game_user1,
-				defaults={
-					"player1_score": 0,
-					"player2_score": 0,
-					"status": 0,
-				}
+				player2=self.game_user2,
+				player1_score=0,
+				player2_score=0,
+				status=0,
 			)
 		#elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
-		logger.info("Je commence lapartie")
+
+		# logger.info("Je commence lapartie")
 		self.status = iv.RUNNING
 		while (self.status == iv.RUNNING or self.status == iv.PAUSED):
 			with self._lock:
@@ -196,6 +197,7 @@ class   gameStateC:
 					self.ballPhysics(self.ball)
 					if (self.shouldHandlePowerUp):
 						self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
+					await sync_to_async(self.match_object.save)()
 					self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
 					self.paddle1Movement(self.paddle1)
 					self.paddle2Movement(self.paddle2)
@@ -218,21 +220,21 @@ class   gameStateC:
 			self.game_user2.gamesWon += 1
 			self.game_user1.gamesLost += 1
 
-		logger.info("Match status : %d" % (self.match_object.status))
-		logger.info("player1 : %s" % (self.game_user1.userName))
-		logger.info("player1Score : %d" % (self.match_object.player1_score))
-		logger.info("games_won : %d" % (self.game_user1.gamesWon))
-		logger.info("games_lost : %d" % (self.game_user1.gamesLost))
-		logger.info("games_played : %d" % (self.game_user1.gamesPlayed))
-		logger.info("player2 : %s" % (self.game_user2.userName))
-		logger.info("player2Score : %d" % (self.match_object.player2_score))
-		logger.info("games_won : %d" % (self.game_user2.gamesWon))
-		logger.info("games_lost : %d" % (self.game_user2.gamesLost))
-		logger.info("games_played : %d" % (self.game_user2.gamesPlayed))
+		# logger.info("Match status : %d" % (self.match_object.status))
+		# logger.info("player1 : %s" % (self.game_user1.userName))
+		# logger.info("player1Score : %d" % (self.match_object.player1_score))
+		# logger.info("games_won : %d" % (self.game_user1.gamesWon))
+		# logger.info("games_lost : %d" % (self.game_user1.gamesLost))
+		# logger.info("games_played : %d" % (self.game_user1.gamesPlayed))
+		# logger.info("player2 : %s" % (self.game_user2.userName))
+		# logger.info("player2Score : %d" % (self.match_object.player2_score))
+		# logger.info("games_won : %d" % (self.game_user2.gamesWon))
+		# logger.info("games_lost : %d" % (self.game_user2.gamesLost))
+		# logger.info("games_played : %d" % (self.game_user2.gamesPlayed))
 
-		await sync_to_async(self.match_object.save)()
 		await sync_to_async(self.game_user1.save)()
 		await sync_to_async(self.game_user2.save)()
+		await sync_to_async(self.match_object.save)()
 
 		if (self.game_mode == 'remote'):
 			global remote_parties
@@ -337,20 +339,15 @@ class   gameStateC:
 		ball.positionX = 0
 		ball.positionY = 0
 
-		#ATTENTION local GameUser not implemented (match object not created!?)
 		if (index == 1):
 			self.player1Score += 1
-			if (self.game_mode == 'remote'):
-				self.match_object.player1_score += 1
-				self.match_object.save()
-			#logger.info("player1Score : %d" % (self.match_object.player1_score))
+			self.match_object.player1_score += 1
+			# logger.info("player1Score : %d" % (self.match_object.player1_score))
 			ball.dirX = -1
 		else:
 			self.player2Score += 1
-			if (self.game_mode == 'remote'):
-				self.match_object.player2_score += 1
-				self.match_object.save()
-			#logger.info("player2Score : %d" % (self.match_object.player2_score))
+			self.match_object.player2_score += 1
+			# logger.info("player2Score : %d" % (self.match_object.player2_score))
 			ball.dirX = 1
 		ball.dirY = 1
 		if (ball.boosted == 1):
@@ -442,7 +439,6 @@ class   gameStateC:
 		)
 			
 	def logObject(self):
-
 		logbuff = self
 		logger.info("group_name : %s" % (logbuff.group_name))
 		logger.info("players_nb : %d" % (logbuff.players_nb))
