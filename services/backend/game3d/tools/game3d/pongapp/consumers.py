@@ -26,6 +26,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.group_name = 0
+        self.tournament = Tournament()
 
     async def connect(self):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
@@ -38,10 +39,11 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         self.group_name = await self.generate_tournament_name()
         logger.info("Group Name consumer : %s", self.group_name)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
-        await self.tournamentLoop()
+        # await self.tournamentLoop()
+        await self.findTournamentGame(0, self.user1, self.user2)
 
     async def disconnect(self, close_code):
-        tournaments.remove(self.tournament)
+        # tournaments.remove(self.tournament)
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def tournamentLoop(self):
@@ -64,6 +66,47 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
     async def game_state(self,event):
         logger.info("Depuis le tournoi je vais envoyer au websocket")
         await self.send(text_data=json.dumps(event["game_state"]))
+
+    # la
+    async def findTournamentGame(self, gameNbr, player1, player2):
+        self.tournament.games[gameNbr].game_mode = "tournament"
+        self.tournament.games[gameNbr].group_name = await self.generate_tournament_name()
+        await self.channel_layer.group_add(self.tournament.games[gameNbr].group_name, self.channel_name)
+        self.tournament.games[gameNbr].paddle1 = paddleC(1)
+        self.tournament.games[gameNbr].paddle2 = paddleC(2)
+        self.tournament.games[gameNbr].limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).score)()
+        self.tournament.games[gameNbr].shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).powerups)()
+        self.tournament.games[gameNbr].players_nb = 2
+        self.tournament.games[gameNbr].player1_user_name = player1
+        self.tournament.games[gameNbr].player2_user_name = player2
+        self.tournament.games[gameNbr].player1_user_id = self.user_id
+        self.tournament.games[gameNbr].gameNbr = gameNbr
+        await self.send(text_data=json.dumps({"party": "active"}))
+        self.tournament.games[gameNbr].powerUpTimer = time.time()
+        asyncio.create_task(self.tournament.games[gameNbr].run_game_loop())
+        return self.tournament.games[gameNbr]
+
+    # la
+    async def load_game(self,event):
+        # Récupérer les données du jeu
+        game_data = event["load_game"]
+
+        # Récupérer les scores des joueurs
+        player1_score = game_data["player1Score"]
+        player2_score = game_data["player2Score"]
+        gameNbr = game_data["gameNbr"]
+        if (gameNbr == 0):
+            if (player1_score > player2_score):
+                self.winner1 = game_data["player1_user_id"]
+            else:
+                self.winner1 = game_data["player2_user_id"]
+            await self.findTournamentGame(1, self.user3, self.user4)
+        elif (gameNbr == 1):
+            if (player1_score > player2_score):
+                self.winner2 = game_data["player1_user_id"]
+            else:
+                self.winner2 = game_data["player2_user_id"]
+            await self.findTournamentGame(2, self.winner1, self.winner2)
 
 class PongLocalConsumer(AsyncWebsocketConsumer):
 
@@ -142,7 +185,9 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             await self.accept()
             logger.info("%s Je cherche a me reconnecter", self.user_name)
             self.gameState = await self.rejoinRemoteParty()
-            self.gameState.status = iv.RUNNING
+            self.gameState.players_nb += 1
+            if (self.gameState.players_nb == 2):
+                self.gameState.status = iv.RUNNING
         else :
             await self.accept()
             logger.info("%s Je cherche a creer/joindre une partie", self.user_name)
@@ -153,6 +198,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
 
         if (self.gameState != 0):
             self.gameState.status = iv.PAUSED
+            self.gameState.players_nb -= 1
             self.gameState.pauseTimer = time.time()
             logger.info("%d je ferme un socket", self.gameState.status)
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)

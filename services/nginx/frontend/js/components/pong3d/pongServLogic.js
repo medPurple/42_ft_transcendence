@@ -36,13 +36,13 @@ function draw() {
 		core.camera.updateProjectionMatrix();
 	});
 
-	core.renderer.render(core.scene, core.camera);
+  core.renderer.render(core.scene, core.camera);
 }
 
 async function setup(gameMode, players) {
-	gameState.game_mode = gameMode;
-	const user_id = await Iuser.getID();
-	const user_name = await Iuser.getUsername();
+  gameState.game_mode = gameMode;
+  const user_id = await Iuser.getID();
+  const user_name = await Iuser.getUsername();
 
 	switch (gameState.game_mode) {
 		case "remote":
@@ -61,21 +61,21 @@ async function setup(gameMode, players) {
 			break;
 	}
 
-	core.gameSocket.onopen = function(e) {
-		console.log('Connected');
-	};
+  core.gameSocket.onopen = function(e) {
+    console.log('Connected');
+  };
 
-	core.gameSocket.onerror = function(e) {
-		console.log('Error');
-	};
+  core.gameSocket.onerror = function(e) {
+    console.log('Error');
+  };
 
-	core.gameSocket.onclose = function(e) {
-		console.log('Closed');
-	};
+  core.gameSocket.onclose = function(e) {
+    console.log('Closed');
+  };
 
-	core.gameSocket.onmessage = async function(event) {
-		await handleServerMessage(event.data);
-	}
+  core.gameSocket.onmessage = async function(event) {
+    await handleServerMessage(event.data);
+  }
 }
 
 const actions = new Map([
@@ -102,23 +102,25 @@ const actions = new Map([
 	["powerup.positionY", (value) => { gameState.powerup_positionY = value; }],
 	["powerup.state", (value) => { gameState.powerup_status = value; }],
 	["powerup.active", (value) => { gameState.powerup_type = value; }],
-	["powerup.shouldHandle", (value) => { gameState.powerup_shouldHandle = value; }],
+	["powerup.shouldHandle", (value) => { gameCustom.powerup = value; }],
 	["status", (value) => { gameState.status = value; }],
 ]);
 
 async function handleServerMessage(message) {
-	const map = new Map(Object.entries(JSON.parse(message)));
+  const map = new Map(Object.entries(JSON.parse(message)));
 
-	for (let [key, value] of map.entries()) {
-		const action = actions.get(key);
-		if (action) {
-		action(value);
-		}
-	}
-	if (gameCustom.powerup)
-		handlePowerUp();
-	await displayScore();
-	draw();
+  for (let [key, value] of map.entries()) {
+    const action = actions.get(key);
+    if (action) {
+      action(value);
+    }
+  }
+  if (gameCustom.powerup)
+    handlePowerUp();
+  if (gameState.game_mode == tournament)
+    deleteForm();
+  await displayScore();
+  draw();
 }
 
 export { setup };
