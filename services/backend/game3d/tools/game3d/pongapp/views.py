@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from .models import GameUser, GameSettings, GameMatch
 from .serializers import GameUserSerializer, GameSettingsSerializer, GameMatchSerializer
 import logging
@@ -197,19 +198,11 @@ class GameMatchAPI(APIView):
 		if user_id:
 			try:
 				user = get_object_or_404(GameUser, userID=user_id)
-				p1_matches = GameMatch.objects.filter(player1=user)#.filter(status=1)
-	
-				p2_matches = GameMatch.objects.filter(player2=user)#.filter(status=1)
-				
-				match_1 = GameMatchSerializer(p1_matches)
-				match_2 = GameMatchSerializer(p2_matches)
-
-				logger.info(f'Match 1: {match_1.data}')
-				logger.info(f'Match 2: {match_2.data}')
-				# json_data = {match_1.data + match_2.data}
-				return Response(match_1, status=status.HTTP_200_OK)
+				matches = GameMatch.objects.filter(Q(player1=user) | Q(player2=user), status=1).order_by('-date')
+				data = self.formatData(matches, user)
+				return Response({'success': True, 'data': data}, status=status.HTTP_200_OK)
 			except Exception as e:
-				return Response({"error": "Match not found"}, status=status.HTTP_404_NOT_FOUND)
+				return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 		else:
 			game_matches = GameMatch.objects.all()
@@ -244,3 +237,62 @@ class GameMatchAPI(APIView):
 
 		game_match.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
+
+	def formatData(self, matches, user):
+		data = {
+			'username': user.userName,
+			'id': user.userID,
+			'game_won': user.gamesWon,
+			'game_lost': user.gamesLost,
+			'game_played': user.gamesPlayed,
+			'history': {}
+		}
+		for match in matches:
+			data['history'][match.id] = {
+				'date': match.date,
+				'player1': {
+					'id': match.player1.userID,
+					'username': match.player1.userName,
+					'score': match.player1_score
+				},
+				'player2': {
+					'id': match.player2.userID,
+					'username': match.player2.userName,
+					'score': match.player2_score
+				}
+			}
+		return data
+
+
+# {
+# 	username:
+# 	id:
+# 	game_win:
+# 	game_lost:
+# 	game_played:
+# 	history{
+# 		game1{
+# 			date:
+# 			player1{
+# 				id:
+# 				username:
+# 				score:
+# 			}
+# 			player2{
+# 				id:
+# 				username:
+# 				score:
+# 			}
+# 		game2{
+# 			player1{
+# 				id:
+# 				username:
+# 				score:
+# 			}
+# 			player2{
+# 				id:
+# 				username:
+# 				score:
+# 			}
+# 		}
+# }

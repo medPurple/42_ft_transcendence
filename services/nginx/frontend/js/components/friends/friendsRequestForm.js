@@ -318,8 +318,8 @@ export class Friends {
 			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmNpc25kc3d3dncxMHVsaDYyaDR4MzJrZzN6cDR3eGg4eGl2djU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GnNi4XFTOIkUe9giJl/giphy.gif";
 		
 			Nonediv.appendChild(img);
-			return Nonediv;
 			this.usersList.appendChild(Nonediv);
+			return Nonediv;
 		}
 		document.body.appendChild(this.usersList);
 		return this.usersList;

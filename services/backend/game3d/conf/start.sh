@@ -6,7 +6,7 @@ sh /tmp/init_db.sh
 service postgresql start
 
 sleep 5
-python3 manage.py makemigrations
+python3 manage.py makemigrations pongapp
 
 sleep 5
 python3 manage.py migrate

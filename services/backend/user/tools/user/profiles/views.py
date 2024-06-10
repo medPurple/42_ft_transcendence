@@ -246,4 +246,14 @@ class CustomUserDeleteView(APIView):
 		logout(request)
 		return Response({'success': True}, status=status.HTTP_200_OK)
 
+class CustomUserStatusView(APIView):
+	def put(self, request):
+		try:
+			logger.info(request.data)
+			user = get_object_or_404(CustomUser, user_id=request.data.get('user_id'))
+			user.is_online = request.data.get('status')
+			user.save()
+			return Response({'success': True}, status=status.HTTP_200_OK)
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_200_OK)
 

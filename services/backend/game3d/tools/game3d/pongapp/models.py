@@ -72,9 +72,5 @@ class GameMatch(models.Model):
 	player2 = models.ForeignKey(GameUser, on_delete=models.PROTECT, related_name='matches_as_player2')
 	player1_score = models.IntegerField(default=0)
 	player2_score = models.IntegerField(default=0)
+	date = models.DateTimeField(auto_now_add=True)
 	status = models.IntegerField(choices=GAME, default=0)
-
-	# def __str__(self):
-	# 	if player1 == None or player2 == None:
-	# 		return f'Match {self.id}: Players not set or deleted'
-	# 	return f'Match {self.id}: {self.player1.userName} vs {self.player2.userName}, {self.status}'
