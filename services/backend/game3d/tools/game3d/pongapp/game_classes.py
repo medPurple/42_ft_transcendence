@@ -461,7 +461,7 @@ class   gameStateC:
         )
 
     async def broadcastGameState(self):
-        logger.info("Depuis le match j'envoie le game state")
+        # logger.info("Depuis le match j'envoie le game state")
         channel_layer = get_channel_layer()
         await channel_layer.group_send(
             self.group_name,

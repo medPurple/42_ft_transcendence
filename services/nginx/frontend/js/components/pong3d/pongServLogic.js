@@ -1,7 +1,7 @@
 import { gameState, gameCustom, core, playMesh } from "./config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
-import { displayScore } from './scoreDisplay.js'
+import { displayScore , deleteForm } from './scoreDisplay.js'
 import { cameraPlayer1, cameraLocalPlayer1, cameraPlayer2, cameraLocalPlayer2, cameraMalusRemote } from './cameraLogic.js'
 import Iuser from "../user/userInfo.js";
 
@@ -107,20 +107,20 @@ const actions = new Map([
 ]);
 
 async function handleServerMessage(message) {
-  const map = new Map(Object.entries(JSON.parse(message)));
+	const map = new Map(Object.entries(JSON.parse(message)));
 
-  for (let [key, value] of map.entries()) {
-    const action = actions.get(key);
-    if (action) {
-      action(value);
-    }
-  }
-  if (gameCustom.powerup)
-    handlePowerUp();
-  if (gameState.game_mode == tournament)
-    deleteForm();
-  await displayScore();
-  draw();
+	for (let [key, value] of map.entries()) {
+		const action = actions.get(key);
+		if (action) {
+		action(value);
+		}
+	}
+	if (gameCustom.powerup)
+		handlePowerUp();
+	if (gameState.game_mode == "tournament")
+		deleteForm();
+	await displayScore();
+	draw();
 }
 
 export { setup };

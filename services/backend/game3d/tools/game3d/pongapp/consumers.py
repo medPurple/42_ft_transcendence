@@ -64,7 +64,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
             return group_name
 
     async def game_state(self,event):
-        logger.info("Depuis le tournoi je vais envoyer au websocket")
+        # logger.info("Depuis le tournoi je vais envoyer au websocket")
         await self.send(text_data=json.dumps(event["game_state"]))
 
     # la
