@@ -8,6 +8,8 @@ from channels.layers import get_channel_layer
 from . import initvalues as iv
 from .models import GameSettings, GameMatch, GameUser
 from asgiref.sync import sync_to_async
+from rest_framework import status
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
@@ -158,27 +160,30 @@ class   gameStateC:
 				player2_score=0,
 				status=0,
 			)
-		# elif (self.game_mode == 'local'):
-		# 	try:
-		# 		self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
-		# 		self.game_user2 = await sync_to_async(Gameuser.objects.create, thread_sensitive=True)(
-		# 			userID=0,
-		# 			userName="LocalPlayer",
-		# 			gamesWon=0,
-		# 			gamesLost=0,
-		# 			gamesPlayed=0,
-		# 		)
-		# 	except GameUser.DoesNotExist:
-		# 		return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-		# 	self.match_object, created = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
-		# 		player1=self.game_user1,
-		# 		player2=self.game_user2,
-		# 		player1_score=0,
-		# 		player2_score=0,
-		# 		status=0,
-		# 	)
+		elif (self.game_mode == 'local'): ####### a modifier, not working!!
+			try:
+				logger.info("Je suis dans le local")
+				self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
+				# self.game_user2 = await sync_to_async(Gameuser.objects.create, thread_sensitive=True)(
+				# 	userID=0,
+				# 	userName="LocalPlayer",
+				# 	gamesWon=0,
+				# 	gamesLost=0,
+				# 	gamesPlayed=0,
+				# )
+			except Exception as e:
+				logger.info(f"Error: {e}")
+			self.match_object, created = await sync_to_async(GameMatch.objects.get_or_create, thread_sensitive=True)(
+				player1=self.game_user1,
+				player2=self.game_user1,
+				defaults={
+					"player1_score": 0,
+					"player2_score": 0,
+					"status": 0,
+				}
+			)
 		#elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
-
+		logger.info("Je commence lapartie")
 		self.status = iv.RUNNING
 		while (self.status == iv.RUNNING or self.status == iv.PAUSED):
 			with self._lock:
@@ -337,14 +342,14 @@ class   gameStateC:
 			self.player1Score += 1
 			if (self.game_mode == 'remote'):
 				self.match_object.player1_score += 1
-				self.match_object.save
+				self.match_object.save()
 			#logger.info("player1Score : %d" % (self.match_object.player1_score))
 			ball.dirX = -1
 		else:
 			self.player2Score += 1
 			if (self.game_mode == 'remote'):
 				self.match_object.player2_score += 1
-				self.match_object.save
+				self.match_object.save()
 			#logger.info("player2Score : %d" % (self.match_object.player2_score))
 			ball.dirX = 1
 		ball.dirY = 1
