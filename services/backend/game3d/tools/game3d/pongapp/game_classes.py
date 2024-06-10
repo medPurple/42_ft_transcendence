@@ -151,37 +151,31 @@ class   gameStateC:
 				self.game_user2 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player2_user_id))
 			except GameUser.DoesNotExist:
 				return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-			self.match_object, created = await sync_to_async(GameMatch.objects.get_or_create, thread_sensitive=True)(
+			self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
 				player1=self.game_user1,
 				player2=self.game_user2,
-				defaults={
-					"player1_score": 0,
-					"player2_score": 0,
-					"status": 0,
-				}
+				player1_score=0,
+				player2_score=0,
+				status=0,
 			)
-		# elif (self.game_mode == 'local'): ####### a modifier, not working!!
+		# elif (self.game_mode == 'local'):
 		# 	try:
 		# 		self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
-		# 		self.game_user2 = await sync_to_async(Gameuser.objects.get_or_create, thread_sensitive=True)(
+		# 		self.game_user2 = await sync_to_async(Gameuser.objects.create, thread_sensitive=True)(
 		# 			userID=0,
-		# 			userName="Local Player",
-		# 			defaults={
-		# 				"gamesWon": 0,
-		# 				"gamesLost": 0,
-		# 				"gamesPlayed": 0
-		# 			}
+		# 			userName="LocalPlayer",
+		# 			gamesWon=0,
+		# 			gamesLost=0,
+		# 			gamesPlayed=0,
 		# 		)
 		# 	except GameUser.DoesNotExist:
 		# 		return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-		# 	self.match_object, created = await sync_to_async(GameMatch.objects.get_or_create, thread_sensitive=True)(
+		# 	self.match_object, created = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
 		# 		player1=self.game_user1,
 		# 		player2=self.game_user2,
-		# 		defaults={
-		# 			"player1_score": 0,
-		# 			"player2_score": 0,
-		# 			"status": 0,
-		# 		}
+		# 		player1_score=0,
+		# 		player2_score=0,
+		# 		status=0,
 		# 	)
 		#elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
 
