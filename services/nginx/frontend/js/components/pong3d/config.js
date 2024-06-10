@@ -42,7 +42,9 @@ export var core = {
   party: 0,
   player_id: 0,
   player1_userid: 0,
-  player2_userid: 0
+  player2_userid: 0,
+  player1_user_name: 0,
+  player2_user_name: 0
 }
 
 export var playMesh = {
@@ -91,30 +93,30 @@ export var pUpState = {
 }
 
 export const constants = {
-	// WIDTH: 1280, 
-	// HEIGHT: 600,
-	// ASPECT: 2 / 1,
-	VIEW_ANGLE: 75,
-	NEAR: 0.1,
-	FAR: 10000,
-	fieldWidth: 400,
-	fieldHeight: 200,
-	paddleWidth: 10,
-	paddleHeight: 30,
-	paddleDepth: 10,
-	paddleQuality: 1,
-	planeWidth: 3,
-	planeHeight: 200,
-	planeQuality: 10,
-	tableWidth: 400 * 1.05,
-	tableHeight: 200 * 1.03,
-	tableQuality: 10,
-	groundWidth: 1000,
-	groundHeight: 2200,
-	groundQuality: 3,
-	wallHeight: 1024,
-	wallWidth: 2048,
-	wallQuality: 3
+  // WIDTH: 1280, 
+  // HEIGHT: 600,
+  // ASPECT: 2 / 1,
+  VIEW_ANGLE: 75,
+  NEAR: 0.1,
+  FAR: 10000,
+  fieldWidth: 400,
+  fieldHeight: 200,
+  paddleWidth: 10,
+  paddleHeight: 30,
+  paddleDepth: 10,
+  paddleQuality: 1,
+  planeWidth: 3,
+  planeHeight: 200,
+  planeQuality: 10,
+  tableWidth: 400 * 1.05,
+  tableHeight: 200 * 1.03,
+  tableQuality: 10,
+  groundWidth: 1000,
+  groundHeight: 2200,
+  groundQuality: 3,
+  wallHeight: 1024,
+  wallWidth: 2048,
+  wallQuality: 3
 }
 
 export const palette = {

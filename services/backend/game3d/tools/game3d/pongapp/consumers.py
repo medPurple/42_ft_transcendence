@@ -185,6 +185,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).powerups)()
             logger.info("Player1 powerups %d", self.gameState.shouldHandlePowerUp)
             self.gameState.player1_user_id = self.user_id 
+            self.gameState.player1_user_name = self.user_name 
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             return newPart
         else:
@@ -193,6 +194,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             self.gameState = remote_parties[listLen - 1]
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             self.gameState.player2_user_id = self.user_id 
+            self.gameState.player2_user_name = self.user_name 
             self.gameState.players_nb = 2
             self.gameState.powerUpTimer = time.time()
             self.gameState.pauseTimer = time.time()
