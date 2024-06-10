@@ -12,12 +12,14 @@ function draw() {
 
 	if (gameState.game_mode == "remote") {
 		if (core.player_id == 1 && gameState.paddle2_powerup != 3) {
-		cameraPlayer1();
+			cameraPlayer1();
 		}
 		else if (core.player_id == 2 && gameState.paddle1_powerup != 3) {
-		cameraPlayer2();
+			cameraPlayer2();
 		}
 	}
+	if (gameState.paddle1_powerup == 3 || gameState.paddle2_powerup == 3)
+		cameraMalus();
 
 	core.camera.aspect = window.innerWidth / window.innerHeight;
 	core.camera.updateProjectionMatrix();

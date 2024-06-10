@@ -20,3 +20,11 @@ export function cameraLocal() {
 	core.camera.position.z = 230;
 	core.camera.position.y = -230;
 }
+
+export function cameraMalus() {
+	core.camera.position.x = 0;
+	core.camera.position.y = 0;
+	core.camera.position.z = 230;
+	core.camera.rotation.z = 0;
+	core.camera.rotation.y = 0;
+}
