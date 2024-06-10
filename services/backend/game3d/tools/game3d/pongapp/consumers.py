@@ -86,6 +86,7 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         local_parties.append(self.gameState)
         self.gameState.game_mode = "local"
         self.gameState.group_name = await self.generate_local_name()
+        self.gameState.player1_user_id = self.user_id
         await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
         self.gameState.paddle1 = paddleC(1)
         self.gameState.paddle2 = paddleC(2)
