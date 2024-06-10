@@ -259,6 +259,7 @@ class   gameStateC:
         self.powerUpPositionX = map_locations[powerUpLoc][0]
         self.powerUpPositionY = map_locations[powerUpLoc][1]
         self.activePowerUp = random.randint(0, 3)
+        # self.activePowerUp = 3
         self.powerUpState = iv.PU_ON_FIELD
         self.powerUpTimer = time.time()
 

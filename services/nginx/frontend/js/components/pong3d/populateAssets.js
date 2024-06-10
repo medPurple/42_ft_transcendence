@@ -31,7 +31,7 @@ function populateDoll() {
 		}
 		else {
 			objMesh.firstAsset.position.x = 800;
-			// objMesh.firstAsset.rotateY(Math.PI / 2);
+			objMesh.firstAsset.rotateY(Math.PI / 2);
 		}
 
 		core.scene.add(objMesh.firstAsset);

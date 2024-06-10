@@ -63,7 +63,6 @@ up:
 	@ echo -e "$(WHITE) A self-sufficient runtime for containers$(CEND)"
 	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
-	@ sleep 15
 	@ echo -e "$(GREEN)★ Images Ready ★$(CEND)\n"
 
 run_script:
