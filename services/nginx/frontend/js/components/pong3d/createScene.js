@@ -50,7 +50,7 @@ export async function createScene() {
 	//Camera setup
 	core.camera = new THREE.PerspectiveCamera(constants.VIEW_ANGLE, window.innerWidth/window.innerHeight, constants.NEAR, constants.FAR)
 
-	if (gameState.game_mode == "local") {
+	if (gameState.game_mode == "local" || gameState.game_mode == "tournament") {
 		cameraLocal();
 		const controls = new OrbitControls(core.camera, c);
 		controls.minDistance = 200;
