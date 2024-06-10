@@ -47,6 +47,11 @@ async function setup(gameMode, players) {
 	switch (gameState.game_mode) {
 		case "remote":
 			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
+			const div = document.getElementById('pong-renderer');
+			const img = new Image();
+			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGwwM2lwdm8zNTFiYng2ZzJhODVpdnQya3lxMDloY3dzNHk1cDB2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Q0MrhO9BUSxKR8RdZC/giphy.gif";
+			img.classList.add('embed-responsive-item');
+			div.appendChild(img);
 			break;
 		case "local":
 			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/');
