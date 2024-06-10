@@ -21,6 +21,12 @@ import Iuser from "../user/userInfo.js";
 //   console.log(response);
 // }
 
+export async function deleteForm() {
+
+  const formDiv = document.getElementById('app-general-container');
+  formDiv.removeChild(formDiv.lastChild);
+}
+
 export async function displayScore() {
 
   var endgame = document.getElementById("pong-renderer");

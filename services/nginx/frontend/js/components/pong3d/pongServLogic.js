@@ -104,6 +104,8 @@ async function handleServerMessage(message) {
   }
   if (gameCustom.powerup)
     handlePowerUp();
+  if (gameState.game_mode == tournament)
+    deleteForm();
   await displayScore();
   draw();
 }
