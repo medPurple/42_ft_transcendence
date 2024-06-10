@@ -64,16 +64,14 @@ class GameSettings(models.Model):
 
 class GameMatch(models.Model):
 	GAME = {
-		0: "Not_Started",
-		1: "Playing",
-		2: "Finished",
+		0: "Playing",
+		1: "Finished",
 	}
 
 	player1 = models.ForeignKey(GameUser, on_delete=models.PROTECT, related_name='matches_as_player1')
 	player2 = models.ForeignKey(GameUser, on_delete=models.PROTECT, related_name='matches_as_player2')
 	player1_score = models.IntegerField(default=0)
 	player2_score = models.IntegerField(default=0)
-	date = models.DateTimeField(auto_now_add=True)
 	status = models.IntegerField(choices=GAME, default=0)
 
 	# def __str__(self):

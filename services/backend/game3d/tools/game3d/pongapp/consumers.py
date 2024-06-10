@@ -112,9 +112,9 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
                     self.gameState.paddle2.move = text_data_json["paddleMov2"]
 
     async def game_state(self,event):
-        logger.info("Depuis le local je vais envoyer au websocket")
+        #logger.info("Depuis le local je vais envoyer au websocket")
         await self.send(text_data=json.dumps(event["game_state"]))
-     
+
     async def generate_local_name(self, length=8):
         global group_names
         characters = string.ascii_letters + string.digits

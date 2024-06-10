@@ -34,7 +34,7 @@ export async function displayScore() {
 				<div class="mt-4">
 					<div class="row">
 						<div class="col-md-6">
-							<h3></h3>
+							<h3>Player 1</h3>
 								<div class="score" id="score1">${gameState.player1Score}</div>
 						</div>
 						<div class="col-md-6">
