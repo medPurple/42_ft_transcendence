@@ -16,7 +16,6 @@
 	import profile from "./views/user/profile.js";
 	import editProfile from "./views/user/editProfile.js";
 	import updatePassword from "./views/user/updatePassword.js";
-	import deleteAccount from "./views/user/deleteAccount.js";
 	import friendsRequest from "./views/friends/friendsRequest.js";
 	import friendsProfile from "./views/friends/friendsProfile.js";
 	import friendsStatistics from "./views/friends/friendsStatistics.js";
