@@ -16,7 +16,6 @@
 	import profile from "./views/user/profile.js";
 	import editProfile from "./views/user/editProfile.js";
 	import updatePassword from "./views/user/updatePassword.js";
-	import deleteAccount from "./views/user/deleteAccount.js";
 	import friendsRequest from "./views/friends/friendsRequest.js";
 	import friendsProfile from "./views/friends/friendsProfile.js";
 	import friendsStatistics from "./views/friends/friendsStatistics.js";
@@ -87,10 +86,6 @@
 			title: "Update password",
 			render: updatePassword
 		},
-		'/delete-account': {
-			title: "Delete account",
-			render: deleteAccount
-		},
 		'/statistics': {
 			title: "Statistics",
 			render: statistics
@@ -153,7 +148,7 @@
 
 	function NavbarFooterVisibility() {
 		const path = location.pathname;
-		const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/statistics', '/chat', '/play', '/pongService', '/gameService', '/pongSettings', '/metaService', '/pkmSettings', '/pokemap', '/play_pr', '/play_pkr'];
+		const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password',  '/friends', '/statistics', '/chat', '/play', '/pongService', '/gameService', '/pongSettings', '/metaService', '/pkmSettings', '/pokemap', '/play_pr', '/play_pkr'];
 		const showNavbarFooter = showInRoute.includes(path) || path.startsWith('/friends') || path.startsWith('/statistics');
 		;
 		;
@@ -182,7 +177,6 @@
 				<li><a class="dropdown-item" href="/chat">chat</a></li>
 				<li><hr class="dropdown-divider"></li>
 				<li><logout-form></logout-form></li>
-				<li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
 				`;
 		} else {
 			dropdownMenu.innerHTML = `
@@ -213,8 +207,8 @@
 						'Authorization': token
 					}
 				});
-
-				if (response.ok){
+				const data = await response.json();
+				if (data.success == true){
 					return true
 				} else {
 					throw new Error('Failed to get user info');

@@ -4,6 +4,7 @@ import Iuser from "../user/userInfo.js";
 
 export class pokeMap {
 
+    
 	constructor() {
 		this.userID = null;
 		this.map = 0;
@@ -11,7 +12,7 @@ export class pokeMap {
 		this.ctxAllCharacters = null;
         this.eventcmbt = false;
         this.eventtalk = false;
-
+        this.mapimage = new Image(520 , 510);
 
 	}
 
@@ -98,59 +99,65 @@ export class pokeMap {
         if (player.player_status === 1){
             if (this.eventcmbt === false){
                 console.warn("combat");
-                this.eventcmbt = true;}
+                this.eventcmbt = true;
+            }
         }
         if (player.player_status === 2){
             if (this.eventtalk === false){
                 console.warn("talk");
                 this.addPnjtalk();
-                this.eventtalk = true;}
+                this.eventtalk = true;
+            }
         }
-
-        const mapimage = new Image(520 , 510);
-        switch (player.player_map){
-            case 0:
-                mapimage.src = './images/Maps/ext.png';
-                break;
-            case 1:
-                mapimage.src = './images/Maps/litte_house1.png';
-                break;
-            case 2:
-                mapimage.src = './images/Maps/litte_house2.png';
-                break;
-            case 3:
-                mapimage.src = './images/Maps/big_house1.png';
-                break;
-            case 4:
-                mapimage.src = './images/Maps/big_house2.png';
-                break;
-        }
+    
         const img = new Image();
         img.src = this.asset_selection(player.orientation, player.player_skin);
-        mapimage.onload = () => {
+    
+        if (player.posX != player.lastPosX || player.posY != player.lastPosY) {
+            this.mapimage.src = this.select_map_image(player.player_map);
+        }
+    
+        // Draw mapimage regardless of whether player has moved
+        this.mapimage.onload = () => {
             let mainx = (player.posX - (19/2)) * 16;
             let mainy = (player.posY - (19/2)) * 16;
             let pmainx = player.posX;
             let pmainy = player.posY;
             this.ctxMAP.fillStyle = 'black';
             this.ctxMAP.fillRect(0, 0, 520, 510);
-            this.ctxMAP.drawImage(mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
+            this.ctxMAP.drawImage(this.mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
             data.forEach(player => {
                 if (player.userID != this.userID && player.active && player.player_map == this.map) {
-                        if (player.posX < pmainx + 10 && player.posX > pmainx - 10 && player.posY < pmainy + 10 && player.posY > pmainy - 10) {
-                            let playerX = this.getx(player.posX, pmainx);
-                            let playerY = this.gety(player.posY, pmainy);
-                            const otherimg = new Image();
-                            otherimg.src = this.asset_selection(player.orientation, player.player_skin);
-                            otherimg.onload = () => {
-                                this.ctxMAP.drawImage(otherimg, playerX, playerY, 25, 50);
-                            }
+                    if (player.posX < pmainx + 10 && player.posX > pmainx - 10 && player.posY < pmainy + 10 && player.posY > pmainy - 10) {
+                        let playerX = this.getx(player.posX, pmainx);
+                        let playerY = this.gety(player.posY, pmainy);
+                        const otherimg = new Image();
+                        otherimg.src = this.asset_selection(player.orientation, player.player_skin);
+                        otherimg.onload = () => {
+                            this.ctxMAP.drawImage(otherimg, playerX, playerY, 25, 50);
                         }
+                    }
                 }
             });
             this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 24, 25, 50);
         }
+    
         this.map = player.player_map;
+    }
+    
+    select_map_image(player_map) {
+        switch (player_map){
+            case 0:
+                return './images/Maps/ext.png';
+            case 1:
+                return './images/Maps/litte_house1.png';
+            case 2:
+                return './images/Maps/litte_house2.png';
+            case 3:
+                return './images/Maps/big_house1.png';
+            case 4:
+                return './images/Maps/big_house2.png';
+        }
     }
 
     asset_selection(orientation, skin) {
@@ -200,6 +207,7 @@ export class pokeMap {
 
     async connection() {
         let id = await Iuser.getID();
+
         const socket = new WebSocket("wss://" + window.location.host + "/ws/pokemap/");
         this.userID = id;
 
@@ -213,15 +221,13 @@ export class pokeMap {
         }
 
 
-        socket.onclose = function (event) {
-            console.log("Websocket connection closed.");
-
+        socket.onclose = async function (event) {
+            return;
         }
 
         socket.onmessage = (e) => {
             let parsed_data = JSON.parse(e.data);
             this.drawmap(parsed_data);
-            // this.draw_all_players(parsed_data);
             socket.send(JSON.stringify({
                 action: "get_players"
             }));
@@ -264,5 +270,4 @@ export class pokeMap {
             }
         };
     }
-
 }

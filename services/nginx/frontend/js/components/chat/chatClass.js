@@ -80,7 +80,7 @@ export class chat {
   async createMessagesDiv() {
    
     const messagesDiv = document.createElement('div');
-    messagesDiv.classList.add('p-3', 'flex-grow-1', 'bg-light');
+    messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
     messagesDiv.id = 'messagesDiv';
     messagesDiv.textContent = '';
     messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
@@ -115,7 +115,7 @@ export class chat {
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'titleDiv';
-    titleDiv.classList.add('bg-light', 'mb-auto','align-items-center', 'w-100', 'p-1', 'border', 'border-dark', 'rounded');
+    titleDiv.classList.add('bg-light', 'mb-3','align-items-center', 'w-100', 'p-1', 'border', 'rounded');
 
     const titleElement = document.createElement('h1');
     titleElement.textContent = user.username;
@@ -126,7 +126,7 @@ export class chat {
     const inviteButton = document.createElement('button');
     inviteButton.id = 'inviteButton';
     inviteButton.textContent = 'Invite';
-    inviteButton.classList.add('btn', 'btn-secondary', 'ml-3', 'mr-3'); // Ajoute les classes ml-auto et mr-2
+    inviteButton.classList.add('btn', 'btn-secondary', 'ml-3', 'mr-3', 'mb-3', 'p-2'); // Ajoute les classes ml-auto et mr-2
 
 
     titleDiv.appendChild(titleElement);
@@ -154,7 +154,7 @@ export class chat {
       const blockButton = document.createElement('button');
       blockButton.id = 'blockButton';
       blockButton.textContent = 'Block';
-      blockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3'); // Ajoute la classe mr-2
+      blockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3', 'mb-3', 'p-2'); // Ajoute la classe mr-2
       this.blockExec(blockButton, user.username);
       titleDiv.appendChild(blockButton);
     }
@@ -260,6 +260,19 @@ export class chat {
 
   async addMessage(user_id, message, timestamp) {
     const messagediv = document.querySelector('#messagesDiv');
+    messagediv.classList.add('d-flex', 'flex-column', 'mb-2');
+
+    const messageDiv2 = document.createElement('div'); // Create a new div for each message
+    messageDiv2.classList.add('d-flex', 'mb-2');
+    if (user_id == await Iuser.getID()){  
+      console.log('end user_id', user_id);
+      messageDiv2.classList.add('align-self-end');
+    }
+    else{
+      console.log('start user_id', user_id);
+      messageDiv2.classList.add('align-self-start');
+    }
+
     const username = await this.getusername(user_id);
     const usernameColor = this.getRandomColor(); // Function to generate random color
 
@@ -276,10 +289,17 @@ export class chat {
     messagediv.appendChild(time);
 
     const msg = document.createElement('p');
+    msg.classList.add('mb-1', 'border', 'border-dark', 'rounded', 'p-2');
+    msg.style.backgroundColor = 'grey';
     msg.textContent = message;
-    messagediv.appendChild(msg);
+    console.log(user_id, await Iuser.getID());
+    msg.style.backgroundColor = 'grey';
+    if (user_id == await Iuser.getID())
+      msg.style.backgroundColor = 'lightgrey';
 
-  }
+    messageDiv2.appendChild(msg);
+    messagediv.appendChild(messageDiv2); // Append the message div to the main messages div
+}
 
   timerCalculation(date) {
 
@@ -423,13 +443,14 @@ export class chat {
       credentials: 'include',
     });
     const data = await response.json();
-    if (data.success)
-    if (data.data){
+    if (data.success){
+      if (data.data){
       console.log(data.data);
       data.data.forEach(message => {
         if (message.message[0] !== '@')
           this.addMessage(message.user_id, message.message, message.timestamp);
-      });
+        });
+      }
     } else
       alert('Failed to get chat history');
 

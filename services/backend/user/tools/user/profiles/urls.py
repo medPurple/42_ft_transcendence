@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomUserVerify, CustomUserLogout, CustomUsernameView, CustomUserRegister, CustomUserLogin, CustomUserView, CustomUserEditView, CustomUserPasswordView, CustomUserDeleteView, AllCustomUserView, CustomUserStatusView
+from .views import CustomUserVerify, CustomUserLogout, CustomUsernameView, CustomUserRegister, CustomUserLogin, CustomUserView, CustomUserEditView, CustomUserPasswordView, AllCustomUserView, CustomUserStatusView
 
 urlpatterns = [
 	path('register/', CustomUserRegister.as_view(), name='register'),
@@ -10,7 +10,6 @@ urlpatterns = [
 	path('user-info/', CustomUserView.as_view(), name='user-info'),
 	path('edit-profile/', CustomUserEditView.as_view(), name='edit-profile'),
 	path('update-password/', CustomUserPasswordView.as_view(), name='update-password'),
-	path('delete-account/', CustomUserDeleteView.as_view(), name='delete-account'),
 	path('all-users/', AllCustomUserView.as_view(), name='all-users'),
 	path('all-users/<str:user_id>/', AllCustomUserView.as_view()),
     path('change-status/',CustomUserStatusView.as_view(), name='change-status'),

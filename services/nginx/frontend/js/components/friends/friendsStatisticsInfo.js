@@ -4,7 +4,6 @@ import Icookies from "../../components/cookie/cookie.js";
 export class FriendsStatistics {
 
 	constructor(username){
-		this.games = [0, 1, 2, 3, 4, 5, 6];
 		this.username = username;
 
 	}
@@ -177,17 +176,21 @@ export class FriendsStatistics {
 			playerTwoCol.appendChild(playerTwoText);
 
 			let playerOneImage = document.createElement('img');
-			playerOneImage.src = `data:image/jpeg;base64,${player1.profile_picture_data}`;
+			if (player1.profile_picture_data)
+				playerOneImage.src = `data:image/jpeg;base64,${player1.profile_picture_data}`;
+			else
+				playerOneImage.src ='../../images/Favicons/PH-01extra.png';
 			playerOneImage.classList.add('rounded-circle', 'mt-2');
 			playerOneImage.width = 80;
 			playerOneImage.alt = 'Player one picture';
 			playerOneCol.appendChild(playerOneImage);
 
 			let playerTwoImage = document.createElement('img');
-			if (player2.profile_picture_data)
-				playerTwoImage.src = `data:image/jpeg;base64,${player2.profile_picture_data}`; // Remplacer par l'URL de l'image de Player two
-			else
-				playerTwoImage.src ='./images/Favicons/default.png';
+			if (player2.profile_picture_data){
+				playerTwoImage.src = `data:image/jpeg;base64,${player2.profile_picture_data}`;
+			} else {
+				playerTwoImage.src ='../../images/Favicons/PH-01extra.png';
+			}
 			playerTwoImage.classList.add('rounded-circle', 'mt-2');
 			playerTwoImage.width = 80;
 			playerTwoImage.alt = 'Player two picture';
@@ -221,6 +224,10 @@ export class FriendsStatistics {
 
 	async initFriendsStatistics(){
 
+		const logoImg = document.querySelector('img[src="./images/Logos/LogoSG-mod.png"]');
+		if (logoImg)
+			logoImg.src = '../../images/Logos/LogoSG-mod.png';
+
 		const containerStats = document.createElement('div');
 		containerStats.classList.add('container');
 		containerStats.id = 'stats';
@@ -249,7 +256,6 @@ export class FriendsStatistics {
 			});
 			const data = await response.json();
 			if (data.success) {
-				console.log(data);
 				return data.data;
 			} else {
 				alert('Failed to get stats');
@@ -266,8 +272,8 @@ export class FriendsStatistics {
 		if (isNaN(time.getTime())) {
 			return 0;
 		}
-		let now = new Date(); // Date actuelle
-		let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+		let now = new Date();
+		let elapsedTimeMillis = now - time;
 		return (Math.floor(elapsedTimeMillis / 1000));
 	} catch (error) {
 		return (0);

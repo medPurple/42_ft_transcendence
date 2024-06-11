@@ -35,16 +35,17 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 			try:
 				token_response = requests.get(token_service_url, headers={'Authorization': f'Bearer {token}'}, verify=False)
 				token_response.raise_for_status()
-				user_id = token_response.json().get('user_id')
-				logger.debug('USER_ID')
-				logger.debug(user_id)
-				user = await self.get_user(user_id)
-				if user is not None:
-					self.scope['user'] = user
-					self.user = user
-					await self.accept()
-				else:
-					await self.close()
+				valid = token_response.json().get('success')
+				if valid is True:
+					data = token_response.json().get('data')
+					user_id = data.get('user_id')
+					user = await self.get_user(user_id)
+					if user is not None:
+						self.scope['user'] = user
+						self.user = user
+						await self.accept()
+					else:
+						await self.close()
 			except (requests.exceptions.RequestException, CustomUser.DoesNotExist):
 				await self.close()
 		else:
@@ -175,6 +176,8 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 		except Exception as e:
 			await self.send(text_data=json.dumps({
 				'success': False,
+				'received_requests': [],
+				'sent_requests': [],
 				'error': str(e)
 			}))
 
