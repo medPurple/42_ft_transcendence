@@ -11,12 +11,12 @@ export class chat {
     this.player2 = null;
   }
 
-  async getusername(data) {
-    let parts = data.split(':');
-    let id = parts[0].trim();
+  async getusername(id) {
 
+    console.log('id', id);  
     const users = await Iuser.getAllUsers();
     let username = users.users.find(user => user.user_id === parseInt(id)).username;
+    console.log('username', username);
     return username;
 
   }
@@ -77,11 +77,33 @@ export class chat {
     return usersDiv;
   }
 
-  createMessagesDiv() {
+  async createMessagesDiv() {
+    let roomName = ''
+    let myid = await Iuser.getID()
+    if (myid > this.targetid)
+      roomName = myid + '_' + this.targetid;
+    else
+      roomName = this.targetid + '_' + myid;
     const messagesDiv = document.createElement('div');
     messagesDiv.classList.add('p-3', 'flex-grow-1', 'border', 'border-dark', 'bg-light');
     messagesDiv.id = 'messagesDiv';
     messagesDiv.textContent = '';
+    messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
+    const response = await fetch(`https://localhost:4430/api/chat/history/${roomName}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Icookies.getCookie('token'),
+        'X-CSRFToken': Icookies.getCookie('csrftoken')
+      },
+      credentials: 'include',
+    });
+    const data = await response.json();
+    if (data.success)
+      if (data.data)
+        console.log(data.data);
+    else
+      alert('Failed to get chat history');
     return messagesDiv;
   }
 
@@ -190,8 +212,8 @@ export class chat {
     }
   }
 
-  async checkBlockStatus(message) {
-    const username = await this.getusername(message)
+  async checkBlockStatus(id) {
+    const username = await this.getusername(id)
     try {
       const blockStatus = await Ifriends.getUserBlock(username);
       console.log(blockStatus);
@@ -213,7 +235,7 @@ export class chat {
     interactiondiv.classList.add('interactionDiv', 'd-flex', 'flex-column', 'p-3');
     interactiondiv.style.flex = '3'; // Ajoute la propriété flex
 
-    const messagesDiv = this.createMessagesDiv();
+    const messagesDiv = await this.createMessagesDiv();
     const inputDiv = this.createInputDiv();
     const titleDiv = await this.createTitleDiv();
 
@@ -257,14 +279,28 @@ export class chat {
     return chatDiv;
   }
 
-  async addMessage(data) {
+  async addMessage(user_id, message, timestamp) {
     const messagediv = document.querySelector('#messagesDiv');
     console.log('add message', data);
-    const username = await this.getusername(data);
+    const username = await this.getusername(user_id);
+    console.log('username', username);
     const usernameColor = this.getRandomColor(); // Function to generate random color
-    let parts = data.split(':');
-    let message = parts[1].trim();
-    messagediv.innerHTML += `<span style="color: ${usernameColor};">${username}</span>: ${message}<br>`;
+
+    const name = document.createElement('span');
+    name.style.color = usernameColor;
+    name.textContent = username;
+    name.style.fontWeight = 'bold';
+    messagediv.appendChild(name);
+
+    const time = document.createElement('span');
+    time.style.color = 'gray';
+    time.textContent = ' ' + timestamp;
+    messagediv.appendChild(time);
+
+    const msg = document.createElement('p');
+    msg.textContent = message;
+    messagediv.appendChild(msg);
+
   }
 
   getRandomColor() {
@@ -277,10 +313,8 @@ export class chat {
   }
 
   async checkInvite(data) {
-    let parts = data.split(':');
-    let id = parts[0].trim();
-    let user_message = parts[1].trim();
-    if (user_message === '@invite@') {
+
+    if (data === '@invite@') {
       console.warn('INVITATION BY' + id);
       return true;
     }
@@ -345,10 +379,7 @@ export class chat {
   }
 
   async checkInviteStatus(data) {
-    let parts = data.split(':');
-    let id = parts[0].trim();
-    let user_message = parts[1].trim();
-    if (user_message === '@accept@') {
+    if (data === '@accept@') {
       console.warn('ACCEPTED BY' + id);
       if (this.player1 === null)
         this.player1 = id;
@@ -356,7 +387,7 @@ export class chat {
         this.player2 = id;
       return true;
     }
-    else if (user_message === '@refuse@') {
+    else if (data === '@refuse@') {
       console.warn('REFUSED BY' + id);
       this.player1 = null;
       this.player2 = null;
@@ -401,10 +432,13 @@ export class chat {
 
     this.websocket.onmessage = async (e) => {
       const data = JSON.parse(e.data);
-      const message = data['message'];
+      console.log('data', data);
+      const message = data.data['message'];
+      const id = data.data['user_id'];
+      const timestamp = data.data['timestamp'];
       const invite = await this.checkInvite(message);
       const invitestatus = await this.checkInviteStatus(message);
-      const blockstatus = await this.checkBlockStatus(message);
+      const blockstatus = await this.checkBlockStatus(id);
       if (invite) {
         inviteButton.disabled = true;
         this.createInviteButton();
@@ -415,9 +449,8 @@ export class chat {
           inviteButton.disabled = false;
       }
       else if (!blockstatus) {
-        await this.addMessage(message);
+        await this.addMessage(id, message, timestamp);
       }
-      console.log(this.player1, this.player2)
       if (this.player1 && this.player2) {
         console.log("Creating party");
         await this.createParty(this.player1, this.player2);
