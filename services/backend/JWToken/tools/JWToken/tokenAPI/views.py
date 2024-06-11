@@ -55,14 +55,9 @@ class TokenAPI(APIView):
 
     def get(self, request):
         token = request.headers.get('Authorization')
-        logger.info("TOKEN : ")
-        logger.debug(token)
         if not token:
-            return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success':False,'error': 'No token provided'}, status=status.HTTP_204_NO_CONTENT)
         data = TokenAPI.decrypt_token(token)
-        logger.info("DATA : ")
-        logger.debug(data)
         if not data:
-            return Response({'error': 'Invalid token'}, status=status.HTTP_404_NOT_FOUND)
-        logger.info("ALL OK")
-        return Response(data, status=status.HTTP_200_OK)
+            return Response({'success':False, 'error': 'Invalid token'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'success':True, 'data': data}, status=status.HTTP_200_OK)
