@@ -6,7 +6,7 @@
 	import contact from "./views/contact.js";
 	import pongService from "./views/pong3d/pongService.js";
 	import game from "./views/game.js";
-	import pokegame from "./views/pokemon/pokegame.js";	
+	import pokegame from "./views/pokemon/pokegame.js";
 	import pongSettings from "./views/pong3d/pongSettings.js";
 	import metaService from "./views/pokemon/metaService.js";
 	import code2FA from "./views/user/code2FA.js";
@@ -87,10 +87,6 @@
 			title: "Update password",
 			render: updatePassword
 		},
-		'/delete-account': {
-			title: "Delete account",
-			render: deleteAccount
-		},
 		'/statistics': {
 			title: "Statistics",
 			render: statistics
@@ -153,7 +149,7 @@
 
 	function NavbarFooterVisibility() {
 		const path = location.pathname;
-		const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password', '/delete-account', '/friends', '/statistics', '/chat', '/play', '/pongService', '/gameService', '/pongSettings', '/metaService', '/pkmSettings', '/pokemap', '/play_pr', '/play_pkr'];
+		const showInRoute = ['/home', '/about', '/contact', '/login', '/register', '/404', '/profile', '/edit-profile', '/update-password',  '/friends', '/statistics', '/chat', '/play', '/pongService', '/gameService', '/pongSettings', '/metaService', '/pkmSettings', '/pokemap', '/play_pr', '/play_pkr'];
 		const showNavbarFooter = showInRoute.includes(path) || path.startsWith('/friends') || path.startsWith('/statistics');
 		;
 		;
@@ -182,7 +178,6 @@
 				<li><a class="dropdown-item" href="/chat">chat</a></li>
 				<li><hr class="dropdown-divider"></li>
 				<li><logout-form></logout-form></li>
-				<li><a class="dropdown-item" href="/delete-account">delete profile</a></li>
 				`;
 		} else {
 			dropdownMenu.innerHTML = `

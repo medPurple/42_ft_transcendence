@@ -55,23 +55,6 @@ def create_userID_microservices(request, user_id, user_name):
 		print(f"Error creating user ID in microservices: {e}")
 		return None
 
-def delete_userID_microservices(request, user_id):
-	headers = {'Content-Type': 'application/json'}
-	data = {"userID": user_id}
-
-	logger.info('Deleting user ID in microservices:')
-	logger.info(data)
-	logger.info(user_id)
-
-	try:
-		response = requests.delete("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
-		response = requests.delete("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
-		#response = ADD OTHER MICROSERVICES LINKS HERE IF NEEDED
-		return response
-	except requests.exceptions.RequestException as e:
-		print(f"Error deleting user ID in microservices: {e}")
-		return None
-
 class JWTAuthentication(BaseAuthentication):
 	def authenticate(self, request):
 		auth_header = request.headers.get('Authorization')
@@ -235,19 +218,6 @@ class CustomUserPasswordView(APIView):
 		else:
 			return Response(form.errors, status=status.HTTP_200_OK)
 
-class CustomUserDeleteView(APIView):
-	authentication_classes = [JWTAuthentication]
-	def delete(self, request):
-		user = request.user
-		logger.info('Deleting user:')
-		logger.info(user.user_id)
-		try:
-			delete_userID_microservices(request, user.user_id)
-			user.delete()
-		except CustomUser.DoesNotExist:
-			return Response({'error': 'User not found'}, status=status.HTTP_200_OK)
-		logout(request)
-		return Response({'success': True}, status=status.HTTP_200_OK)
 
 class CustomUserStatusView(APIView):
 	def put(self, request):
