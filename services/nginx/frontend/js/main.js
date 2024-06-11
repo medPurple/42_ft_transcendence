@@ -5,7 +5,7 @@
 	import about from "./views/about.js";
 	import contact from "./views/contact.js";
 	import pongService from "./views/pong3d/pongService.js";
-	import game from "./views/game.js";
+	// import game from "./views/game.js";
 	import pokegame from "./views/pokemon/pokegame.js";	
 	import pongSettings from "./views/pong3d/pongSettings.js";
 	import metaService from "./views/pokemon/metaService.js";
@@ -51,10 +51,10 @@
 			title: "Pong Service",
 			render: pongService
 		},
-		'/gameService': {
-			title: "Game Service",
-			render: game
-		},
+		// '/gameService': {
+		// 	title: "Game Service",
+		// 	render: game
+		// },
 		'/pongSettings': {
 			title: "Pong Settings",
 			render: pongSettings

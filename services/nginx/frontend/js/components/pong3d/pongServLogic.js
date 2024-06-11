@@ -36,22 +36,18 @@ function draw() {
 		core.camera.updateProjectionMatrix();
 	});
 
-  core.renderer.render(core.scene, core.camera);
+	core.renderer.render(core.scene, core.camera);
 }
 
 async function setup(gameMode, players) {
-  gameState.game_mode = gameMode;
-  const user_id = await Iuser.getID();
-  const user_name = await Iuser.getUsername();
+	gameState.game_mode = gameMode;
+	const user_id = await Iuser.getID();
+	const user_name = await Iuser.getUsername();
 
 	switch (gameState.game_mode) {
 		case "remote":
 			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
-			const div = document.getElementById('pong-renderer');
-			const img = new Image();
-			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGwwM2lwdm8zNTFiYng2ZzJhODVpdnQya3lxMDloY3dzNHk1cDB2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Q0MrhO9BUSxKR8RdZC/giphy.gif";
-			img.classList.add('embed-responsive-item');
-			div.appendChild(img);
+			waitingForPlayer();
 			break;
 		case "local":
 			core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/');
@@ -61,25 +57,26 @@ async function setup(gameMode, players) {
 			break;
 	}
 
-  core.gameSocket.onopen = function(e) {
-    console.log('Connected');
-  };
+	core.gameSocket.onopen = async function(e) {
+		await createScene();
+		console.log('Connected');
+	};
 
-  core.gameSocket.onerror = function(e) {
-    console.log('Error');
-  };
+	core.gameSocket.onerror = function(e) {
+		console.log('Error');
+	};
 
-  core.gameSocket.onclose = function(e) {
-    console.log('Closed');
-  };
+	core.gameSocket.onclose = function(e) {
+		console.log('Closed');
+	};
 
-  core.gameSocket.onmessage = async function(event) {
-    await handleServerMessage(event.data);
-  }
+	core.gameSocket.onmessage = function(event) {
+		handleServerMessage(event.data);
+	}
 }
 
 const actions = new Map([
-	["party", async (value) => { if (value === 'active') { core.party = true; await createScene(); await draw() } }],
+	["party", (value) => { if (value === 'active') { core.party = true; } }],
 	["player", (value) => { core.player_id = value; console.log("Player_id :", core.player_id) }],
 	["player1_user_id", (value) => { core.player1_userid = value }],
 	["player2_user_id", (value) => { core.player2_userid = value }],
@@ -106,21 +103,131 @@ const actions = new Map([
 	["status", (value) => { gameState.status = value; }],
 ]);
 
-async function handleServerMessage(message) {
+function handleServerMessage(message) {
 	const map = new Map(Object.entries(JSON.parse(message)));
 
 	for (let [key, value] of map.entries()) {
 		const action = actions.get(key);
 		if (action) {
-		action(value);
+			action(value);
 		}
 	}
+	if (gameState.game_mode == "tournament") 
+		deleteForm();
+
+	console.log(gameState.status);
+
+	switch (gameState.status) {
+		case 0:
+			if (gameState.game_mode == "remote")
+				waitingForPlayer();
+			break;
+		case 1:
+			playingMode();
+			break;
+		case 2:
+			gamePaused();
+			break;
+		default:
+			endGame();
+			break;
+	}
+}
+
+function waitingForPlayer() {
+	const screensdiv = document.getElementById('pong-screens');
+	const pongrender = document.getElementById('pong-renderer');
+	const pongscore = document.getElementById('pong-score');
+
+	pongrender.classList.add('hidden');
+	pongscore.classList.add('hidden');
+	screensdiv.classList.remove('hidden');
+
+	screensdiv.innerHTML = `
+			<div class="row-md-4 p-5">
+			<img src="../../../images/Game/GameWaiting.gif" class="img-fluid" alt="Display Image">
+			<h4>Waiting for someone to join...</h4>
+			</div>
+	`;
+	
+}
+
+function gamePaused() {
+	const screensdiv = document.getElementById('pong-screens');
+	const pongrender = document.getElementById('pong-renderer');
+	const pongscore = document.getElementById('pong-score');
+
+	pongrender.classList.add('hidden');
+	pongscore.classList.add('hidden');
+	screensdiv.classList.remove('hidden');
+
+	if (gameState.status == 3) {
+		pongrender.innerHTML = `
+				<div id="custom-endgame">
+					<img src="../../../images/Game/GameEnded.jpg" class="img-fluid" alt="Display Image">
+					<h4>Game Ended by other player...</h4>
+				</div>`;
+	}
+
+	screensdiv.innerHTML = `
+			<div class="row-md-4 p-5">
+			<img src="../../../images/Game/GamePaused.gif" class="img-fluid" alt="Display Image">
+			<h4>Game Paused...</h4>
+			</div>
+	`;
+}
+
+function playingMode() {
+
+	const screensdiv = document.getElementById('pong-screens');
+	const pongrender = document.getElementById('pong-renderer');
+	const pongscore = document.getElementById('pong-score');
+
+	screensdiv.classList.add('hidden');
+	pongrender.classList.remove('hidden');
+	pongscore.classList.remove('hidden');
+
 	if (gameCustom.powerup)
 		handlePowerUp();
-	if (gameState.game_mode == "tournament")
-		deleteForm();
-	await displayScore();
+	displayScore();
 	draw();
+}
+
+function endGame() {
+	const screensdiv = document.getElementById('pong-screens');
+	const pongrender = document.getElementById('pong-renderer');
+	const pongscore = document.getElementById('pong-score');
+
+	pongscore.classList.add('hidden');
+	screensdiv.classList.add('hidden');
+	pongrender.classList.remove('hidden');
+
+	if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
+		pongscore.innerHTML = '';
+		screensdiv.innerHTML = '';
+		pongrender.innerHTML = '';
+		if (gameState.player1Score == gameState.score_limit) {
+			pongrender.innerHTML = `
+			<div id="custom-endgame">
+				<img src="../../../images/Game/P1-WINS.jpeg" class="img-fluid" alt="Display Image">
+			</div>
+			`;
+		}
+		else if (gameState.player2Score == gameState.score_limit) {
+			pongrender.innerHTML = `
+			<div id="custom-endgame">
+				<img src="../../../images/Game/P2-WINS.jpeg" class="img-fluid" alt="Display Image">
+			</div>
+			`;
+		}
+		else if (gameState.status == 3) {
+			pongrender.innerHTML = `
+			<div id="custom-endgame">
+				<img src="../../../images/Game/GameEnded.gif" class="img-fluid" alt="Display Image">
+				<h4>Game Ended by other player...</h4>
+			</div>`;
+		}
+	}
 }
 
 export { setup };

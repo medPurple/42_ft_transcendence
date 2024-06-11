@@ -8,6 +8,9 @@ import { tournamentInput } from "../components/pong3d/tournamentInput.js";
 
 export function pong_localplay() {
   const generaldiv = document.createElement('div');
+  const screens = document.createElement('div');
+  screens.id = "pong-screens";
+  screens.classList.add('hidden');
   const gamediv = document.createElement('div');
   gamediv.id = "pong-renderer"
   const scorediv = document.createElement('div');
@@ -19,6 +22,7 @@ export function pong_localplay() {
     alert("You need to be logged in to play in local");
     window.location.href = '/pongService';
   }
+  generaldiv.appendChild(screens);
   generaldiv.appendChild(gamediv);
   generaldiv.appendChild(scorediv);
   document.body.appendChild(generaldiv);
@@ -27,6 +31,9 @@ export function pong_localplay() {
 
 export async function pong_remoteplay() {
   const generaldiv = document.createElement('div');
+  const screens = document.createElement('div');
+  screens.id = "pong-screens";
+  screens.classList.add('hidden');
   const gamediv = document.createElement('div');
   gamediv.id = "pong-renderer"
   const scorediv = document.createElement('div');
@@ -38,6 +45,7 @@ export async function pong_remoteplay() {
     alert("You need to be logged in to play in remote");
     window.location.href = '/pongService';
   }
+  generaldiv.appendChild(screens);
   generaldiv.appendChild(gamediv);
   generaldiv.appendChild(scorediv);
   document.body.appendChild(generaldiv);

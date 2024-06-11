@@ -124,10 +124,29 @@ a:hover {
 	margin: 0;
 }
 
+#pong-renderer.hidden {
+	display: none;
+}
+
 #pong-score {
 	font-family: 'Courier New', Courier, monospace;
 	font-size: 2em;
 	color: #7b8787;
+}
+
+#pong-score.hidden {
+	display: none;
+}
+
+#pong-screens {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+#pong-screens.hidden {
+	display: none;
 }
 
 #custom-endgame {
