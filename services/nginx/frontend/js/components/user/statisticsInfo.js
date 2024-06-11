@@ -99,13 +99,13 @@ export class Statistics {
 				divCardText.appendChild(cardImage);
 				break;
 			case 1:
-				divCardText.textContent = ` ${stats.game_played}`;
+				divCardText.textContent = `${stats.game_played}`;
 				break;
 			case 2:
-				divCardText.textContent = ` ${stats.game_won}`;
+				divCardText.textContent = `${stats.game_won}`;
 				break;
 			case 3:
-				divCardText.textContent = ` ${stats.game_lost}`;
+				divCardText.textContent = `${stats.game_lost}`;
 				break;
 			default:
 				break;
@@ -125,14 +125,11 @@ export class Statistics {
 		profileContainer.classList.add('d-flex', 'flex-wrap', 'justify-content-center');
 		profileContainer.id = 'profile-friends-container';
 		rowOther.appendChild(profileContainer);
-		
+
 
 		let party = 0;
-		console.log(stats);
-		console.log(users);
 		for (let matchId in stats.history) {
 			let game = stats.history[matchId];
-			console.log(game);
 			let player1 = users.users.find(user => user.user_id === game.player1.id);
 			let player2 = users.users.find(user => user.user_id === game.player2.id);
 
@@ -231,10 +228,10 @@ export class Statistics {
 		containerStats.id = 'stats';
 		document.querySelector('main').appendChild(containerStats);
 		const userInfo = await Iuser.getAllUserInfo();
-		const stats = await this.getStats(userInfo.user.user_id);			
+		const stats = await this.getStats(userInfo.user.user_id);
 		const users = await Iuser.getAllUsers();
 
-		
+
 
 		this.createUserCardStats(containerStats, userInfo, stats);
 		this.createPartyStats(containerStats, stats, users);
@@ -254,7 +251,6 @@ export class Statistics {
 			});
 			const data = await response.json();
 			if (data.success) {
-				console.log(data);
 				return data.data;
 			} else {
 				alert('Failed to get stats');
