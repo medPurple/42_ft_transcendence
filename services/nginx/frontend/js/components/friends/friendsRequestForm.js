@@ -187,7 +187,11 @@ export class Friends {
 			return;
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
+		if (!requestFriend)
+			return;
 		const friendsList = await Ifriends.getFriendsList();
+		if (!friendsList)
+			return;
 
 		if (dataUsers.users.length != this.lastusernumber) {
 			this.ulElement.innerHTML = ''; // Clear the list before populating it
@@ -312,11 +316,11 @@ export class Friends {
 			Nonediv.style.display = 'flex'; // Set display to flex
 			Nonediv.style.justifyContent = 'center'; // Center along the main axis
 			Nonediv.style.alignItems = 'center'; // Center along the cross axis
-		
+
 			const img = new Image();
 			img.classList.add('w-50', 'h-50'); // Set width and height to 100%
 			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmNpc25kc3d3dncxMHVsaDYyaDR4MzJrZzN6cDR3eGg4eGl2djU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GnNi4XFTOIkUe9giJl/giphy.gif";
-		
+
 			Nonediv.appendChild(img);
 			this.usersList.appendChild(Nonediv);
 			return Nonediv;
