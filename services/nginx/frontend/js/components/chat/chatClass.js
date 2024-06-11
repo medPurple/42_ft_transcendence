@@ -23,7 +23,7 @@ export class chat {
 
   createChatDiv() {
     const chatDiv = document.createElement('div');
-    chatDiv.classList.add('m-3', 'rounded', 'border', 'border-dark', 'd-flex');;
+    chatDiv.classList.add('m-3', 'rounded', 'd-flex');;
     chatDiv.style.height = 'calc(100vh - 2rem)';
     chatDiv.id = 'chatDiv';
     return chatDiv;
@@ -31,7 +31,7 @@ export class chat {
 
   async createUsersDiv() {
     const usersDiv = document.createElement('div');
-    usersDiv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded');
+    usersDiv.classList.add('d-flex', 'flex-column', 'rounded');
     usersDiv.style.flex = '1'; // Ajoute la propriété flex
     usersDiv.id = 'usersDiv';
 
@@ -78,32 +78,12 @@ export class chat {
   }
 
   async createMessagesDiv() {
-    let roomName = ''
-    let myid = await Iuser.getID()
-    if (myid > this.targetid)
-      roomName = myid + '_' + this.targetid;
-    else
-      roomName = this.targetid + '_' + myid;
+   
     const messagesDiv = document.createElement('div');
-    messagesDiv.classList.add('p-3', 'flex-grow-1', 'border', 'border-dark', 'bg-light');
+    messagesDiv.classList.add('p-3', 'flex-grow-1', 'bg-light');
     messagesDiv.id = 'messagesDiv';
     messagesDiv.textContent = '';
     messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
-    const response = await fetch(`https://localhost:4430/api/chat/history/${roomName}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': Icookies.getCookie('token'),
-        'X-CSRFToken': Icookies.getCookie('csrftoken')
-      },
-      credentials: 'include',
-    });
-    const data = await response.json();
-    if (data.success)
-      if (data.data)
-        console.log(data.data);
-    else
-      alert('Failed to get chat history');
     return messagesDiv;
   }
 
@@ -135,7 +115,7 @@ export class chat {
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'titleDiv';
-    titleDiv.classList.add('bg-light', 'align-items-center', 'w-100', 'p-1', 'border', 'border-dark', 'rounded');
+    titleDiv.classList.add('bg-light', 'mb-auto','align-items-center', 'w-100', 'p-1', 'border', 'border-dark', 'rounded');
 
     const titleElement = document.createElement('h1');
     titleElement.textContent = user.username;
@@ -239,6 +219,7 @@ export class chat {
     const inputDiv = this.createInputDiv();
     const titleDiv = await this.createTitleDiv();
 
+
     interactiondiv.appendChild(titleDiv);
     interactiondiv.appendChild(messagesDiv);
     interactiondiv.appendChild(inputDiv);
@@ -269,10 +250,8 @@ export class chat {
     const usersDiv = await this.createUsersDiv();
 
     chatDiv.appendChild(usersDiv);
-    if (this.targetid) {
+    if (this.targetid)
       chatDiv.appendChild(await this.createInteractionDiv());
-      this.createChatDiv();
-    }
     else
       chatDiv.appendChild(this.createNonediv());
     document.body.appendChild(chatDiv);
@@ -281,9 +260,7 @@ export class chat {
 
   async addMessage(user_id, message, timestamp) {
     const messagediv = document.querySelector('#messagesDiv');
-    console.log('add message', data);
     const username = await this.getusername(user_id);
-    console.log('username', username);
     const usernameColor = this.getRandomColor(); // Function to generate random color
 
     const name = document.createElement('span');
@@ -293,14 +270,30 @@ export class chat {
     messagediv.appendChild(name);
 
     const time = document.createElement('span');
+    let timer = this.timerCalculation(timestamp);
     time.style.color = 'gray';
-    time.textContent = ' ' + timestamp;
+    time.textContent = ' ' + timer;
     messagediv.appendChild(time);
 
     const msg = document.createElement('p');
     msg.textContent = message;
     messagediv.appendChild(msg);
 
+  }
+
+  timerCalculation(date) {
+
+    try {
+      console.log(date);
+      let time = new Date(date);
+      if (isNaN(time.getTime())) {
+        return 0;
+      }
+      const options = { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
+      return time.toLocaleDateString('en-US', options);
+    } catch (error) {
+      return (0);
+    }
   }
 
   getRandomColor() {
@@ -420,6 +413,26 @@ export class chat {
     else
       roomName = this.targetid + '_' + myid;
 
+    const response = await fetch(`https://localhost:4430/api/chat/history/${roomName}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Icookies.getCookie('token'),
+        'X-CSRFToken': Icookies.getCookie('csrftoken')
+        },
+      credentials: 'include',
+    });
+    const data = await response.json();
+    if (data.success)
+    if (data.data){
+      console.log(data.data);
+      data.data.forEach(message => {
+        if (message.message[0] !== '@')
+          this.addMessage(message.user_id, message.message, message.timestamp);
+      });
+    } else
+      alert('Failed to get chat history');
+
     this.websocket = new WebSocket(
       'wss://' + window.location.host + '/ws/chat/'
       + roomName
@@ -433,9 +446,9 @@ export class chat {
     this.websocket.onmessage = async (e) => {
       const data = JSON.parse(e.data);
       console.log('data', data);
-      const message = data.data['message'];
-      const id = data.data['user_id'];
-      const timestamp = data.data['timestamp'];
+      const id = data['user_id'];
+      const message = data['message'];
+      const timestamp = data['time'];
       const invite = await this.checkInvite(message);
       const invitestatus = await this.checkInviteStatus(message);
       const blockstatus = await this.checkBlockStatus(id);
@@ -540,5 +553,3 @@ export class chat {
   }
 
 }
-
-
