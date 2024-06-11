@@ -175,6 +175,8 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 		except Exception as e:
 			await self.send(text_data=json.dumps({
 				'success': False,
+				'received_requests': [],
+				'sent_requests': [],
 				'error': str(e)
 			}))
 

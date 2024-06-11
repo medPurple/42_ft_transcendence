@@ -3,10 +3,6 @@ import Icookies from "../../components/cookie/cookie.js";
 
 export class Statistics {
 
-	constructor(){
-		this.games = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-	}
-
 	createUserCardStats(containerStats, userInfo, stats){
 
 		let rowUser = document.createElement('div');
@@ -137,9 +133,6 @@ export class Statistics {
 				player1 = {username: 'Guest'};
 			if (!player2)
 				player2 = {username: 'Guest'};
-
-			console.log(player1);
-			console.log(player2);
 			party++;
 
 			const cardDiv = document.createElement('div');
@@ -180,7 +173,7 @@ export class Statistics {
 			if (player1.profile_picture_data)
 				playerOneImage.src = `data:image/jpeg;base64,${player1.profile_picture_data}`;
 			else
-				playerOneImage.src ='./images/Favicons/default.png';
+				playerOneImage.src ='./images/Favicons/PH-01extra.png';
 			playerOneImage.classList.add('rounded-circle', 'mt-2');
 			playerOneImage.width = 80;
 			playerOneImage.alt = 'Player one picture';
@@ -188,9 +181,9 @@ export class Statistics {
 
 			let playerTwoImage = document.createElement('img');
 			if (player2.profile_picture_data)
-				playerTwoImage.src = `data:image/jpeg;base64,${player2.profile_picture_data}`; // Remplacer par l'URL de l'image de Player two
+				playerTwoImage.src = `data:image/jpeg;base64,${player2.profile_picture_data}`;
 			else
-				playerTwoImage.src ='./images/Favicons/default.png';
+				playerTwoImage.src ='./images/Favicons/PH-01extra.png';
 			playerTwoImage.classList.add('rounded-circle', 'mt-2');
 			playerTwoImage.width = 80;
 			playerTwoImage.alt = 'Player two picture';
