@@ -189,7 +189,6 @@ export class FriendsStatistics {
 			if (player2.profile_picture_data){
 				playerTwoImage.src = `data:image/jpeg;base64,${player2.profile_picture_data}`;
 			} else {
-				console.log(player2)
 				playerTwoImage.src ='../../images/Favicons/PH-01extra.png';
 			}
 			playerTwoImage.classList.add('rounded-circle', 'mt-2');
@@ -272,8 +271,8 @@ export class FriendsStatistics {
 		if (isNaN(time.getTime())) {
 			return 0;
 		}
-		let now = new Date(); // Date actuelle
-		let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+		let now = new Date();
+		let elapsedTimeMillis = now - time;
 		return (Math.floor(elapsedTimeMillis / 1000));
 	} catch (error) {
 		return (0);
