@@ -76,7 +76,7 @@ export class Friends {
 		socket.onmessage = async (event) => {
 			let data = JSON.parse(event.data);
 			if (data.error) {
-				console.error(data.error);
+
 			} else if (data.success) {
 				if (socket.onmessagecallback) {
 					socket.onmessagecallback(data);
@@ -187,8 +187,9 @@ export class Friends {
 			return;
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
-		if (!requestFriend)
+		if (!requestFriend && !('received_requests' in requestFriend))
 			return;
+
 		const friendsList = await Ifriends.getFriendsList();
 		if (!friendsList)
 			return;
@@ -202,15 +203,25 @@ export class Friends {
 					const otherUser = this.variablesArray.find(u => u.name === user.username);
 					const cardElement = document.querySelector('#user_' + user.username);
 					if (cardElement) {
-						const hasFriendRequest = requestFriend.received_requests.some(request => {
-							return request.from_user === user.user_id || request.to_user === user.user_id;
-						});
+						let hasFriendRequest;
+						if (requestFriend.received_requests){
+							hasFriendRequest = requestFriend.received_requests.some(request => {
+								return request.from_user === user.user_id || request.to_user === user.user_id;
+							});
+						} else
+							hasFriendRequest = null;
 
-						const hasSendRequest = requestFriend.sent_requests.some(request => {
-							return request.from_user === user.user_id || request.to_user === user.user_id;
-						});
+						let hasSendRequest;
+						if (requestFriend.sent_requests) {
+							hasSendRequest = requestFriend.sent_requests.some(request => {
+								return request.from_user === user.user_id || request.to_user === user.user_id;
+							});
+						} else {
+							hasSendRequest = null;
+						}
 
 						const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
+
 						if (isFriends != otherUser.isFriends) {
 							if (isFriends) {
 								cardElement.innerHTML = ''; // Clear card content
