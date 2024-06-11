@@ -13,6 +13,8 @@ import random
 logger = logging.getLogger(__name__)
 
 class PlayerConsumer(AsyncWebsocketConsumer):
+    gID = 0
+
     async def connect(self):
         await self.accept()
         logger.info("connected")
@@ -24,6 +26,23 @@ class PlayerConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         self.send_message_task.cancel()
+        user = await sync_to_async(get_object_or_404)(player, userID=self.gID)
+        basejson = {
+            "userID": user.userID,
+            "posX": user.posX,
+            "posY": user.posY,
+            "lastPosX": user.lastPosX,
+            "lastPosY": user.lastPosY,
+            "orientation": user.orientation,
+            "player_skin": user.player_skin,
+            "player_map": user.player_map,
+            "player_status": user.player_status,
+            "active": False,
+        }
+        instance = editplayerModelSerializer(user, data=basejson)
+        if instance.is_valid():
+            await sync_to_async(instance.save,)()
+
 
     async def receive(self, text_data):
         try:
@@ -31,6 +50,7 @@ class PlayerConsumer(AsyncWebsocketConsumer):
             json_data = {}
             id = text_data_json.get("userID")
             if (id and text_data_json.get("action") == "connect"):
+                gID = id
                 playerobj = await sync_to_async(get_object_or_404)(player, userID=id)
                 basejson = {
                     "userID": playerobj.userID,

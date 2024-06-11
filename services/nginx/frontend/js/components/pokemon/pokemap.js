@@ -113,8 +113,7 @@ export class pokeMap {
         const img = new Image();
         img.src = this.asset_selection(player.orientation, player.player_skin);
     
-        if (player.posX !== player.lastPosX || player.posY !== player.lastPosY) {
-            // Player has moved, reload mapimage
+        if (player.posX != player.lastPosX || player.posY != player.lastPosY) {
             this.mapimage.src = this.select_map_image(player.player_map);
         }
     
@@ -222,15 +221,13 @@ export class pokeMap {
         }
 
 
-        socket.onclose = function (event) {
-            console.log("Websocket connection closed.");
-
+        socket.onclose = async function (event) {
+            return;
         }
 
         socket.onmessage = (e) => {
             let parsed_data = JSON.parse(e.data);
             this.drawmap(parsed_data);
-            // this.draw_all_players(parsed_data);
             socket.send(JSON.stringify({
                 action: "get_players"
             }));
@@ -273,5 +270,4 @@ export class pokeMap {
             }
         };
     }
-
 }

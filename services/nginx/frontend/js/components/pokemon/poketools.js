@@ -61,7 +61,7 @@ export class pokechat {
 
     createChatbox(){
         const chatbox = document.createElement('div');
-        chatbox.classList.add('bg-white', 'rounded', 'mb-3', 'chatbox');
+        chatbox.classList.add('bg-white', 'rounded', 'mb-3', 'chatbox','flex-grow-1', 'd-flex', 'flex-column');
 		chatbox.style.padding = '12px';
 		chatbox.style.overflowWrap = 'break-word';
 		chatbox.style.overflowY = 'auto';
@@ -117,10 +117,7 @@ export class pokechat {
         return color;
     }
 
-    async getusername(data){
-        let message = data.message;
-        let parts = message.split(':');
-        let id = parts[0].trim();
+    async getusername(id){
 
         const users = await Iuser.getAllUsers();
         let username = users.users.find(user => user.user_id === parseInt(id)).username;
@@ -128,13 +125,60 @@ export class pokechat {
 
     }
 
-    async addChatMessage(data){
+    timerCalculation(date) {
+        try {
+          console.log(date);
+          let time = new Date(date);
+          if (isNaN(time.getTime())) {
+            return 0;
+          }
+          const options = { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
+          return time.toLocaleDateString('en-US', options);
+        } catch (error) {
+          return (0);
+        }
+    }
+
+    async addChatMessage(message, id, timestamp){
         const chatbox = document.querySelector('.chatbox');
-        const username = await this.getusername(data)
+        const username = await this.getusername(id)
         const usernameColor = this.getRandomColor(); // Function to generate random color
-        let parts = data.message.split(':');
-        let message = parts[1].trim();
-        chatbox.innerHTML += `<span style="color: ${usernameColor};">${username}</span>: ${message}<br>`;
+
+        const messageDiv2 = document.createElement('div'); // Create a new div for each message
+        messageDiv2.classList.add('d-flex', 'mb-2');
+        if (id == await Iuser.getID()){  
+            console.log('end user_id', id);
+            messageDiv2.classList.add('align-self-end');
+        }
+        else{
+            console.log('start user_id', id);
+            messageDiv2.classList.add('align-self-start');
+        }
+
+        const name = document.createElement('span');
+        name.style.color = usernameColor;
+        name.textContent = username;
+        name.style.fontWeight = 'bold';
+        name.classList.add('align-items-center')
+        chatbox.appendChild(name);
+
+        const time = document.createElement('span');
+        let timer = this.timerCalculation(timestamp);
+        time.style.color = 'gray';
+        time.textContent = ' ' + timer;
+        chatbox.appendChild(time);
+
+        const msg = document.createElement('p');
+        msg.classList.add('mb-1', 'border', 'border-dark', 'rounded', 'p-2');
+        msg.style.backgroundColor = 'grey';
+        msg.textContent = message;
+        msg.style.backgroundColor = 'grey';
+        if (id == await Iuser.getID())
+            msg.style.backgroundColor = 'lightgrey';
+
+        messageDiv2.appendChild(msg);
+        chatbox.appendChild(messageDiv2);
+        // chatbox.innerHTML += `<span style="color: ${usernameColor};">${username}</span>: ${message}<br>`;
     }
 
     pokechatinit(){
@@ -154,7 +198,11 @@ export class pokechat {
 
         this.chatSocket.onmessage = async (e) => {
             const data = JSON.parse(e.data);
-            await this.addChatMessage(data);
+            console.log(data);
+            const message = data.message;
+            const id = data.user_id;
+            const time = data.time;
+            await this.addChatMessage(message, id, time);
         };
 
         chatInput.focus();
