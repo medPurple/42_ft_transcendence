@@ -29,22 +29,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	# Receive message from WebSocket
 	async def receive(self, text_data):
 		text_data_json = json.loads(text_data)
+		text_data_json["room_name"] = self.room_name  # Add room_name to the data
 		serializer = self.serializer_class(data=text_data_json)
 		logger.debug(text_data_json)
 		if serializer.is_valid():
 			await self.save_message(serializer)
 			user_id = serializer.data.get('user_id')
 			message = serializer.data.get('message')
+			time = serializer.data.get('timestamp')
 			await self.channel_layer.group_send(
 				self.room_group_name, {
 					"type": "chat.message",
-					"message": f"{user_id}: {message}"  # Include the user id in the message
+					"message": message,
+					"user_id": user_id,
+					"time":	time,
 				}
 			)
 
 	@sync_to_async
 	def save_message(self, serializer):
-		serializer.save()
+		logger.info("Saving message")
+		logger.info(self.room_name)
+		logger.debug(serializer)
+		serializer.save()  # No need to assign room_name here
+		logger.debug(serializer.data)
 
 	# 	Message.objects.create(user_id=user_id, room_name=room_name, message=message)
 
@@ -52,9 +60,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	# Receive message from room group
 	async def chat_message(self, event):
 		message = event["message"]
+		user_id = event["user_id"]
+		time = event["time"]
 
 		# Send message to WebSocket
-		await self.send(text_data=json.dumps({"message": message}))
+		await self.send(text_data=json.dumps({"message": message, "user_id": user_id, "time": time}))
 
 
 

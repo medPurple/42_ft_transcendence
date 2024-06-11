@@ -11,19 +11,19 @@ export class chat {
     this.player2 = null;
   }
 
-  async getusername(data) {
-    let parts = data.split(':');
-    let id = parts[0].trim();
+  async getusername(id) {
 
+    console.log('id', id);  
     const users = await Iuser.getAllUsers();
     let username = users.users.find(user => user.user_id === parseInt(id)).username;
+    console.log('username', username);
     return username;
 
   }
 
   createChatDiv() {
     const chatDiv = document.createElement('div');
-    chatDiv.classList.add('m-3', 'rounded', 'border', 'border-dark', 'd-flex');;
+    chatDiv.classList.add('m-3', 'rounded', 'd-flex');;
     chatDiv.style.height = 'calc(100vh - 2rem)';
     chatDiv.id = 'chatDiv';
     return chatDiv;
@@ -31,7 +31,7 @@ export class chat {
 
   async createUsersDiv() {
     const usersDiv = document.createElement('div');
-    usersDiv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded');
+    usersDiv.classList.add('d-flex', 'flex-column', 'rounded');
     usersDiv.style.flex = '1'; // Ajoute la propriété flex
     usersDiv.id = 'usersDiv';
 
@@ -77,11 +77,13 @@ export class chat {
     return usersDiv;
   }
 
-  createMessagesDiv() {
+  async createMessagesDiv() {
+   
     const messagesDiv = document.createElement('div');
-    messagesDiv.classList.add('p-3', 'flex-grow-1', 'border', 'border-dark', 'bg-light');
+    messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
     messagesDiv.id = 'messagesDiv';
     messagesDiv.textContent = '';
+    messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
     return messagesDiv;
   }
 
@@ -113,7 +115,7 @@ export class chat {
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'titleDiv';
-    titleDiv.classList.add('bg-light', 'align-items-center', 'w-100', 'p-1', 'border', 'border-dark', 'rounded');
+    titleDiv.classList.add('bg-light', 'mb-3','align-items-center', 'w-100', 'p-1', 'border', 'rounded');
 
     const titleElement = document.createElement('h1');
     titleElement.textContent = user.username;
@@ -124,7 +126,7 @@ export class chat {
     const inviteButton = document.createElement('button');
     inviteButton.id = 'inviteButton';
     inviteButton.textContent = 'Invite';
-    inviteButton.classList.add('btn', 'btn-secondary', 'ml-3', 'mr-3'); // Ajoute les classes ml-auto et mr-2
+    inviteButton.classList.add('btn', 'btn-secondary', 'ml-3', 'mr-3', 'mb-3', 'p-2'); // Ajoute les classes ml-auto et mr-2
 
 
     titleDiv.appendChild(titleElement);
@@ -152,7 +154,7 @@ export class chat {
       const blockButton = document.createElement('button');
       blockButton.id = 'blockButton';
       blockButton.textContent = 'Block';
-      blockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3'); // Ajoute la classe mr-2
+      blockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3', 'mb-3', 'p-2'); // Ajoute la classe mr-2
       this.blockExec(blockButton, user.username);
       titleDiv.appendChild(blockButton);
     }
@@ -190,8 +192,8 @@ export class chat {
     }
   }
 
-  async checkBlockStatus(message) {
-    const username = await this.getusername(message)
+  async checkBlockStatus(id) {
+    const username = await this.getusername(id)
     try {
       const blockStatus = await Ifriends.getUserBlock(username);
       console.log(blockStatus);
@@ -213,9 +215,10 @@ export class chat {
     interactiondiv.classList.add('interactionDiv', 'd-flex', 'flex-column', 'p-3');
     interactiondiv.style.flex = '3'; // Ajoute la propriété flex
 
-    const messagesDiv = this.createMessagesDiv();
+    const messagesDiv = await this.createMessagesDiv();
     const inputDiv = this.createInputDiv();
     const titleDiv = await this.createTitleDiv();
+
 
     interactiondiv.appendChild(titleDiv);
     interactiondiv.appendChild(messagesDiv);
@@ -247,24 +250,70 @@ export class chat {
     const usersDiv = await this.createUsersDiv();
 
     chatDiv.appendChild(usersDiv);
-    if (this.targetid) {
+    if (this.targetid)
       chatDiv.appendChild(await this.createInteractionDiv());
-      this.createChatDiv();
-    }
     else
       chatDiv.appendChild(this.createNonediv());
     document.body.appendChild(chatDiv);
     return chatDiv;
   }
 
-  async addMessage(data) {
+  async addMessage(user_id, message, timestamp) {
     const messagediv = document.querySelector('#messagesDiv');
-    console.log('add message', data);
-    const username = await this.getusername(data);
+    messagediv.classList.add('d-flex', 'flex-column', 'mb-2');
+
+    const messageDiv2 = document.createElement('div'); // Create a new div for each message
+    messageDiv2.classList.add('d-flex', 'mb-2');
+    if (user_id == await Iuser.getID()){  
+      console.log('end user_id', user_id);
+      messageDiv2.classList.add('align-self-end');
+    }
+    else{
+      console.log('start user_id', user_id);
+      messageDiv2.classList.add('align-self-start');
+    }
+
+    const username = await this.getusername(user_id);
     const usernameColor = this.getRandomColor(); // Function to generate random color
-    let parts = data.split(':');
-    let message = parts[1].trim();
-    messagediv.innerHTML += `<span style="color: ${usernameColor};">${username}</span>: ${message}<br>`;
+
+    const name = document.createElement('span');
+    name.style.color = usernameColor;
+    name.textContent = username;
+    name.style.fontWeight = 'bold';
+    messagediv.appendChild(name);
+
+    const time = document.createElement('span');
+    let timer = this.timerCalculation(timestamp);
+    time.style.color = 'gray';
+    time.textContent = ' ' + timer;
+    messagediv.appendChild(time);
+
+    const msg = document.createElement('p');
+    msg.classList.add('mb-1', 'border', 'border-dark', 'rounded', 'p-2');
+    msg.style.backgroundColor = 'grey';
+    msg.textContent = message;
+    console.log(user_id, await Iuser.getID());
+    msg.style.backgroundColor = 'grey';
+    if (user_id == await Iuser.getID())
+      msg.style.backgroundColor = 'lightgrey';
+
+    messageDiv2.appendChild(msg);
+    messagediv.appendChild(messageDiv2); // Append the message div to the main messages div
+}
+
+  timerCalculation(date) {
+
+    try {
+      console.log(date);
+      let time = new Date(date);
+      if (isNaN(time.getTime())) {
+        return 0;
+      }
+      const options = { day: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric' };
+      return time.toLocaleDateString('en-US', options);
+    } catch (error) {
+      return (0);
+    }
   }
 
   getRandomColor() {
@@ -277,10 +326,8 @@ export class chat {
   }
 
   async checkInvite(data) {
-    let parts = data.split(':');
-    let id = parts[0].trim();
-    let user_message = parts[1].trim();
-    if (user_message === '@invite@') {
+
+    if (data === '@invite@') {
       console.warn('INVITATION BY' + id);
       return true;
     }
@@ -345,10 +392,7 @@ export class chat {
   }
 
   async checkInviteStatus(data) {
-    let parts = data.split(':');
-    let id = parts[0].trim();
-    let user_message = parts[1].trim();
-    if (user_message === '@accept@') {
+    if (data === '@accept@') {
       console.warn('ACCEPTED BY' + id);
       if (this.player1 === null)
         this.player1 = id;
@@ -356,7 +400,7 @@ export class chat {
         this.player2 = id;
       return true;
     }
-    else if (user_message === '@refuse@') {
+    else if (data === '@refuse@') {
       console.warn('REFUSED BY' + id);
       this.player1 = null;
       this.player2 = null;
@@ -389,6 +433,26 @@ export class chat {
     else
       roomName = this.targetid + '_' + myid;
 
+    const response = await fetch(`https://localhost:4430/api/chat/history/${roomName}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Icookies.getCookie('token'),
+        'X-CSRFToken': Icookies.getCookie('csrftoken')
+        },
+      credentials: 'include',
+    });
+    const data = await response.json();
+    if (data.success)
+    if (data.data){
+      console.log(data.data);
+      data.data.forEach(message => {
+        if (message.message[0] !== '@')
+          this.addMessage(message.user_id, message.message, message.timestamp);
+      });
+    } else
+      alert('Failed to get chat history');
+
     this.websocket = new WebSocket(
       'wss://' + window.location.host + '/ws/chat/'
       + roomName
@@ -401,10 +465,13 @@ export class chat {
 
     this.websocket.onmessage = async (e) => {
       const data = JSON.parse(e.data);
+      console.log('data', data);
+      const id = data['user_id'];
       const message = data['message'];
+      const timestamp = data['time'];
       const invite = await this.checkInvite(message);
       const invitestatus = await this.checkInviteStatus(message);
-      const blockstatus = await this.checkBlockStatus(message);
+      const blockstatus = await this.checkBlockStatus(id);
       if (invite) {
         inviteButton.disabled = true;
         this.createInviteButton();
@@ -415,9 +482,8 @@ export class chat {
           inviteButton.disabled = false;
       }
       else if (!blockstatus) {
-        await this.addMessage(message);
+        await this.addMessage(id, message, timestamp);
       }
-      console.log(this.player1, this.player2)
       if (this.player1 && this.player2) {
         console.log("Creating party");
         await this.createParty(this.player1, this.player2);
@@ -507,5 +573,3 @@ export class chat {
   }
 
 }
-
-
