@@ -1,4 +1,4 @@
-import { FriendsStatistics } from "../../components/friends/friendsStatisticsForm.js";
+import { FriendsStatistics } from "../../components/friends/friendsStatisticsInfo.js";
 import Icookies from "../../components/cookie/cookie.js"
 
 
