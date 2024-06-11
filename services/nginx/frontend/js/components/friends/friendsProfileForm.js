@@ -16,7 +16,8 @@ export class FriendsProfile {
 			const profileContainer = this.displayFriendsProfile(data, profilePictureData, statut);
 			return profileContainer;
 		} catch (error) {
-			console.error('Error:', error);
+			let tmpdiv = document.createElement('div');
+			return tmpdiv;
 		}
 	}
 
@@ -35,7 +36,12 @@ export class FriendsProfile {
 		let profileContainer = document.createElement('div');
 		profileContainer.className = 'd-flex justify-content-center';
 		profileContainer.id = 'profile-friends-container';
-		document.querySelector('main').appendChild(profileContainer);
+		let mainElement = document.querySelector('main');
+		if (mainElement) {
+			mainElement.appendChild(profileContainer);
+		} else {
+			console.error('No <main> element found in the document.');
+		}
 
 		let cardDiv = document.createElement('div');
 		cardDiv.className = 'card text-center';

@@ -225,7 +225,8 @@ export class FriendsStatistics {
 	async initFriendsStatistics(){
 
 		const logoImg = document.querySelector('img[src="./images/Logos/LogoSG-mod.png"]');
-		logoImg.src = '../../images/Logos/LogoSG-mod.png'
+		if (logoImg)
+			logoImg.src = '../../images/Logos/LogoSG-mod.png';
 
 		const containerStats = document.createElement('div');
 		containerStats.classList.add('container');
