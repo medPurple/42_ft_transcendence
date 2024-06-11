@@ -213,8 +213,8 @@
 						'Authorization': token
 					}
 				});
-
-				if (response.ok){
+				const data = await response.json();
+				if (data.success == true){
 					return true
 				} else {
 					throw new Error('Failed to get user info');

@@ -83,10 +83,13 @@ class JWTAuthentication(BaseAuthentication):
 		try:
 			token_response = requests.get(token_service_url, headers={'Authorization': auth_header}, verify=False)
 			token_response.raise_for_status()
-			user_id = token_response.json().get('user_id')
-			user = CustomUser.objects.get(user_id=user_id)
+			valid = token_response.json().get('success')
+			if valid is True:
+				data = token_response.json().get('data')
+				user_id = data.get('user_id')
+				user = CustomUser.objects.get(user_id=user_id)
 			return (user, token)
-		except (requests.exceptions.RequestException, CustomUser.DoesNotExist):
+		except (requests.exceptions.RequestException, CustomUser.DoesNotExist, Exception):
 			raise exceptions.AuthenticationFailed('Invalid token')
 
 

@@ -60,11 +60,12 @@ export default class userInfo {
 				},
 				credentials: 'include',
 			});
-			if (!response.ok) {
-				throw new Error('identification failed');
-			}
 			const data = await response.json();
-			return data.user_id;
+			if (data.success){
+				return data.data.user_id;
+			} else {
+				throw new Error('Failed to get user info');
+			}
 		} catch (error) {
 			// console.error('Error:', error);
 			throw error; // share the error

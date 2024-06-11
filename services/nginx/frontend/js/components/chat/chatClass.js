@@ -443,13 +443,14 @@ export class chat {
       credentials: 'include',
     });
     const data = await response.json();
-    if (data.success)
-    if (data.data){
+    if (data.success){
+      if (data.data){
       console.log(data.data);
       data.data.forEach(message => {
         if (message.message[0] !== '@')
           this.addMessage(message.user_id, message.message, message.timestamp);
-      });
+        });
+      }
     } else
       alert('Failed to get chat history');
 
