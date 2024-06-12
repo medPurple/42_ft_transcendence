@@ -176,7 +176,6 @@ class   gameStateC:
                 logger.info(f"Error changing user status in microservices: {e}")
         elif (self.game_mode == 'local'):
             try:
-                # logger.info("Je suis dans le local")
                 self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
                 self.game_user2, created = await sync_to_async(GameUser.objects.get_or_create, thread_sensitive=True)(
                     userID=self.game_user1.userID * 1000,
@@ -189,7 +188,6 @@ class   gameStateC:
                 )
             except GameUser.DoesNotExist:
                 return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
-            logger.info(self.game_user1, self.game_user2)
             self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
                 player1=self.game_user1,
                 player2=self.game_user2,

@@ -128,7 +128,7 @@ function handleServerMessage(message) {
 		case 2:
 			gamePaused();
 			break;
-		default:
+		case 3:
 			endGame();
 			break;
 	}
@@ -144,10 +144,10 @@ function waitingForPlayer() {
 	screensdiv.classList.remove('hidden');
 
 	screensdiv.innerHTML = `
-			<div class="row-md-4 p-5">
+		<div class="row-md-4 p-5">
 			<img src="../../../images/Game/GameWaiting.gif" class="img-fluid" alt="Display Image">
-			<h4>Waiting for someone to join...</h4>
-			</div>
+			<h6 class="p-5" style="color: grey;">...waiting for someone to join...</h6>
+		</div>
 	`;
 	
 }
@@ -161,19 +161,11 @@ function gamePaused() {
 	pongscore.classList.add('hidden');
 	screensdiv.classList.remove('hidden');
 
-	if (gameState.status == 3) {
-		pongrender.innerHTML = `
-				<div id="custom-endgame">
-					<img src="../../../images/Game/GameEnded.jpg" class="img-fluid" alt="Display Image">
-					<h4>Game Ended by other player...</h4>
-				</div>`;
-	}
-
 	screensdiv.innerHTML = `
-			<div class="row-md-4 p-5">
+		<div class="row-md-4 p-5">
 			<img src="../../../images/Game/GamePaused.gif" class="img-fluid" alt="Display Image">
-			<h4>Game Paused...</h4>
-			</div>
+			<h6 class="p-5" style="color: grey;">...game paused...</h6>
+		</div>
 	`;
 }
 
@@ -198,8 +190,8 @@ function endGame() {
 	const pongrender = document.getElementById('pong-renderer');
 	const pongscore = document.getElementById('pong-score');
 
-	pongscore.classList.add('hidden');
 	screensdiv.classList.add('hidden');
+	pongscore.classList.add('hidden');
 	pongrender.classList.remove('hidden');
 
 	if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
@@ -220,11 +212,11 @@ function endGame() {
 			</div>
 			`;
 		}
-		else if (gameState.status == 3) {
+		else {
 			pongrender.innerHTML = `
-			<div id="custom-endgame">
+			<div class="row-md-4 p-5">
 				<img src="../../../images/Game/GameEnded.gif" class="img-fluid" alt="Display Image">
-				<h4>Game Ended by other player...</h4>
+				<h6 class="p-5" style="color: grey;">...game ended by another player...</h6>
 			</div>`;
 		}
 	}
