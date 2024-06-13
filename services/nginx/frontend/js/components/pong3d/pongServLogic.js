@@ -46,11 +46,11 @@ async function setup(gameMode, players) {
 
   switch (gameState.game_mode) {
     case "remote":
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/');
       waitingForPlayer();
       break;
     case "local":
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/');
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/' + user_name + '/' + players.player3 + '/');
       break;
     default:
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/');
@@ -58,6 +58,9 @@ async function setup(gameMode, players) {
   }
 
   core.gameSocket.onopen = async function(e) {
+
+    if (gameState.game_mode == "tournament")
+      removeForm();
     await createScene();
     console.log('Connected');
   };
@@ -112,15 +115,14 @@ function handleServerMessage(message) {
       action(value);
     }
   }
-  if (gameState.game_mode == "tournament")
-    deleteForm();
-
   console.log(gameState.status);
 
+  console.log("gameState.status = ", gameState.status);
   switch (gameState.status) {
     case 0:
       if (gameState.game_mode == "remote")
         waitingForPlayer();
+      welcomeScreen();
       break;
     case 1:
       playingMode();
@@ -133,6 +135,13 @@ function handleServerMessage(message) {
       break;
   }
 }
+
+function removeForm() {
+  console.log("Je veux virer le form")
+  const divToRemove = document.getElementById('app-general-container');
+  divToRemove.classList.add('hidden');
+}
+
 
 function waitingForPlayer() {
   const screensdiv = document.getElementById('pong-screens');

@@ -52,6 +52,10 @@ a:hover {
 	padding-bottom: 10em;
 }
 
+#app-general-container.hidden {
+  display: none;
+}
+
 /********** HOME CARD PAGE ***********/
 .image-container {
 	position: relative;

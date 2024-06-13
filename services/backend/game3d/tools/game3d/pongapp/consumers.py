@@ -26,6 +26,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.group_name = 0
+        self.actual_match = 0
         self.tournament = Tournament()
 
     async def connect(self):
@@ -44,6 +45,8 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # tournaments.remove(self.tournament)
+        if (self.actual_match != 0):
+            self.actual_match.status = iv.PAUSED
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def tournamentLoop(self):
@@ -70,6 +73,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
     # la
     async def findTournamentGame(self, gameNbr, player1, player2):
         self.tournament.games[gameNbr].game_mode = "tournament"
+        self.actual_match = self.tournament.games[gameNbr]
         self.tournament.games[gameNbr].group_name = await self.generate_tournament_name()
         await self.channel_layer.group_add(self.tournament.games[gameNbr].group_name, self.channel_name)
         self.tournament.games[gameNbr].paddle1 = paddleC(1)
@@ -86,6 +90,18 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         asyncio.create_task(self.tournament.games[gameNbr].run_game_loop())
         return self.tournament.games[gameNbr]
 
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+
+        for key in text_data_json:
+            if (key == "paddleMov1"):
+                with self.actual_match._lock:
+                    self.actual_match.paddle1.move = text_data_json["paddleMov1"]
+
+            if (key == "paddleMov2"):
+                with self.actual_match._lock:
+                    self.actual_match.paddle2.move = text_data_json["paddleMov2"]
+
     # la
     async def load_game(self,event):
         # Récupérer les données du jeu
@@ -97,15 +113,15 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         gameNbr = game_data["gameNbr"]
         if (gameNbr == 0):
             if (player1_score > player2_score):
-                self.winner1 = game_data["player1_user_id"]
+                self.winner1 = self.user1
             else:
-                self.winner1 = game_data["player2_user_id"]
+                self.winner1 = self.user2
             await self.findTournamentGame(1, self.user3, self.user4)
         elif (gameNbr == 1):
             if (player1_score > player2_score):
-                self.winner2 = game_data["player1_user_id"]
+                self.winner2 = self.user3
             else:
-                self.winner2 = game_data["player2_user_id"]
+                self.winner2 = self.user4
             await self.findTournamentGame(2, self.winner1, self.winner2)
 
 class PongLocalConsumer(AsyncWebsocketConsumer):
@@ -120,6 +136,8 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
+        self.user_name = self.scope["url_route"]["kwargs"]["user1"]
+        self.player2_name = self.scope["url_route"]["kwargs"]["user2"]
         await self.accept()
         self.gameState = await self.findLocalParty()
 
@@ -136,6 +154,8 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         self.gameState.game_mode = "local"
         self.gameState.group_name = await self.generate_local_name()
         self.gameState.player1_user_id = self.user_id
+        self.gameState.player1_user_name = self.user_id
+        self.gameState.player2_user_name = self.player2_name
         await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
         self.gameState.paddle1 = paddleC(1)
         self.gameState.paddle2 = paddleC(2)
