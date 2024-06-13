@@ -57,8 +57,11 @@ async function setup(gameMode, players) {
   }
 
   core.gameSocket.onopen = async function(e) {
-	await createScene();
-	console.log('Connected');
+
+    if (gameState.game_mode == "tournament")
+      removeForm();
+    await createScene();
+    console.log('Connected');
   };
 
   core.gameSocket.onerror = function(e) {
@@ -105,16 +108,13 @@ const actions = new Map([
 function handleServerMessage(message) {
 	const map = new Map(Object.entries(JSON.parse(message)));
 
-	for (let [key, value] of map.entries()) {
-		const action = actions.get(key);
-		if (action) {
-		action(value);
-		}
-	}
-	if (gameState.game_mode == "tournament")
-		deleteForm();
-
-	console.log(gameState.status);
+  for (let [key, value] of map.entries()) {
+    const action = actions.get(key);
+    if (action) {
+      action(value);
+    }
+  }
+  console.log(gameState.status);
 
 	switch (gameState.status) {
 		case 0:
@@ -137,6 +137,13 @@ function handleServerMessage(message) {
 			break;
 	}
 }
+
+function removeForm() {
+  console.log("Je veux virer le form")
+  const divToRemove = document.getElementById('app-general-container');
+  divToRemove.classList.add('hidden');
+}
+
 
 function waitingForPlayer() {
 	const screensdiv = document.getElementById('pong-screens');

@@ -4,21 +4,48 @@ import { pokechat, pokebag } from "../components/pokemon/poketools.js";
 import Icookies from "../components/cookie/cookie.js"
 import { setup } from "../components/pong3d/pongServLogic.js";
 import { tournamentInput } from "../components/pong3d/tournamentInput.js";
+import { localInput } from "../components/pong3d/localInput.js";
 
 
-export function pong_localplay() {
+// export function pong_localplay() {
+//   const generaldiv = document.createElement('div');
+//   const screens = document.createElement('div');
+//   screens.id = "pong-screens";
+//   screens.classList.add('hidden');
+//   const gamediv = document.createElement('div');
+//   gamediv.id = "pong-renderer"
+//   const scorediv = document.createElement('div');
+//   scorediv.id = "pong-score"
+//   if (Icookies.getCookie('token') != null) {
+//     setup("local", null);
+//   } else {
+//     generaldiv.classList.add('not-logged');
+//     alert("You need to be logged in to play in local");
+//     window.location.href = '/pongService';
+//   }
+//   generaldiv.appendChild(screens);
+//   generaldiv.appendChild(gamediv);
+//   generaldiv.appendChild(scorediv);
+//   document.body.appendChild(generaldiv);
+//   return generaldiv;
+// }
+
+export async function pong_localplay() {
   const generaldiv = document.createElement('div');
   const screens = document.createElement('div');
   screens.id = "pong-screens";
   screens.classList.add('hidden');
-  const gamediv = document.createElement('div');
-  gamediv.id = "pong-renderer"
-  const scorediv = document.createElement('div');
-  scorediv.id = "pong-score"
+  let gamediv = document.createElement('div');
+  let scorediv = document.createElement('div');
   if (Icookies.getCookie('token') != null) {
-    setup("local", null);
+    let turgecence = new localInput();
+    generaldiv.appendChild(await turgecence.initLocalInfo());
+    //generaldiv.removeChild(generaldiv.lastChild);
+    gamediv.id = "pong-renderer"
+    scorediv.id = "pong-score"
+    // gamediv.appendChild(await pongTournamentMatchmaking.mainMatchmakingDiv());
   } else {
-    generaldiv.classList.add('not-logged');
+    gamediv.classList.add('not-logged');
     alert("You need to be logged in to play in local");
     window.location.href = '/pongService';
   }
@@ -28,6 +55,7 @@ export function pong_localplay() {
   document.body.appendChild(generaldiv);
   return generaldiv;
 }
+
 
 export async function pong_remoteplay() {
   const generaldiv = document.createElement('div');
@@ -54,6 +82,9 @@ export async function pong_remoteplay() {
 
 export async function pong_tournamentplay() {
   const generaldiv = document.createElement('div');
+  const screens = document.createElement('div');
+  screens.id = "pong-screens";
+  screens.classList.add('hidden');
   let gamediv = document.createElement('div');
   let scorediv = document.createElement('div');
   if (Icookies.getCookie('token') != null) {
@@ -68,6 +99,7 @@ export async function pong_tournamentplay() {
     alert("You need to be logged in to play in tournament");
     window.location.href = '/pongService';
   }
+  generaldiv.appendChild(screens);
   generaldiv.appendChild(gamediv);
   generaldiv.appendChild(scorediv);
   document.body.appendChild(generaldiv);

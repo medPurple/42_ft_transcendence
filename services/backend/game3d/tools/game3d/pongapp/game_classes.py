@@ -218,8 +218,8 @@ class   gameStateC:
                     self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
                     self.paddle1Movement(self.paddle1)
                     self.paddle2Movement(self.paddle2)
-
-            await sync_to_async(self.match_object.save)()
+            if (self.game_mode == "remote" or self.game_mode == "local"):
+                await sync_to_async(self.match_object.save)()
             await asyncio.sleep(0.032)
             #self.logObject()
             await self.broadcastGameState()
@@ -228,33 +228,34 @@ class   gameStateC:
             await self.stopGame()
 
     async def stopGame(self):
-        user_service_url = 'https://user:4430/api/profiles/change-status/'
-        self.match_object.status = 1
-        self.game_user1.gamesPlayed += 1
-        self.game_user2.gamesPlayed += 1
-        if (self.player1Score > self.player2Score):
-            self.game_user1.gamesWon += 1
-            self.game_user2.gamesLost += 1
-        else:
-            self.game_user2.gamesWon += 1
-            self.game_user1.gamesLost += 1
-        
+        if (self.game_mode == "remote" or self.game_mode == "local"):
+            user_service_url = 'https://user:4430/api/profiles/change-status/'
+            self.match_object.status = 1
+            self.game_user1.gamesPlayed += 1
+            self.game_user2.gamesPlayed += 1
+            if (self.player1Score > self.player2Score):
+                self.game_user1.gamesWon += 1
+                self.game_user2.gamesLost += 1
+            else:
+                self.game_user2.gamesWon += 1
+                self.game_user1.gamesLost += 1
+            
 
-        # logger.info("Match status : %d" % (self.match_object.status))
-        # logger.info("player1 : %s" % (self.game_user1.userName))
-        # logger.info("player1Score : %d" % (self.match_object.player1_score))
-        # logger.info("games_won : %d" % (self.game_user1.gamesWon))
-        # logger.info("games_lost : %d" % (self.game_user1.gamesLost))
-        # logger.info("games_played : %d" % (self.game_user1.gamesPlayed))
-        # logger.info("player2 : %s" % (self.game_user2.userName))
-        # logger.info("player2Score : %d" % (self.match_object.player2_score))
-        # logger.info("games_won : %d" % (self.game_user2.gamesWon))
-        # logger.info("games_lost : %d" % (self.game_user2.gamesLost))
-        # logger.info("games_played : %d" % (self.game_user2.gamesPlayed))
+            # logger.info("Match status : %d" % (self.match_object.status))
+            # logger.info("player1 : %s" % (self.game_user1.userName))
+            # logger.info("player1Score : %d" % (self.match_object.player1_score))
+            # logger.info("games_won : %d" % (self.game_user1.gamesWon))
+            # logger.info("games_lost : %d" % (self.game_user1.gamesLost))
+            # logger.info("games_played : %d" % (self.game_user1.gamesPlayed))
+            # logger.info("player2 : %s" % (self.game_user2.userName))
+            # logger.info("player2Score : %d" % (self.match_object.player2_score))
+            # logger.info("games_won : %d" % (self.game_user2.gamesWon))
+            # logger.info("games_lost : %d" % (self.game_user2.gamesLost))
+            # logger.info("games_played : %d" % (self.game_user2.gamesPlayed))
 
-        await sync_to_async(self.game_user1.save)()
-        await sync_to_async(self.game_user2.save)()
-        await sync_to_async(self.match_object.save)()
+            await sync_to_async(self.game_user1.save)()
+            await sync_to_async(self.game_user2.save)()
+            await sync_to_async(self.match_object.save)()
 
         if (self.game_mode == 'remote'):
             try:
@@ -275,14 +276,10 @@ class   gameStateC:
             global local_parties
             local_parties.remove(self)
         elif (self.game_mode == 'tournament' and self.gameNbr != 2):
+            self.status = iv.FINISHED
             await self.loadAnotherGame()
         else:
             global tournaments
-            if self.player1Score > self.player2Score:
-                tournaments[-1].winners.append(self.player1_user_id)
-            else:
-                tournaments[-1].winners.append(self.player2_user_id)
-            tournaments[-1].match_is_running = False
 
     def checkPauseTimer(self):
         if (time.time() - self.pauseTimer > 5):
@@ -376,12 +373,14 @@ class   gameStateC:
 
         if (index == 1):
             self.player1Score += 1
-            self.match_object.player1_score += 1
+            if (self.game_mode == "remote" or self.game_mode == "local"):
+                self.match_object.player1_score += 1
             # logger.info("player1Score : %d" % (self.match_object.player1_score))
             ball.dirX = -1
         else:
             self.player2Score += 1
-            self.match_object.player2_score += 1
+            if (self.game_mode == "remote" or self.game_mode == "local"):
+                self.match_object.player2_score += 1
             # logger.info("player2Score : %d" % (self.match_object.player2_score))
             ball.dirX = 1
         ball.dirY = 1
