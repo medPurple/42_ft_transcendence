@@ -238,7 +238,7 @@ export class chat {
 
     const img = new Image();
     img.classList.add('w-100', 'h-100'); // Set width and height to 100%
-    img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmNpc25kc3d3dncxMHVsaDYyaDR4MzJrZzN6cDR3eGg4eGl2djU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GnNi4XFTOIkUe9giJl/giphy.gif";
+    img.src = "../../../images/Site/AloneAgain.gif";
 
     Nonediv.appendChild(img);
     Nonediv.style.flex = '3';

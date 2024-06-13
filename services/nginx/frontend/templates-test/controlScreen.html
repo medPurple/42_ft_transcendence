@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- HEAD ZONE: links to other files / images / scripts / libraries / description / logos / general site settings  -->
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Transcendence</title>
+	<!-- Link to Custom CSS -->
+	<link rel="stylesheet" href="../css/style.css"/>
+	<!-- Links to Images (logos or other) -->
+	<link rel="icon" href="../images/Favicons/favicon.png"/>
+	<!-- CSS Bootstrap Libraries -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+	<!-- JS THREE Scripts -->
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.148.0/three.min.js"></script>
+	<script src="https://unpkg.com/three@0.138/examples/js/loaders/GLTFLoader.js"></script> -->
+	<script type="importmap">
+		{
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.148.0/examples/jsm/"
+		}
+		}
+	</script>
+
+	<!-- JS Bootstrap Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
+	<!-- JS Custom Script -->
+
+	<script type="module" src="../js/main.js" defer></script>
+</head>
+
+<!-- BODY ZONE : Main structure -->
+<body>
+	<!-- HEADER ZONE (index-menus) -->
+	<header>
+		<nav id="navbar" class="navbar navbar-expand-md hidden">
+			<div class="container">
+				<a class="navbar-brand" href="/home">
+					<img src="../images/Logos/LogoSG-mod.png" alt="logo" width="75" height="40" class="d-inline-block align-text-top">
+				</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link" href="/home">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/about">About</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/contact">Contact</a>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" id="navbar-dropdown-button" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							User
+						</a>
+					<ul class="dropdown-menu" id="navbar-dropdown-menu">
+					</ul>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<!-- MAIN ZONE ('CHANGING body' here) -->
+	<main id="app">
+		<div id="pong-screens">
+			<div id="welcome" class="row justify-content-center p-5">
+				<h3 class="text-center">Game Controls </h3>
+				<div class="row">
+					<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
+						<button class="btn btn-dark text-start" type="button" style="background: #333;">🡸 W S</button>
+					</div>
+					<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
+						<button class="btn btn-secondary text-end" type="button" style="background: #333;">8 5 🡺</button>
+					</div>
+				</div>
+			
+				<h2 class="text-center mb-4 mt-3">playername VS playername</h2>
+			
+				<h6>( PRESS ENTER )</h6>
+				<div class="spinner-border text-dark mb-4 mt-3" role="status"></div>
+			</div>
+		</div>
+		<div id="pong-renderer" class="hidden"></div>
+		<div id="pong-score" class="hidden"></div>
+	</main>
+
+	<!-- FOOTER ZONE -->
+	<footer id="custom-footer" class="fixed-bottom hidden">
+		<a href="/contact" data-link>© 2024 La pat patrouille</a>
+	</footer>
+</body>
+</html>
+
+
+
+

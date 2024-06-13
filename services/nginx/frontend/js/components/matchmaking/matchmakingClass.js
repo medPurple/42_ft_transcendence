@@ -95,7 +95,7 @@ class MatchmakingButtons {
 		if (this.game === 'pong_multiplayer'){
 			waitinggif.classList.add('embed-responsive', 'embed-responsive-16by9');
 			const img = new Image();
-			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGwwM2lwdm8zNTFiYng2ZzJhODVpdnQya3lxMDloY3dzNHk1cDB2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Q0MrhO9BUSxKR8RdZC/giphy.gif";
+			img.src = "../../../images/Site/AloneAgain.gif";
 			img.classList.add('embed-responsive-item');
 			waitinggif.appendChild(img);
 		} else if (this.game === 'pkm_multiplayer'){
@@ -105,7 +105,7 @@ class MatchmakingButtons {
 			waitinggif.style.position = "relative";
 			
 			const img = new Image();
-			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2ZnaGJod21veWJlNXo1Y2Y5NWZxdXZieTA3dnQ0bXQ4amk3M3kwZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Ny6WEYvBuBvDW/giphy.gif";
+			img.src = "../../../images/Site/AloneAgain.gif";
 			img.style.width = "100%";
 			img.style.height = "100%";
 			img.style.position = "absolute";
