@@ -1,4 +1,4 @@
-import { core } from './config.js'
+import { core, gameState } from './config.js'
 
 export function onKeyDownRemote(event) {
   switch (event.keyCode) {
@@ -7,6 +7,10 @@ export function onKeyDownRemote(event) {
       break;
     case 68:
       core.gameSocket.send(JSON.stringify({ 'paddleMov': "right" }))
+      break;
+    case 13:
+      if (gameState.status == 1)
+        core.gameSocket.send(JSON.stringify({ 'validate': "true" }))
       break;
   }
 }
@@ -36,6 +40,10 @@ export function onKeyDownLocal(event) {
     case 104:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "right" }))
       break;
+    case 13:
+      if (gameState.status == 1)
+        core.gameSocket.send(JSON.stringify({ 'validate': "true" }))
+      break;
   }
 }
 
@@ -53,7 +61,6 @@ export function onKeyUpLocal(event) {
     case 104:
       core.gameSocket.send(JSON.stringify({ 'paddleMov2': "false" }))
       break;
-
   }
 }
 

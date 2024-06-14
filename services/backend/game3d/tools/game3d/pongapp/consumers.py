@@ -87,6 +87,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         self.tournament.games[gameNbr].gameNbr = gameNbr
         await self.send(text_data=json.dumps({"party": "active"}))
         self.tournament.games[gameNbr].powerUpTimer = time.time()
+        self.tournament.games[gameNbr].status = iv.WAITING_FOR_VALIDATION
         asyncio.create_task(self.tournament.games[gameNbr].run_game_loop())
         return self.tournament.games[gameNbr]
 
@@ -101,6 +102,11 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
             if (key == "paddleMov2"):
                 with self.actual_match._lock:
                     self.actual_match.paddle2.move = text_data_json["paddleMov2"]
+
+            if (key == "validate"):
+                with self.actual_match._lock:
+                    self.actual_match.players_nb += 1
+
 
     # la
     async def load_game(self,event):
@@ -168,6 +174,7 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         self.gameState.players_nb = 0
         await self.send(text_data=json.dumps({"party": "active"})) 
         self.gameState.powerUpTimer = time.time()
+        self.gameState.status = iv.WAITING_FOR_VALIDATION
         asyncio.create_task(self.gameState.run_game_loop())
         return self.gameState
 
@@ -182,6 +189,9 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
             if (key == "paddleMov2"):
                 with self.gameState._lock:
                     self.gameState.paddle2.move = text_data_json["paddleMov2"]
+            if (key == "validate"):
+                with self.gameState._lock:
+                    self.gameState.players_nb += 1
 
     async def game_state(self,event):
         #logger.info("Depuis le local je vais envoyer au websocket")
@@ -237,13 +247,18 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        paddleMov = text_data_json["paddleMov"]
-        if (self.player_id == 1):
-            with self.gameState._lock:
-                self.gameState.paddle1.move = paddleMov
-        else:
-            with self.gameState._lock:
-                self.gameState.paddle2.move = paddleMov 
+
+        for key in text_data_json:
+            if (key == "paddleMov"):
+                if (self.player_id == 1):
+                    with self.gameState._lock:
+                        self.gameState.paddle1.move = text_data_json["paddleMov"]
+                else:
+                    with self.gameState._lock:
+                        self.gameState.paddle2.move = text_data_json["paddleMov"]
+            if (key == "validate"):
+                with self.gameState._lock:
+                    self.gameState.players_nb += 1
 
     async def findRemoteParty(self):
         global remote_parties
@@ -280,7 +295,7 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
             self.gameState.powerUpTimer = time.time()
             self.gameState.pauseTimer = time.time()
             await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
-            
+            self.gameState.status = iv.WAITING_FOR_VALIDATION
             self.task = asyncio.create_task(self.gameState.run_game_loop())
             return remote_parties[listLen - 1]
 
