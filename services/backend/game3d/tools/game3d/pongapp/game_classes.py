@@ -203,11 +203,13 @@ class   gameStateC:
         #elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
         # logger.info("Je commence lapartie")
         await self.broadcastGameState()
-        self.status = iv.RUNNING
-        while (self.status == iv.RUNNING or self.status == iv.PAUSED):
+        #self.status = iv.RUNNING a  decommenter apres
+        while (self.status == iv.RUNNING or self.status == iv.PAUSED or self.status == iv.WAITING_FOR_VALIDATION):
             with self._lock:
                 if(self.status == iv.PAUSED):
                     self.checkPauseTimer()
+                if(self.status == iv.WAITING_FOR_VALIDATION)
+                    self.checkPlayersValidation()
                 if (self.status == iv.RUNNING):
                     #logger.info(self.status)
                     if (self.shouldHandlePowerUp):
@@ -240,19 +242,6 @@ class   gameStateC:
                 self.game_user2.gamesWon += 1
                 self.game_user1.gamesLost += 1
             
-
-            # logger.info("Match status : %d" % (self.match_object.status))
-            # logger.info("player1 : %s" % (self.game_user1.userName))
-            # logger.info("player1Score : %d" % (self.match_object.player1_score))
-            # logger.info("games_won : %d" % (self.game_user1.gamesWon))
-            # logger.info("games_lost : %d" % (self.game_user1.gamesLost))
-            # logger.info("games_played : %d" % (self.game_user1.gamesPlayed))
-            # logger.info("player2 : %s" % (self.game_user2.userName))
-            # logger.info("player2Score : %d" % (self.match_object.player2_score))
-            # logger.info("games_won : %d" % (self.game_user2.gamesWon))
-            # logger.info("games_lost : %d" % (self.game_user2.gamesLost))
-            # logger.info("games_played : %d" % (self.game_user2.gamesPlayed))
-
             await sync_to_async(self.game_user1.save)()
             await sync_to_async(self.game_user2.save)()
             await sync_to_async(self.match_object.save)()
@@ -284,6 +273,16 @@ class   gameStateC:
     def checkPauseTimer(self):
         if (time.time() - self.pauseTimer > 5):
             self.status = iv.FINISHED
+
+    def checkPlayersValidation(self):
+        if (self.game_mode == "remote"):
+            if (self.players_nb == 2):
+                self.status = iv.RUNNING
+        else:
+            if (self.players_nb = 1):
+                self.status = iv.RUNNING
+
+    }
 
     def popPowerUp(self):
         global map_locations

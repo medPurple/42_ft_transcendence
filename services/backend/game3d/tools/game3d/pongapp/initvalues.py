@@ -1,9 +1,10 @@
 ## Party status
 
 NOT_STARTED = 0
-RUNNING = 1 
-PAUSED = 2 
-FINISHED = 3
+WAITING_FOR_VALIDATION = 1
+RUNNING = 2 
+PAUSED = 3 
+FINISHED = 4
 
 ## Field dimensions
 
