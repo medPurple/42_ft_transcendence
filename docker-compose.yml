@@ -92,7 +92,7 @@ services:
     user: root
     volumes:
     - game3d:/var/lib/postgresql
-    - pongapp:/app
+    # - pongapp:/app
     networks:
       - microservices
     build: services/backend/game3d

@@ -208,7 +208,7 @@ class   gameStateC:
             with self._lock:
                 if(self.status == iv.PAUSED):
                     self.checkPauseTimer()
-                if(self.status == iv.WAITING_FOR_VALIDATION)
+                if(self.status == iv.WAITING_FOR_VALIDATION):
                     self.checkPlayersValidation()
                 if (self.status == iv.RUNNING):
                     #logger.info(self.status)
@@ -279,10 +279,8 @@ class   gameStateC:
             if (self.players_nb == 2):
                 self.status = iv.RUNNING
         else:
-            if (self.players_nb = 1):
+            if (self.players_nb == 1):
                 self.status = iv.RUNNING
-
-    }
 
     def popPowerUp(self):
         global map_locations
