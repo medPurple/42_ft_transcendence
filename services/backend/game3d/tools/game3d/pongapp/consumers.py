@@ -47,14 +47,9 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         # tournaments.remove(self.tournament)
         if (self.actual_match != 0):
             self.actual_match.status = iv.PAUSED
+            self.actual_match.players_nb -= 1
+            self.actual_match.pauseTimer = time.time()
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-
-    async def tournamentLoop(self):
-        global tournaments
-        self.tournament = Tournament(players = self.players, group_name=self.group_name, user_id=self.user_id)
-        tournaments.append(self.tournament)
-        await self.send(text_data=json.dumps({"party": "active"})) 
-        await self.tournament.tournamentLoop()
 
     async def generate_tournament_name(self, length=8):
         global group_names
@@ -74,8 +69,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
     async def findTournamentGame(self, gameNbr, player1, player2):
         self.tournament.games[gameNbr].game_mode = "tournament"
         self.actual_match = self.tournament.games[gameNbr]
-        self.tournament.games[gameNbr].group_name = await self.generate_tournament_name()
-        await self.channel_layer.group_add(self.tournament.games[gameNbr].group_name, self.channel_name)
+        self.tournament.games[gameNbr].group_name = self.group_name
         self.tournament.games[gameNbr].paddle1 = paddleC(1)
         self.tournament.games[gameNbr].paddle2 = paddleC(2)
         self.tournament.games[gameNbr].limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).score)()
@@ -148,6 +142,10 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         self.gameState = await self.findLocalParty()
 
     async def disconnect(self, close_code):
+        if (self.gameState != 0):
+            self.gameState.status = iv.PAUSED
+            self.gameState.players_nb -= 1
+            self.gameState.pauseTimer = time.time()
         await self.channel_layer.group_discard(self.gameState.group_name, self.channel_name)
 
     async def findLocalParty(self):

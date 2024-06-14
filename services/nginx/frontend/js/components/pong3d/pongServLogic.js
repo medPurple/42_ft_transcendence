@@ -1,7 +1,7 @@
 import { gameState, gameCustom, core, playMesh } from "./config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
-import { displayScore, deleteForm } from './scoreDisplay.js'
+import { displayScore } from './scoreDisplay.js'
 import { cameraPlayer1, cameraLocalPlayer1, cameraPlayer2, cameraLocalPlayer2, cameraMalusRemote } from './cameraLogic.js'
 import Iuser from "../user/userInfo.js";
 
@@ -17,7 +17,7 @@ function draw() {
     else
       cameraMalusRemote();
   }
-  else if (gameState.game_mode == "local" && gameCustom.powerup == 1) {
+  else if ((gameState.game_mode == "local" || gameState.game_mode == "tournament") && gameCustom.powerup == 1) {
     if (gameState.paddle1_powerup == 3) {
       cameraLocalPlayer1();
     }
@@ -114,7 +114,7 @@ function handleServerMessage(message) {
       action(value);
     }
   }
-  // console.log(gameState.status);
+  console.log(gameState.status);
 
   switch (gameState.status) {
     case 0:
@@ -122,7 +122,6 @@ function handleServerMessage(message) {
         waitingForPlayer();
       break;
     case 1:
-      console.log("Je veux qu on appuie sur entree")
       welcomeScreen();
       break;
     case 2:
@@ -219,7 +218,7 @@ function welcomeScreen() {
 			</div>
 		</div>
 	
-		<h2 class="text-center mb-4 mt-3">{player1} VS ${player2}</h2>
+		<h2 class="text-center mb-4 mt-3">${player1} VS ${player2}</h2>
 	
 		<div class="spinner-border text-dark mb-4 mt-3" role="status"></div>
 		<h6 style="color: grey;"> PRESS ENTER </h6>
@@ -246,6 +245,7 @@ function gamePaused() {
 }
 
 function playingMode() {
+  console.log("je passe bien dans le playing mode")
   const screensdiv = document.getElementById('pong-screens');
   const pongrender = document.getElementById('pong-renderer');
   const pongscore = document.getElementById('pong-score');
@@ -265,35 +265,37 @@ function endGame() {
   const pongrender = document.getElementById('pong-renderer');
   const pongscore = document.getElementById('pong-score');
 
-  screensdiv.classList.add('hidden');
+  screensdiv.classList.remove('hidden');
   pongscore.classList.add('hidden');
-  pongrender.classList.remove('hidden');
+  pongrender.classList.add('hidden');
 
+  console.log("Je passe dans endGame()");
   if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
     pongscore.innerHTML = '';
     screensdiv.innerHTML = '';
-    pongrender.innerHTML = '';
+    //pongrender.innerHTML = '';
     if (gameState.player1Score == gameState.score_limit) {
-      pongrender.innerHTML = `
+      screensdiv.innerHTML = `
 				<div id="custom-endgame">
 					<img src="../../../images/Game/P1-WINS.jpeg" class="img-fluid" alt="Display Image">
 				</div>
 				`;
     }
     else if (gameState.player2Score == gameState.score_limit) {
-      pongrender.innerHTML = `
+      screensdiv.innerHTML = `
 				<div id="custom-endgame">
 					<img src="../../../images/Game/P2-WINS.jpeg" class="img-fluid" alt="Display Image">
 				</div>
 				`;
     }
-    else {
-      pongrender.innerHTML = `
-				<div class="row-md-4 p-5">
-					<img src="../../../images/Game/GameEnded.gif" class="img-fluid" alt="Display Image">
-					<h6 class="p-5" style="color: grey;">...game ended by another player...</h6>
-				</div>`;
-    }
+  }
+  else {
+    console.log("Je rentre dans ce cas")
+    screensdiv.innerHTML = `
+<div class="row-md-4 p-5">
+  <img src="../../../images/Game/GameEnded.gif" class="img-fluid" alt="Display Image">
+  <h6 class="p-5" style="color: grey;">...game ended by another player...</h6>
+</div>`;
   }
 }
 

@@ -203,12 +203,9 @@ class   gameStateC:
         #elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
         # logger.info("Je commence lapartie")
         await self.broadcastGameState()
-        logger.info(self.status)
-        logger.info("Je cherche a afficher une frame")
         #self.status = iv.RUNNING a  decommenter apres
         while (self.status == iv.RUNNING or self.status == iv.PAUSED or self.status == iv.WAITING_FOR_VALIDATION):
             with self._lock:
-                logger.info("J'essaie d afficher une frame")
                 if(self.status == iv.PAUSED):
                     self.checkPauseTimer()
                 if(self.status == iv.WAITING_FOR_VALIDATION):
@@ -274,8 +271,12 @@ class   gameStateC:
             global tournaments
 
     def checkPauseTimer(self):
-        if (time.time() - self.pauseTimer > 5):
-            self.status = iv.FINISHED
+        if (self.game_mode == "remote"):
+            if (time.time() - self.pauseTimer > 5):
+                self.status = iv.FINISHED
+        else:
+            if (time.time() - self.pauseTimer > 1):
+                self.status = iv.FINISHED
 
     def checkPlayersValidation(self):
         logger.info("Je check le nombre de joueurs qui sont la")
