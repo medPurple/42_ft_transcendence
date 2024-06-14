@@ -73,21 +73,31 @@
 	<main id="app">
 		<div id="pong-screens">
 			<div id="welcome" class="row justify-content-center p-5">
-				<h3 class="text-center">Game Controls </h3>
+				<h4 class="text-center" style="color: #4d544c;">LOCAL GAME CONTROLS</h4>
 				<div class="row">
 					<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
-						<button class="btn btn-dark text-start" type="button" style="background: #333;">🡸 W S</button>
+						<button class="btn btn-dark text-start" type="button" style="background: #333;"><strong>🡸 W S</strong></button>
 					</div>
 					<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
-						<button class="btn btn-secondary text-end" type="button" style="background: #333;">8 5 🡺</button>
+						<button class="btn btn-secondary text-end" type="button" style="background: #333;"><strong>8 5 🡺</strong></button>
 					</div>
 				</div>
 			
 				<h2 class="text-center mb-4 mt-3">playername VS playername</h2>
 			
-				<h6>( PRESS ENTER )</h6>
 				<div class="spinner-border text-dark mb-4 mt-3" role="status"></div>
+				<h6 style="color: grey;"> PRESS ENTER </h6>
 			</div>
+			<!-- <div id="welcome" class="row justify-content-center p-5">
+				<h4 class="text-center" style="color: #4d544c;">REMOTE GAME CONTROLS</h4>
+				<div class="col-sm-6 d-grid gap-2 mb-4 mt-3">
+					<button class="btn btn-dark" type="button" style="background: #333;"><strong>🡸 A D 🡺</strong></button>
+				</div>
+				<h2 class="text-center mb-4 mt-3">playername VS playername</h2>
+			
+				<h6 style="color: grey;"> PRESS ENTER </h6>
+				<div class="spinner-border text-dark mb-4 mt-3" role="status"></div>
+			</div> -->
 		</div>
 		<div id="pong-renderer" class="hidden"></div>
 		<div id="pong-score" class="hidden"></div>

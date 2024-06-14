@@ -174,42 +174,57 @@ function welcomeScreen() {
 	if (gameState.game_mode == "local")
 	{
 		screensdiv.innerHTML = `
-		<div class="row-md-4 p-5">
-			<h1 class="p-5" style="color: grey;">LOCAL CONTROLS HERE</h1>
+		<div id="welcome" class="row justify-content-center p-5">
+		<h4 class="text-center" style="color: #4d544c;">LOCAL GAME CONTROLS</h4>
+		<div class="row">
+			<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
+				<button class="btn btn-dark text-start" type="button" style="background: #333;"><strong>🡸 W S</strong></button>
+			</div>
+			<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
+				<button class="btn btn-secondary text-end" type="button" style="background: #333;"><strong>8 5 🡺</strong></button>
+			</div>
 		</div>
-		<div class="row-md-4 p-5">
-			<h1 class="p-5" style="color: grey;">Player VS HERE</h1>
-		</div>
-		<div class="row-md-4 p-5">
-			<h2 class="p-5" style="color: grey;">...WELCOME SCREEN...</h2>
+	
+		<h2 class="text-center mb-4 mt-3">playername VS playername</h2>
+	
+		<div class="spinner-border text-dark mb-4 mt-3" role="status"></div>
+		<h6 style="color: grey;"> PRESS ENTER </h6>
 		</div>
 		`;
 	}
 	else if (gameState.game_mode == "remote")
 	{
 		screensdiv.innerHTML = `
-		<div class="row-md-4 p-5">
-			<h1 class="p-5" style="color: grey;">REMOTE CONTROLS HERE</h1>
+		<div id="welcome" class="row justify-content-center p-5">
+		<h4 class="text-center" style="color: #4d544c;">REMOTE GAME CONTROLS</h4>
+		<div class="col-sm-6 d-grid gap-2 mb-4 mt-3">
+			<button class="btn btn-dark" type="button" style="background: #333;"><strong>🡸 A D 🡺</strong></button>
 		</div>
-		<div class="row-md-4 p-5">
-			<h1 class="p-5" style="color: grey;">Player VS HERE</h1>
-		</div>
-		<div class="row-md-4 p-5">
-			<h2 class="p-5" style="color: grey;">...WELCOME SCREEN...</h2>
+		<h2 class="text-center mb-4 mt-3">playername VS playername</h2>
+	
+		<div class="spinner-border text-dark mb-4 mt-3" role="status"></div>
+		<h6 style="color: grey;"> PRESS ENTER </h6>
 		</div>
 		`;
 	}
 	else if (gameState.game_mode == "tournament")
 	{
 		screensdiv.innerHTML = `
-		<div class="row-md-4 p-5">
-			<h1 class="p-5" style="color: grey;">Tournament CONTROLS HERE</h1>
+		<div id="welcome" class="row justify-content-center p-5">
+		<h4 class="text-center" style="color: #4d544c;">TORUNAMENT GAME CONTROLS</h4>
+		<div class="row">
+			<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
+				<button class="btn btn-dark text-start" type="button" style="background: #333;"><strong>🡸 W S</strong></button>
+			</div>
+			<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
+				<button class="btn btn-secondary text-end" type="button" style="background: #333;"><strong>8 5 🡺</strong></button>
+			</div>
 		</div>
-		<div class="row-md-4 p-5">
-			<h1 class="p-5" style="color: grey;">Player VS HERE</h1>
-		</div>
-		<div class="row-md-4 p-5">
-			<h2 class="p-5" style="color: grey;">...WELCOME SCREEN...</h2>
+	
+		<h2 class="text-center mb-4 mt-3">playername VS playername</h2>
+	
+		<div class="spinner-border text-dark mb-4 mt-3" role="status"></div>
+		<h6 style="color: grey;"> PRESS ENTER </h6>
 		</div>
 		`;
 	}
