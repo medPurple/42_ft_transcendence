@@ -363,7 +363,6 @@ export class pokebag{
         // bagdiv.classList.add('container-fluid');
 
         const pokelist = this.getpokelist();
-        console.warn(pokelist)
         pokelist.forEach(pokemon => {
             bagdiv.appendChild(this.createCard(pokemon));
         });
