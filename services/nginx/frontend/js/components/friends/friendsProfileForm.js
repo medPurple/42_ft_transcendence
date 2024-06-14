@@ -16,7 +16,8 @@ export class FriendsProfile {
 			const profileContainer = this.displayFriendsProfile(data, profilePictureData, statut);
 			return profileContainer;
 		} catch (error) {
-			console.error('Error:', error);
+			let tmpdiv = document.createElement('div');
+			return tmpdiv;
 		}
 	}
 
@@ -30,12 +31,18 @@ export class FriendsProfile {
 	}
 
 	displayFriendsProfile(data, profilePictureData, statut) {
+		const logoImg = document.querySelector('img[src="./images/Logos/LogoSG-mod.png"]');
+		logoImg.src = '../../images/Logos/LogoSG-mod.png'
 		let profileContainer = document.createElement('div');
-		profileContainer.className = 'd-flex justify-content-center'; // Appliquer la classe Bootstrap pour centrer les éléments horizontalement
+		profileContainer.className = 'd-flex justify-content-center';
 		profileContainer.id = 'profile-friends-container';
-		document.querySelector('main').appendChild(profileContainer);
+		let mainElement = document.querySelector('main');
+		if (mainElement) {
+			mainElement.appendChild(profileContainer);
+		} else {
+			console.error('No <main> element found in the document.');
+		}
 
-		// Créer la structure Bootstrap de la carte
 		let cardDiv = document.createElement('div');
 		cardDiv.className = 'card text-center';
 		cardDiv.style.width = '20rem';
@@ -89,7 +96,6 @@ export class FriendsProfile {
 
 		cardFooter.appendChild(statusSpan);
 
-		// Assemblez la structure de la carte
 		cardBody.appendChild(cardTitle);
 		cardBody.appendChild(cardText);
 

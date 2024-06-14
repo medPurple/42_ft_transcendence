@@ -1,12 +1,9 @@
 import Iuser from "../../components/user/userInfo.js";
+import Icookies from "../../components/cookie/cookie.js";
 
 export class Statistics {
 
-	constructor(){
-		this.games = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-	}
-
-	createUserCardStats(containerStats, userInfo){
+	createUserCardStats(containerStats, userInfo, stats){
 
 		let rowUser = document.createElement('div');
 		rowUser.classList.add('row');
@@ -51,7 +48,7 @@ export class Statistics {
 			divCardBody.appendChild(divCardText);
 
 			this.generateCardTitle(userInfo, divCardBody, i);
-			this.generateCardText(divCardBody, cardImage, i);
+			this.generateCardText(divCardBody, cardImage, i, stats);
 
 
 		}
@@ -72,13 +69,13 @@ export class Statistics {
 				strong.textContent = userInfo.user.username;
 				break;
 			case 1:
-				strong.textContent = 'Played games';
+				strong.textContent = 'Games played';
 				break;
 			case 2:
-				strong.textContent = 'Won games';
+				strong.textContent = 'Games won';
 				break;
 			case 3:
-				strong.textContent = 'Lost games';
+				strong.textContent = 'Games lost';
 				break;
 			default:
 				break;
@@ -86,7 +83,7 @@ export class Statistics {
 		return divCardTitle;
 	}
 
-	generateCardText(divCardBody, cardImage, i){
+	generateCardText(divCardBody, cardImage, i, stats){
 
 
 		let divCardText = document.createElement('div');
@@ -98,13 +95,13 @@ export class Statistics {
 				divCardText.appendChild(cardImage);
 				break;
 			case 1:
-				divCardText.textContent = ` ${i + 1}  ${i - 1}`;
+				divCardText.textContent = `${stats.game_played}`;
 				break;
 			case 2:
-				divCardText.textContent = ` ${i - 1}  ${i + 1}`;
+				divCardText.textContent = `${stats.game_won}`;
 				break;
 			case 3:
-				divCardText.textContent = ` ${i + 1}  ${i - 1}`;
+				divCardText.textContent = `${stats.game_lost}`;
 				break;
 			default:
 				break;
@@ -114,7 +111,7 @@ export class Statistics {
 
 	}
 
-	createPartyStats(containerStats, userInfo){
+	createPartyStats(containerStats, stats, users){
 
 		let rowOther = document.createElement('div');
 		rowOther.classList.add('row');
@@ -125,8 +122,17 @@ export class Statistics {
 		profileContainer.id = 'profile-friends-container';
 		rowOther.appendChild(profileContainer);
 
+
 		let party = 0;
-		this.games.forEach((game) => {
+		for (let matchId in stats.history) {
+			let game = stats.history[matchId];
+			let player1 = users.users.find(user => user.user_id === game.player1.id);
+			let player2 = users.users.find(user => user.user_id === game.player2.id);
+
+			if (!player1)
+				player1 = {username: 'Guest'};
+			if (!player2)
+				player2 = {username: 'Guest'};
 			party++;
 
 			const cardDiv = document.createElement('div');
@@ -156,22 +162,28 @@ export class Statistics {
 			rowPlayers.appendChild(playerTwoCol);
 
 			let playerOneText = document.createElement('div');
-			playerOneText.innerHTML = `<strong>${userInfo.user.username} </strong>`;
+			playerOneText.innerHTML = `<strong>${player1.username} </strong>`;
 			playerOneCol.appendChild(playerOneText);
 
 			let playerTwoText = document.createElement('div');
-			playerTwoText.innerHTML = `<strong>raph </strong>`;
+			playerTwoText.innerHTML = `<strong>${player2.username} </strong>`;
 			playerTwoCol.appendChild(playerTwoText);
 
 			let playerOneImage = document.createElement('img');
-			playerOneImage.src = `data:image/jpeg;base64,${userInfo.user.profile_picture_data}`;
+			if (player1.profile_picture_data)
+				playerOneImage.src = `data:image/jpeg;base64,${player1.profile_picture_data}`;
+			else
+				playerOneImage.src ='./images/Favicons/PH-01extra.png';
 			playerOneImage.classList.add('rounded-circle', 'mt-2');
 			playerOneImage.width = 80;
 			playerOneImage.alt = 'Player one picture';
 			playerOneCol.appendChild(playerOneImage);
 
 			let playerTwoImage = document.createElement('img');
-			playerTwoImage.src = `data:image/jpeg;base64,${userInfo.user.profile_picture_data}`; // Remplacer par l'URL de l'image de Player two
+			if (player2.profile_picture_data)
+				playerTwoImage.src = `data:image/jpeg;base64,${player2.profile_picture_data}`;
+			else
+				playerTwoImage.src ='./images/Favicons/PH-01extra.png';
 			playerTwoImage.classList.add('rounded-circle', 'mt-2');
 			playerTwoImage.width = 80;
 			playerTwoImage.alt = 'Player two picture';
@@ -186,9 +198,18 @@ export class Statistics {
 			resultRow.appendChild(resultCol);
 
 			let resultText = document.createElement('div');
-			resultText.innerHTML = `<strong>Result: </strong> ${party + 1} - ${party - 1}`;
+			resultText.innerHTML = `<strong>Result: </strong> ${game.player1.score} - ${game.player2.score}`;
 			resultCol.appendChild(resultText);
-		});
+
+			const cardFooter = document.createElement('div');
+			cardFooter.className = 'card-footer';
+			const date = this.timerCalculation(game.date);
+			if (date > 60)
+				cardFooter.textContent = `${Math.floor(date / 60)} min ago`;
+			else
+				cardFooter.textContent = `${date} sec ago`;
+			cardDiv.appendChild(cardFooter);
+		};
 
 		return rowOther;
 	}
@@ -200,11 +221,50 @@ export class Statistics {
 		containerStats.id = 'stats';
 		document.querySelector('main').appendChild(containerStats);
 		const userInfo = await Iuser.getAllUserInfo();
+		const stats = await this.getStats(userInfo.user.user_id);
+		const users = await Iuser.getAllUsers();
 
-		this.createUserCardStats(containerStats, userInfo);
-		this.createPartyStats(containerStats, userInfo);
+
+
+		this.createUserCardStats(containerStats, userInfo, stats);
+		this.createPartyStats(containerStats, stats, users);
 
 		return containerStats;
 	}
-}
 
+	async getStats(userID){
+		try {
+			const response = await fetch (`/api/pong/match/${userID}/`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': Icookies.getCookie('csrftoken'),
+					'Authorization': Icookies.getCookie('token')
+				},
+			});
+			const data = await response.json();
+			if (data.success) {
+				return data.data;
+			} else {
+				alert('Failed to get stats');
+			}
+		} catch (error) {
+			console.error('Error', error);
+		}
+	}
+
+	timerCalculation(date) {
+
+	try {
+		let time = new Date(date);
+		if (isNaN(time.getTime())) {
+			return 0;
+		}
+		let now = new Date(); // Date actuelle
+		let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+		return (Math.floor(elapsedTimeMillis / 1000));
+	} catch (error) {
+		return (0);
+		}
+	}
+}

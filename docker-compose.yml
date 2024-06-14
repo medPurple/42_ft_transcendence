@@ -44,7 +44,7 @@ services:
     networks:
     - microservices
     # volumes:
-    #   - frontend:/usr/share/nginx/html/
+    # - frontend:/usr/share/nginx/html/
     build: services/nginx
     image: nginx
     ports:
@@ -63,6 +63,19 @@ services:
     expose :
     - "4430"
     restart: on-failure
+
+  # arena:
+  #   container_name: arena
+  #   user: root
+  #   volumes:
+  #     - user:/var/lib/postgresql/
+  #   networks:
+  #   - microservices
+  #   build: services/backend/arena
+  #   image: arena
+  #   expose :
+  #   - "4430"
+  #   restart: on-failure
 
   token:
     container_name: jwtoken

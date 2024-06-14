@@ -3,22 +3,22 @@ import Iuser from "../user/userInfo.js";
 
 class MatchmakingButtons {
 
-	constructor() {
-		this.maindiv = document.createElement('div');
-		this.maindiv.classList.add('main-matchmaking-div');
-		this.matchsocket = null;
-		this.status = null;
-		this.timer = 0;
-	}
+  constructor() {
+    this.maindiv = document.createElement('div');
+    this.maindiv.classList.add('main-matchmaking-div');
+    this.matchsocket = null;
+    this.status = null;
+    this.timer = 0;
+  }
 
-	matchmakingsocketaction() {
-		this.matchsocket.onopen = (event) => {
-			console.log("Matchmaking socket opened.");
-		}
+  matchmakingsocketaction() {
+    this.matchsocket.onopen = (event) => {
+      console.log("Matchmaking socket opened.");
+    }
 
-		this.matchsocket.onclose = (event) => {
-			console.log("Matchmaking socket closed.", event.data);
-		}
+    this.matchsocket.onclose = (event) => {
+      console.log("Matchmaking socket closed.", event.data);
+    }
 
 		this.matchsocket.onmessage = async (event) => {
 			const data = JSON.parse(event.data);
@@ -47,54 +47,55 @@ class MatchmakingButtons {
 			console.log("Status sent.");
 		}
 
-	}
+  }
 
-	timerCalculation() {
+  timerCalculation() {
 
-		try{
-			let time = new Date(this.timer);
-			if (isNaN(time.getTime())) {
-				return 0;
-			}
-			let now = new Date(); // Date actuelle
-			let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
-			return (Math.floor(elapsedTimeMillis / 1000));
-		}
-		catch (error) {
-			return (0);
-		}
-	}
+    try {
+      let time = new Date(this.timer);
+      if (isNaN(time.getTime())) {
+        return 0;
+      }
+      let now = new Date(); // Date actuelle
+      let elapsedTimeMillis = now - time; // Temps écoulé en millisecondes
+      return (Math.floor(elapsedTimeMillis / 1000));
+    }
+    catch (error) {
+      return (0);
+    }
+  }
 
-	async removeUser() {
-		console.log("Removing user from queue.");
-		const id = await Iuser.getID();
-		const body = {
-			"userID": id}
-		const response = await fetch('https://localhost:4430/api/matchmaking/', {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': Icookies.getCookie('token'),
-				'X-CSRFToken': Icookies.getCookie('csrftoken')
-			},
-			credentials: 'include',
-			body: JSON.stringify(body)
-		});
-		console.log(response);
+  async removeUser() {
+    console.log("Removing user from queue.");
+    const id = await Iuser.getID();
+    const body = {
+      "userID": id
+    }
+    const response = await fetch('https://localhost:4430/api/matchmaking/', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Icookies.getCookie('token'),
+        'X-CSRFToken': Icookies.getCookie('csrftoken')
+      },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    console.log(response);
 
-	}
-	
-	waitingPage() {
-		const waitingpage = document.createElement('div');
-		waitingpage.id = 'waiting-page';
-		waitingpage.classList.add('waiting-page', 'center', 'p-3', 'position-absolute', 'top-50', 'start-50', 'translate-middle', 'z-index-1');
-		
-		const waitinggif = document.createElement('div');
+  }
+
+  waitingPage() {
+    const waitingpage = document.createElement('div');
+    waitingpage.id = 'waiting-page';
+    waitingpage.classList.add('waiting-page', 'center', 'p-3', 'position-absolute', 'top-50', 'start-50', 'translate-middle', 'z-index-1');
+
+    const waitinggif = document.createElement('div');
 
 		if (this.game === 'pong_multiplayer'){
 			waitinggif.classList.add('embed-responsive', 'embed-responsive-16by9');
 			const img = new Image();
-			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGwwM2lwdm8zNTFiYng2ZzJhODVpdnQya3lxMDloY3dzNHk1cDB2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Q0MrhO9BUSxKR8RdZC/giphy.gif";
+			img.src = "../../../images/Site/AloneAgain.gif";
 			img.classList.add('embed-responsive-item');
 			waitinggif.appendChild(img);
 		} else if (this.game === 'pkm_multiplayer'){
@@ -104,7 +105,7 @@ class MatchmakingButtons {
 			waitinggif.style.position = "relative";
 			
 			const img = new Image();
-			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2ZnaGJod21veWJlNXo1Y2Y5NWZxdXZieTA3dnQ0bXQ4amk3M3kwZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Ny6WEYvBuBvDW/giphy.gif";
+			img.src = "../../../images/Site/AloneAgain.gif";
 			img.style.width = "100%";
 			img.style.height = "100%";
 			img.style.position = "absolute";
@@ -116,50 +117,50 @@ class MatchmakingButtons {
 		}
 
 
-		waitingpage.appendChild(waitinggif);
+    waitingpage.appendChild(waitinggif);
 
 
 
-		const timer = document.createElement('p');
-		timer.id = 'timer';
-		timer.innerText = this.timerCalculation();
-		timer.classList.add('timer', 'text-center', 'text-black', 'fs-3');
+    const timer = document.createElement('p');
+    timer.id = 'timer';
+    timer.innerText = this.timerCalculation();
+    timer.classList.add('timer', 'text-center', 'text-black', 'fs-3');
 
-		const cancelbutton = document.createElement('button');
-		cancelbutton.classList.add('cancel-button', 'btn', 'btn-danger', 'text-white', 'fs-3');
-		cancelbutton.innerText = 'Cancel';
-		cancelbutton.onclick = async () => {
-			await this.removeUser();
-			this.removeWaitingPage();
-			window.location.href = '/home';
-		}
+    const cancelbutton = document.createElement('button');
+    cancelbutton.classList.add('cancel-button', 'btn', 'btn-danger', 'text-white', 'fs-3');
+    cancelbutton.innerText = 'Cancel';
+    cancelbutton.onclick = async () => {
+      await this.removeUser();
+      this.removeWaitingPage();
+      window.location.href = '/home';
+    }
 
-		waitingpage.appendChild(timer);
-		waitingpage.appendChild(cancelbutton);
+    waitingpage.appendChild(timer);
+    waitingpage.appendChild(cancelbutton);
 
-		return waitingpage;
-	}
+    return waitingpage;
+  }
 
-	removeWaitingPage() {
-		const waitingpage = document.querySelector('#waiting-page');
-		waitingpage.remove();
-	}
+  removeWaitingPage() {
+    const waitingpage = document.querySelector('#waiting-page');
+    waitingpage.remove();
+  }
 
-	updateData() {
-		const timer = document.querySelector('#timer');
+  updateData() {
+    const timer = document.querySelector('#timer');
 
-		if (timer){
-			const time = this.timerCalculation();
-			if (time > 60) {
-				timer.innerText = Math.floor(time / 60) + "m " + time % 60 + "s";
-			}
-			else {
-				timer.innerText = time;
-			}
-		}
-	}
+    if (timer) {
+      const time = this.timerCalculation();
+      if (time > 60) {
+        timer.innerText = Math.floor(time / 60) + "m " + time % 60 + "s";
+      }
+      else {
+        timer.innerText = time;
+      }
+    }
+  }
 
-	async createParty(data) {
+	async createParty_pong(data) {
 		console.log("Creating party with data:", data);
 		const users = await Iuser.getAllUsers();
 		let username1 = users.users.find(user => user.user_id === parseInt(data.player1)).username;
@@ -187,69 +188,73 @@ class MatchmakingButtons {
 		console.log(response);
 	}
 
-	async changeStatus() {
-		console.log("Changing status to game.");
-		const id = await Iuser.getID();
-		const body = {
-			"userID": id,
-			"status": "game"
-		}
-		const response = await fetch('https://localhost:4430/api/matchmaking/', {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': Icookies.getCookie('token'),
-				'X-CSRFToken': Icookies.getCookie('csrftoken')
-			},
-			credentials: 'include',
-			body: JSON.stringify(body)
-		});
-		console.log(response);
-	}
+  async changeStatus() {
+    console.log("Changing status to game.");
+    const id = await Iuser.getID();
+    const body = {
+      "userID": id,
+      "status": "game"
+    }
+    const response = await fetch('https://localhost:4430/api/matchmaking/', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Icookies.getCookie('token'),
+        'X-CSRFToken': Icookies.getCookie('csrftoken')
+      },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    console.log(response);
+  }
 
 	async checkstatus(data) {
 		if (this.status === 'found') {
 			this.removeWaitingPage();
-			await this.createParty(data);
 			await this.changeStatus();
-			window.location.href = "/gameService"
+			if (this.game === 'pong_multiplayer')
+				await this.createParty_pong(data);
+				window.location.href = "/gameService"
+			if (this.game === 'pong_multiplayer')
+				await this.createParty_pong(data);
+				window.location.href = "/pokecombat"
 		}
 	}
 
-	async mainMatchmakingDiv() {
-		this.matchsocket = new WebSocket("wss://localhost:4430/api/wsqueue/")
-		this.matchmakingsocketaction();
+  async mainMatchmakingDiv() {
+    this.matchsocket = new WebSocket("wss://localhost:4430/api/wsqueue/")
+    this.matchmakingsocketaction();
 
-		console.log("Matchmaking socket created.");
-		const msg = {
-			"action": "queue_add",
-			"game": this.game,
-			"id": await Iuser.getID(),
-		}
+    console.log("Matchmaking socket created.");
+    const msg = {
+      "action": "queue_add",
+      "game": this.game,
+      "id": await Iuser.getID(),
+    }
 
-		const waitForOpenConnection = new Promise(resolve => {
-			this.matchsocket.addEventListener('open', resolve);
-		});
-		await waitForOpenConnection;
+    const waitForOpenConnection = new Promise(resolve => {
+      this.matchsocket.addEventListener('open', resolve);
+    });
+    await waitForOpenConnection;
 
-		const waitingPage = this.waitingPage();
-		if (waitingPage instanceof HTMLElement) {
-			this.maindiv.appendChild(waitingPage);
-		} else {
-			console.error("waitingPage did not return a valid DOM node.");
-		}
-		this.matchsocket.send(JSON.stringify(msg));
+    const waitingPage = this.waitingPage();
+    if (waitingPage instanceof HTMLElement) {
+      this.maindiv.appendChild(waitingPage);
+    } else {
+      console.error("waitingPage did not return a valid DOM node.");
+    }
+    this.matchsocket.send(JSON.stringify(msg));
 
-		document.body.appendChild(this.maindiv);
-		return this.maindiv;
-	}
+    document.body.appendChild(this.maindiv);
+    return this.maindiv;
+  }
 }
 
 class Matchmaking extends MatchmakingButtons {
-	constructor(game) {
-		super();
-		this.game = game;
-	}
+  constructor(game) {
+    super();
+    this.game = game;
+  }
 }
 
 const pongRemoteMatchmaking = new Matchmaking('pong_multiplayer');

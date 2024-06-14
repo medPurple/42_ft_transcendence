@@ -1,3 +1,11 @@
+## Party status
+
+NOT_STARTED = 0
+WAITING_FOR_VALIDATION = 1
+RUNNING = 2 
+PAUSED = 3 
+FINISHED = 4
+
 ## Field dimensions
 
 FIELD_WIDTH = 400

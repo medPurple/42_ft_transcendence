@@ -76,7 +76,7 @@ export class Friends {
 		socket.onmessage = async (event) => {
 			let data = JSON.parse(event.data);
 			if (data.error) {
-				console.error(data.error);
+
 			} else if (data.success) {
 				if (socket.onmessagecallback) {
 					socket.onmessagecallback(data);
@@ -187,7 +187,12 @@ export class Friends {
 			return;
 		const currentUser = await Iuser.getUsername();
 		const requestFriend = await this.getRequests();
+		if (!requestFriend && !('received_requests' in requestFriend))
+			return;
+
 		const friendsList = await Ifriends.getFriendsList();
+		if (!friendsList)
+			return;
 
 		if (dataUsers.users.length != this.lastusernumber) {
 			this.ulElement.innerHTML = ''; // Clear the list before populating it
@@ -198,15 +203,25 @@ export class Friends {
 					const otherUser = this.variablesArray.find(u => u.name === user.username);
 					const cardElement = document.querySelector('#user_' + user.username);
 					if (cardElement) {
-						const hasFriendRequest = requestFriend.received_requests.some(request => {
-							return request.from_user === user.user_id || request.to_user === user.user_id;
-						});
+						let hasFriendRequest;
+						if (requestFriend.received_requests){
+							hasFriendRequest = requestFriend.received_requests.some(request => {
+								return request.from_user === user.user_id || request.to_user === user.user_id;
+							});
+						} else
+							hasFriendRequest = null;
 
-						const hasSendRequest = requestFriend.sent_requests.some(request => {
-							return request.from_user === user.user_id || request.to_user === user.user_id;
-						});
+						let hasSendRequest;
+						if (requestFriend.sent_requests) {
+							hasSendRequest = requestFriend.sent_requests.some(request => {
+								return request.from_user === user.user_id || request.to_user === user.user_id;
+							});
+						} else {
+							hasSendRequest = null;
+						}
 
 						const isFriends = friendsList.friends.some(friend => friend.user_id === user.user_id);
+
 						if (isFriends != otherUser.isFriends) {
 							if (isFriends) {
 								cardElement.innerHTML = ''; // Clear card content
@@ -312,14 +327,14 @@ export class Friends {
 			Nonediv.style.display = 'flex'; // Set display to flex
 			Nonediv.style.justifyContent = 'center'; // Center along the main axis
 			Nonediv.style.alignItems = 'center'; // Center along the cross axis
-		
+
 			const img = new Image();
 			img.classList.add('w-50', 'h-50'); // Set width and height to 100%
-			img.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmNpc25kc3d3dncxMHVsaDYyaDR4MzJrZzN6cDR3eGg4eGl2djU3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/GnNi4XFTOIkUe9giJl/giphy.gif";
-		
+			img.src = "../../../images/Site/AloneAgain.gif";
+
 			Nonediv.appendChild(img);
-			return Nonediv;
 			this.usersList.appendChild(Nonediv);
+			return Nonediv;
 		}
 		document.body.appendChild(this.usersList);
 		return this.usersList;

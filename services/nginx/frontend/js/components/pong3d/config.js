@@ -18,8 +18,9 @@ export var gameState = {
 	powerup_positionY: 0,
 	powerup_status: 0,
 	powerup_type: 0,
+	powerup_shouldHandle: 0,
 	game_mode: 0,
-	active: 0
+	status: 0
 }
 
 export const gameCustom = {
@@ -27,19 +28,23 @@ export const gameCustom = {
 	otherPaddle: 1,
 	ball: 1,
 	map: 0,
-	table: 1,
+	table: 2,
 	powerup: 0,
 	score_limit: 1
 }
-
 
 export var core = {
 	scene: 3,
 	renderer: 0,
 	camera: 0,
+	controls: 0,
 	gameSocket: 0,
 	party: 0,
-	player_id: 0
+	player_id: 0,
+	player1_userid: 0,
+	player2_userid: 0,
+	player1_user_name: 0,
+	player2_user_name: 0
 }
 
 export var playMesh = {
@@ -100,7 +105,7 @@ export const constants = {
 	paddleHeight: 30,
 	paddleDepth: 10,
 	paddleQuality: 1,
-	planeWidth: 400,
+	planeWidth: 3,
 	planeHeight: 200,
 	planeQuality: 10,
 	tableWidth: 400 * 1.05,

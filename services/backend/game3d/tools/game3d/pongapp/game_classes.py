@@ -4,9 +4,14 @@ import asyncio
 import random
 import logging
 import time
+import requests
 from channels.layers import get_channel_layer
 from . import initvalues as iv
-from .models import GameSettings
+from .models import GameSettings, GameMatch, GameUser
+from asgiref.sync import sync_to_async
+from rest_framework import status
+from rest_framework.response import Response
+
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +26,60 @@ map_locations = {
     iv.SOUTH: [-100, 0],
     iv.SOUTH_EAST: [-100, -50]
 }
+
+remote_parties = []
+local_parties = []
+tournaments = []
+
+class   Tournament:
+
+    # la
+    def __init__(self, *args, **kwargs):
+        self.games = [gameStateC() for i in range(3)]
+
+    # def __init__(self, players, group_name, user_id, *args, **kwargs):
+    #     self.tournament_matches = []
+    #     for i in range(3):
+    #         self.tournament_matches.append(gameStateC())
+    #     self.user_id = user_id
+    #     self.group_name = group_name
+    #     logger.info("user_id : %s" % (self.user_id))
+    #     self.players = []
+    #     for i in players:
+    #         self.players.append(i)
+    #     self.winners = []
+        
+    # async def tournamentLoop(self):
+    #     global tournament_match_is_running
+    #     self.matches_played = 0
+    #     self.match_is_running = False
+    #     while (self.matches_played < 3):
+    #         if not self.match_is_running:
+    #             await self.initiate_match(self.matches_played)
+    #             asyncio.create_task(self.tournament_matches[self.matches_played].run_game_loop())
+    #             logger.info("match.group_name %s", self.tournament_matches[self.matches_played].group_name)
+    #             self.matches_played += 1
+
+    def updatePlayerName(self):
+        if (self.matches_played == 0):
+            self.tournament_matches[0].player1_user_id = self.players[0]
+            self.tournament_matches[0].player2_user_id = self.players[1]
+        elif (self.matches_played == 1):
+            self.tournament_matches[1].player1_user_id = self.players[2]
+            self.tournament_matches[1].player2_user_id = self.players[3]
+        else:
+            self.tournament_matches[2].player1_user_id = self.winners[0]
+            self.tournament_matches[2].player2_user_id = self.winners[1]
+
+    async def initiate_match(self, match_number):
+        self.match_is_running = True
+        self.tournament_matches[match_number].game_mode = 'tournament'
+        self.tournament_matches[match_number].group_name = self.group_name
+        self.tournament_matches[match_number].limitScore = GameSettings.objects.get(user=self.user_id).score
+        self.tournament_matches[match_number].limitScore = 7
+        self.powerUpTimer = time.time()
+        self.updatePlayerName()
+
 
 class   paddleC:
 
@@ -65,38 +124,168 @@ class   gameStateC:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.gameNbr = 0
         self.game_mode = 0
+        self.task = 0
+        self.match_object = 0
+        self.game_user1 = 0
+        self.game_user2 = 0
+        self.player1_user_id = 0 
+        self.player2_user_id = 0
+        self.player1_user_name = 0 
+        self.player2_user_name = 0
         self.group_name = 0
-        self.players_nb = 0
+        self.players_nb = 0    # - pongapp:/app
         self.player1Score = iv.PADDLE1_SCORE
         self.player2Score = iv.PADDLE2_SCORE
-		######## HERE recuperer le USERID correct!!!!!! ########
-        # self.limitScore = GameSettings.objects.get(user=1).score
         self.limitScore = 7
-        self.paddle2 = 0
+        self.paddle1 = paddleC(1)
+        self.paddle2 = paddleC(2)
         self.ball = ballC()
         self.powerUpTimer = 0
+        self.pauseTimer = 0
         self.powerUpState = iv.PU_NO
         self.powerUpPositionX = iv.DEFAULT_PU_LOC 
         self.powerUpPositionY = iv.DEFAULT_PU_LOC 
         self.activePowerUp = iv.NONE_PU
-        self.active = 0
+        self.shouldHandlePowerUp = 0
+        self.status = iv.NOT_STARTED
         self._lock = threading.Lock()
 
     async def run_game_loop(self):
-        self.active = 1 
-        while self.active:
+        user_service_url = 'https://user:4430/api/profiles/change-status/'
+        if (self.game_mode == 'remote'):
+            try:
+                self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
+                self.game_user2 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player2_user_id))
+            except GameUser.DoesNotExist:
+                return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+            self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
+                player1=self.game_user1,
+                player2=self.game_user2,
+                player1_score=0,
+                player2_score=0,
+                status=0,
+            )
+            try:
+                responsep1 = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 2}, verify=False)
+                responsep2 = requests.put(user_service_url, json={'user_id' : int(self.player2_user_id), 'status': 2}, verify=False)
+                responsep1.raise_for_status()
+                responsep2.raise_for_status()
+            except Exception as e:
+                logger.info(f"Error changing user status in microservices: {e}")
+        elif (self.game_mode == 'local'):
+            try:
+                self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
+                self.game_user2, created = await sync_to_async(GameUser.objects.get_or_create, thread_sensitive=True)(
+                    userID=self.game_user1.userID * 1000,
+                    userName=self.game_user1.userName + " (local)",
+                    defaults={
+                        'gamesWon': 0,
+                        'gamesLost': 0,
+                        'gamesPlayed': 0,
+                    }
+                )
+            except GameUser.DoesNotExist:
+                return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+            self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
+                player1=self.game_user1,
+                player2=self.game_user2,
+                player1_score=0,
+                player2_score=0,
+                status=0,
+            )
+            try:
+                response = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 2}, verify=False)
+                response.raise_for_status()
+            except Exception as e:
+                logger.info(f"Error changing user status in microservices: {e}")
+        #elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
+        # logger.info("Je commence lapartie")
+        await self.broadcastGameState()
+        #self.status = iv.RUNNING a  decommenter apres
+        while (self.status == iv.RUNNING or self.status == iv.PAUSED or self.status == iv.WAITING_FOR_VALIDATION):
             with self._lock:
-                self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
-                self.ballPhysics(self.ball)
-                self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif	
-                self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
-                self.paddle1Movement(self.paddle1)
-                self.paddle2Movement(self.paddle2)
-
+                if(self.status == iv.PAUSED):
+                    self.checkPauseTimer()
+                if(self.status == iv.WAITING_FOR_VALIDATION):
+                    self.checkPlayersValidation()
+                if (self.status == iv.RUNNING):
+                    #logger.info(self.status)
+                    if (self.shouldHandlePowerUp):
+                        self.powerUpHandling(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif
+                    self.ballPhysics(self.ball)
+                    if (self.shouldHandlePowerUp):
+                        self.isBallOnPowerUp(self.ball, self.paddle1, self.paddle2) # Lancer que si powerup actif    
+                    self.paddlePhysics(self.ball, self.paddle1, self.paddle2)
+                    self.paddle1Movement(self.paddle1)
+                    self.paddle2Movement(self.paddle2)
+            if (self.game_mode == "remote" or self.game_mode == "local"):
+                await sync_to_async(self.match_object.save)()
             await asyncio.sleep(0.032)
             #self.logObject()
             await self.broadcastGameState()
+        if (self.status == iv.FINISHED):
+            logger.info("J'arrete la partie")
+            await self.stopGame()
+
+    async def stopGame(self):
+        if (self.game_mode == "remote" or self.game_mode == "local"):
+            user_service_url = 'https://user:4430/api/profiles/change-status/'
+            self.match_object.status = 1
+            self.game_user1.gamesPlayed += 1
+            self.game_user2.gamesPlayed += 1
+            if (self.player1Score > self.player2Score):
+                self.game_user1.gamesWon += 1
+                self.game_user2.gamesLost += 1
+            else:
+                self.game_user2.gamesWon += 1
+                self.game_user1.gamesLost += 1
+            
+            await sync_to_async(self.game_user1.save)()
+            await sync_to_async(self.game_user2.save)()
+            await sync_to_async(self.match_object.save)()
+
+        if (self.game_mode == 'remote'):
+            try:
+                responsep1 = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 1}, verify=False)
+                responsep2 = requests.put(user_service_url, json={'user_id' : int(self.player2_user_id), 'status': 1}, verify=False)
+                responsep1.raise_for_status()
+                responsep2.raise_for_status()
+            except Exception as e:
+                logger.info(f"Error changing user status in microservices: {e}")
+            global remote_parties
+            remote_parties.remove(self)
+        elif (self.game_mode == 'local'):
+            try:
+                response = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 1}, verify=False)
+                response.raise_for_status()
+            except Exception as e:
+                logger.info(f"Error changing user status in microservices: {e}")
+            global local_parties
+            local_parties.remove(self)
+        elif (self.game_mode == 'tournament' and self.gameNbr != 2):
+            self.status = iv.FINISHED
+            await self.loadAnotherGame()
+        else:
+            global tournaments
+
+    def checkPauseTimer(self):
+        if (self.game_mode == "remote"):
+            if (time.time() - self.pauseTimer > 5):
+                self.status = iv.FINISHED
+        else:
+            if (time.time() - self.pauseTimer > 1):
+                self.status = iv.FINISHED
+
+    def checkPlayersValidation(self):
+        logger.info("Je check le nombre de joueurs qui sont la")
+        if (self.game_mode == "remote"):
+            if (self.players_nb == 2):
+                self.status = iv.RUNNING
+        else:
+            if (self.players_nb == 1):
+                self.status = iv.RUNNING
 
     def popPowerUp(self):
         global map_locations
@@ -104,6 +293,7 @@ class   gameStateC:
         self.powerUpPositionX = map_locations[powerUpLoc][0]
         self.powerUpPositionY = map_locations[powerUpLoc][1]
         self.activePowerUp = random.randint(0, 3)
+        # self.activePowerUp = 3
         self.powerUpState = iv.PU_ON_FIELD
         self.powerUpTimer = time.time()
 
@@ -185,9 +375,15 @@ class   gameStateC:
 
         if (index == 1):
             self.player1Score += 1
+            if (self.game_mode == "remote" or self.game_mode == "local"):
+                self.match_object.player1_score += 1
+            # logger.info("player1Score : %d" % (self.match_object.player1_score))
             ball.dirX = -1
         else:
             self.player2Score += 1
+            if (self.game_mode == "remote" or self.game_mode == "local"):
+                self.match_object.player2_score += 1
+            # logger.info("player2Score : %d" % (self.match_object.player2_score))
             ball.dirX = 1
         ball.dirY = 1
         if (ball.boosted == 1):
@@ -198,7 +394,7 @@ class   gameStateC:
 
     def checkForScore(self):
         if (self.player1Score == self.limitScore or self.player2Score == self.limitScore):
-            self.active = 0
+            self.status = iv.FINISHED
 
     def paddlePhysics(self, ball, paddle1, paddle2):
         if (ball.positionX <= paddle1.positionX + paddle1.width and ball.positionX >= paddle1.positionX):
@@ -246,13 +442,35 @@ class   gameStateC:
         paddle2.scaleZ += (1 - paddle2.scaleZ) * 0.2
         paddle2.positionY += paddle2.dirY
 
+    # la
+    async def loadAnotherGame(self):
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "load.game",
+                "load_game": {
+                    "player1_user_id": self.player1_user_id,
+                    "player2_user_id": self.player2_user_id,
+                    "player1Score": self.player1Score,
+                    "player2Score": self.player2Score,
+                    "gameNbr": self.gameNbr
+                }
+            }
+        )
+
     async def broadcastGameState(self):
+        # logger.info("Depuis le match j'envoie le game state")
         channel_layer = get_channel_layer()
         await channel_layer.group_send(
             self.group_name,
             {
                 "type": "game.state",
                 "game_state": {
+                    "player1_user_id": self.player1_user_id,
+                    "player2_user_id": self.player2_user_id,
+                    "player1_user_name": self.player1_user_name,
+                    "player2_user_name": self.player2_user_name,
                     "player1Score": self.player1Score,
                     "player2Score": self.player2Score,
                     "limitScore": self.limitScore,
@@ -270,7 +488,8 @@ class   gameStateC:
                     "powerup.positionX": self.powerUpPositionX,
                     "powerup.positionY": self.powerUpPositionY,
                     "powerup.active": self.activePowerUp,
-                    "active": self.active
+                    "powerup.shouldHandle": self.shouldHandlePowerUp,
+                    "status": self.status
                 }
             }
         )

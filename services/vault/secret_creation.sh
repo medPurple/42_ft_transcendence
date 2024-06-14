@@ -123,3 +123,17 @@ else
 	echo "$ENV_FILE unknow file."
 fi
 #------------------------------------------------#
+#------------------------------------------------#
+echo "[VAULT SECRET] arena container secret"
+ENV_FILE="/vault/arena/.env"
+SECRET_PATH="arena"
+
+if [ -f "$ENV_FILE" ]; then
+	set -a
+	. "$ENV_FILE"
+	set +a
+    vault kv put kv/arena userdb=$arena_userdb passworddb=$arena_passworddb namedb=$arena_namedb 
+else
+	echo "$ENV_FILE unknow file."
+fi
+#------------------------------------------------#

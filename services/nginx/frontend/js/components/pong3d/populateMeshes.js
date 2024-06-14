@@ -12,44 +12,51 @@ function setPhysicalMaterial(color, metalness, roughness, iridescence, iridescen
 	return physMaterial;
 }
 
-function setStandardMaterial(color, metalness, roughness) {
+// function setStandardMaterial(color, metalness, roughness) {
 
-	var stanMaterial = new THREE.MeshStandardMaterial({
-		color: color, roughness: roughness,
-		metalness: metalness
+// 	var stanMaterial = new THREE.MeshStandardMaterial({
+// 		color: color, roughness: roughness,
+// 		metalness: metalness
+// 	})
+// 	return stanMaterial;
+// }
+
+// function setLambertMaterial(color) {
+
+// 	var lambMaterial = new THREE.MeshLambertMaterial({
+// 		color: color
+// 	})
+// 	return lambMaterial;
+// }
+
+function setMeshPhongMaterial(color, shading) {
+
+	const phongMaterial = new THREE.MeshPhongMaterial({
+		color: color,
+		flatShading: shading,
 	})
-	return stanMaterial;
-}
-
-function setLambertMaterial(color) {
-
-	var lambMaterial = new THREE.MeshLambertMaterial({
-		color: color
-	})
-	return lambMaterial;
+	return phongMaterial;
 }
 
 export function populateSelfPaddle(posX, posY) {
 
 	var paddleMaterial;
 
-	// console.log('PADDLE SELF in populate my paddle: ',gameCustom.ownPaddle);/////////
-
 	switch (gameCustom.ownPaddle) {
 		case 0:
-			paddleMaterial = setPhysicalMaterial(palette.rose01, 1, 0.5, 0, 0, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.rose01, 1);
 			break;
 		case 1:
-			paddleMaterial = setPhysicalMaterial(palette.rose02, 1, 0.5, 0, 0, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.rose02, 1);
 			break;
 		case 2:
-			paddleMaterial = setPhysicalMaterial(palette.blue03, 1, 0.2, 0, 0, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.blue03, 1);
 			break;
 		case 3:
-			paddleMaterial = setPhysicalMaterial(palette.blue04, 1, 0.5, 1, 1.7, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.blue04, 1);
 			break;
 		default:
-			paddleMaterial = setStandardMaterial(palette.black, 1, 0.7);
+			paddleMaterial = setMeshPhongMaterial(palette.black, 1);
 			break;
 	}
 
@@ -75,23 +82,21 @@ export function populateOtherPaddle(posX, posY) {
 			gameCustom.otherPaddle = 4;
 	}
 
-	// console.log('PADDLE ENEMY in populate other paddle: ', gameCustom.otherPaddle);/////////
-
 	switch (gameCustom.otherPaddle) {
 		case 0:
-			paddleMaterial = setPhysicalMaterial(palette.rose01, 1, 0.5, 0, 0, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.rose01, 1);
 			break;
 		case 1:
-			paddleMaterial = setPhysicalMaterial(palette.rose02, 1, 0.5, 0, 0, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.rose02, 1);
 			break;
 		case 2:
-			paddleMaterial = setPhysicalMaterial(palette.blue03, 1, 0.2, 0, 0, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.blue03, 1);
 			break;
 		case 3:
-			paddleMaterial = setPhysicalMaterial(palette.blue04, 1, 0.5, 1, 1.7, 0);
+			paddleMaterial = setMeshPhongMaterial(palette.blue04, 1);
 			break;
 		default:
-			paddleMaterial = setStandardMaterial(palette.black, 1, 0.7);
+			paddleMaterial = setMeshPhongMaterial(palette.black, 1);
 			break;
 	}
 
@@ -111,17 +116,15 @@ export function populateBall(posX, posY) {
 	var radius = 5, segments = 6, rings = 6;
 	var ballMaterial;
 
-	// console.log('BALL in populate ball: ',gameCustom.ball);///////////////
-
 	switch (gameCustom.ball) {
 		case 0:
-			ballMaterial = setLambertMaterial(palette.yellow);
+			ballMaterial = setPhysicalMaterial(palette.yellow, 1, 0.7, 0, 0, 0);
 			break;
 		case 1:
-			ballMaterial = setLambertMaterial(palette.white);
+			ballMaterial = setPhysicalMaterial(palette.white, 1, 0.7, 0, 0, 0);
 			break;
 		default:
-			ballMaterial = setLambertMaterial(palette.blue01);
+			ballMaterial = setPhysicalMaterial(palette.blue01, 1, 0.7, 0, 0, 0);
 			break;
 	}
 
@@ -138,41 +141,61 @@ export function populateBall(posX, posY) {
 
 export function populatePlane(posX, posY) {
 
-	var planeMaterial;
-
-	// console.log('TABLE in populate plane: ',gameCustom.table);///////////
-
-	switch (gameCustom.table) {
-		case 0:
-			planeMaterial = setPhysicalMaterial(palette.kaki, 1, 0.7, 0, 0, 0);
-			break;
-		case 1:
-			planeMaterial = setPhysicalMaterial(palette.grey, 1, 0.7, 0, 0, 0);
-			break;
-		default:
-			planeMaterial = setPhysicalMaterial(palette.brown, 1, 0.7, 1, 1.7, 0);
-			break;
-	}
-
-	var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight, constants.planeQuality, constants.planeQuality), planeMaterial);
+	var planeMaterial = setMeshPhongMaterial(palette.white, 0);
+	var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth, constants.planeHeight * 0.95, constants.planeQuality, constants.planeQuality), planeMaterial);
 
 	plane.position.x = posX;
 	plane.position.y = posY;
-	plane.receiveShadow = true;
 
 	return plane;
 }
 
-export function populateTable(color, posX, posY, posZ) {
+export function populateLine(posX, posY) {
 
-	var tableMaterial = new THREE.MeshLambertMaterial({ color: color });
+	var lineMaterial = setMeshPhongMaterial(palette.white, 0);
+	var line = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight * 0.95, constants.planeQuality, constants.planeQuality), lineMaterial);
+
+	line.position.x = posX;
+	line.position.y = posY;
+
+	return line;
+}
+
+export function populateHorizontalLine(posX, posY) {
+
+	var lineMaterial = setMeshPhongMaterial(palette.white, 0);
+	var line = new THREE.Mesh(new THREE.PlaneGeometry(constants.tableWidth * 0.90, constants.planeWidth, constants.planeQuality, constants.planeQuality), lineMaterial);
+
+	line.position.x = posX;
+	line.position.y = posY;
+
+	return line;
+}
+
+
+export function populateTable(posX, posY, posZ) {
+
+	switch (gameCustom.table) {
+		case 0:
+			var texturePath = "../../../images/Textures/Metal.jpeg";
+			break;
+		case 1:
+			var texturePath = "../../../images/Textures/Concrete.jpeg";
+			break;
+		default:
+			var texturePath = "../../../images/Textures/Wood.jpeg";
+			break;
+	}
+
+	var tableTexture = new THREE.TextureLoader().load(texturePath);
+	var tableMaterial = new THREE.MeshBasicMaterial({ map: tableTexture });
 
 	var table = new THREE.Mesh(new THREE.BoxGeometry(constants.tableWidth, constants.tableHeight, constants.tableQuality, constants.tableQuality, 1), tableMaterial);
 	table.position.x = posX;
 	table.position.y = posY;
 	table.position.z = posZ;
 	table.receiveShadow = true;
-	//table.castShadow = true;
+	table.castShadow = true;
 
 	return table;
 }
@@ -190,7 +213,10 @@ export function populateSkybox() {
 			name_file = "../../../images/Skybox/02/cornfield";
 			break;
 		case 2:
-			name_file = "../../../images/Skybox/03/OpenWorld";
+			name_file = "../../../images/Skybox/03/dormitory";
+			break;
+		case 3:
+			name_file = "../../../images/Skybox/04/ow";
 			break;
 	}
 
@@ -212,9 +238,11 @@ export function populateSkybox() {
 		materialArray[i].side = THREE.BackSide;
 
 	let skyboxGeometry;
+	let position = 400;
 	switch (gameCustom.map) {
 		case 0:
-			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+			skyboxGeometry = new THREE.BoxGeometry(2048, 1807, 2048);
+			position = 800;
 			break;
 		case 1:
 			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
@@ -222,11 +250,14 @@ export function populateSkybox() {
 		case 2:
 			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
 			break;
+		case 3:
+			skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+			break;
 	}
 	
 	let skybox = new THREE.Mesh(skyboxGeometry, materialArray);
 	skybox.rotation.x = Math.PI / 2;
-	skybox.position.z += 400;
+	skybox.position.z += position;
 
 	return skybox;
 }

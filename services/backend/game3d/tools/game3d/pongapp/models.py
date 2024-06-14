@@ -49,10 +49,10 @@ class GameSettings(models.Model):
 	}
 
 	user = models.ForeignKey(GameUser, on_delete=models.CASCADE)
-	scene = models.IntegerField(choices=SCENES, default="OpenWorld")
+	scene = models.IntegerField(choices=SCENES, default=3)
 	ball = models.IntegerField(choices=BALLS, default=1)
 	paddle = models.IntegerField(choices=PADDLES, default=3)
-	table = models.IntegerField(choices=TABLES, default=1)
+	table = models.IntegerField(choices=TABLES, default=2)
 	score = models.IntegerField(choices=SCORES, default=7)
 	powerups = models.BooleanField(default=False)
 
@@ -64,9 +64,8 @@ class GameSettings(models.Model):
 
 class GameMatch(models.Model):
 	GAME = {
-		0: "Not_Started",
-		1: "Playing",
-		2: "Finished",
+		0: "Playing",
+		1: "Finished",
 	}
 
 	player1 = models.ForeignKey(GameUser, on_delete=models.PROTECT, related_name='matches_as_player1')
@@ -75,8 +74,3 @@ class GameMatch(models.Model):
 	player2_score = models.IntegerField(default=0)
 	date = models.DateTimeField(auto_now_add=True)
 	status = models.IntegerField(choices=GAME, default=0)
-
-	# def __str__(self):
-	# 	if player1 == None or player2 == None:
-	# 		return f'Match {self.id}: Players not set or deleted'
-	# 	return f'Match {self.id}: {self.player1.userName} vs {self.player2.userName}, {self.status}'
