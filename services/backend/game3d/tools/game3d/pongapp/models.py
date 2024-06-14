@@ -52,7 +52,7 @@ class GameSettings(models.Model):
 	scene = models.IntegerField(choices=SCENES, default=3)
 	ball = models.IntegerField(choices=BALLS, default=1)
 	paddle = models.IntegerField(choices=PADDLES, default=3)
-	table = models.IntegerField(choices=TABLES, default=1)
+	table = models.IntegerField(choices=TABLES, default=2)
 	score = models.IntegerField(choices=SCORES, default=7)
 	powerups = models.BooleanField(default=False)
 

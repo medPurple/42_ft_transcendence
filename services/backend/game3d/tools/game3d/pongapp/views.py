@@ -28,7 +28,7 @@ class GameSettingsAPI(APIView):
 				"scene": 3,
 				"ball": 1,
 				"paddle": 3,
-				"table": 1,
+				"table": 2,
 				"score": 7,
 				"powerups": False
 			}

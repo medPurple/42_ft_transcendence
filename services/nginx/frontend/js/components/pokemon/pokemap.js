@@ -43,11 +43,11 @@ export class pokeMap {
 	}
 
     getx(x, mainx) {
-        return 254 + (x - mainx) * 26;
+        return 255 + (x - mainx) * 27;
     }
 
     gety(y, mainy) {
-        return 192 + (y - mainy) * 23;
+        return 226 + (y - mainy) * 27;
     }
 
     generateRandomName(){
@@ -119,30 +119,31 @@ export class pokeMap {
     
         // Draw mapimage regardless of whether player has moved
         this.mapimage.onload = () => {
-            let mainx = (player.posX - (19/2)) * 16;
-            let mainy = (player.posY - (19/2)) * 16;
-            let pmainx = player.posX;
-            let pmainy = player.posY;
+            let mainx = (player.posX - (19/2)) * 16 + 4;
+            let mainy = (player.posY - (19/2)) * 16 - 3;
             this.ctxMAP.fillStyle = 'black';
             this.ctxMAP.fillRect(0, 0, 520, 510);
             this.ctxMAP.drawImage(this.mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
-            data.forEach(player => {
-                if (player.userID != this.userID && player.active && player.player_map == this.map) {
-                    if (player.posX < pmainx + 10 && player.posX > pmainx - 10 && player.posY < pmainy + 10 && player.posY > pmainy - 10) {
-                        let playerX = this.getx(player.posX, pmainx);
-                        let playerY = this.gety(player.posY, pmainy);
-                        const otherimg = new Image();
-                        otherimg.src = this.asset_selection(player.orientation, player.player_skin);
-                        otherimg.onload = () => {
-                            this.ctxMAP.drawImage(otherimg, playerX, playerY, 25, 50);
-                        }
-                    }
-                }
-            });
             this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 24, 25, 50);
         }
-    
-        this.map = player.player_map;
+		this.map = player.player_map;
+	
+		let pmainx = player.posX;
+		let pmainy = player.posY;
+		data.forEach(player => {
+			if (player.userID != this.userID && player.active && player.player_map == this.map) {
+				
+				if (player.posX < pmainx + 10 && player.posX > pmainx - 10 && player.posY < pmainy + 10 && player.posY > pmainy - 10) {
+					let playerX = this.getx(player.posX, pmainx);
+					let playerY = this.gety(player.posY, pmainy);
+					const otherimg = new Image();
+					otherimg.src = this.asset_selection(player.orientation, player.player_skin);
+					otherimg.onload = () => {
+						this.ctxMAP.drawImage(otherimg, playerX, playerY, 25, 50);
+					}
+				}
+			}
+		});
     }
     
     select_map_image(player_map) {
