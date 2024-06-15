@@ -78,6 +78,12 @@ export default class RegistrationForm extends HTMLElement {
 		}
 
 		// Check if password is not similar to username
+		if (!/^[a-zA-Z]+$/.test(username)) {
+			this.showAlert('Username should contain only alphanumeric characters');
+			return false;
+		}
+
+		// Check if password should not be similar to the username
 		if (password1.includes(username)) {
 			this.showAlert('Password should not be similar to the username');
 			return false;

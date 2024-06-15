@@ -36,6 +36,8 @@ volumes:
   chat:
   game3d:
   pokemap:
+  prom_data:
+  graf_data:
 
 
 services:
@@ -43,8 +45,6 @@ services:
     container_name: nginx
     networks:
     - microservices
-    # volumes:
-    # - frontend:/usr/share/nginx/html/
     build: services/nginx
     image: nginx
     ports:
@@ -63,19 +63,6 @@ services:
     expose :
     - "4430"
     restart: on-failure
-
-  # arena:
-  #   container_name: arena
-  #   user: root
-  #   volumes:
-  #     - user:/var/lib/postgresql/
-  #   networks:
-  #   - microservices
-  #   build: services/backend/arena
-  #   image: arena
-  #   expose :
-  #   - "4430"
-  #   restart: on-failure
 
   token:
     container_name: jwtoken
@@ -136,3 +123,30 @@ services:
     expose :
     - "4430"
     restart: on-failure
+
+  prometheus:
+    image: prom/prometheus
+    user: root
+    container_name: prometheus
+    command:
+      - '--config.file=/tmp/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/tmp/prometheus
+      - prom_data:/prometheus
+  grafana:
+    user: root
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+      - graf_data:/grafana
