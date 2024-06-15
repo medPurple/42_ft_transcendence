@@ -60,6 +60,8 @@ all: run_script up
 up:
 	@ echo -e "\n$(YELLOW)★ Launching Docker ★$(CEND)"
 	@ docker --version
+	@ docker pull prom/prometheus
+	@ docker pull grafana/grafana
 	@ echo -e "$(WHITE) A self-sufficient runtime for containers$(CEND)"
 	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
