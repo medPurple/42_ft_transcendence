@@ -135,7 +135,8 @@ class   gameStateC:
         self.player1_user_name = 0 
         self.player2_user_name = 0
         self.group_name = 0
-        self.players_nb = 0    # - pongapp:/app
+        self.players_nb = 0    
+        self.players_ready = 0
         self.player1Score = iv.PADDLE1_SCORE
         self.player2Score = iv.PADDLE2_SCORE
         self.limitScore = 7
@@ -153,6 +154,8 @@ class   gameStateC:
         self._lock = threading.Lock()
 
     async def run_game_loop(self):
+        logger.info("Je rentre danis la tache asynchrone")
+        await self.broadcastGameState()
         user_service_url = 'https://user:4430/api/profiles/change-status/'
         if (self.game_mode == 'remote'):
             try:
@@ -201,8 +204,8 @@ class   gameStateC:
             except Exception as e:
                 logger.info(f"Error changing user status in microservices: {e}")
         #elif (self.game_mode == 'tournament'): ####### GameUser TOURNAMENT
-        # logger.info("Je commence lapartie")
-        await self.broadcastGameState()
+        logger.info("Je commence lapartie")
+        self.pauseTimer = time.time()
         #self.status = iv.RUNNING a  decommenter apres
         while (self.status == iv.RUNNING or self.status == iv.PAUSED or self.status == iv.WAITING_FOR_VALIDATION):
             with self._lock:
@@ -279,12 +282,11 @@ class   gameStateC:
                 self.status = iv.FINISHED
 
     def checkPlayersValidation(self):
-        logger.info("Je check le nombre de joueurs qui sont la")
         if (self.game_mode == "remote"):
-            if (self.players_nb == 2):
+            if (self.players_ready == 2):
                 self.status = iv.RUNNING
         else:
-            if (self.players_nb == 1):
+            if (self.players_ready == 1):
                 self.status = iv.RUNNING
 
     def popPowerUp(self):

@@ -74,7 +74,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         self.tournament.games[gameNbr].paddle2 = paddleC(2)
         self.tournament.games[gameNbr].limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).score)()
         self.tournament.games[gameNbr].shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).powerups)()
-        self.tournament.games[gameNbr].players_nb = 0
+        self.tournament.games[gameNbr].players_nb = 2
         self.tournament.games[gameNbr].player1_user_name = player1
         self.tournament.games[gameNbr].player2_user_name = player2
         self.tournament.games[gameNbr].player1_user_id = self.user_id
@@ -99,7 +99,7 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
 
             if (key == "validate"):
                 with self.actual_match._lock:
-                    self.actual_match.players_nb += 1
+                    self.actual_match.players_ready += 1
 
 
     # la
@@ -160,6 +160,7 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         self.gameState.player1_user_id = self.user_id
         self.gameState.player1_user_name = self.user_name
         self.gameState.player2_user_name = self.player2_name
+        self.gameState.players_nb = 2
         await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
         self.gameState.paddle1 = paddleC(1)
         self.gameState.paddle2 = paddleC(2)
@@ -169,7 +170,6 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).powerups)()
         #logger.info("Player1 powerups %d", self.gameState.shouldHandlePowerUp)
 #################
-        self.gameState.players_nb = 0
         await self.send(text_data=json.dumps({"party": "active"})) 
         self.gameState.powerUpTimer = time.time()
         self.gameState.status = iv.WAITING_FOR_VALIDATION
@@ -189,7 +189,7 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
                     self.gameState.paddle2.move = text_data_json["paddleMov2"]
             if (key == "validate"):
                 with self.gameState._lock:
-                    self.gameState.players_nb += 1
+                    self.gameState.players_ready += 1
 
     async def game_state(self,event):
         #logger.info("Depuis le local je vais envoyer au websocket")
@@ -256,44 +256,49 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
                         self.gameState.paddle2.move = text_data_json["paddleMov"]
             if (key == "validate"):
                 with self.gameState._lock:
-                    self.gameState.players_nb += 1
+                    self.gameState.players_ready += 1
 
     async def findRemoteParty(self):
         global remote_parties
         listLen = len(remote_parties)
+        logger.info("listLen : %d", listLen)
         if (listLen == 0 or remote_parties[listLen - 1].players_nb == 2 or 
             (remote_parties[listLen - 1].status == iv.PAUSED and remote_parties[listLen-1].players_nb == 2)):
+            logger.info("1 Je cree la partie")
             newPart = gameStateC()
             remote_parties.append(newPart)
             self.player_id = 1
             await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = newPart
-            self.gameState.game_mode = "remote"
-            self.gameState.group_name = await self.generate_group_name()
-            remote_parties[listLen].players_nb = 0
+            with self.gameState._lock:
+                self.gameState.players_nb = 1
+                self.gameState.game_mode = "remote"
+                self.gameState.group_name = await self.generate_group_name()
 #################
-            self.gameUser = await sync_to_async(lambda: GameUser.objects.get(userID=self.user_id))()
-            self.gameState.limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).score)()
-            #logger.info("Player1 limitScore %d", self.gameState.limitScore)
-            self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).powerups)()
+                self.gameUser = await sync_to_async(lambda: GameUser.objects.get(userID=self.user_id))()
+                self.gameState.limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).score)()
+                #logger.info("Player1 limitScore %d", self.gameState.limitScore)
+                self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).powerups)()
 #################
-            #logger.info("Player1 powerups %d", self.gameState.shouldHandlePowerUp)
-            self.gameState.player1_user_id = self.user_id
-            self.gameState.player1_user_name = self.user_name 
+                #logger.info("Player1 powerups %d", self.gameState.shouldHandlePowerUp)
+                self.gameState.player1_user_id = self.user_id
+                self.gameState.player1_user_name = self.user_name 
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             return newPart
         else:
+            logger.info("2 Je join la partie")
             self.player_id = 2 
             await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = remote_parties[listLen - 1]
-            await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
-            self.gameState.player2_user_id = self.user_id 
-            self.gameState.player2_user_name = self.user_name 
-            self.gameState.players_nb = 0
-            self.gameState.powerUpTimer = time.time()
-            self.gameState.pauseTimer = time.time()
-            await self.channel_layer.group_send(self.gameState.group_name, {"type": "launch.party"})
-            self.gameState.status = iv.WAITING_FOR_VALIDATION
+            with self.gameState._lock:
+                await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
+                self.gameState.player2_user_id = self.user_id 
+                self.gameState.player2_user_name = self.user_name 
+                self.gameState.players_nb = 2
+                self.gameState.powerUpTimer = time.time()
+                self.gameState.pauseTimer = time.time()
+                self.gameState.status = iv.WAITING_FOR_VALIDATION
+                logger.info("Je vais lancer la tache asynchrone")
             self.task = asyncio.create_task(self.gameState.run_game_loop())
             return remote_parties[listLen - 1]
 

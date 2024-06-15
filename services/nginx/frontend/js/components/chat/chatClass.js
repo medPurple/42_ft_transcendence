@@ -13,7 +13,7 @@ export class chat {
 
   async getusername(id) {
 
-    console.log('id', id);  
+    console.log('id', id);
     const users = await Iuser.getAllUsers();
     let username = users.users.find(user => user.user_id === parseInt(id)).username;
     console.log('username', username);
@@ -78,7 +78,7 @@ export class chat {
   }
 
   async createMessagesDiv() {
-   
+
     const messagesDiv = document.createElement('div');
     messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
     messagesDiv.id = 'messagesDiv';
@@ -97,10 +97,10 @@ export class chat {
     input.id = 'messageInput';
     input.classList.add('form-control', 'mr-2');
 
-		const sendButton = document.createElement('button');
-		sendButton.id = 'sendButton';
-		sendButton.textContent = 'Send';
-		sendButton.classList.add('btn', 'btn-dark');
+    const sendButton = document.createElement('button');
+    sendButton.id = 'sendButton';
+    sendButton.textContent = 'Send';
+    sendButton.classList.add('btn', 'btn-dark');
 
     inputDiv.appendChild(input);
     inputDiv.appendChild(sendButton);
@@ -115,7 +115,7 @@ export class chat {
 
     const titleDiv = document.createElement('div');
     titleDiv.id = 'titleDiv';
-    titleDiv.classList.add('bg-light', 'mb-3','align-items-center', 'w-100', 'p-1', 'border', 'rounded');
+    titleDiv.classList.add('bg-light', 'mb-3', 'align-items-center', 'w-100', 'p-1', 'border', 'rounded');
 
     const titleElement = document.createElement('h1');
     titleElement.textContent = user.username;
@@ -264,11 +264,11 @@ export class chat {
 
     const messageDiv2 = document.createElement('div'); // Create a new div for each message
     messageDiv2.classList.add('d-flex', 'mb-2');
-    if (user_id == await Iuser.getID()){  
+    if (user_id == await Iuser.getID()) {
       console.log('end user_id', user_id);
       messageDiv2.classList.add('align-self-end');
     }
-    else{
+    else {
       console.log('start user_id', user_id);
       messageDiv2.classList.add('align-self-start');
     }
@@ -299,7 +299,7 @@ export class chat {
 
     messageDiv2.appendChild(msg);
     messagediv.appendChild(messageDiv2); // Append the message div to the main messages div
-}
+  }
 
   timerCalculation(date) {
 
@@ -325,7 +325,7 @@ export class chat {
     return color;
   }
 
-  async checkInvite(data) {
+  async checkInvite(data, id) {
 
     if (data === '@invite@') {
       console.warn('INVITATION BY' + id);
@@ -344,11 +344,11 @@ export class chat {
     inputdiv.appendChild(this.createRefuseButton());
   }
 
-	createAcceptButton(){
-		const acceptButton = document.createElement('button');
-		acceptButton.id = 'acceptButton';
-		acceptButton.textContent = 'Accept';
-		acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
+  createAcceptButton() {
+    const acceptButton = document.createElement('button');
+    acceptButton.id = 'acceptButton';
+    acceptButton.textContent = 'Accept';
+    acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
 
     acceptButton.onclick = async (e) => {
       console.log('accept');
@@ -391,7 +391,7 @@ export class chat {
 
   }
 
-  async checkInviteStatus(data) {
+  async checkInviteStatus(data, id) {
     if (data === '@accept@') {
       console.warn('ACCEPTED BY' + id);
       if (this.player1 === null)
@@ -439,16 +439,16 @@ export class chat {
         'Content-Type': 'application/json',
         'Authorization': Icookies.getCookie('token'),
         'X-CSRFToken': Icookies.getCookie('csrftoken')
-        },
+      },
       credentials: 'include',
     });
     const data = await response.json();
-    if (data.success){
-      if (data.data){
-      console.log(data.data);
-      data.data.forEach(message => {
-        if (message.message[0] !== '@')
-          this.addMessage(message.user_id, message.message, message.timestamp);
+    if (data.success) {
+      if (data.data) {
+        console.log(data.data);
+        data.data.forEach(message => {
+          if (message.message[0] !== '@')
+            this.addMessage(message.user_id, message.message, message.timestamp);
         });
       }
     } else
@@ -470,8 +470,8 @@ export class chat {
       const id = data['user_id'];
       const message = data['message'];
       const timestamp = data['time'];
-      const invite = await this.checkInvite(message);
-      const invitestatus = await this.checkInviteStatus(message);
+      const invite = await this.checkInvite(message, id);
+      const invitestatus = await this.checkInviteStatus(message, id);
       const blockstatus = await this.checkBlockStatus(id);
       if (invite) {
         inviteButton.disabled = true;
@@ -487,9 +487,19 @@ export class chat {
       }
       if (this.player1 && this.player2) {
         console.log("Creating party");
-        await this.createParty(this.player1, this.player2);
-        await this.changeStatus();
-        window.location.href = "/gameService"
+        //await this.createParty(this.player1, this.player2);
+        //await this.changeStatus();
+        if (id == this.player1) {
+          console.log("Je lance direct")
+          window.location.href = "/play_pr"
+        }
+        else
+          console.log("Je lance apres")
+        window.location.href = "/play_pr"
+        setTimeout(() => {
+          window.location.href = "/play_pr"
+            ;
+        }, 50);
       }
 
     };
