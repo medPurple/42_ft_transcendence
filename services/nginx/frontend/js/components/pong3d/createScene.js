@@ -43,7 +43,6 @@ export async function createScene() {
     window.addEventListener('keyup', onKeyUpRemote, false);
   }
   else {
-    console.log("je mets les event du local");
     window.addEventListener('keydown', onKeyDownLocal, false);
     window.addEventListener('keyup', onKeyUpLocal, false);
   }

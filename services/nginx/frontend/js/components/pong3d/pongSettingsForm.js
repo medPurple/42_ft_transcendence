@@ -3,32 +3,32 @@ import Icookies from "../cookie/cookie.js";
 import Iuser from "../user/userInfo.js";
 
 export default class pongSettingsForm extends HTMLElement {
-	constructor(){
-		super();
-		this.attachShadow({mode: 'open'});
-	}
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
 
-	async connectedCallback(){
-		const editSettings = document.createElement('div');
-		editSettings.id = 'pong-settings';
-		this.shadowRoot.appendChild(editSettings);
-		await this.initGamerInfo();
-		await this.initFormSubmit();
-	}
+  async connectedCallback() {
+    const editSettings = document.createElement('div');
+    editSettings.id = 'pong-settings';
+    this.shadowRoot.appendChild(editSettings);
+    await this.initGamerInfo();
+    await this.initFormSubmit();
+  }
 
-	async initGamerInfo() {
-		try {
-				const data = await gamer.getGamerSettings();
-				this.displaypongSettingsForm(data);
-		} catch (error) {
-			alert('You should be logged in to change the settings');
-			window.location.href = '/pongService';
-		}
-	}
+  async initGamerInfo() {
+    try {
+      const data = await gamer.getGamerSettings();
+      this.displaypongSettingsForm(data);
+    } catch (error) {
+      alert('You should be logged in to change the settings');
+      window.location.href = '/pongService';
+    }
+  }
 
-	displaypongSettingsForm(data){
-		let settingsContainer = this.shadowRoot.querySelector('#pong-settings');
-		settingsContainer.innerHTML = `
+  displaypongSettingsForm(data) {
+    let settingsContainer = this.shadowRoot.querySelector('#pong-settings');
+    settingsContainer.innerHTML = `
 
 		<link rel="stylesheet" href="css/style.css" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -138,46 +138,45 @@ export default class pongSettingsForm extends HTMLElement {
 		</form>
 		</div>
 	`;
-	}
+  }
 
-	async initFormSubmit() {
-		const editSettings = this.shadowRoot.getElementById('settings-form');
-		const userId = await Iuser.getID();
-		console.log(userId);
+  async initFormSubmit() {
+    const editSettings = this.shadowRoot.getElementById('settings-form');
+    const userId = await Iuser.getID();
+    console.log(userId);
 
-		if (!editSettings) {
-			console.error('Could not find the settings form');
-			return;
-		}
-		editSettings.addEventListener('submit', function(event) {
-			event.preventDefault();
-			let jwtToken = Icookies.getCookie('token');
-			let csrfToken = Icookies.getCookie('csrftoken');
+    if (!editSettings) {
+      console.error('Could not find the settings form');
+      return;
+    }
+    editSettings.addEventListener('submit', function(event) {
+      event.preventDefault();
+      let jwtToken = Icookies.getCookie('token');
+      let csrfToken = Icookies.getCookie('csrftoken');
 
-			const formData = new FormData(editSettings);
-			fetch(`api/pong/${userId}/`, {
-				method: 'PUT',
-				body: formData,
-				headers: {
-					'Authorization': jwtToken,
-					'X-CSRFToken': csrfToken
-				}
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					console.log('Settings updated successfully');
-					window.location.href = '/pongService';
-				} else {
-					console.log('Something went wrong updating the settings');
-					alert('An error occurred submitting the settings. Please try again.');
-				}
-			})
-			.catch(error => {
-				console.error('Error initFormSubmit:', error);
-			});
-		});
-	}
+      const formData = new FormData(editSettings);
+      fetch(`api/pong/${userId}/`, {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Authorization': jwtToken,
+          'X-CSRFToken': csrfToken
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = '/pongService';
+          } else {
+            console.log('Something went wrong updating the settings');
+            alert('An error occurred submitting the settings. Please try again.');
+          }
+        })
+        .catch(error => {
+          console.error('Error initFormSubmit:', error);
+        });
+    });
+  }
 }
 
 customElements.define('settings-form', pongSettingsForm);

@@ -2,47 +2,45 @@ import Iuser from "./userInfo.js"
 
 
 export default class profileForm extends HTMLElement {
-	constructor() {
-		super();
-		this.attachShadow({mode: 'open'});
-	}
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
 
-	async connectedCallback() {
+  async connectedCallback() {
 
-		const profileContainer = document.createElement('div');
-		profileContainer.id = 'profile-container';
+    const profileContainer = document.createElement('div');
+    profileContainer.id = 'profile-container';
 
-		// Ajouter les éléments à l'ombre
-		this.shadowRoot.appendChild(profileContainer);
-		await this.initUserInfo();
+    this.shadowRoot.appendChild(profileContainer);
+    await this.initUserInfo();
 
+  }
+  async initUserInfo() {
+    try {
+      const data = await Iuser.getAllUserInfo();
+      let statut = this.checkStatut(data.user.is_online);
+      let profilePictureData = data.user.profile_picture_data;
+      this.displayUserProfile(data, profilePictureData, statut);
+
+    } catch (error) {
+      console.error('Error:', error)
     }
-	async initUserInfo() {
-		try {
-			const data = await Iuser.getAllUserInfo();
-			// Access other properties from data here
-			let statut = this.checkStatut(data.user.is_online);
-			let profilePictureData = data.user.profile_picture_data;
-			this.displayUserProfile(data, profilePictureData, statut);
+  }
 
-		} catch (error) {
-			console.error('Error:', error)
-		}
-	}
-
-	checkStatut(is_online) {
-		if(is_online === 0)
-			return {text: "Offline", color: "grey"};
-		else if (is_online === 1)
-			return {text: "Online", color: "green"};
-		else
-			return {text: "Playing", color: "yellow"};
-	}
+  checkStatut(is_online) {
+    if (is_online === 0)
+      return { text: "Offline", color: "grey" };
+    else if (is_online === 1)
+      return { text: "Online", color: "green" };
+    else
+      return { text: "Playing", color: "yellow" };
+  }
 
 
-	displayUserProfile(data, profilePictureData, statut){
-		let profileContainer = this.shadowRoot.querySelector('#profile-container');
-		profileContainer.innerHTML = `
+  displayUserProfile(data, profilePictureData, statut) {
+    let profileContainer = this.shadowRoot.querySelector('#profile-container');
+    profileContainer.innerHTML = `
 
 		<link rel="stylesheet" href="css/style.css" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -75,7 +73,7 @@ export default class profileForm extends HTMLElement {
 		</div>
 
 		`;
-	}
+  }
 }
 
 customElements.define('profile-form', profileForm);

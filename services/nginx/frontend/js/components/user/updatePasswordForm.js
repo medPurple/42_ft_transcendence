@@ -3,10 +3,10 @@ import Icookies from "../cookie/cookie.js";
 import Iuser from "../user/userInfo.js";
 
 export default class updatePasswordForm extends HTMLElement {
-	constructor(){
-		super();
-		this.attachShadow({mode: 'open'});
-		this.shadowRoot.innerHTML = `
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
 
 		<link rel="stylesheet" href="css/style.css" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -32,70 +32,67 @@ export default class updatePasswordForm extends HTMLElement {
 			</form>
 		</div>
 		`;
-	}
+  }
 
-	showAlert(message, type = 'danger') {
-		const alertContainer = this.shadowRoot.getElementById('alert-container');
-		alertContainer.innerHTML = `
+  showAlert(message, type = 'danger') {
+    const alertContainer = this.shadowRoot.getElementById('alert-container');
+    alertContainer.innerHTML = `
 			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
 				${message}
 			</div>`;
 
-	}
+  }
 
-	validateForm(formData) {
-		// Get the form data
-		const password1 = formData.get('new_password1');
-		const password2 = formData.get('new_password2');
+  validateForm(formData) {
+    const password1 = formData.get('new_password1');
+    const password2 = formData.get('new_password2');
 
-		// Check if passwords match
-		if (password1 !== password2) {
-			this.showAlert('Passwords do not match');
-			return false;
-		}
+    if (password1 !== password2) {
+      this.showAlert('Passwords do not match');
+      return false;
+    }
 
-		// Check if new password has at least 8 characters
-		if (password1.length < 8) {
-			this.showAlert('New password should be at least 8 characters long');
-			return false;
-		}
+    if (password1.length < 8) {
+      this.showAlert('New password should be at least 8 characters long');
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	connectedCallback() {
-		const pwdForm = this.shadowRoot.getElementById('update-password-form');
-		const showAlert = this.showAlert.bind(this);
-		const validateForm = this.validateForm.bind(this);
-		pwdForm.addEventListener('submit', async function(event) {
-			event.preventDefault();
-			let jwtToken = Icookies.getCookie('token');
-			let csrfToken = Icookies.getCookie('csrftoken');
+  connectedCallback() {
+    const pwdForm = this.shadowRoot.getElementById('update-password-form');
+    const showAlert = this.showAlert.bind(this);
+    const validateForm = this.validateForm.bind(this);
+    pwdForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      let jwtToken = Icookies.getCookie('token');
+      let csrfToken = Icookies.getCookie('csrftoken');
 
-			try {
-				const formData = new FormData(pwdForm);
-				if (!validateForm(formData)) {
-					return;
-				}
-				const response = await fetch('api/profiles/update-password/', {
-					method: 'POST',
-					body: formData,
-					headers: {
-						'Authorization': jwtToken,
-						'X-CSRFToken': csrfToken
-					}
-				});
-				const data = await response.json();
-				if (data.success) {
-					window.location.href = '/home';
-				} else {
-					showAlert('An error occurred. Please try again.');
-				}
-			} catch(error) {
-				showAlert('Error:', error);
-			}
-		});
-	}
+      try {
+        const formData = new FormData(pwdForm);
+        if (!validateForm(formData)) {
+          return;
+        }
+        const response = await fetch('api/profiles/update-password/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Authorization': jwtToken,
+            'X-CSRFToken': csrfToken
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.location.href = '/home';
+        } else {
+          showAlert('An error occurred. Please try again.');
+        }
+      } catch (error) {
+        showAlert('Error:', error);
+      }
+    });
+  }
 }
 
 customElements.define('update-password-form', updatePasswordForm);
