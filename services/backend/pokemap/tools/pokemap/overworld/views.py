@@ -46,7 +46,7 @@ class playerAPI(APIView):
         return Response({"error": "userID parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, *args, **kwargs):
-        logger.info(request.data)
+        # logger.info(request.data)
         playerobj = get_object_or_404(player, userID=request.data["userID"])
         instance = editplayerModelSerializer(playerobj, data=request.data)
         if instance.is_valid():

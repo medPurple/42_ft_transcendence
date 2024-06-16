@@ -25,8 +25,8 @@ if [ -f "$ENV_FILE" ]; then
 	set +a
 	cert_value=$(cat /tmp/.transcendance_crt.crt)
 	key_value=$(cat /tmp/.transcendance_key.key)
-	echo "$cert_value"
-	echo "$key_value"
+	# echo "$cert_value"
+	# echo "$key_value"
 	vault kv put kv/nginx ssl_certificate="$cert_value" ssl_certificate_key="$key_value"
 else
 	echo "$ENV_FILE unknow file."
@@ -83,7 +83,7 @@ echo "[VAULT SECRET] JWToken container secret"
 ENV_FILE="/vault/JWToken/.env"
 SECRET_PATH="key"
 secret=$(dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//')
-echo "PASS=$secret" > /vault/JWToken/.env
+# echo "PASS=$secret" > /vault/JWToken/.env
 if [ -f "$ENV_FILE" ]; then
 	set -a
 	. "$ENV_FILE"

@@ -31,7 +31,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		text_data_json["room_name"] = self.room_name  # Add room_name to the data
 		serializer = self.serializer_class(data=text_data_json)
-		logger.debug(text_data_json)
+		# logger.debug(text_data_json)
 		if serializer.is_valid():
 			await self.save_message(serializer)
 			user_id = serializer.data.get('user_id')
@@ -48,11 +48,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	@sync_to_async
 	def save_message(self, serializer):
-		logger.info("Saving message")
-		logger.info(self.room_name)
-		logger.debug(serializer)
+		# logger.info("Saving message")
+		# logger.info(self.room_name)
+		# logger.debug(serializer)
 		serializer.save()  # No need to assign room_name here
-		logger.debug(serializer.data)
+		# logger.debug(serializer.data)
 
 	# 	Message.objects.create(user_id=user_id, room_name=room_name, message=message)
 

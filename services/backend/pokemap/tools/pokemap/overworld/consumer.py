@@ -17,7 +17,7 @@ class PlayerConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         await self.accept()
-        logger.info("connected")
+        # logger.info("connected")
         self.map_changed = False
         self.send_message_task = asyncio.create_task(self.send_message())
 
@@ -450,7 +450,7 @@ async def change_status(playerobj, json_data):
         "player_status": playerobj.player_status,
         "active": playerobj.active,
     }
-    logger.info(json_data)
+    # logger.info(json_data)
     if json_data.get("event") == "combat":
         basejson["player_status"] = player.StatusChoices.FIGHT
     elif json_data.get("event") == "people":

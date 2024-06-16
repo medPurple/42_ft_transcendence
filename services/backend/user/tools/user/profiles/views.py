@@ -42,9 +42,9 @@ def create_userID_microservices(request, user_id, user_name):
 	headers = {'Content-Type': 'application/json'}
 	data = {"userID": user_id, "userName": user_name}
 
-	logger.info('Creating user ID in microservices:')
-	logger.info(data)
-	logger.info(user_id)
+	# logger.info('Creating user ID in microservices:')
+	# logger.info(data)
+	# logger.info(user_id)
 
 	try:
 		response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
@@ -100,7 +100,7 @@ class CustomUserRegister(APIView):
 			user.save()
 			token = user_token(request, user.user_id)
 			if token is not None:
-				logger.info('Token created')
+				# logger.info('Token created')
 
 				user_creation = create_userID_microservices(request, user.user_id, user.username)
 
@@ -174,7 +174,7 @@ class CustomUserVerify(APIView):
 class CustomUserLogout(APIView):
 	authentication_classes = [JWTAuthentication]
 	def post(self, request):
-		logger.debug(request)
+		# logger.debug(request)
 		user = request.user
 		try:
 			user.is_online = 0
@@ -193,9 +193,9 @@ class CustomUsernameView(APIView):
 class CustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]
 	def get(self, request):
-		logger.info('User info')
-		logger.info(request)
-		logger.info(request.user)
+		# logger.info('User info')
+		# logger.info(request)
+		# logger.info(request.user)
 		serializer = CustomUserSerializer(request.user)
 		return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
 
@@ -225,7 +225,7 @@ class CustomUserPasswordView(APIView):
 class CustomUserStatusView(APIView):
 	def put(self, request):
 		try:
-			logger.info(request.data)
+			# logger.info(request.data)
 			user = get_object_or_404(CustomUser, user_id=request.data.get('user_id'))
 			user.is_online = request.data.get('status')
 			user.save()

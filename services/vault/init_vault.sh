@@ -13,8 +13,8 @@ if [ ! -f /vault/file/vault_init.txt ]; then
 	echo "[VAULT] Key recuperation"
 	UNSEAL_KEY=$(awk '/^Unseal Key 1:/{print $NF}' /vault/file/vault_init.txt)
 	ROOT_TOKEN=$(awk '/^Initial Root Token:/{print $NF}' /vault/file/vault_init.txt)
-	echo "Unseal Key 1: $UNSEAL_KEY"
-	echo "Initial Root Token: $ROOT_TOKEN"
+	# echo "Unseal Key 1: $UNSEAL_KEY"
+	# echo "Initial Root Token: $ROOT_TOKEN"
 	
 	vault operator unseal "$UNSEAL_KEY"
 	vault login "$ROOT_TOKEN"
@@ -43,8 +43,8 @@ else
 
 	UNSEAL_KEY=$(awk '/^Unseal Key 1:/{print $NF}' /vault/file/vault_init.txt)
 	ROOT_TOKEN=$(awk '/^Initial Root Token:/{print $NF}' /vault/file/vault_init.txt)
-	echo "Unseal Key 1: $UNSEAL_KEY"
-	echo "Initial Root Token: $ROOT_TOKEN"
+	# echo "Unseal Key 1: $UNSEAL_KEY"
+	# echo "Initial Root Token: $ROOT_TOKEN"
 	
 	vault operator unseal "$UNSEAL_KEY"
 	vault login "$ROOT_TOKEN"

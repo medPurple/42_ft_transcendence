@@ -219,14 +219,14 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
         self.user_name = self.scope["url_route"]["kwargs"]["user_name"]
         if await self.checkForReconnexion():
             await self.accept()
-            logger.info("%s Je cherche a me reconnecter", self.user_name)
+            # logger.info("%s Je cherche a me reconnecter", self.user_name)
             self.gameState = await self.rejoinRemoteParty()
             self.gameState.players_ready += 1
             if (self.gameState.players_ready == 2):
                 self.gameState.status = iv.RUNNING
         else :
             await self.accept()
-            logger.info("%s Je cherche a creer/joindre une partie", self.user_name)
+            # logger.info("%s Je cherche a creer/joindre une partie", self.user_name)
             await self.findRemoteParty()
 
 
@@ -261,10 +261,10 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
     async def findRemoteParty(self):
         global remote_parties
         listLen = len(remote_parties)
-        logger.info("listLen : %d", listLen)
+        # logger.info("listLen : %d", listLen)
         if (listLen == 0 or remote_parties[listLen - 1].players_nb == 2 or 
             (remote_parties[listLen - 1].status == iv.PAUSED and remote_parties[listLen-1].players_nb == 2)):
-            logger.info("1 Je cree la partie")
+            # logger.info("1 Je cree la partie")
             newPart = gameStateC()
             remote_parties.append(newPart)
             self.player_id = 1
@@ -328,30 +328,30 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
 
     async def logObject(self, gameState):
         logbuff = gameState
-        logger.info("player1_user_id : %s" % (logbuff.player1_user_id))
-        logger.info("player2_user_id : %s" % (logbuff.player2_user_id))
-        logger.info("player1_user_name : %s" % (logbuff.player1_user_name))
-        logger.info("player2_user_name : %s" % (logbuff.player2_user_name))
-        logger.info("group_name : %s" % (logbuff.group_name))
-        logger.info("players_nb : %d" % (logbuff.players_nb))
-        logger.info("player1Score : %d" % (logbuff.player1Score))
-        logger.info("player2Score : %d" % (logbuff.player2Score))
-        logger.info("paddle1.positionX : %d" % (logbuff.paddle1.positionX))
-        logger.info("paddle1.width : %d" % (logbuff.paddle1.width))
-        logger.info("paddle1.dirY : %d" % (logbuff.paddle1.dirY))
-        logger.info("paddle1.speed : %d" % (logbuff.paddle1.speed))
-        logger.info("paddle1.move : %s" % (logbuff.paddle1.move))
-        logger.info("paddle2.positionX : %d" % (logbuff.paddle2.positionX))
-        logger.info("paddle2.width : %d" % (logbuff.paddle2.width))
-        logger.info("paddle2.dirY : %d" % (logbuff.paddle2.dirY))
-        logger.info("paddle2.speed : %d" % (logbuff.paddle2.speed))
-        logger.info("paddle2.move : %s" % (logbuff.paddle2.move))
-        logger.info("ball.positionX : %d" % (logbuff.ball.positionX))
-        logger.info("ball.positionY : %d" % (logbuff.ball.positionY))
-        logger.info("ball.dirX : %d" % (logbuff.ball.dirX))
-        logger.info("ball.dirY : %d" % (logbuff.ball.dirY))
-        logger.info("ball.speed : %d" % (logbuff.ball.speed))
-        logger.info("active : %d" % (logbuff.status))
+        # logger.info("player1_user_id : %s" % (logbuff.player1_user_id))
+        # logger.info("player2_user_id : %s" % (logbuff.player2_user_id))
+        # logger.info("player1_user_name : %s" % (logbuff.player1_user_name))
+        # logger.info("player2_user_name : %s" % (logbuff.player2_user_name))
+        # logger.info("group_name : %s" % (logbuff.group_name))
+        # logger.info("players_nb : %d" % (logbuff.players_nb))
+        # logger.info("player1Score : %d" % (logbuff.player1Score))
+        # logger.info("player2Score : %d" % (logbuff.player2Score))
+        # logger.info("paddle1.positionX : %d" % (logbuff.paddle1.positionX))
+        # logger.info("paddle1.width : %d" % (logbuff.paddle1.width))
+        # logger.info("paddle1.dirY : %d" % (logbuff.paddle1.dirY))
+        # logger.info("paddle1.speed : %d" % (logbuff.paddle1.speed))
+        # logger.info("paddle1.move : %s" % (logbuff.paddle1.move))
+        # logger.info("paddle2.positionX : %d" % (logbuff.paddle2.positionX))
+        # logger.info("paddle2.width : %d" % (logbuff.paddle2.width))
+        # logger.info("paddle2.dirY : %d" % (logbuff.paddle2.dirY))
+        # logger.info("paddle2.speed : %d" % (logbuff.paddle2.speed))
+        # logger.info("paddle2.move : %s" % (logbuff.paddle2.move))
+        # logger.info("ball.positionX : %d" % (logbuff.ball.positionX))
+        # logger.info("ball.positionY : %d" % (logbuff.ball.positionY))
+        # logger.info("ball.dirX : %d" % (logbuff.ball.dirX))
+        # logger.info("ball.dirY : %d" % (logbuff.ball.dirY))
+        # logger.info("ball.speed : %d" % (logbuff.ball.speed))
+        # logger.info("active : %d" % (logbuff.status))
 
     async def generate_group_name(self, length=8):
         global group_names
@@ -484,30 +484,30 @@ class PongChatConsumer(AsyncWebsocketConsumer):
 
     async def logObject(self, gameState):
         logbuff = gameState
-        logger.info("playeer1_user_id : %s" % (logbuff.player1_user_id))
-        logger.info("player2_user_id : %s" % (logbuff.player2_user_id))
-        logger.info("player1_user_name : %s" % (logbuff.player1_user_name))
-        logger.info("player2_user_name : %s" % (logbuff.player2_user_name))
-        logger.info("group_name : %s" % (logbuff.group_name))
-        logger.info("players_nb : %d" % (logbuff.players_nb))
-        logger.info("player1Score : %d" % (logbuff.player1Score))
-        logger.info("player2Score : %d" % (logbuff.player2Score))
-        logger.info("paddle1.positionX : %d" % (logbuff.paddle1.positionX))
-        logger.info("paddle1.width : %d" % (logbuff.paddle1.width))
-        logger.info("paddle1.dirY : %d" % (logbuff.paddle1.dirY))
-        logger.info("paddle1.speed : %d" % (logbuff.paddle1.speed))
-        logger.info("paddle1.move : %s" % (logbuff.paddle1.move))
-        logger.info("paddle2.positionX : %d" % (logbuff.paddle2.positionX))
-        logger.info("paddle2.width : %d" % (logbuff.paddle2.width))
-        logger.info("paddle2.dirY : %d" % (logbuff.paddle2.dirY))
-        logger.info("paddle2.speed : %d" % (logbuff.paddle2.speed))
-        logger.info("paddle2.move : %s" % (logbuff.paddle2.move))
-        logger.info("ball.positionX : %d" % (logbuff.ball.positionX))
-        logger.info("ball.positionY : %d" % (logbuff.ball.positionY))
-        logger.info("ball.dirX : %d" % (logbuff.ball.dirX))
-        logger.info("ball.dirY : %d" % (logbuff.ball.dirY))
-        logger.info("ball.speed : %d" % (logbuff.ball.speed))
-        logger.info("active : %d" % (logbuff.status))
+        # logger.info("playeer1_user_id : %s" % (logbuff.player1_user_id))
+        # logger.info("player2_user_id : %s" % (logbuff.player2_user_id))
+        # logger.info("player1_user_name : %s" % (logbuff.player1_user_name))
+        # logger.info("player2_user_name : %s" % (logbuff.player2_user_name))
+        # logger.info("group_name : %s" % (logbuff.group_name))
+        # logger.info("players_nb : %d" % (logbuff.players_nb))
+        # logger.info("player1Score : %d" % (logbuff.player1Score))
+        # logger.info("player2Score : %d" % (logbuff.player2Score))
+        # logger.info("paddle1.positionX : %d" % (logbuff.paddle1.positionX))
+        # logger.info("paddle1.width : %d" % (logbuff.paddle1.width))
+        # logger.info("paddle1.dirY : %d" % (logbuff.paddle1.dirY))
+        # logger.info("paddle1.speed : %d" % (logbuff.paddle1.speed))
+        # logger.info("paddle1.move : %s" % (logbuff.paddle1.move))
+        # logger.info("paddle2.positionX : %d" % (logbuff.paddle2.positionX))
+        # logger.info("paddle2.width : %d" % (logbuff.paddle2.width))
+        # logger.info("paddle2.dirY : %d" % (logbuff.paddle2.dirY))
+        # logger.info("paddle2.speed : %d" % (logbuff.paddle2.speed))
+        # logger.info("paddle2.move : %s" % (logbuff.paddle2.move))
+        # logger.info("ball.positionX : %d" % (logbuff.ball.positionX))
+        # logger.info("ball.positionY : %d" % (logbuff.ball.positionY))
+        # logger.info("ball.dirX : %d" % (logbuff.ball.dirX))
+        # logger.info("ball.dirY : %d" % (logbuff.ball.dirY))
+        # logger.info("ball.speed : %d" % (logbuff.ball.speed))
+        # logger.info("active : %d" % (logbuff.status))
 
     async def generate_group_name(self, length=8):
         global group_names

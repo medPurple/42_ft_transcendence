@@ -28,8 +28,8 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 		query_string = self.scope['query_string'].decode()
 		params = parse_qs(query_string)
 		token = params.get('token', [None])[0]
-		logger.debug('TOKRRRRREN')
-		logger.debug(token)
+		# logger.debug('TOKRRRRREN')
+		# logger.debug(token)
 		if token is not None:
 			token_service_url = 'https://JWToken:4430/api/token/'
 			try:

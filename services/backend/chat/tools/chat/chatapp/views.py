@@ -16,7 +16,7 @@ class chat_history(APIView):
             else:
                 messages = Message.objects.all()
             serializer = MessageSerializer(messages, many=True)
-            logger.debug(serializer.data)
+            # logger.debug(serializer.data)
             return Response({'success': True, 'data': serializer.data}, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=200)
