@@ -12,34 +12,30 @@ export class chat {
 	}
 
 	async getusername(id) {
-
-		console.log('id', id);
 		const users = await Iuser.getAllUsers();
 		let username = users.users.find(user => user.user_id === parseInt(id)).username;
-		console.log('username', username);
 		return username;
-
 	}
 
 	createChatDiv() {
 		const chatDiv = document.createElement('div');
-		chatDiv.classList.add('m-3', 'rounded', 'd-flex');;
-		chatDiv.style.height = 'calc(100vh - 2rem)';
+		chatDiv.classList.add('row', 'p-3');
 		chatDiv.id = 'chatDiv';
 		return chatDiv;
 	}
 
 	async createUsersDiv() {
 		const usersDiv = document.createElement('div');
-		usersDiv.classList.add('d-flex', 'flex-column', 'rounded');
-		usersDiv.style.flex = '1'; // Ajoute la propriété flex
+		usersDiv.classList.add('col-4', 'p-3');
+		usersDiv.style.flex = 'flex';
+		usersDiv.style.flexDirection = 'column';
 		usersDiv.id = 'usersDiv';
 
-		const title = document.createElement('h2'); // Crée un nouvel élément de titre
-		title.textContent = 'User List'; // Ajoute du texte au titre
-		title.classList.add('text-underline', 'mt-3'); // Ajoute une marge en haut et souligne le texte
-		usersDiv.appendChild(title); // Ajoute le titre à usersDiv
-
+		const title = document.createElement('button');
+		title.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-dark', 'mb-2');
+		title.style.color = 'white';
+		title.textContent = 'Add friend: ';
+		usersDiv.appendChild(title);
 
 		const response = await Iuser.getAllUsers();
 		const id = await Iuser.getID()
@@ -51,7 +47,6 @@ export class chat {
 				userButton.textContent = user.username;
 				usersDiv.appendChild(userButton);
 				userButton.onclick = async (e) => {
-					console.log("user id ", user.user_id);
 					this.targetid = user.user_id;
 					const interactiondiv = document.querySelector('.interactionDiv');
 					const Nonediv = document.querySelector('.Nonediv');
@@ -73,33 +68,34 @@ export class chat {
 				}
 			}
 		});
-
 		return usersDiv;
 	}
 
 	async createMessagesDiv() {
 		const messagesDiv = document.createElement('div');
-		messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
+		messagesDiv.classList.add('p-3', 'mt-auto', 'bg-white', 'rounded');
 		messagesDiv.id = 'messagesDiv';
 		messagesDiv.textContent = '';
-		messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
+		messagesDiv.style.overflowY = 'scroll';
 		return messagesDiv;
 	}
 
 	createInputDiv() {
 		const inputDiv = document.createElement('div');
 		inputDiv.id = 'inputDiv';
-		inputDiv.classList.add('p-3', 'mt-auto');
+		inputDiv.classList.add('mt-3');
 
-		const input = document.createElement('input');
-		input.type = 'text';
+		const input = document.createElement('textarea');
 		input.id = 'messageInput';
-		input.classList.add('form-control', 'mr-2');
+		input.classList.add('form-control');
+		input.placeholder = 'Write here...';
+		input.rows = 3;
+		input.style.resize = 'none';
 
 		const sendButton = document.createElement('button');
 		sendButton.id = 'sendButton';
 		sendButton.textContent = 'Send';
-		sendButton.classList.add('btn', 'btn-dark');
+		sendButton.classList.add('btn', 'btn-dark', 'mt-3', 'm-2');
 
 		inputDiv.appendChild(input);
 		inputDiv.appendChild(sendButton);
@@ -110,13 +106,12 @@ export class chat {
 	async createTitleDiv() {
 		const response = await Iuser.getAllUsers();
 		let user = response.users.find(user => user.user_id === parseInt(this.targetid));
-		// console.warn(user)
 
 		const titleDiv = document.createElement('div');
 		titleDiv.id = 'titleDiv';
-		titleDiv.classList.add('bg-light', 'mb-3', 'align-items-center', 'w-100', 'p-1', 'border', 'rounded');
+		titleDiv.classList.add('bg-light', 'mb-3', 'align-items-center', 'w-100', 'p-3', 'border', 'rounded');
 
-		const titleElement = document.createElement('h1');
+		const titleElement = document.createElement('h4');
 		titleElement.textContent = user.username;
 		titleElement.href = `/friend-profile/${user.username}`;
 		titleElement.setAttribute('data-link', '');
@@ -125,7 +120,7 @@ export class chat {
 		const inviteButton = document.createElement('button');
 		inviteButton.id = 'inviteButton';
 		inviteButton.textContent = 'Invite';
-		inviteButton.classList.add('btn', 'btn-secondary', 'ml-3', 'mr-3', 'mb-3', 'p-2'); // Ajoute les classes ml-auto et mr-2
+		inviteButton.classList.add('btn', 'btn-light', 'm-2', 'border-dark');
 
 		titleDiv.appendChild(titleElement);
 		titleDiv.appendChild(inviteButton);
@@ -135,7 +130,7 @@ export class chat {
 			const unblockButton = document.createElement('button');
 			unblockButton.id = 'unblockButton';
 			unblockButton.textContent = 'Unblock';
-			unblockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3'); // Ajoute la classe mr-2
+			unblockButton.classList.add('btn', 'btn-secondary', 'm-2');
 			this.unblockExec(unblockButton, user.username);
 			titleDiv.appendChild(unblockButton);
 
@@ -144,7 +139,7 @@ export class chat {
 			const blockedButton = document.createElement('button');
 			blockedButton.id = 'blockedButton';
 			blockedButton.textContent = 'Blocked';
-			blockedButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3');
+			blockedButton.classList.add('btn', 'btn-secondary', 'm-2');
 			blockedButton.disabled = true;
 			titleDiv.appendChild(blockedButton);
 
@@ -152,11 +147,10 @@ export class chat {
 			const blockButton = document.createElement('button');
 			blockButton.id = 'blockButton';
 			blockButton.textContent = 'Block';
-			blockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3', 'mb-3', 'p-2'); // Ajoute la classe mr-2
+			blockButton.classList.add('btn', 'btn-secondary', 'm-2');
 			this.blockExec(blockButton, user.username);
 			titleDiv.appendChild(blockButton);
 		}
-
 		return titleDiv;
 	}
 
@@ -164,7 +158,6 @@ export class chat {
 		blockButton.onclick = async () => {
 			try {
 				const blockIsValid = await Ifriends.blockUser(username);
-				console.log(blockIsValid);
 				if (blockIsValid.success) {
 					blockButton.textContent = 'User is blocked';
 					blockButton.disabled = true;
@@ -179,7 +172,6 @@ export class chat {
 		unblockButton.onclick = async () => {
 			try {
 				const unblockIsValid = await Ifriends.unblockUser(username);
-				console.log(unblockIsValid)
 				if (unblockIsValid.success) {
 					unblockButton.textContent = 'User is unblocked';
 					unblockButton.disabled = true;
@@ -194,7 +186,6 @@ export class chat {
 		const username = await this.getusername(id)
 		try {
 			const blockStatus = await Ifriends.getUserBlock(username);
-			console.log(blockStatus);
 			if (blockStatus.success) {
 				return true;
 			}
@@ -204,19 +195,16 @@ export class chat {
 		} catch (error) {
 			console.error('Error:', error);
 		}
-
 	}
-
 
 	async createInteractionDiv() {
 		const interactiondiv = document.createElement('div');
 		interactiondiv.classList.add('interactionDiv', 'd-flex', 'flex-column', 'p-3');
-		interactiondiv.style.flex = '3'; // Ajoute la propriété flex
+		interactiondiv.style.flex = '3';
 
 		const messagesDiv = await this.createMessagesDiv();
 		const inputDiv = this.createInputDiv();
 		const titleDiv = await this.createTitleDiv();
-
 
 		interactiondiv.appendChild(titleDiv);
 		interactiondiv.appendChild(messagesDiv);
@@ -227,15 +215,14 @@ export class chat {
 
 	createNonediv() {
 		const Nonediv = document.createElement('div');
-		Nonediv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded', 'Nonediv');
-		Nonediv.style.width = '100%'; // Set the width to 100%
-		Nonediv.style.height = '100%'; // Set the height to 100%
-		Nonediv.style.display = 'flex'; // Set display to flex
-		Nonediv.style.justifyContent = 'center'; // Center along the main axis
-		Nonediv.style.alignItems = 'center'; // Center along the cross axis
+		Nonediv.classList.add('col-8', 'Nonediv', 'p-3');
+		Nonediv.style.height = '80vw';
+		Nonediv.style.width = 'auto';
+		Nonediv.style.display = 'flex';
+		Nonediv.style.flexDirection = 'column';
 
 		const img = new Image();
-		img.classList.add('w-100', 'h-100'); // Set width and height to 100%
+		img.classList.add('w-100');
 		img.src = "../../../images/Site/AloneAgain.gif";
 
 		Nonediv.appendChild(img);
@@ -257,43 +244,62 @@ export class chat {
 	}
 
 	async addMessage(user_id, message, timestamp) {
+		const userID = await Iuser.getID();
+		const userName = await this.getusername(user_id);
+
 		const messagediv = document.querySelector('#messagesDiv');
 		messagediv.classList.add('d-flex', 'flex-column', 'mb-2');
 
-		const messageDiv2 = document.createElement('div'); // Create a new div for each message
-		messageDiv2.classList.add('d-flex', 'mb-2');
-		if (user_id == await Iuser.getID()) {
-			console.log('end user_id', user_id);
+		const messageDiv2 = document.createElement('div');
+		messageDiv2.classList.add('d-flex', 'flex-column', 'mb-2');
+
+		if (user_id == userID)
+		{
 			messageDiv2.classList.add('align-self-end');
+			messageDiv2.style.justifyContent = 'flex-end';
 		}
-		else {
-			console.log('start user_id', user_id);
+		else{
 			messageDiv2.classList.add('align-self-start');
+			messageDiv2.style.justifyItems = 'flex-start';
 		}
 
-		const username = await this.getusername(user_id);
 		const usernameColor = this.getRandomColor();
+		const name = document.createElement('div');
 
-		const name = document.createElement('span');
+		name.textContent = userName;
 		name.style.color = usernameColor;
-		name.textContent = username;
 		name.style.fontWeight = 'bold';
-		messagediv.appendChild(name);
-
-		const time = document.createElement('span');
+		if (user_id == userID)
+			name.classList.add('align-self-end');
+		else
+			name.classList.add('align-self-start');
+		
+		const time = document.createElement('div');
 		let timer = this.timerCalculation(timestamp);
 		time.style.color = 'gray';
 		time.textContent = ' ' + timer;
+		if (user_id == userID)
+			time.classList.add('align-self-end');
+		else
+			time.classList.add('align-self-start');
+
+		messagediv.appendChild(name);
 		messagediv.appendChild(time);
 
-		const msg = document.createElement('p');
-		msg.classList.add('mb-1', 'border', 'border-dark', 'rounded', 'p-2');
+		const msg = document.createElement('div');
+		msg.classList.add('mb-2', 'rounded', 'p-2');
 		msg.style.backgroundColor = 'grey';
+		msg.style.maxWidth = '40vw';
+		msg.style.overflow = 'auto';
+		msg.style.overflowWrap = 'break-word';
 		msg.textContent = message;
-		console.log(user_id, await Iuser.getID());
-		msg.style.backgroundColor = 'grey';
-		if (user_id == await Iuser.getID())
+		msg.style.textAlign = 'left';
+		if (user_id == userID){
 			msg.style.backgroundColor = 'lightgrey';
+			msg.classList.add('align-self-end');
+		}
+		else
+			msg.classList.add('align-self-start');
 
 		messageDiv2.appendChild(msg);
 		messagediv.appendChild(messageDiv2);
@@ -301,7 +307,6 @@ export class chat {
 
 	timerCalculation(date) {
 		try {
-			console.log(date);
 			let time = new Date(date);
 			if (isNaN(time.getTime())) {
 				return 0;
@@ -344,10 +349,9 @@ export class chat {
 		const acceptButton = document.createElement('button');
 		acceptButton.id = 'acceptButton';
 		acceptButton.textContent = 'Accept';
-		acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
+		acceptButton.classList.add('btn', 'btn-light', 'mt-3', 'm-2', 'border-dark');
 
 		acceptButton.onclick = async (e) => {
-			console.log('accept');
 			this.websocket.send(JSON.stringify({
 				'message': '@accept@',
 				'user_id': await Iuser.getID()
@@ -359,7 +363,6 @@ export class chat {
 			acceptButton.remove();
 			refuseButton.remove();
 		}
-
 		return acceptButton;
 	}
 
@@ -367,10 +370,9 @@ export class chat {
 		const refuseButton = document.createElement('button');
 		refuseButton.id = 'refuseButton';
 		refuseButton.textContent = 'Refuse';
-		refuseButton.classList.add('btn', 'btn-secondary');
+		refuseButton.classList.add('btn', 'btn-secondary', 'mt-3', 'm-2', 'border-dark');
 
 		refuseButton.onclick = async (e) => {
-			console.log('refuse');
 			this.websocket.send(JSON.stringify({
 				'message': '@refuse@',
 				'user_id': await Iuser.getID()
@@ -382,9 +384,7 @@ export class chat {
 			acceptButton.remove();
 			refuseButton.remove();
 		}
-
 		return refuseButton;
-
 	}
 
 	async checkInviteStatus(data, id) {
@@ -428,7 +428,7 @@ export class chat {
 		else
 			roomName = this.targetid + '_' + myid;
 
-		const response = await fetch(`https://localhost:4430/api/chat/history/${roomName}`, {
+		const response = await fetch(`https://${window.location.host}/api/chat/history/${roomName}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -437,10 +437,10 @@ export class chat {
 			},
 			credentials: 'include',
 		});
+
 		const data = await response.json();
 		if (data.success) {
 			if (data.data) {
-				console.log(data.data);
 				data.data.forEach(message => {
 					if (message.message[0] !== '@')
 						this.addMessage(message.user_id, message.message, message.timestamp);
@@ -455,13 +455,8 @@ export class chat {
 			+ '/'
 		);
 
-		this.websocket.onopen = function(e) {
-			console.log('Chat socket open');
-		}
-
 		this.websocket.onmessage = async (e) => {
 			const data = JSON.parse(e.data);
-			console.log('data', data);
 			const id = data['user_id'];
 			const message = data['message'];
 			const timestamp = data['time'];
@@ -481,14 +476,12 @@ export class chat {
 				await this.addMessage(id, message, timestamp);
 			}
 			if (this.player1 && this.player2) {
-				if (id == this.player1) {
+				if (id == this.player1)
 					window.location.href = "/play_pc"
-				}
-				else {
+				else
 					setTimeout(() => { window.location.href = "/play_pc"; }, 50);
-				}
 			}
-
+		
 		};
 
 		this.websocket.onclose = function(e) {
@@ -520,53 +513,50 @@ export class chat {
 				'user_id': user_id
 			}));
 		}
+
 	}
 
-	async createParty(id1, id2) {
-		const users = await Iuser.getAllUsers();
-		let username1 = users.users.find(user => user.user_id === parseInt(id1)).username;
-		let username2 = users.users.find(user => user.user_id === parseInt(id2)).username;
-		const party = {
-			"player1": {
-				id: id1,
-				username: username1
-			},
-			"player2": {
-				id: id2,
-				username: username2
-			},
-		}
-		const response = await fetch('https://localhost:4430/api/pong/match/', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': Icookies.getCookie('token'),
-				'X-CSRFToken': Icookies.getCookie('csrftoken')
-			},
-			credentials: 'include',
-			body: JSON.stringify(party)
-		});
-		console.log(response);
-	}
+	// async createParty(id1, id2) {
+	// 	const users = await Iuser.getAllUsers();
+	// 	let username1 = users.users.find(user => user.user_id === parseInt(id1)).username;
+	// 	let username2 = users.users.find(user => user.user_id === parseInt(id2)).username;
+	// 	const party = {
+	// 		"player1": {
+	// 			id: id1,
+	// 			username: username1
+	// 		},
+	// 		"player2": {
+	// 			id: id2,
+	// 			username: username2
+	// 		},
+	// 	}
+	// 	const response = await fetch('https://localhost:4430/api/pong/match/', {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Authorization': Icookies.getCookie('token'),
+	// 			'X-CSRFToken': Icookies.getCookie('csrftoken')
+	// 		},
+	// 		credentials: 'include',
+	// 		body: JSON.stringify(party)
+	// 	});
+	// }
 
-	async changeStatus() {
-		console.log("Changing status to game.");
-		const id = await Iuser.getID();
-		const body = {
-			"userID": id,
-			"status": "game"
-		}
-		const response = await fetch('https://localhost:4430/api/matchmaking/', {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': Icookies.getCookie('token'),
-				'X-CSRFToken': Icookies.getCookie('csrftoken')
-			},
-			credentials: 'include',
-			body: JSON.stringify(body)
-		});
-		console.log(response);
-	}
-
+	// async changeStatus() {
+	// 	const id = await Iuser.getID();
+	// 	const body = {
+	// 		"userID": id,
+	// 		"status": "game"
+	// 	}
+	// 	const response = await fetch('https://localhost:4430/api/matchmaking/', {
+	// 		method: 'PUT',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			'Authorization': Icookies.getCookie('token'),
+	// 			'X-CSRFToken': Icookies.getCookie('csrftoken')
+	// 		},
+	// 		credentials: 'include',
+	// 		body: JSON.stringify(body)
+	// 	});
+	// }
 }

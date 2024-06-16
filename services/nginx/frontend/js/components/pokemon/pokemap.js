@@ -1,32 +1,26 @@
-import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
-
 
 export class pokeMap {
 
-    
 	constructor() {
 		this.userID = null;
 		this.map = 0;
 		this.ctxMAP = null;
 		this.ctxAllCharacters = null;
-        this.eventcmbt = false;
-        this.eventtalk = false;
-        this.mapimage = new Image(520 , 510);
+		this.eventcmbt = false;
+		this.eventtalk = false;
+		this.mapimage = new Image(520 , 510);
 
 	}
 
 	divmapCreation() {
-
 		// MAP DIV
 		const divmap = document.createElement('div');
 		divmap.classList.add('PokeGB');
-
 		// IMG
 		const img = document.createElement('img');
 		img.classList.add('game-boy-background');
 		img.src = '../images/Site/BG-GameBoy-win964x880.png';
-
 		// CANVAS
 		const canvas = document.createElement('canvas');
 		canvas.classList.add('pokecanva');
@@ -42,92 +36,90 @@ export class pokeMap {
 		return divmap;
 	}
 
-    getx(x, mainx) {
-        return 255 + (x - mainx) * 27;
-    }
+	getx(x, mainx) {
+		return 255 + (x - mainx) * 27;
+	}
 
-    gety(y, mainy) {
-        return 226 + (y - mainy) * 27;
-    }
+	gety(y, mainy) {
+		return 226 + (y - mainy) * 27;
+	}
 
-    generateRandomName(){
-        const names = [
-            "Ash",
-            "Misty",
-            "Brock",
-            "Jessie",
-            "James",
-            "Gary",
-            "May",
-            "Dawn"
-        ];
-        const randomIndex = Math.floor(Math.random() * names.length);
-        return names[randomIndex];
-    }
+	generateRandomName(){
+		const names = [
+			"Ash",
+			"Misty",
+			"Brock",
+			"Jessie",
+			"James",
+			"Gary",
+			"May",
+			"Dawn"
+		];
+		const randomIndex = Math.floor(Math.random() * names.length);
+		return names[randomIndex];
+	}
 
-    generateRandomText() {
-        const texts = [
-            "Hello there!",
-            "How are you today?",
-            "Nice weather we're having, isn't it?",
-            "Have you seen any rare Pokémon around?",
-            "I heard there's a hidden treasure nearby.",
-            "Do you want to battle?",
-            "I can teach you a cool move if you're interested.",
-            "I'm looking for a specific Pokémon. Have you seen it?",
-            "Do you know any good training spots?",
-            "I'm on a quest to become the Pokémon Champion!",
-        ];
-        const randomIndex = Math.floor(Math.random() * texts.length);
-        return texts[randomIndex];
-    }
+	generateRandomText() {
+		const texts = [
+			"Hello there!",
+			"How are you today?",
+			"Nice weather we're having, isn't it?",
+			"Have you seen any rare Pokémon around?",
+			"I heard there's a hidden treasure nearby.",
+			"Do you want to battle?",
+			"I can teach you a cool move if you're interested.",
+			"I'm looking for a specific Pokémon. Have you seen it?",
+			"Do you know any good training spots?",
+			"I'm on a quest to become the Pokémon Champion!",
+		];
+		const randomIndex = Math.floor(Math.random() * texts.length);
+		return texts[randomIndex];
+	}
 
-    addPnjtalk(){
-        const chatbox = document.querySelector('.chatbox');
-        const username = this.generateRandomName();
-        const message = this.generateRandomText();
-        chatbox.innerHTML += `<span style="color: black;">${username}</span>: ${message}<br>`;
-        // Heal all pkms
-    }
+	addPnjtalk(){
+		const chatbox = document.querySelector('.chatbox');
+		const username = this.generateRandomName();
+		const message = this.generateRandomText();
+		chatbox.innerHTML += `<span style="color: black;">${username}</span>: ${message}<br>`;
+	}
 
-    drawmap(data){
-        let player = data.find(player => player.userID == this.userID);
-        if (player.player_status === 0){
-            this.eventcmbt = false;
-            this.eventtalk = false;
-        }
-        if (player.player_status === 1){
-            if (this.eventcmbt === false){
-                console.warn("combat");
-                this.eventcmbt = true;
-            }
-        }
-        if (player.player_status === 2){
-            if (this.eventtalk === false){
-                console.warn("talk");
-                this.addPnjtalk();
-                this.eventtalk = true;
-            }
-        }
-    
-        const img = new Image();
-        img.src = this.asset_selection(player.orientation, player.player_skin);
-    
-        if (player.posX != player.lastPosX || player.posY != player.lastPosY) {
-            this.mapimage.src = this.select_map_image(player.player_map);
-        }
-    
-        // Draw mapimage regardless of whether player has moved
-        this.mapimage.onload = () => {
-            let mainx = (player.posX - (19/2)) * 16 + 4;
-            let mainy = (player.posY - (19/2)) * 16 - 3;
-            this.ctxMAP.fillStyle = 'black';
-            this.ctxMAP.fillRect(0, 0, 520, 510);
-            this.ctxMAP.drawImage(this.mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
-            this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 24, 25, 50);
-        }
+	drawmap(data){
+		let player = data.find(player => player.userID == this.userID);
+		if (player.player_status === 0){
+			this.eventcmbt = false;
+			this.eventtalk = false;
+		}
+		if (player.player_status === 1){
+			if (this.eventcmbt === false){
+				console.warn("combat");
+				this.eventcmbt = true;
+			}
+		}
+		if (player.player_status === 2){
+			if (this.eventtalk === false){
+				console.warn("talk");
+				this.addPnjtalk();
+				this.eventtalk = true;
+			}
+		}
+		
+		const img = new Image();
+		img.src = this.asset_selection(player.orientation, player.player_skin);
+		
+		if (player.posX != player.lastPosX || player.posY != player.lastPosY) {
+			this.mapimage.src = this.select_map_image(player.player_map);
+		}
+		
+		this.mapimage.onload = () => {
+			let mainx = (player.posX - (19/2)) * 16 + 4;
+			let mainy = (player.posY - (19/2)) * 16 - 3;
+			this.ctxMAP.fillStyle = 'black';
+			this.ctxMAP.fillRect(0, 0, 520, 510);
+			this.ctxMAP.drawImage(this.mapimage, mainx, mainy, 19 * 16, 19 * 16, 0, 0, 520, 510);
+			this.ctxMAP.drawImage(img, 500/2 - 16/2 + 12, 500/2 - 24, 25, 50);
+		}
 		this.map = player.player_map;
-	
+
 		let pmainx = player.posX;
 		let pmainy = player.posY;
 		data.forEach(player => {
@@ -144,131 +136,127 @@ export class pokeMap {
 				}
 			}
 		});
-    }
-    
-    select_map_image(player_map) {
-        switch (player_map){
-            case 0:
-                return './images/Maps/ext.png';
-            case 1:
-                return './images/Maps/litte_house1.png';
-            case 2:
-                return './images/Maps/litte_house2.png';
-            case 3:
-                return './images/Maps/big_house1.png';
-            case 4:
-                return './images/Maps/big_house2.png';
-        }
-    }
+	}
+		
+	select_map_image(player_map) {
+		switch (player_map){
+			case 0:
+				return './images/Maps/ext.png';
+			case 1:
+				return './images/Maps/litte_house1.png';
+			case 2:
+				return './images/Maps/litte_house2.png';
+			case 3:
+				return './images/Maps/big_house1.png';
+			case 4:
+				return './images/Maps/big_house2.png';
+		}
+	}
 
-    asset_selection(orientation, skin) {
-        switch (skin) {
-            case 0:
-                switch (orientation) {
-                    case "N":
-                        return './images/Persos/Guards-Tileset/Guard_00.png';
-                    case "S":
-                        return './images/Persos/Guards-Tileset/Guard_03.png';
-                    case "E":
-                        return './images/Persos/Guards-Tileset/Guard_09.png';
-                    case "W":
-                        return './images/Persos/Guards-Tileset/Guard_06.png';
-                }
-            case 2:
-                switch (orientation) {
-                    case "N":
-                        return './images/Persos/James-Tileset/James_00.png';
-                    case "S":
-                        return './images/Persos/James-Tileset/James_03.png';
-                    case "E":
-                        return './images/Persos/James-Tileset/James_09.png';
-                    case "W":
-                        return './images/Persos/James-Tileset/James_06.png';
-                }
-            case 1:
-                switch (orientation) {
-                    case "N":
-                        return './images/Persos/Jessie-Tileset/Jessie_00.png';
-                    case "S":
-                        return './images/Persos/Jessie-Tileset/Jessie_03.png';
-                    case "E":
-                        return './images/Persos/Jessie-Tileset/Jessie_09.png';
-                    case "W":
-                        return './images/Persos/Jessie-Tileset/Jessie_06.png';
-                }
-        }
-    }
+	asset_selection(orientation, skin) {
+		switch (skin) {
+			case 0:
+				switch (orientation) {
+					case "N":
+						return './images/Persos/Guards-Tileset/Guard_00.png';
+					case "S":
+						return './images/Persos/Guards-Tileset/Guard_03.png';
+					case "E":
+						return './images/Persos/Guards-Tileset/Guard_09.png';
+					case "W":
+						return './images/Persos/Guards-Tileset/Guard_06.png';
+				}
+			case 2:
+				switch (orientation) {
+					case "N":
+						return './images/Persos/James-Tileset/James_00.png';
+					case "S":
+						return './images/Persos/James-Tileset/James_03.png';
+					case "E":
+						return './images/Persos/James-Tileset/James_09.png';
+					case "W":
+						return './images/Persos/James-Tileset/James_06.png';
+				}
+			case 1:
+				switch (orientation) {
+					case "N":
+						return './images/Persos/Jessie-Tileset/Jessie_00.png';
+					case "S":
+						return './images/Persos/Jessie-Tileset/Jessie_03.png';
+					case "E":
+						return './images/Persos/Jessie-Tileset/Jessie_09.png';
+					case "W":
+						return './images/Persos/Jessie-Tileset/Jessie_06.png';
+				}
+		}
+	}
 
-    startingPokeverse() {
-        const pokemondiv = document.createElement('div');
-        pokemondiv.appendChild(this.divmapCreation());
-        this.connection();
-        return pokemondiv;
-    }
+	startingPokeverse() {
+		const pokemondiv = document.createElement('div');
+		pokemondiv.appendChild(this.divmapCreation());
+		this.connection();
+		return pokemondiv;
+	}
 
-    async connection() {
-        let id = await Iuser.getID();
+	async connection() {
+		let id = await Iuser.getID();
 
-        const socket = new WebSocket("wss://" + window.location.host + "/ws/pokemap/");
-        this.userID = id;
+		const socket = new WebSocket("wss://" + window.location.host + "/ws/pokemap/");
+		this.userID = id;
 
-        socket.onopen = async (e) => {
-            console.log("WebSocket connection opened.");
-            socket.send(JSON.stringify({
-                action: "connect",
-                userID: id,
-            }));
+		socket.onopen = async (e) => {
+			socket.send(JSON.stringify({
+				action: "connect",
+				userID: id,
+			}));
+		}
 
-        }
+		socket.onclose = async function (event) {
+			return;
+		}
 
+		socket.onmessage = (e) => {
+			let parsed_data = JSON.parse(e.data);
+			this.drawmap(parsed_data);
+			socket.send(JSON.stringify({
+				action: "get_players"
+			}));
+		}
 
-        socket.onclose = async function (event) {
-            return;
-        }
+		document.onkeydown = (event) => {
+			if (event.key == 'ArrowUp') {
+				event.preventDefault();
+				socket.send(JSON.stringify({
+					action: "move",
+					new: "y-",
+					userID: id,
+				}));
 
-        socket.onmessage = (e) => {
-            let parsed_data = JSON.parse(e.data);
-            this.drawmap(parsed_data);
-            socket.send(JSON.stringify({
-                action: "get_players"
-            }));
-        }
-
-        document.onkeydown = (event) => {
-            
-            if (event.key == 'ArrowUp') {
-                event.preventDefault();
-                socket.send(JSON.stringify({
-                    action: "move",
-                    new: "y-",
-                    userID: id,
-                }));
-
-            }
-            if (event.key == 'ArrowDown') {
-                event.preventDefault();
-                socket.send(JSON.stringify({
-                    action: "move",
-                    new: "y+",
-                    userID: id,
-                }));
-            }
-            if (event.key == 'ArrowRight') {
-                event.preventDefault();
-                socket.send(JSON.stringify({
-                    action: "move",
-                    new: "x+",
-                    userID: id,
-                }));
-            }
-            if (event.key == 'ArrowLeft') {
-                event.preventDefault();
-                socket.send(JSON.stringify({
-                    action: "move",
-                    new: "x-",
-                    userID: id,
-                }));
-            }
-        };
-    }
+			}
+			if (event.key == 'ArrowDown') {
+				event.preventDefault();
+				socket.send(JSON.stringify({
+					action: "move",
+					new: "y+",
+					userID: id,
+				}));
+			}
+			if (event.key == 'ArrowRight') {
+				event.preventDefault();
+				socket.send(JSON.stringify({
+					action: "move",
+					new: "x+",
+					userID: id,
+				}));
+			}
+			if (event.key == 'ArrowLeft') {
+				event.preventDefault();
+				socket.send(JSON.stringify({
+					action: "move",
+					new: "x-",
+					userID: id,
+				}));
+			}
+		};
+	}
 }

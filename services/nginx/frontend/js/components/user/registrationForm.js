@@ -1,10 +1,18 @@
 import Icookies from "../cookie/cookie.js"
 
 export default class RegistrationForm extends HTMLElement {
+<<<<<<< HEAD
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+=======
+
+	constructor() {
+		super(); 
+		this.attachShadow({ mode: 'open' });
+		this.shadowRoot.innerHTML = `
+>>>>>>> 8a2f543191fc1ea89b61008b1c2685e6e9f27db1
 		<link rel="stylesheet" href="css/style.css" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
@@ -55,6 +63,7 @@ export default class RegistrationForm extends HTMLElement {
 			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
 				${message}
 			</div>`;
+<<<<<<< HEAD
 
   }
 
@@ -89,12 +98,48 @@ export default class RegistrationForm extends HTMLElement {
       this.showAlert('Password should be at least 8 characters long');
       return false;
     }
+=======
+	}
+
+	validateForm(formData) {
+		const username = formData.get('username');
+		const email = formData.get('email');
+		const password1 = formData.get('password1');
+		const password2 = formData.get('password2');
+		const img = formData.get('profile_picture');
+
+		if (!username || !email || !password1 || !password2) {
+			this.showAlert('All fields must be filled');
+			return false;
+		}
+
+		if (password1 !== password2) {
+			this.showAlert('Passwords do not match');
+			return false;
+		}
+
+		if (!/^[a-zA-Z]+$/.test(username)) {
+			this.showAlert('Username should contain only alphanumeric characters');
+			return false;
+		}
+
+		if (password1.includes(username)) {
+			this.showAlert('Password should not be similar to the username');
+			return false;
+		}
+
+		if (password1.length < 8) {
+			this.showAlert('Password should be at least 8 characters long');
+			return false;
+		}
+>>>>>>> 8a2f543191fc1ea89b61008b1c2685e6e9f27db1
 
     if (img && img.size > 1048576) {
       this.showAlert('Image too large');
       return false;
     }
 
+<<<<<<< HEAD
     return true;
   }
 
@@ -146,6 +191,56 @@ export default class RegistrationForm extends HTMLElement {
       }
     });
   }
+=======
+		return true;
+	}
+	
+	connectedCallback() {
+		const signupForm = this.shadowRoot.getElementById('signup-form');
+		const showAlert = this.showAlert.bind(this);
+		const validateForm = this.validateForm.bind(this);
+		signupForm.addEventListener('submit', async function(event) {
+			event.preventDefault();
+
+			try {
+				const formData = new FormData(signupForm);
+				if (!validateForm(formData)) {
+					return;
+				}
+
+				const response = await 	fetch('/api/profiles/register/', {
+					method: 'POST',
+					body: formData,
+					headers: {
+						'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+					}
+				});
+
+				const data = await response.json();
+				if (data.success) {
+					Icookies.setCookie('token', data.token, 90);
+					window.location.href = `/home`;
+				} else {
+					if (data.password2){
+						showAlert(data.password2[0]);
+						return;
+					}
+					else if (data.username){
+						showAlert(data.username);
+						return;
+					}
+					else if (data.email){
+						showAlert(data.email);
+						return;
+					}
+					showAlert('Registration failed. Please check the form and try again.');
+				}
+			} catch(error) {
+				showAlert('Error:', error);
+			}
+		});
+	}
+>>>>>>> 8a2f543191fc1ea89b61008b1c2685e6e9f27db1
 }
 
 customElements.define('registration-form', RegistrationForm);

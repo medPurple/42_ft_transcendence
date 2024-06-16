@@ -1,4 +1,3 @@
-import Ifriends from "./friendsInfo.js";
 import Iuser from "../user/userInfo.js";
 
 export class FriendsProfile {

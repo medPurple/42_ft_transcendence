@@ -8,7 +8,7 @@ export default async () => {
 		document.body.appendChild(logdiv);
 	} else {
 		alert("You need to be logged in to see your friends");
-        window.location.href = '/home';
+		window.location.href = '/home';
 	}
-	return logdiv; /// ATTENTION CONSOLE ERROR in browser: Reference error: logdiv is not defined
+	return logdiv;
 }

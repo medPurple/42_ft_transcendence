@@ -86,19 +86,16 @@ export default class pkmSettingsForm extends HTMLElement {
 			const formData = new FormData(editSettings);
 			const selectedRadio = editSettings.querySelector('input[name="image-radio"]:checked');
 			if (selectedRadio){
-				console.log(selectedRadio.id);
 				let skin = null
 				if (selectedRadio.id === 'radio_jessie') {
 					skin = 1;
 				} else if (selectedRadio.id === 'radio_james') {
 					skin = 2;
 				}
-				console.log(userId, skin)
 				const json = {
                     "userID": parseInt(await Iuser.getID(), 10),
                     "player_skin": skin,
                 }
-				console.log(JSON.stringify(json));
 				const response = await fetch(`api/pokemap/player/`, {
 					method: 'PUT',
 					body: JSON.stringify(json),
@@ -109,12 +106,9 @@ export default class pkmSettingsForm extends HTMLElement {
 					},
 					credentials: 'include',
 				});
-				console.log(response);
 				if (response.ok) {
-					console.log('Settings updated successfully');
 					window.location.href = '/metaService';
 				} else {
-					console.log('Something went wrong updating the settings');
 					alert('An error occurred submitting the settings. Please try again.');
 				}
 			}

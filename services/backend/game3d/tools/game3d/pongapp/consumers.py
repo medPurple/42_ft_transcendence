@@ -28,6 +28,8 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         self.group_name = 0
         self.actual_match = 0
         self.tournament = Tournament()
+        self.gameUser = 0
+        self.user_id = 0
 
     async def connect(self):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
@@ -35,11 +37,11 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         self.user2 = self.scope["url_route"]["kwargs"]["user2"]
         self.user3 = self.scope["url_route"]["kwargs"]["user3"]
         self.user4 = self.scope["url_route"]["kwargs"]["user4"]
+        self.gameUser = await sync_to_async(lambda: GameUser.objects.get(userID=self.user_id))()
         self.players = [self.user1, self.user2, self.user3, self.user4]
         await self.accept()
         self.group_name = await self.generate_tournament_name()
         await self.channel_layer.group_add(self.group_name, self.channel_name)
-        # await self.tournamentLoop()
         await self.findTournamentGame(0, self.user1, self.user2)
 
     async def disconnect(self, close_code):
@@ -65,15 +67,14 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
     async def game_state(self,event):
         await self.send(text_data=json.dumps(event["game_state"]))
 
-    # la
     async def findTournamentGame(self, gameNbr, player1, player2):
         self.tournament.games[gameNbr].game_mode = "tournament"
         self.actual_match = self.tournament.games[gameNbr]
         self.tournament.games[gameNbr].group_name = self.group_name
         self.tournament.games[gameNbr].paddle1 = paddleC(1)
         self.tournament.games[gameNbr].paddle2 = paddleC(2)
-        self.tournament.games[gameNbr].limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).score)()
-        self.tournament.games[gameNbr].shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.user_id).powerups)()
+        self.tournament.games[gameNbr].limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).score)()
+        self.tournament.games[gameNbr].shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).powerups)()
         self.tournament.games[gameNbr].players_nb = 2
         self.tournament.games[gameNbr].player1_user_name = player1
         self.tournament.games[gameNbr].player2_user_name = player2
@@ -101,8 +102,6 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
                 with self.actual_match._lock:
                     self.actual_match.players_ready += 1
 
-
-    # la
     async def load_game(self,event):
         # Récupérer les données du jeu
         game_data = event["load_game"]
@@ -277,23 +276,15 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
                 self.gameState.group_name = await self.generate_group_name()
                 self.gameState.player1_user_id = self.user_id
                 self.gameState.player1_user_name = self.user_name
-                logger.info("%s mon objet", self.user_name)
-                await self.logObject(self.gameState)
-                logger.info("Je passe avant les fonctions asynchrones")
                 self.gameUser = await sync_to_async(lambda: GameUser.objects.get(userID=self.user_id))()
-                logger.info("Je passe avant la premiere fonction asynchrones")
                 self.gameState.limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).score)()
                 self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).powerups)()
-                logger.info("Je passe apres les fonctions asynchrones")
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             return newPart
         else:
-            logger.info("2 Je join la partie")
             self.player_id = 2 
             await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = remote_parties[listLen - 1]
-            logger.info("%s mon objet", self.user_name)
-            await self.logObject(self.gameState)
             with self.gameState._lock:
                 await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
                 self.gameState.player2_user_id = self.user_id 
@@ -389,16 +380,13 @@ class PongChatConsumer(AsyncWebsocketConsumer):
         self.user_name = self.scope["url_route"]["kwargs"]["user_name"]
         if await self.checkForReconnexion():
             await self.accept()
-            logger.info("%s Je cherche a me reconnecter", self.user_name)
             self.gameState = await self.rejoinRemoteParty()
             self.gameState.players_ready += 1
             if (self.gameState.players_ready == 2):
                 self.gameState.status = iv.RUNNING
         else :
             await self.accept()
-            logger.info("%s Je cherche a creer/joindre une partie", self.user_name)
             await self.findRemoteParty()
-
 
     async def disconnect(self, close_code):
 
@@ -427,15 +415,12 @@ class PongChatConsumer(AsyncWebsocketConsumer):
                     if (self.player_id == 2 and self.gameState.player_2_has_validate == 0):
                         self.gameState.players_ready += 1
                         self.gameState.player_2_has_validate = 1
-                    
 
     async def findRemoteParty(self):
         global chat_parties
         listLen = len(chat_parties)
-        logger.info("listLen : %d", listLen)
         if (listLen == 0 or chat_parties[listLen - 1].players_nb == 2 or 
             (chat_parties[listLen - 1].status == iv.PAUSED and chat_parties[listLen-1].players_nb == 2)):
-            logger.info("1 Je cree la partie")
             newPart = gameStateC()
             chat_parties.append(newPart)
             self.player_id = 1
@@ -447,23 +432,15 @@ class PongChatConsumer(AsyncWebsocketConsumer):
                 self.gameState.group_name = await self.generate_group_name()
                 self.gameState.player1_user_id = self.user_id
                 self.gameState.player1_user_name = self.user_name
-                logger.info("%s mon objet", self.user_name)
-                await self.logObject(self.gameState)
-                logger.info("Je passe avant les fonctions asynchrones")
                 self.gameUser = await sync_to_async(lambda: GameUser.objects.get(userID=self.user_id))()
-                logger.info("Je passe avant la premiere fonction asynchrones")
                 self.gameState.limitScore = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).score)()
                 self.gameState.shouldHandlePowerUp = await sync_to_async(lambda: GameSettings.objects.get(user=self.gameUser).powerups)()
-                logger.info("Je passe apres les fonctions asynchrones")
             await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
             return newPart
         else:
-            logger.info("2 Je joins la partie")
             self.player_id = 2 
             await self.send(text_data=json.dumps({"player": self.player_id}))
             self.gameState = chat_parties[listLen - 1]
-            logger.info("%s mon objet", self.user_name)
-            await self.logObject(self.gameState)
             with self.gameState._lock:
                 await self.channel_layer.group_add(self.gameState.group_name, self.channel_name)
                 self.gameState.player2_user_id = self.user_id 

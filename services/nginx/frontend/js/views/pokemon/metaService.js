@@ -1,6 +1,5 @@
 
 export default () => `
-
 	<div class="container">
 		<div class="row mb-4 g-4">
 			<div class="col-sm-4">
@@ -15,5 +14,4 @@ export default () => `
 			</div>
 		</div>
 	</div>
-
 	`;
