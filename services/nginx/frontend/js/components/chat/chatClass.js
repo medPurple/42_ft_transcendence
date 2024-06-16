@@ -88,10 +88,11 @@ export class chat {
 		inputDiv.id = 'inputDiv';
 		inputDiv.classList.add('mt-3');
 
-		const input = document.createElement('input');
-		input.type = 'text';
+		const input = document.createElement('textarea');
 		input.id = 'messageInput';
 		input.classList.add('form-control');
+		input.rows = 3;
+		input.style.resize = 'none';
 
 		const sendButton = document.createElement('button');
 		sendButton.id = 'sendButton';
@@ -107,7 +108,6 @@ export class chat {
 	async createTitleDiv() {
 		const response = await Iuser.getAllUsers();
 		let user = response.users.find(user => user.user_id === parseInt(this.targetid));
-		// console.warn(user)
 
 		const titleDiv = document.createElement('div');
 		titleDiv.id = 'titleDiv';
@@ -123,7 +123,6 @@ export class chat {
 		inviteButton.id = 'inviteButton';
 		inviteButton.textContent = 'Invite';
 		inviteButton.classList.add('btn', 'btn-light', 'm-2', 'border-dark'); // Ajoute les classes ml-auto et mr-2
-
 
 		titleDiv.appendChild(titleElement);
 		titleDiv.appendChild(inviteButton);
@@ -261,13 +260,17 @@ export class chat {
 		messageDiv2.classList.add('d-flex', 'flex-column', 'mb-2');
 
 		if (user_id == userID)
+		{
 			messageDiv2.classList.add('align-self-end');
-		else
+			messageDiv2.style.justifyContent = 'flex-end';
+		}
+		else{
 			messageDiv2.classList.add('align-self-start');
+			messageDiv2.style.justifyItems = 'flex-start';
+		}
 
 		const usernameColor = this.getRandomColor();
 		const name = document.createElement('div');
-		// name.classList.add('d-flex', 'mb-2');
 
 		name.textContent = userName;
 		name.style.color = usernameColor;
@@ -291,14 +294,21 @@ export class chat {
 		messagediv.appendChild(name);
 		messagediv.appendChild(time);
 
-		const msg = document.createElement('p');
-		msg.classList.add('mb-2', 'border', 'rounded', 'p-2');
+		const msg = document.createElement('div');
+		msg.classList.add('mb-2', 'rounded', 'p-2');
 		msg.style.backgroundColor = 'grey';
+		msg.style.maxWidth = '40vw';
+		msg.style.overflow = 'auto';
+		msg.style.overflowWrap = 'break-word';
 		msg.textContent = message;
-		if (user_id == userID) {
-			msg.style.backgroundColor = 'lightgrey';
+		msg.style.textAlign = 'left';
 
+		if (user_id == userID){
+			msg.style.backgroundColor = 'lightgrey';
+			msg.classList.add('align-self-end');
 		}
+		else
+			msg.classList.add('align-self-start');
 
 		messageDiv2.appendChild(msg);
 		messagediv.appendChild(messageDiv2);
@@ -327,7 +337,6 @@ export class chat {
 	}
 
 	async checkInvite(data, id) {
-
 		if (data === '@invite@') {
 			console.warn('INVITATION BY' + id);
 			return true;
@@ -364,7 +373,6 @@ export class chat {
 			acceptButton.remove();
 			refuseButton.remove();
 		}
-
 		return acceptButton;
 	}
 
@@ -387,9 +395,7 @@ export class chat {
 			acceptButton.remove();
 			refuseButton.remove();
 		}
-
 		return refuseButton;
-
 	}
 
 	async checkInviteStatus(data, id) {
@@ -417,7 +423,6 @@ export class chat {
 			return true;
 		}
 		return false;
-
 	}
 
 	async createChat() {
@@ -443,6 +448,7 @@ export class chat {
 			},
 			credentials: 'include',
 		});
+
 		const data = await response.json();
 		if (data.success) {
 			if (data.data) {
