@@ -78,7 +78,7 @@ export class chat {
   }
 
   async createMessagesDiv() {
-   
+  
     const messagesDiv = document.createElement('div');
     messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
     messagesDiv.id = 'messagesDiv';
@@ -433,7 +433,7 @@ export class chat {
     else
       roomName = this.targetid + '_' + myid;
 
-    const response = await fetch(`https://localhost:4430/api/chat/history/${roomName}`, {
+    const response = await fetch(`https://${window.location.host}/api/chat/history/${roomName}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -455,9 +455,7 @@ export class chat {
       alert('Failed to get chat history');
 
     this.websocket = new WebSocket(
-      'wss://' + window.location.host + '/ws/chat/'
-      + roomName
-      + '/'
+      `wss://${window.location.host}/ws/chat/${roomName}/`
     );
 
     this.websocket.onopen = function(e) {
