@@ -82,7 +82,6 @@ export var lights = {
   pointLight: 0,
   pointLight2: 0,
   pointLight3: 0,
-  //pointLight4: 0,
   spotLight: 0,
   ambientLight: 0
 }
@@ -94,9 +93,6 @@ export var pUpState = {
 }
 
 export const constants = {
-  // WIDTH: 1280, 
-  // HEIGHT: 600,
-  // ASPECT: 2 / 1,
   VIEW_ANGLE: 75,
   NEAR: 0.1,
   FAR: 10000,

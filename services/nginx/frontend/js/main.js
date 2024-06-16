@@ -4,8 +4,6 @@ import home from "./views/home.js";
 import about from "./views/about.js";
 import contact from "./views/contact.js";
 import pongService from "./views/pong3d/pongService.js";
-// import game from "./views/game.js";
-// import pokegame from "./views/pokemon/pokegame.js";
 import pongSettings from "./views/pong3d/pongSettings.js";
 import metaService from "./views/pokemon/metaService.js";
 import code2FA from "./views/user/code2FA.js";
@@ -47,10 +45,6 @@ const routes = {
     title: "Pong Service",
     render: pongService
   },
-  // '/gameService': {
-  // 	title: "Game Service",
-  // 	render: game
-  // },
   '/pongSettings': {
     title: "Pong Settings",
     render: pongSettings
@@ -121,10 +115,6 @@ const routes = {
     title: "Pong Tournament Play",
     render: pong_tournamentplay
   },
-  // '/play_pkr': {
-  // 	title: "Pokemon Remote Play",
-  // 	render: pkm_remoteplay
-  // },
   '/pokemap': {
     title: "Pokemon Map",
     render: pokemap_interactive
@@ -133,10 +123,6 @@ const routes = {
     title: "Pokemon Settings",
     render: pkmSettings
   },
-  // '/pokecombat': {
-  // 	title: "Pokemon Combat",
-  // 	render: pokegame
-  // },
   '/chat': {
     title: "Chat",
     render: chatService
@@ -290,5 +276,3 @@ async function router() {
 
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);
-
-

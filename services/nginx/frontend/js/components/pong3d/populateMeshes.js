@@ -3,354 +3,244 @@ import { constants, gameCustom, palette } from "./config.js"
 
 function setPhysicalMaterial(color, metalness, roughness, iridescence, iridescenceIOR, transmission) {
 
-	var physMaterial = new THREE.MeshPhysicalMaterial({
-		color: color, roughness: roughness,
-		metalness: metalness, iridescence: iridescence,
-		iridescenceIOR: iridescenceIOR
-	})
-	physMaterial.transmission = transmission;
-	return physMaterial;
+  var physMaterial = new THREE.MeshPhysicalMaterial({
+    color: color, roughness: roughness,
+    metalness: metalness, iridescence: iridescence,
+    iridescenceIOR: iridescenceIOR
+  })
+  physMaterial.transmission = transmission;
+  return physMaterial;
 }
-
-// function setStandardMaterial(color, metalness, roughness) {
-
-// 	var stanMaterial = new THREE.MeshStandardMaterial({
-// 		color: color, roughness: roughness,
-// 		metalness: metalness
-// 	})
-// 	return stanMaterial;
-// }
-
-// function setLambertMaterial(color) {
-
-// 	var lambMaterial = new THREE.MeshLambertMaterial({
-// 		color: color
-// 	})
-// 	return lambMaterial;
-// }
 
 function setMeshPhongMaterial(color, shading) {
 
-	const phongMaterial = new THREE.MeshPhongMaterial({
-		color: color,
-		flatShading: shading,
-	})
-	return phongMaterial;
+  const phongMaterial = new THREE.MeshPhongMaterial({
+    color: color,
+    flatShading: shading,
+  })
+  return phongMaterial;
 }
 
 export function populateSelfPaddle(posX, posY) {
 
-	var paddleMaterial;
+  var paddleMaterial;
 
-	switch (gameCustom.ownPaddle) {
-		case 0:
-			paddleMaterial = setMeshPhongMaterial(palette.rose01, 1);
-			break;
-		case 1:
-			paddleMaterial = setMeshPhongMaterial(palette.rose02, 1);
-			break;
-		case 2:
-			paddleMaterial = setMeshPhongMaterial(palette.blue03, 1);
-			break;
-		case 3:
-			paddleMaterial = setMeshPhongMaterial(palette.blue04, 1);
-			break;
-		default:
-			paddleMaterial = setMeshPhongMaterial(palette.black, 1);
-			break;
-	}
+  switch (gameCustom.ownPaddle) {
+    case 0:
+      paddleMaterial = setMeshPhongMaterial(palette.rose01, 1);
+      break;
+    case 1:
+      paddleMaterial = setMeshPhongMaterial(palette.rose02, 1);
+      break;
+    case 2:
+      paddleMaterial = setMeshPhongMaterial(palette.blue03, 1);
+      break;
+    case 3:
+      paddleMaterial = setMeshPhongMaterial(palette.blue04, 1);
+      break;
+    default:
+      paddleMaterial = setMeshPhongMaterial(palette.black, 1);
+      break;
+  }
 
-	var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
+  var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
 
-	paddle.position.x = posX;
-	paddle.position.y = posY;
-	paddle.position.z = constants.paddleDepth;
-	paddle.receiveShadow = true;
-	paddle.castShadow = true;
+  paddle.position.x = posX;
+  paddle.position.y = posY;
+  paddle.position.z = constants.paddleDepth;
+  paddle.receiveShadow = true;
+  paddle.castShadow = true;
 
-	return paddle;
+  return paddle;
 }
 
 export function populateOtherPaddle(posX, posY) {
 
-	var paddleMaterial;
+  var paddleMaterial;
 
-	if (gameCustom.otherPaddle == gameCustom.ownPaddle) {
-		if (gameCustom.ownPaddle == 4)
-			gameCustom.otherPaddle = 1;
-		else
-			gameCustom.otherPaddle = 4;
-	}
+  if (gameCustom.otherPaddle == gameCustom.ownPaddle) {
+    if (gameCustom.ownPaddle == 4)
+      gameCustom.otherPaddle = 1;
+    else
+      gameCustom.otherPaddle = 4;
+  }
 
-	switch (gameCustom.otherPaddle) {
-		case 0:
-			paddleMaterial = setMeshPhongMaterial(palette.rose01, 1);
-			break;
-		case 1:
-			paddleMaterial = setMeshPhongMaterial(palette.rose02, 1);
-			break;
-		case 2:
-			paddleMaterial = setMeshPhongMaterial(palette.blue03, 1);
-			break;
-		case 3:
-			paddleMaterial = setMeshPhongMaterial(palette.blue04, 1);
-			break;
-		default:
-			paddleMaterial = setMeshPhongMaterial(palette.black, 1);
-			break;
-	}
+  switch (gameCustom.otherPaddle) {
+    case 0:
+      paddleMaterial = setMeshPhongMaterial(palette.rose01, 1);
+      break;
+    case 1:
+      paddleMaterial = setMeshPhongMaterial(palette.rose02, 1);
+      break;
+    case 2:
+      paddleMaterial = setMeshPhongMaterial(palette.blue03, 1);
+      break;
+    case 3:
+      paddleMaterial = setMeshPhongMaterial(palette.blue04, 1);
+      break;
+    default:
+      paddleMaterial = setMeshPhongMaterial(palette.black, 1);
+      break;
+  }
 
-	var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
+  var paddle = new THREE.Mesh(new THREE.BoxGeometry(constants.paddleWidth, constants.paddleHeight, constants.paddleDepth, constants.paddleQuality, constants.paddleQuality, constants.paddleQuality), paddleMaterial);
 
-	paddle.position.x = posX;
-	paddle.position.y = posY;
-	paddle.position.z = constants.paddleDepth;
-	paddle.receiveShadow = true;
-	paddle.castShadow = true;
+  paddle.position.x = posX;
+  paddle.position.y = posY;
+  paddle.position.z = constants.paddleDepth;
+  paddle.receiveShadow = true;
+  paddle.castShadow = true;
 
-	return paddle;
+  return paddle;
 }
 
 export function populateBall(posX, posY) {
 
-	var radius = 5, segments = 6, rings = 6;
-	var ballMaterial;
+  var radius = 5, segments = 6, rings = 6;
+  var ballMaterial;
 
-	switch (gameCustom.ball) {
-		case 0:
-			ballMaterial = setPhysicalMaterial(palette.yellow, 1, 0.7, 0, 0, 0);
-			break;
-		case 1:
-			ballMaterial = setPhysicalMaterial(palette.white, 1, 0.7, 0, 0, 0);
-			break;
-		default:
-			ballMaterial = setPhysicalMaterial(palette.blue01, 1, 0.7, 0, 0, 0);
-			break;
-	}
+  switch (gameCustom.ball) {
+    case 0:
+      ballMaterial = setPhysicalMaterial(palette.yellow, 1, 0.7, 0, 0, 0);
+      break;
+    case 1:
+      ballMaterial = setPhysicalMaterial(palette.white, 1, 0.7, 0, 0, 0);
+      break;
+    default:
+      ballMaterial = setPhysicalMaterial(palette.blue01, 1, 0.7, 0, 0, 0);
+      break;
+  }
 
-	var ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), ballMaterial);
+  var ball = new THREE.Mesh(new THREE.SphereGeometry(radius, segments, rings), ballMaterial);
 
-	ball.position.x = posX;
-	ball.position.y = posY;
-	ball.position.z = radius;
-	ball.receiveShadow = true;
-	ball.castShadow = true;
+  ball.position.x = posX;
+  ball.position.y = posY;
+  ball.position.z = radius;
+  ball.receiveShadow = true;
+  ball.castShadow = true;
 
-	return ball;
+  return ball;
 }
 
 export function populatePlane(posX, posY) {
 
-	var planeMaterial = setMeshPhongMaterial(palette.white, 0);
-	var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth, constants.planeHeight * 0.95, constants.planeQuality, constants.planeQuality), planeMaterial);
+  var planeMaterial = setMeshPhongMaterial(palette.white, 0);
+  var plane = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth, constants.planeHeight * 0.95, constants.planeQuality, constants.planeQuality), planeMaterial);
 
-	plane.position.x = posX;
-	plane.position.y = posY;
+  plane.position.x = posX;
+  plane.position.y = posY;
 
-	return plane;
+  return plane;
 }
 
 export function populateLine(posX, posY) {
 
-	var lineMaterial = setMeshPhongMaterial(palette.white, 0);
-	var line = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight * 0.95, constants.planeQuality, constants.planeQuality), lineMaterial);
+  var lineMaterial = setMeshPhongMaterial(palette.white, 0);
+  var line = new THREE.Mesh(new THREE.PlaneGeometry(constants.planeWidth * 0.95, constants.planeHeight * 0.95, constants.planeQuality, constants.planeQuality), lineMaterial);
 
-	line.position.x = posX;
-	line.position.y = posY;
+  line.position.x = posX;
+  line.position.y = posY;
 
-	return line;
+  return line;
 }
 
 export function populateHorizontalLine(posX, posY) {
 
-	var lineMaterial = setMeshPhongMaterial(palette.white, 0);
-	var line = new THREE.Mesh(new THREE.PlaneGeometry(constants.tableWidth * 0.90, constants.planeWidth, constants.planeQuality, constants.planeQuality), lineMaterial);
+  var lineMaterial = setMeshPhongMaterial(palette.white, 0);
+  var line = new THREE.Mesh(new THREE.PlaneGeometry(constants.tableWidth * 0.90, constants.planeWidth, constants.planeQuality, constants.planeQuality), lineMaterial);
 
-	line.position.x = posX;
-	line.position.y = posY;
+  line.position.x = posX;
+  line.position.y = posY;
 
-	return line;
+  return line;
 }
 
 
 export function populateTable(posX, posY, posZ) {
 
-	switch (gameCustom.table) {
-		case 0:
-			var texturePath = "../../../images/Textures/Metal.jpeg";
-			break;
-		case 1:
-			var texturePath = "../../../images/Textures/Concrete.jpeg";
-			break;
-		default:
-			var texturePath = "../../../images/Textures/Wood.jpeg";
-			break;
-	}
+  switch (gameCustom.table) {
+    case 0:
+      var texturePath = "../../../images/Textures/Metal.jpeg";
+      break;
+    case 1:
+      var texturePath = "../../../images/Textures/Concrete.jpeg";
+      break;
+    default:
+      var texturePath = "../../../images/Textures/Wood.jpeg";
+      break;
+  }
 
-	var tableTexture = new THREE.TextureLoader().load(texturePath);
-	var tableMaterial = new THREE.MeshBasicMaterial({ map: tableTexture });
+  var tableTexture = new THREE.TextureLoader().load(texturePath);
+  var tableMaterial = new THREE.MeshBasicMaterial({ map: tableTexture });
 
-	var table = new THREE.Mesh(new THREE.BoxGeometry(constants.tableWidth, constants.tableHeight, constants.tableQuality, constants.tableQuality, 1), tableMaterial);
-	table.position.x = posX;
-	table.position.y = posY;
-	table.position.z = posZ;
-	table.receiveShadow = true;
-	table.castShadow = true;
+  var table = new THREE.Mesh(new THREE.BoxGeometry(constants.tableWidth, constants.tableHeight, constants.tableQuality, constants.tableQuality, 1), tableMaterial);
+  table.position.x = posX;
+  table.position.y = posY;
+  table.position.z = posZ;
+  table.receiveShadow = true;
+  table.castShadow = true;
 
-	return table;
+  return table;
 }
 
 export function populateSkybox() {
 
-	let materialArray = [];
-	
-	let name_file;
-	switch (gameCustom.map) {
-		case 0:
-			name_file = "../../../images/Skybox/01/playground";
-			break;
-		case 1:
-			name_file = "../../../images/Skybox/02/cornfield";
-			break;
-		case 2:
-			name_file = "../../../images/Skybox/03/dormitory";
-			break;
-		case 3:
-			name_file = "../../../images/Skybox/04/ow";
-			break;
-	}
+  let materialArray = [];
 
-	let texture_ft = new THREE.TextureLoader().load(name_file + '_ft.jpg');
-	let texture_bk = new THREE.TextureLoader().load(name_file + '_bk.jpg');
-	let texture_up = new THREE.TextureLoader().load(name_file + '_up.jpg');
-	let texture_dn = new THREE.TextureLoader().load(name_file + '_dn.jpg');
-	let texture_rt = new THREE.TextureLoader().load(name_file + '_rt.jpg');
-	let texture_lf = new THREE.TextureLoader().load(name_file + '_lf.jpg');
+  let name_file;
+  switch (gameCustom.map) {
+    case 0:
+      name_file = "../../../images/Skybox/01/playground";
+      break;
+    case 1:
+      name_file = "../../../images/Skybox/02/cornfield";
+      break;
+    case 2:
+      name_file = "../../../images/Skybox/03/dormitory";
+      break;
+    case 3:
+      name_file = "../../../images/Skybox/04/ow";
+      break;
+  }
 
-	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_ft }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_bk }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_up }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_dn }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_rt }));
-	materialArray.push(new THREE.MeshBasicMaterial( { map: texture_lf }));
+  let texture_ft = new THREE.TextureLoader().load(name_file + '_ft.jpg');
+  let texture_bk = new THREE.TextureLoader().load(name_file + '_bk.jpg');
+  let texture_up = new THREE.TextureLoader().load(name_file + '_up.jpg');
+  let texture_dn = new THREE.TextureLoader().load(name_file + '_dn.jpg');
+  let texture_rt = new THREE.TextureLoader().load(name_file + '_rt.jpg');
+  let texture_lf = new THREE.TextureLoader().load(name_file + '_lf.jpg');
 
-	for (let i = 0; i < 6; i++)
-		materialArray[i].side = THREE.BackSide;
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_ft }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_bk }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_up }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_dn }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_rt }));
+  materialArray.push(new THREE.MeshBasicMaterial({ map: texture_lf }));
 
-	let skyboxGeometry;
-	let position = 400;
-	switch (gameCustom.map) {
-		case 0:
-			skyboxGeometry = new THREE.BoxGeometry(2048, 1807, 2048);
-			position = 800;
-			break;
-		case 1:
-			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
-			break;
-		case 2:
-			skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
-			break;
-		case 3:
-			skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
-			break;
-	}
-	
-	let skybox = new THREE.Mesh(skyboxGeometry, materialArray);
-	skybox.rotation.x = Math.PI / 2;
-	skybox.position.z += position;
+  for (let i = 0; i < 6; i++)
+    materialArray[i].side = THREE.BackSide;
 
-	return skybox;
+  let skyboxGeometry;
+  let position = 400;
+  switch (gameCustom.map) {
+    case 0:
+      skyboxGeometry = new THREE.BoxGeometry(2048, 1807, 2048);
+      position = 800;
+      break;
+    case 1:
+      skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+      break;
+    case 2:
+      skyboxGeometry = new THREE.BoxGeometry(2048, 1024, 2048);
+      break;
+    case 3:
+      skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+      break;
+  }
+
+  let skybox = new THREE.Mesh(skyboxGeometry, materialArray);
+  skybox.rotation.x = Math.PI / 2;
+  skybox.position.z += position;
+
+  return skybox;
 }
-
-	
-// export function populateFloor() {
-
-// 	const groundTexLoader = new THREE.TextureLoader();
-
-// 	var path;
-
-// 	// console.log('SCENE in populate floor: ',gameCustom.map);///////////
-
-// 	switch (gameCustom.map) {
-// 		case 0:
-// 			path = '../../../images/Floor/F-Playground.jpg';
-// 			break;
-// 		case 1:
-// 			path = '../../../images/Floor/F-Cornfield.jpg';
-// 			break;
-// 		default:
-// 			path = '../../../images/Floor/F-Concrete.jpg';
-// 			break;
-// 	}
-
-// 	var groundMaterial = new THREE.MeshLambertMaterial({
-// 		map: groundTexLoader.load(path,
-// 		function(texture) {
-// 			texture.wrapS = THREE.ClampToEdgeWrapping;
-// 			texture.wrapT = THREE.ClampToEdgeWrapping;
-// 			texture.minFilter = THREE.LinearFilter;
-// 			texture.magFilter = THREE.LinearFilter;
-// 			// const repeatX = 2200 / 512;
-// 			// const repeatY = 2200 / 512;
-// 			// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-// 			// texture.repeat.set(repeatX, repeatY);
-// 			// texture.minFilter = THREE.LinearFilter;
-// 			// texture.magFilter = THREE.LinearFilter;
-// 		})
-// 	});
-
-// 	var ground = new THREE.Mesh(new THREE.BoxGeometry(constants.groundWidth, constants.groundHeight, constants.groundQuality, 1, 1, 1), groundMaterial);
-// 	ground.position.z = -132;
-// 	ground.receiveShadow = true;
-
-// 	return ground;
-// }
-
-// export function populateWall(player_id) {
-
-// 	const wallTexLoader = new THREE.TextureLoader();
-
-// 	var path;
-
-// 	// console.log('SCENE in populate wall :', gameCustom.map);///////////
-
-// 	switch (gameCustom.map) {
-// 		case 0:
-// 			path = '../../../images/Walls/final/W-Playground.jpg';
-// 			break;
-// 		case 1:
-// 			path = '../../../images/Walls/final/W-Cornfield.jpg';
-// 			break;
-// 		default:
-// 			path = '../../../images/Walls/final/W-Tiled.png';
-// 			break;
-// 	}
-
-// 	var wallMaterial = new THREE.MeshLambertMaterial({
-// 		map: wallTexLoader.load(path, function(texture) {
-// 			texture.wrapS = THREE.ClampToEdgeWrapping;
-// 			texture.wrapT = THREE.ClampToEdgeWrapping;
-// 			texture.minFilter = THREE.LinearFilter;
-// 			texture.magFilter = THREE.LinearFilter;
-// 		})
-// 	});
-
-// 	var wall = new THREE.Mesh(new THREE.BoxGeometry(constants.wallWidth, constants.wallHeight, constants.wallQuality, 1, 1, 1), wallMaterial);
-
-// 	if (player_id == 1) {
-// 		wall.position.x = 500;
-// 	}
-// 	else {
-// 		wall.position.x = -500;
-// 	}
-// 	if (gameCustom.map == 2) {
-// 		wall.position.z = 100;
-// 	}
-// 	else
-// 		wall.position.z = 380;
-// 	wall.rotateY(Math.PI / 2);
-// 	wall.rotateZ(Math.PI / 2);
-// 	wall.receiveShadow = true;
-
-// 	return wall;
-// }

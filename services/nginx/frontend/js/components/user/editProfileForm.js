@@ -2,36 +2,36 @@ import Iuser from "./userInfo.js";
 import Icookies from "../cookie/cookie.js";
 
 export default class editProfileForm extends HTMLElement {
-    constructor(){
-        super();
-        this.attachShadow({mode: 'open'});
-	}
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
 
-	async connectedCallback(){
-		const editProfile = document.createElement('div');
-		editProfile.id = 'edit-profile';
-		this.shadowRoot.appendChild(editProfile);
-		await this.initUserInfo();
-		this.initFormSubmit();
+  async connectedCallback() {
+    const editProfile = document.createElement('div');
+    editProfile.id = 'edit-profile';
+    this.shadowRoot.appendChild(editProfile);
+    await this.initUserInfo();
+    this.initFormSubmit();
 
-	}
+  }
 
-	async initUserInfo() {
-		try {
-			const data = await Iuser.getAllUserInfo();
-			if (data && data.user) {
-                this.displayEditProfileForm(data);
-            } else {
-                console.error('Données utilisateur manquantes ou incorrectes');
-            }
-		} catch (error) {
-			console.error('Error:', error)
-		}
-	}
+  async initUserInfo() {
+    try {
+      const data = await Iuser.getAllUserInfo();
+      if (data && data.user) {
+        this.displayEditProfileForm(data);
+      } else {
+        console.error('Données utilisateur manquantes ou incorrectes');
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
 
-	displayEditProfileForm(data){
-		let editProfileContainer = this.shadowRoot.querySelector('#edit-profile');
-		editProfileContainer.innerHTML = `
+  displayEditProfileForm(data) {
+    let editProfileContainer = this.shadowRoot.querySelector('#edit-profile');
+    editProfileContainer.innerHTML = `
 
 		<link rel="stylesheet" href="css/style.css" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -89,77 +89,73 @@ export default class editProfileForm extends HTMLElement {
 		</div>
 
 		`;
-	}
+  }
 
 
-	showAlert(message, type = 'danger') {
-		const alertContainer = this.shadowRoot.getElementById('alert-container');
-		alertContainer.innerHTML = `
+  showAlert(message, type = 'danger') {
+    const alertContainer = this.shadowRoot.getElementById('alert-container');
+    alertContainer.innerHTML = `
 			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
 				${message}
 			</div>`;
 
-	}
+  }
 
-	validateForm(formData) {
-		// Get the form data
-		const username = formData.get('username');
-		const img = formData.get('profile_picture');
+  validateForm(formData) {
+    const username = formData.get('username');
+    const img = formData.get('profile_picture');
 
 
-		// Check if password is not similar to username
-		if (!/^[a-zA-Z]+$/.test(username)) {
-			this.showAlert('Username should contain only alphanumeric characters');
-			return false;
-		}
+    if (!/^[a-zA-Z]+$/.test(username)) {
+      this.showAlert('Username should contain only alphanumeric characters');
+      return false;
+    }
 
-		if (img && img.size > 1048576) {
-			this.showAlert('Image too large');
-			return false;
-		}
+    if (img && img.size > 1048576) {
+      this.showAlert('Image too large');
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	initFormSubmit() {
-		const editForm = this.shadowRoot.getElementById('edit-profile-form'); // Use getElementById to find the form within the component
-		const showAlert = this.showAlert.bind(this);
-		const validateForm = this.validateForm.bind(this);
-		editForm.addEventListener('submit', async function(event) {
-			event.preventDefault();
+  initFormSubmit() {
+    const editForm = this.shadowRoot.getElementById('edit-profile-form');
+    const showAlert = this.showAlert.bind(this);
+    const validateForm = this.validateForm.bind(this);
+    editForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
 
-			try {
-				const formData = new FormData(editForm);
-				if (!validateForm(formData)) {
-					return;
-				}
+      try {
+        const formData = new FormData(editForm);
+        if (!validateForm(formData)) {
+          return;
+        }
 
-				let jwtToken = Icookies.getCookie('token');
-				let csrfToken = Icookies.getCookie('csrftoken');
-				const response = await fetch('/api/profiles/edit-profile/', {
-					method: 'POST',
-					body: formData,
-					headers: {
-						'Authorization': jwtToken,
-						'X-CSRFToken': csrfToken
-					}
-				});
-				const data = await response.json();
-				if (data.success) {
-					window.location.href = '/home'; // Change the URL to your home page URL
+        let jwtToken = Icookies.getCookie('token');
+        let csrfToken = Icookies.getCookie('csrftoken');
+        const response = await fetch('/api/profiles/edit-profile/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Authorization': jwtToken,
+            'X-CSRFToken': csrfToken
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.location.href = '/home';
 
-				} else {
-					// Display validation errors or any other error message
-					showAlert('Update profile failed. Please check the form and try again.');
-					return;
-				}
+        } else {
+          showAlert('Update profile failed. Please check the form and try again.');
+          return;
+        }
 
-			} catch(error) {
-				showAlert('Error:', error);
-				// Handle API errors
-			}
-		});
-	}
+      } catch (error) {
+        showAlert('Error:', error);
+      }
+    });
+  }
 }
 
 customElements.define('edit-profile-form', editProfileForm);

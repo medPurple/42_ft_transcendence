@@ -119,7 +119,6 @@ function handleServerMessage(message) {
       action(value);
     }
   }
-  // console.log(gameState.status);
 
   switch (gameState.status) {
     case 0:
@@ -142,7 +141,6 @@ function handleServerMessage(message) {
 }
 
 function removeForm() {
-  console.log("Je veux virer le form")
   const divToRemove = document.getElementById('app-general-container');
   divToRemove.classList.add('hidden');
 }
@@ -278,11 +276,9 @@ function endGame() {
   pongscore.classList.add('hidden');
   pongrender.classList.add('hidden');
 
-  console.log("Je passe dans endGame()");
   if (gameState.player1Score == gameState.score_limit || gameState.player2Score == gameState.score_limit) {
     pongscore.innerHTML = '';
     screensdiv.innerHTML = '';
-    //pongrender.innerHTML = '';
     if (gameState.player1Score == gameState.score_limit) {
       screensdiv.innerHTML = `
 				<div id="custom-endgame">

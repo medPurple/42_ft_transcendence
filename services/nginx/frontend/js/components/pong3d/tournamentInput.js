@@ -3,36 +3,36 @@ import { setup } from "./pongServLogic.js";
 
 export class tournamentInput {
 
-	constructor() {
-		this.players = null;
-	}
+  constructor() {
+    this.players = null;
+  }
 
-	async initTournamentInfo() {
-		try {
-			const username = await Iuser.getUsername();
-			const tournamentForm = this.displayTournament(username)
-			return tournamentForm;
-		} catch (error) {
-			console.error('Error', error);
-		}
-	}
+  async initTournamentInfo() {
+    try {
+      const username = await Iuser.getUsername();
+      const tournamentForm = this.displayTournament(username)
+      return tournamentForm;
+    } catch (error) {
+      console.error('Error', error);
+    }
+  }
 
-	displayTournament(username) {
-		let tournamentContainer = document.createElement('div');
-		tournamentContainer.id = 'app-general-container';
-		document.querySelector('main').appendChild(tournamentContainer);
+  displayTournament(username) {
+    let tournamentContainer = document.createElement('div');
+    tournamentContainer.id = 'app-general-container';
+    document.querySelector('main').appendChild(tournamentContainer);
 
-		let alertContainer = document.createElement('div');
-		alertContainer.id = 'alert-container';
-		tournamentContainer.appendChild(alertContainer);
+    let alertContainer = document.createElement('div');
+    alertContainer.id = 'alert-container';
+    tournamentContainer.appendChild(alertContainer);
 
-		let form = document.createElement('form');
-		form.setAttribute('id', 'tournament-form');
-		form.setAttribute('method', 'post');
-		form.setAttribute('action', '');
-		form.setAttribute('class', 'container');
-		let elementContainer =
-			`
+    let form = document.createElement('form');
+    form.setAttribute('id', 'tournament-form');
+    form.setAttribute('method', 'post');
+    form.setAttribute('action', '');
+    form.setAttribute('class', 'container');
+    let elementContainer =
+      `
 				<div class="mb-4">
 				<h5>Who is going to play today?</h5>
 				</div>
@@ -51,32 +51,32 @@ export class tournamentInput {
 				</div>
 				<button type="submit" class="btn btn-dark">Validate</button>
 			`
-		form.innerHTML = elementContainer;
+    form.innerHTML = elementContainer;
 
-		tournamentContainer.appendChild(form);
+    tournamentContainer.appendChild(form);
 
-		form.addEventListener('submit', (event) => {
-			event.preventDefault();
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
 
-			const player2Input = document.querySelector('input[name="player2"]');
-			const player3Input = document.querySelector('input[name="player3"]');
-			const player4Input = document.querySelector('input[name="player4"]');
-			const alphanumericRegex = /^[a-z0-9]+$/i;
-		
-			if (!alphanumericRegex.test(player2Input.value)
-				|| !alphanumericRegex.test(player3Input.value)
-				|| !alphanumericRegex.test(player4Input.value)) {
-				alert('Incorrect player names');
-				return;
-			}
+      const player2Input = document.querySelector('input[name="player2"]');
+      const player3Input = document.querySelector('input[name="player3"]');
+      const player4Input = document.querySelector('input[name="player4"]');
+      const alphanumericRegex = /^[a-z0-9]+$/i;
 
-			const formData = new FormData(form);
-			const players = Object.fromEntries(formData.entries());
+      if (!alphanumericRegex.test(player2Input.value)
+        || !alphanumericRegex.test(player3Input.value)
+        || !alphanumericRegex.test(player4Input.value)) {
+        alert('Incorrect player names');
+        return;
+      }
 
-			this.players = players;
-			setup("tournament", players);
-		});
+      const formData = new FormData(form);
+      const players = Object.fromEntries(formData.entries());
 
-		return tournamentContainer;
-	}
+      this.players = players;
+      setup("tournament", players);
+    });
+
+    return tournamentContainer;
+  }
 }

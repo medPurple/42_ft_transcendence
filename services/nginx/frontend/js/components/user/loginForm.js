@@ -1,10 +1,10 @@
 import Icookies from "../cookie/cookie.js"
 
-export default class LoginForm extends HTMLElement{
-	constructor() {
-		super(); // Always call super first in constructor
-		this.attachShadow({ mode: 'open' }); // Create a new attached DOM tree for the component
-        this.shadowRoot.innerHTML = `
+export default class LoginForm extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
 
 		<link rel="stylesheet" href="css/style.css" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -28,54 +28,50 @@ export default class LoginForm extends HTMLElement{
 				</form>
 		</div>
 		`;
-	}
+  }
 
-	showAlert(message, type = 'danger') {
-		const alertContainer = this.shadowRoot.getElementById('alert-container');
-		alertContainer.innerHTML = `
+  showAlert(message, type = 'danger') {
+    const alertContainer = this.shadowRoot.getElementById('alert-container');
+    alertContainer.innerHTML = `
 			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
 				${message}
 			</div>`;
 
-	}
+  }
 
-	connectedCallback() {
-		const signupForm = this.shadowRoot.getElementById('login-form'); // Use getElementById to find the form within the component
-		const showAlert = this.showAlert.bind(this);
-		signupForm.addEventListener('submit', function(event) {
-			event.preventDefault();
+  connectedCallback() {
+    const signupForm = this.shadowRoot.getElementById('login-form');
+    const showAlert = this.showAlert.bind(this);
+    signupForm.addEventListener('submit', function(event) {
+      event.preventDefault();
 
-            // Get the form data
-			const formData = new FormData(signupForm);
+      const formData = new FormData(signupForm);
 
-            // Send an AJAX request to submit the form
-			fetch('/api/profiles/login/', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'X-CSRFToken': formData.get('csrfmiddlewaretoken') // Get the CSRF token from the form data
-				}
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data.two_fa) {
-					window.location.href = '/code2FA';
-				}
-				else if (data.success) {
-					Icookies.setCookie('token', data.token, 90);
-					window.location.href = '/home'; // Change the URL to your home page URL
+      fetch('/api/profiles/login/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.two_fa) {
+            window.location.href = '/code2FA';
+          }
+          else if (data.success) {
+            Icookies.setCookie('token', data.token, 90);
+            window.location.href = '/home';
 
-				} else {
-                    // Display validation errors or any other error message
-					showAlert('Login failed. Please check the form and try again.')
-				}
-			})
-			.catch(error => {
-				showAlert(error);
-                // Handle API errors
-			});
-		});
-	}
+          } else {
+            showAlert('Login failed. Please check the form and try again.')
+          }
+        })
+        .catch(error => {
+          showAlert(error);
+        });
+    });
+  }
 }
 
 customElements.define('login-form', LoginForm);
