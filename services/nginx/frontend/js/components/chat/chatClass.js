@@ -12,32 +12,34 @@ export class chat {
 	}
 
 	async getusername(id) {
+
 		console.log('id', id);
 		const users = await Iuser.getAllUsers();
 		let username = users.users.find(user => user.user_id === parseInt(id)).username;
 		console.log('username', username);
 		return username;
+
 	}
 
 	createChatDiv() {
 		const chatDiv = document.createElement('div');
-		chatDiv.classList.add('row', 'p-3');
+		chatDiv.classList.add('m-3', 'rounded', 'd-flex');;
+		chatDiv.style.height = 'calc(100vh - 2rem)';
 		chatDiv.id = 'chatDiv';
 		return chatDiv;
 	}
 
 	async createUsersDiv() {
 		const usersDiv = document.createElement('div');
-		usersDiv.classList.add('col-4', 'p-3');
-		usersDiv.style.flex = 'flex';
-		usersDiv.style.flexDirection = 'column';
+		usersDiv.classList.add('d-flex', 'flex-column', 'rounded');
+		usersDiv.style.flex = '1'; // Ajoute la propriété flex
 		usersDiv.id = 'usersDiv';
 
-		const title = document.createElement('button');
-		title.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-dark', 'mb-2');
-		title.style.color = 'white';
-		title.textContent = 'Add friend: ';
-		usersDiv.appendChild(title);
+		const title = document.createElement('h2'); // Crée un nouvel élément de titre
+		title.textContent = 'User List'; // Ajoute du texte au titre
+		title.classList.add('text-underline', 'mt-3'); // Ajoute une marge en haut et souligne le texte
+		usersDiv.appendChild(title); // Ajoute le titre à usersDiv
+
 
 		const response = await Iuser.getAllUsers();
 		const id = await Iuser.getID()
@@ -71,12 +73,13 @@ export class chat {
 				}
 			}
 		});
+
 		return usersDiv;
 	}
 
 	async createMessagesDiv() {
 		const messagesDiv = document.createElement('div');
-		messagesDiv.classList.add('p-3', 'mt-auto', 'bg-white', 'rounded');
+		messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
 		messagesDiv.id = 'messagesDiv';
 		messagesDiv.textContent = '';
 		messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
@@ -86,113 +89,17 @@ export class chat {
 	createInputDiv() {
 		const inputDiv = document.createElement('div');
 		inputDiv.id = 'inputDiv';
-		inputDiv.classList.add('mt-3');
+		inputDiv.classList.add('p-3', 'mt-auto');
 
-		const input = document.createElement('textarea');
+		const input = document.createElement('input');
+		input.type = 'text';
 		input.id = 'messageInput';
-		input.classList.add('form-control');
-		input.placeholder = 'Write here...';
-		input.rows = 3;
-		input.style.resize = 'none';
-
-  constructor() {
-    this.targetid = null;
-    this.websocket = null;
-    this.player1 = null;
-    this.player2 = null;
-  }
-
-  async getusername(id) {
-
-    console.log('id', id);  
-    const users = await Iuser.getAllUsers();
-    let username = users.users.find(user => user.user_id === parseInt(id)).username;
-    console.log('username', username);
-    return username;
-
-  }
-
-  createChatDiv() {
-    const chatDiv = document.createElement('div');
-    chatDiv.classList.add('m-3', 'rounded', 'd-flex');;
-    chatDiv.style.height = 'calc(100vh - 2rem)';
-    chatDiv.id = 'chatDiv';
-    return chatDiv;
-  }
-
-  async createUsersDiv() {
-    const usersDiv = document.createElement('div');
-    usersDiv.classList.add('d-flex', 'flex-column', 'rounded');
-    usersDiv.style.flex = '1'; // Ajoute la propriété flex
-    usersDiv.id = 'usersDiv';
-
-    const title = document.createElement('h2'); // Crée un nouvel élément de titre
-    title.textContent = 'User List'; // Ajoute du texte au titre
-    title.classList.add('text-underline', 'mt-3'); // Ajoute une marge en haut et souligne le texte
-    usersDiv.appendChild(title); // Ajoute le titre à usersDiv
-
-
-    const response = await Iuser.getAllUsers();
-    const id = await Iuser.getID()
-
-    response.users.forEach(user => {
-      if (user.user_id != id) {
-        const userButton = document.createElement('button');
-        userButton.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-light');
-        userButton.textContent = user.username;
-        usersDiv.appendChild(userButton);
-        userButton.onclick = async (e) => {
-          console.log("user id ", user.user_id);
-          this.targetid = user.user_id;
-          const interactiondiv = document.querySelector('.interactionDiv');
-          const Nonediv = document.querySelector('.Nonediv');
-          if (Nonediv)
-            Nonediv.remove();
-          else {
-            this.websocket.send(JSON.stringify({
-              'message': '@refuse@',
-              'user_id': await Iuser.getID()
-            }));
-            this.player1 = null;
-            this.player2 = null;
-            this.websocket.close();
-            interactiondiv.remove();
-          }
-          const newinteractiondiv = await this.createInteractionDiv();
-          document.querySelector('#chatDiv').appendChild(newinteractiondiv);
-          this.createChat();
-        }
-      }
-    });
-
-    return usersDiv;
-  }
-
-  async createMessagesDiv() {
-  
-    const messagesDiv = document.createElement('div');
-    messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
-    messagesDiv.id = 'messagesDiv';
-    messagesDiv.textContent = '';
-    messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
-    return messagesDiv;
-  }
-
-  createInputDiv() {
-    const inputDiv = document.createElement('div');
-    inputDiv.id = 'inputDiv';
-    inputDiv.classList.add('p-3', 'mt-auto');
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'messageInput';
-    input.classList.add('form-control', 'mr-2');
-
+		input.classList.add('form-control', 'mr-2');
 
 		const sendButton = document.createElement('button');
 		sendButton.id = 'sendButton';
 		sendButton.textContent = 'Send';
-		sendButton.classList.add('btn', 'btn-dark', 'mt-3', 'm-2');
+		sendButton.classList.add('btn', 'btn-dark');
 
 		inputDiv.appendChild(input);
 		inputDiv.appendChild(sendButton);
@@ -203,12 +110,13 @@ export class chat {
 	async createTitleDiv() {
 		const response = await Iuser.getAllUsers();
 		let user = response.users.find(user => user.user_id === parseInt(this.targetid));
+		// console.warn(user)
 
 		const titleDiv = document.createElement('div');
 		titleDiv.id = 'titleDiv';
-		titleDiv.classList.add('bg-light', 'mb-3', 'align-items-center', 'w-100', 'p-3', 'border', 'rounded');
+		titleDiv.classList.add('bg-light', 'mb-3', 'align-items-center', 'w-100', 'p-1', 'border', 'rounded');
 
-		const titleElement = document.createElement('h4');
+		const titleElement = document.createElement('h1');
 		titleElement.textContent = user.username;
 		titleElement.href = `/friend-profile/${user.username}`;
 		titleElement.setAttribute('data-link', '');
@@ -217,7 +125,7 @@ export class chat {
 		const inviteButton = document.createElement('button');
 		inviteButton.id = 'inviteButton';
 		inviteButton.textContent = 'Invite';
-		inviteButton.classList.add('btn', 'btn-light', 'm-2', 'border-dark'); // Ajoute les classes ml-auto et mr-2
+		inviteButton.classList.add('btn', 'btn-secondary', 'ml-3', 'mr-3', 'mb-3', 'p-2'); // Ajoute les classes ml-auto et mr-2
 
 		titleDiv.appendChild(titleElement);
 		titleDiv.appendChild(inviteButton);
@@ -227,7 +135,7 @@ export class chat {
 			const unblockButton = document.createElement('button');
 			unblockButton.id = 'unblockButton';
 			unblockButton.textContent = 'Unblock';
-			unblockButton.classList.add('btn', 'btn-secondary', 'm-2'); // Ajoute la classe mr-2
+			unblockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3'); // Ajoute la classe mr-2
 			this.unblockExec(unblockButton, user.username);
 			titleDiv.appendChild(unblockButton);
 
@@ -236,7 +144,7 @@ export class chat {
 			const blockedButton = document.createElement('button');
 			blockedButton.id = 'blockedButton';
 			blockedButton.textContent = 'Blocked';
-			blockedButton.classList.add('btn', 'btn-secondary', 'm-2');
+			blockedButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3');
 			blockedButton.disabled = true;
 			titleDiv.appendChild(blockedButton);
 
@@ -244,10 +152,11 @@ export class chat {
 			const blockButton = document.createElement('button');
 			blockButton.id = 'blockButton';
 			blockButton.textContent = 'Block';
-			blockButton.classList.add('btn', 'btn-secondary', 'm-2'); // Ajoute la classe mr-2
+			blockButton.classList.add('btn', 'btn-danger', 'mr-3', 'ml-3', 'mb-3', 'p-2'); // Ajoute la classe mr-2
 			this.blockExec(blockButton, user.username);
 			titleDiv.appendChild(blockButton);
 		}
+
 		return titleDiv;
 	}
 
@@ -295,17 +204,19 @@ export class chat {
 		} catch (error) {
 			console.error('Error:', error);
 		}
+
 	}
 
 
 	async createInteractionDiv() {
 		const interactiondiv = document.createElement('div');
 		interactiondiv.classList.add('interactionDiv', 'd-flex', 'flex-column', 'p-3');
-		interactiondiv.style.flex = '3';
+		interactiondiv.style.flex = '3'; // Ajoute la propriété flex
 
 		const messagesDiv = await this.createMessagesDiv();
 		const inputDiv = this.createInputDiv();
 		const titleDiv = await this.createTitleDiv();
+
 
 		interactiondiv.appendChild(titleDiv);
 		interactiondiv.appendChild(messagesDiv);
@@ -316,14 +227,15 @@ export class chat {
 
 	createNonediv() {
 		const Nonediv = document.createElement('div');
-		Nonediv.classList.add('col-8', 'Nonediv', 'p-3');
-		Nonediv.style.height = '80vw';
-		Nonediv.style.width = 'auto';
-		Nonediv.style.display = 'flex';
-		Nonediv.style.flexDirection = 'column';
+		Nonediv.classList.add('d-flex', 'flex-column', 'border', 'border-dark', 'rounded', 'Nonediv');
+		Nonediv.style.width = '100%'; // Set the width to 100%
+		Nonediv.style.height = '100%'; // Set the height to 100%
+		Nonediv.style.display = 'flex'; // Set display to flex
+		Nonediv.style.justifyContent = 'center'; // Center along the main axis
+		Nonediv.style.alignItems = 'center'; // Center along the cross axis
 
 		const img = new Image();
-		img.classList.add('w-100');
+		img.classList.add('w-100', 'h-100'); // Set width and height to 100%
 		img.src = "../../../images/Site/AloneAgain.gif";
 
 		Nonediv.appendChild(img);
@@ -345,62 +257,43 @@ export class chat {
 	}
 
 	async addMessage(user_id, message, timestamp) {
-		const userID = await Iuser.getID();
-		const userName = await this.getusername(user_id);
-
 		const messagediv = document.querySelector('#messagesDiv');
 		messagediv.classList.add('d-flex', 'flex-column', 'mb-2');
 
-		const messageDiv2 = document.createElement('div');
-		messageDiv2.classList.add('d-flex', 'flex-column', 'mb-2');
-
-		if (user_id == userID)
-		{
+		const messageDiv2 = document.createElement('div'); // Create a new div for each message
+		messageDiv2.classList.add('d-flex', 'mb-2');
+		if (user_id == await Iuser.getID()) {
+			console.log('end user_id', user_id);
 			messageDiv2.classList.add('align-self-end');
-			messageDiv2.style.justifyContent = 'flex-end';
 		}
-		else{
+		else {
+			console.log('start user_id', user_id);
 			messageDiv2.classList.add('align-self-start');
-			messageDiv2.style.justifyItems = 'flex-start';
 		}
 
+		const username = await this.getusername(user_id);
 		const usernameColor = this.getRandomColor();
-		const name = document.createElement('div');
 
-		name.textContent = userName;
+		const name = document.createElement('span');
 		name.style.color = usernameColor;
+		name.textContent = username;
 		name.style.fontWeight = 'bold';
-		if (user_id == userID)
-			name.classList.add('align-self-end');
-		else
-			name.classList.add('align-self-start');
-		
-		const time = document.createElement('div');
+		messagediv.appendChild(name);
+
+		const time = document.createElement('span');
 		let timer = this.timerCalculation(timestamp);
 		time.style.color = 'gray';
 		time.textContent = ' ' + timer;
-		if (user_id == userID)
-			time.classList.add('align-self-end');
-		else
-			time.classList.add('align-self-start');
-
-		messagediv.appendChild(name);
 		messagediv.appendChild(time);
 
-		const msg = document.createElement('div');
-		msg.classList.add('mb-2', 'rounded', 'p-2');
+		const msg = document.createElement('p');
+		msg.classList.add('mb-1', 'border', 'border-dark', 'rounded', 'p-2');
 		msg.style.backgroundColor = 'grey';
-		msg.style.maxWidth = '40vw';
-		msg.style.overflow = 'auto';
-		msg.style.overflowWrap = 'break-word';
 		msg.textContent = message;
-		msg.style.textAlign = 'left';
-		if (user_id == userID){
+		console.log(user_id, await Iuser.getID());
+		msg.style.backgroundColor = 'grey';
+		if (user_id == await Iuser.getID())
 			msg.style.backgroundColor = 'lightgrey';
-			msg.classList.add('align-self-end');
-		}
-		else
-			msg.classList.add('align-self-start');
 
 		messageDiv2.appendChild(msg);
 		messagediv.appendChild(messageDiv2);
@@ -408,6 +301,7 @@ export class chat {
 
 	timerCalculation(date) {
 		try {
+			console.log(date);
 			let time = new Date(date);
 			if (isNaN(time.getTime())) {
 				return 0;
@@ -450,7 +344,7 @@ export class chat {
 		const acceptButton = document.createElement('button');
 		acceptButton.id = 'acceptButton';
 		acceptButton.textContent = 'Accept';
-		acceptButton.classList.add('btn', 'btn-light', 'mt-3', 'm-2', 'border-dark');
+		acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
 
 		acceptButton.onclick = async (e) => {
 			console.log('accept');
@@ -465,6 +359,7 @@ export class chat {
 			acceptButton.remove();
 			refuseButton.remove();
 		}
+
 		return acceptButton;
 	}
 
@@ -472,7 +367,7 @@ export class chat {
 		const refuseButton = document.createElement('button');
 		refuseButton.id = 'refuseButton';
 		refuseButton.textContent = 'Refuse';
-		refuseButton.classList.add('btn', 'btn-secondary', 'mt-3', 'm-2', 'border-dark');
+		refuseButton.classList.add('btn', 'btn-secondary');
 
 		refuseButton.onclick = async (e) => {
 			console.log('refuse');
@@ -487,7 +382,9 @@ export class chat {
 			acceptButton.remove();
 			refuseButton.remove();
 		}
+
 		return refuseButton;
+
 	}
 
 	async checkInviteStatus(data, id) {
@@ -540,7 +437,6 @@ export class chat {
 			},
 			credentials: 'include',
 		});
-
 		const data = await response.json();
 		if (data.success) {
 			if (data.data) {
@@ -563,155 +459,35 @@ export class chat {
 			console.log('Chat socket open');
 		}
 
-		acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
-
-    acceptButton.onclick = async (e) => {
-      console.log('accept');
-      this.websocket.send(JSON.stringify({
-        'message': '@accept@',
-        'user_id': await Iuser.getID()
-      }));
-      const inputdiv = document.querySelector('#inputDiv');
-      const acceptButton = inputdiv.querySelector('#acceptButton');
-      const refuseButton = inputdiv.querySelector('#refuseButton');
-
-      acceptButton.remove();
-      refuseButton.remove();
-    }
-
-    return acceptButton;
-  }
-
-  createRefuseButton() {
-    const refuseButton = document.createElement('button');
-    refuseButton.id = 'refuseButton';
-    refuseButton.textContent = 'Refuse';
-    refuseButton.classList.add('btn', 'btn-secondary');
-
-    refuseButton.onclick = async (e) => {
-      console.log('refuse');
-      this.websocket.send(JSON.stringify({
-        'message': '@refuse@',
-        'user_id': await Iuser.getID()
-      }));
-      const inputdiv = document.querySelector('#inputDiv');
-      const acceptButton = inputdiv.querySelector('#acceptButton');
-      const refuseButton = inputdiv.querySelector('#refuseButton');
-
-      acceptButton.remove();
-      refuseButton.remove();
-    }
-
-    return refuseButton;
-
-  }
-
-  async checkInviteStatus(data) {
-    if (data === '@accept@') {
-      console.warn('ACCEPTED BY' + id);
-      if (this.player1 === null)
-        this.player1 = id;
-      else if (this.player2 === null)
-        this.player2 = id;
-      return true;
-    }
-    else if (data === '@refuse@') {
-      console.warn('REFUSED BY' + id);
-      this.player1 = null;
-      this.player2 = null;
-      const inviteButton = document.querySelector('#inviteButton');
-      const acceptButton = document.querySelector('#acceptButton');
-      const refuseButton = document.querySelector('#refuseButton');
-      inviteButton.disabled = false;
-
-      if (acceptButton)
-        acceptButton.remove();
-      if (refuseButton)
-        refuseButton.remove();
-      return true;
-    }
-    return false;
-
-  }
-
-  async createChat() {
-    let myid = await Iuser.getID()
-    let roomName = ''
-    const interactiondiv = document.querySelector('.interactionDiv');
-    const inputDiv = interactiondiv.querySelector('#inputDiv');
-    const input = inputDiv.querySelector('#messageInput');
-    const sendButton = inputDiv.querySelector('#sendButton');
-    const inviteButton = document.querySelector('#inviteButton');
-
-    if (myid > this.targetid)
-      roomName = myid + '_' + this.targetid;
-    else
-      roomName = this.targetid + '_' + myid;
-
-    const response = await fetch(`https://${window.location.host}/api/chat/history/${roomName}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': Icookies.getCookie('token'),
-        'X-CSRFToken': Icookies.getCookie('csrftoken')
-        },
-      credentials: 'include',
-    });
-    const data = await response.json();
-    if (data.success){
-      if (data.data){
-      console.log(data.data);
-      data.data.forEach(message => {
-        if (message.message[0] !== '@')
-          this.addMessage(message.user_id, message.message, message.timestamp);
-        });
-      }
-    } else
-      alert('Failed to get chat history');
-
-    this.websocket = new WebSocket(
-      `wss://${window.location.host}/ws/chat/${roomName}/`
-    );
-
-    this.websocket.onopen = function(e) {
-      console.log('Chat socket open');
-    }
-
-
-    this.websocket.onmessage = async (e) => {
-      const data = JSON.parse(e.data);
-      console.log('data', data);
-      const id = data['user_id'];
-      const message = data['message'];
-      const timestamp = data['time'];
-      const invite = await this.checkInvite(message, id);
-      const invitestatus = await this.checkInviteStatus(message, id);
-      const blockstatus = await this.checkBlockStatus(id);
-      if (invite) {
-        inviteButton.disabled = true;
-        this.createInviteButton();
-      }
-      else if (invitestatus) {
-        console.warn('INVITATION STATUS');
-        if (!this.player1 && !this.player2)
-          inviteButton.disabled = false;
-      }
-      else if (!blockstatus) {
-        await this.addMessage(id, message, timestamp);
-      }
-      if (this.player1 && this.player2) {
-        console.log("Creating party");
-        //await this.createParty(this.player1, this.player2);
-        //await this.changeStatus();
-        if (id == this.player1) {
-          console.log("Je lance direct")
-          window.location.href = "/play_pc"
-        }
-        else {
-          console.log("Je lance apres")
-          setTimeout(() => { window.location.href = "/play_pc"; }, 50);
-        }
-      }
+		this.websocket.onmessage = async (e) => {
+			const data = JSON.parse(e.data);
+			console.log('data', data);
+			const id = data['user_id'];
+			const message = data['message'];
+			const timestamp = data['time'];
+			const invite = await this.checkInvite(message, id);
+			const invitestatus = await this.checkInviteStatus(message, id);
+			const blockstatus = await this.checkBlockStatus(id);
+			if (invite) {
+				inviteButton.disabled = true;
+				this.createInviteButton();
+			}
+			else if (invitestatus) {
+				console.warn('INVITATION STATUS');
+				if (!this.player1 && !this.player2)
+					inviteButton.disabled = false;
+			}
+			else if (!blockstatus) {
+				await this.addMessage(id, message, timestamp);
+			}
+			if (this.player1 && this.player2) {
+				if (id == this.player1) {
+					window.location.href = "/play_pc"
+				}
+				else {
+					setTimeout(() => { window.location.href = "/play_pc"; }, 50);
+				}
+			}
 
 		};
 
@@ -744,7 +520,6 @@ export class chat {
 				'user_id': user_id
 			}));
 		}
-
 	}
 
 	async createParty(id1, id2) {
@@ -793,4 +568,5 @@ export class chat {
 		});
 		console.log(response);
 	}
+
 }
