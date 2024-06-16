@@ -1,21 +1,8 @@
-#version: '3'
-
-  # djangoTemplate:
-  #   container_name: djangotemplate
-  #   user: root
-  #   volumes:
-  #     - djangotemplate:/var/lib/postgresql/
-  #   networks:
-  #   - microservices
-  #   build: backend/djangotemplate
-  #   image: djangotemplate
-  #   expose :
-  #   - "8080"
-  #   restart: on-failure
 
 networks:
   microservices:
     external: true
+
 
 volumes:
   secret_volume:
@@ -43,8 +30,8 @@ services:
     container_name: nginx
     networks:
     - microservices
-    volumes:
-    - frontend:/usr/share/nginx/html/
+    # volumes:
+    # - frontend:/usr/share/nginx/html/
     build: services/nginx
     image: nginx
     ports:
@@ -64,19 +51,6 @@ services:
     - "4430"
     restart: on-failure
 
-  # arena:
-  #   container_name: arena
-  #   user: root
-  #   volumes:
-  #     - user:/var/lib/postgresql/
-  #   networks:
-  #   - microservices
-  #   build: services/backend/arena
-  #   image: arena
-  #   expose :
-  #   - "4430"
-  #   restart: on-failure
-
   token:
     container_name: jwtoken
     networks:
@@ -92,7 +66,7 @@ services:
     user: root
     volumes:
     - game3d:/var/lib/postgresql
-    - pongapp:/app
+    # - pongapp:/app
     networks:
       - microservices
     build: services/backend/game3d

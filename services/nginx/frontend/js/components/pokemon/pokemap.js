@@ -236,7 +236,7 @@ export class pokeMap {
 
         document.onkeydown = (event) => {
             
-            if (event.key == 'w') {
+            if (event.key == 'ArrowUp') {
                 event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
@@ -245,7 +245,7 @@ export class pokeMap {
                 }));
 
             }
-            if (event.key == 's') {
+            if (event.key == 'ArrowDown') {
                 event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
@@ -253,7 +253,7 @@ export class pokeMap {
                     userID: id,
                 }));
             }
-            if (event.key == 'd') {
+            if (event.key == 'ArrowRight') {
                 event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
@@ -261,7 +261,7 @@ export class pokeMap {
                     userID: id,
                 }));
             }
-            if (event.key == 'a') {
+            if (event.key == 'ArrowLeft') {
                 event.preventDefault();
                 socket.send(JSON.stringify({
                     action: "move",
