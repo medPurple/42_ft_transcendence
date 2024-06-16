@@ -491,15 +491,12 @@ export class chat {
         //await this.changeStatus();
         if (id == this.player1) {
           console.log("Je lance direct")
-          window.location.href = "/play_pr"
+          window.location.href = "/play_pc"
         }
-        else
+        else {
           console.log("Je lance apres")
-        window.location.href = "/play_pr"
-        setTimeout(() => {
-          window.location.href = "/play_pr"
-            ;
-        }, 50);
+          setTimeout(() => { window.location.href = "/play_pc"; }, 50);
+        }
       }
 
     };

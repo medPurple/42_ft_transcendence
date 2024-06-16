@@ -9,7 +9,7 @@ function draw() {
   if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
     return;
 
-  if (gameState.game_mode == "remote") {
+  if (gameState.game_mode == "remote" || gameState.game_mode == "chat") {
     if (core.player_id == 1 && gameState.paddle2_powerup != 3)
       cameraPlayer1();
     else if (core.player_id == 2 && gameState.paddle1_powerup != 3)
@@ -50,6 +50,9 @@ async function setup(gameMode, players) {
       break;
     case "local":
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/' + user_name + '/' + players.player2 + '/');
+      break;
+    case "chat":
+      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/chat/' + user_id + '/' + user_name + '/');
       break;
     default:
       core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/');
@@ -119,7 +122,7 @@ function handleServerMessage(message) {
 
   switch (gameState.status) {
     case 0:
-      if (gameState.game_mode == "remote")
+      if (gameState.game_mode == "remote" || gameState.game_mode == "chat")
         waitingForPlayer();
       break;
     case 1:
@@ -189,7 +192,7 @@ function welcomeScreen() {
 		</div>
 		`;
   }
-  else if (gameState.game_mode == "remote") {
+  else if (gameState.game_mode == "remote" || gameState.game_mode == "chat") {
     screensdiv.innerHTML = `
 		<div id="welcome" class="row justify-content-center p-5">
 		<h4 class="text-center" style="color: #4d544c;">REMOTE GAME CONTROLS</h4>

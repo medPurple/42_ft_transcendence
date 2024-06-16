@@ -80,6 +80,29 @@ export async function pong_remoteplay() {
   return generaldiv;
 }
 
+export async function pong_chatplay() {
+  const generaldiv = document.createElement('div');
+  const screens = document.createElement('div');
+  screens.id = "pong-screens";
+  screens.classList.add('hidden');
+  const gamediv = document.createElement('div');
+  gamediv.id = "pong-renderer"
+  const scorediv = document.createElement('div');
+  scorediv.id = "pong-score"
+  if (Icookies.getCookie('token') != null) {
+    setup("chat", null);
+  } else {
+    gamediv.classList.add('not-logged');
+    alert("You need to be logged in to play in chat");
+    window.location.href = '/pongService';
+  }
+  generaldiv.appendChild(screens);
+  generaldiv.appendChild(gamediv);
+  generaldiv.appendChild(scorediv);
+  document.body.appendChild(generaldiv);
+  return generaldiv;
+}
+
 export async function pong_tournamentplay() {
   const generaldiv = document.createElement('div');
   const screens = document.createElement('div');

@@ -28,6 +28,7 @@ map_locations = {
 }
 
 remote_parties = []
+chat_parties = []
 local_parties = []
 tournaments = []
 
@@ -154,10 +155,9 @@ class   gameStateC:
         self._lock = threading.Lock()
 
     async def run_game_loop(self):
-        logger.info("Je rentre danis la tache asynchrone")
         await self.broadcastGameState()
         user_service_url = 'https://user:4430/api/profiles/change-status/'
-        if (self.game_mode == 'remote'):
+        if (self.game_mode == 'remote' or self.game_mode == 'chat'):
             try:
                 self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
                 self.game_user2 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player2_user_id))
@@ -233,7 +233,7 @@ class   gameStateC:
             await self.stopGame()
 
     async def stopGame(self):
-        if (self.game_mode == "remote" or self.game_mode == "local"):
+        if (self.game_mode == "remote" or self.game_mode == "chat" or self.game_mode == "local"):
             user_service_url = 'https://user:4430/api/profiles/change-status/'
             self.match_object.status = 1
             self.game_user1.gamesPlayed += 1
@@ -249,16 +249,20 @@ class   gameStateC:
             await sync_to_async(self.game_user2.save)()
             await sync_to_async(self.match_object.save)()
 
-        if (self.game_mode == 'remote'):
+        if (self.game_mode == 'remote' or self.game_mode == "chat"):
             try:
                 responsep1 = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 1}, verify=False)
                 responsep2 = requests.put(user_service_url, json={'user_id' : int(self.player2_user_id), 'status': 1}, verify=False)
                 responsep1.raise_for_status()
                 responsep2.raise_for_status()
             except Exception as e:
-                logger.info(f"Error changing user status in microservices: {e}")
-            global remote_parties
-            remote_parties.remove(self)
+                logger.info(f"Error changing user statuus in microservices: {e}")
+            if (self.game_mode == 'remote'):
+                global remote_parties
+                remote_parties.remove(self)
+            else:
+                global chat_parties
+                chat_parties.remove(self)
         elif (self.game_mode == 'local'):
             try:
                 response = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 1}, verify=False)
@@ -274,7 +278,7 @@ class   gameStateC:
             global tournaments
 
     def checkPauseTimer(self):
-        if (self.game_mode == "remote"):
+        if (self.game_mode == "remote" or self.game_mode == "chat"):
             if (time.time() - self.pauseTimer > 5):
                 self.status = iv.FINISHED
         else:
@@ -282,7 +286,7 @@ class   gameStateC:
                 self.status = iv.FINISHED
 
     def checkPlayersValidation(self):
-        if (self.game_mode == "remote"):
+        if (self.game_mode == "remote" or self.game_mode == "chat"):
             if (self.players_ready == 2):
                 self.status = iv.RUNNING
         else:
@@ -377,15 +381,13 @@ class   gameStateC:
 
         if (index == 1):
             self.player1Score += 1
-            if (self.game_mode == "remote" or self.game_mode == "local"):
+            if (self.game_mode == "remote" or self.game_mode == "chat" or self.game_mode == "local"):
                 self.match_object.player1_score += 1
-            # logger.info("player1Score : %d" % (self.match_object.player1_score))
             ball.dirX = -1
         else:
             self.player2Score += 1
-            if (self.game_mode == "remote" or self.game_mode == "local"):
+            if (self.game_mode == "remote" or self.game_mode == "chat" or self.game_mode == "local"):
                 self.match_object.player2_score += 1
-            # logger.info("player2Score : %d" % (self.match_object.player2_score))
             ball.dirX = 1
         ball.dirY = 1
         if (ball.boosted == 1):
@@ -462,7 +464,6 @@ class   gameStateC:
         )
 
     async def broadcastGameState(self):
-        # logger.info("Depuis le match j'envoie le game state")
         channel_layer = get_channel_layer()
         await channel_layer.group_send(
             self.group_name,
