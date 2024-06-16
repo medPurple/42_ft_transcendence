@@ -112,7 +112,7 @@ class CustomUserRegister(APIView):
 			else:
 				return Response({'error': 'Error creating token'}, status=status.HTTP_200_OK)
 		else:
-			return Response(form.errors, status=status.HTTP_200_OK)
+			return Response({'error': 'Error profile creation'}, status=status.HTTP_200_OK)
 
 class CustomUserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)
@@ -121,18 +121,21 @@ class CustomUserLogin(APIView):
 		if form.is_valid():
 			user = form.get_user()
 			if user.is_2fa is True:
-				verification_code = generate_random_digits()
-				user.otp = verification_code
-				user.otp_expiry_time = timezone.now() + timedelta(hours=1)
-				user.save()
-				send_mail(
-					'Verification Code',
-					f'Your verification code is: {user.otp}',
-					'wilbanablo@gmail.com',
-					[user.email],
-					fail_silently=False,
-				)
-				return Response({'succes:': True, 'two_fa': True}, status=status.HTTP_200_OK)
+				try:
+					verification_code = generate_random_digits()
+					user.otp = verification_code
+					user.otp_expiry_time = timezone.now() + timedelta(hours=1)
+					user.save()
+					send_mail(
+						'Verification Code',
+						f'Your verification code is: {user.otp}',
+						'wilbanablo@gmail.com',
+						[user.email],
+						fail_silently=False,
+					)
+					return Response({'succes:': True, 'two_fa': True}, status=status.HTTP_200_OK)
+				except Exception as e:
+					return Response({'error': str(e)}, status=status.HTTP_200_OK)
 			else:
 				token = user_token(request, user.user_id)
 				user.is_online = 1
