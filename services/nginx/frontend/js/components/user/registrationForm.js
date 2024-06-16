@@ -64,6 +64,7 @@ export default class RegistrationForm extends HTMLElement {
 		const email = formData.get('email');
 		const password1 = formData.get('password1');
 		const password2 = formData.get('password2');
+		const img = formData.get('profile_picture');
 
 		// Check if all fields are filled
 		if (!username || !email || !password1 || !password2) {
@@ -95,8 +96,14 @@ export default class RegistrationForm extends HTMLElement {
 			return false;
 		}
 
+		if (img && img.size > 1048576) {
+			this.showAlert('Image too large');
+			return false;
+		}
+
 		return true;
 	}
+	
 	connectedCallback() {
 		const signupForm = this.shadowRoot.getElementById('signup-form'); // Use getElementById to find the form within the component
 		const showAlert = this.showAlert.bind(this);
