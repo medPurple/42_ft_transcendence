@@ -19,6 +19,11 @@ export default class LogoutForm extends HTMLElement {
       let jwtToken = Icookies.getCookie('token');
       let csrfToken = Icookies.getCookie('csrftoken');
 
+      if (!jwtToken) {
+        window.location.href = '/home';
+        return;
+      }
+      
       fetch('/api/profiles/logout/', {
         method: 'POST',
         headers: {
