@@ -1,4 +1,4 @@
-import { pongRemoteMatchmaking, pongTournamentMatchmaking, pkmRemoteMatchmaking, pkmTournamentMatchmaking } from "../components/matchmaking/matchmakingClass.js";
+import { pkmRemoteMatchmaking } from "../components/matchmaking/matchmakingClass.js";
 import { pokeMap } from "../components/pokemon/pokemap.js";
 import { pokechat, pokebag } from "../components/pokemon/poketools.js";
 import Icookies from "../components/cookie/cookie.js"
