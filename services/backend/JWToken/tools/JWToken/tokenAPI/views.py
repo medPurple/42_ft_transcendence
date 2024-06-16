@@ -50,7 +50,7 @@ class TokenAPI(APIView):
     def post(self, request):
         data = request.data
         token = TokenAPI.generate_token(data)
-        logger.info(token)
+        # logger.info(token)
         return Response({'token': token}, status=status.HTTP_201_CREATED)
 
     def get(self, request):
