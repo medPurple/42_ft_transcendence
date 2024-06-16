@@ -20,7 +20,7 @@ export class pokechat {
 		
         // Création du bouton pour ouvrir le modal
         const modalButton = document.createElement('button');
-        modalButton.classList.add('btn', 'btn-dark');
+        modalButton.classList.add('btn', 'btn-dark', 'w-100', 'rounded');
         modalButton.setAttribute('data-bs-toggle', 'modal');
         modalButton.setAttribute('data-bs-target', '#participantsModal');
         modalButton.setAttribute('type', 'button'); // Ajoutez cette ligne
