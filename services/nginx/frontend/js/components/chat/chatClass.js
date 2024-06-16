@@ -91,6 +91,7 @@ export class chat {
 		const input = document.createElement('textarea');
 		input.id = 'messageInput';
 		input.classList.add('form-control');
+		input.placeholder = 'Write here...';
 		input.rows = 3;
 		input.style.resize = 'none';
 
@@ -281,11 +282,9 @@ export class chat {
 			name.classList.add('align-self-start');
 		
 		const time = document.createElement('div');
-		time.classList.add('mb-2');
 		let timer = this.timerCalculation(timestamp);
 		time.style.color = 'gray';
 		time.textContent = ' ' + timer;
-
 		if (user_id == userID)
 			time.classList.add('align-self-end');
 		else
@@ -302,7 +301,6 @@ export class chat {
 		msg.style.overflowWrap = 'break-word';
 		msg.textContent = message;
 		msg.style.textAlign = 'left';
-
 		if (user_id == userID){
 			msg.style.backgroundColor = 'lightgrey';
 			msg.classList.add('align-self-end');

@@ -68,7 +68,6 @@ export class pokechat {
         chatbox.style.textAlign = 'left';
         chatbox.style.flexGrow = '1';
 	
-
         return chatbox;
     }
 
@@ -96,7 +95,6 @@ export class pokechat {
 
 
     createElement() {
-        
         const chatdiv = document.createElement('div');
         chatdiv.classList.add('d-flex', 'flex-column', 'text-black', 'justify-content-center');
 		chatdiv.style.height = '50vw';
@@ -118,11 +116,9 @@ export class pokechat {
     }
 
     async getusername(id){
-
         const users = await Iuser.getAllUsers();
         let username = users.users.find(user => user.user_id === parseInt(id)).username;
         return username;
-
     }
 
     timerCalculation(date) {
@@ -141,45 +137,60 @@ export class pokechat {
 
     async addChatMessage(message, id, timestamp){
         const chatbox = document.querySelector('.chatbox');
-        const username = await this.getusername(id)
-        const usernameColor = this.getRandomColor(); // Function to generate random color
+		const userID = await Iuser.getID();
+		const username = await this.getusername(id);
+		
+        const messageDiv2 = document.createElement('div');
+        messageDiv2.classList.add('d-flex', 'mb-2'); //felx-column
 
-        const messageDiv2 = document.createElement('div'); // Create a new div for each message
-        messageDiv2.classList.add('d-flex', 'mb-2');
-        if (id == await Iuser.getID()){  
-            console.log('end user_id', id);
-            messageDiv2.classList.add('align-self-end');
+        if (id == userID) {
+			messageDiv2.classList.add('align-self-end');
+			messageDiv2.style.justifyContent = 'flex-end';
         }
-        else{
-            console.log('start user_id', id);
-            messageDiv2.classList.add('align-self-start');
+        else {
+			messageDiv2.classList.add('align-self-start');
+			messageDiv2.style.justifyItems = 'flex-start';
         }
 
-        const name = document.createElement('span');
-        name.style.color = usernameColor;
+		const usernameColor = this.getRandomColor();
+        const name = document.createElement('div');
+
         name.textContent = username;
+        name.style.color = usernameColor;
         name.style.fontWeight = 'bold';
-        name.classList.add('align-items-center')
-        chatbox.appendChild(name);
+		if (id == userID)
+			name.classList.add('align-self-end');
+		else
+			name.classList.add('align-self-start');
 
-        const time = document.createElement('span');
+		const time = document.createElement('div');
         let timer = this.timerCalculation(timestamp);
         time.style.color = 'gray';
         time.textContent = ' ' + timer;
+		if (id == userID)
+			time.classList.add('align-self-end');
+		else
+			time.classList.add('align-self-start');
+		
+        chatbox.appendChild(name);
         chatbox.appendChild(time);
 
-        const msg = document.createElement('p');
-        msg.classList.add('mb-1', 'border', 'border-dark', 'rounded', 'p-2');
+        const msg = document.createElement('div');
+        msg.classList.add('mb-2', 'rounded', 'p-2');
         msg.style.backgroundColor = 'grey';
-        msg.textContent = message;
-        msg.style.backgroundColor = 'grey';
-        if (id == await Iuser.getID())
-            msg.style.backgroundColor = 'lightgrey';
+        msg.style.maxWidth = '20vw';
+		msg.style.overflow = 'auto';
+		msg.style.overflowWrap = 'break-word';
+		msg.textContent = message;
+		msg.style.textAlign = 'left';
+		if (id == userID) {
+			msg.style.backgroundColor = 'lightgrey';
+			msg.classList.add('align-self-end');
+		}
 
-        messageDiv2.appendChild(msg);
-        chatbox.appendChild(messageDiv2);
-        // chatbox.innerHTML += `<span style="color: ${usernameColor};">${username}</span>: ${message}<br>`;
-    }
+		messageDiv2.appendChild(msg);
+		chatbox.appendChild(messageDiv2);
+	}
 
     pokechatinit(){
         const chatdiv = this.createElement();
