@@ -38,7 +38,7 @@ export async function createScene() {
   }
   c.appendChild(core.renderer.domElement);
 
-  if (gameState.game_mode == "remote") {
+  if (gameState.game_mode == "remote" || gameState.game_mode == "chat") {
     window.addEventListener('keydown', onKeyDownRemote, false);
     window.addEventListener('keyup', onKeyUpRemote, false);
   }
