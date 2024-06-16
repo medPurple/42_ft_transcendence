@@ -106,6 +106,7 @@ const actions = new Map([
   ["powerup.state", (value) => { gameState.powerup_status = value; }],
   ["powerup.active", (value) => { gameState.powerup_type = value; }],
   ["powerup.shouldHandle", (value) => { gameCustom.powerup = value; }],
+  ["game_nbr", (value) => { gameState.gameNbr = value; }],
   ["status", (value) => { gameState.status = value; }],
 ]);
 
@@ -207,6 +208,7 @@ function welcomeScreen() {
   else if (gameState.game_mode == "tournament") {
     screensdiv.innerHTML = `
 		<div id="welcome" class="row justify-content-center p-5">
+    <h2 id="current-match" class="text-center"></h2>
 		<h4 class="text-center" style="color: #4d544c;">TOURNAMENT GAME CONTROLS</h4>
 		<div class="row">
 			<div class="col-md-6 d-grid gap-2 mb-4 mt-3">
@@ -220,6 +222,18 @@ function welcomeScreen() {
 		<h6 style="color: grey;"> PRESS ENTER </h6>
 		</div>
 		`;
+    let currentMatch = document.getElementById('current-match');
+    switch (gameState.gameNbr) {
+      case 0:
+        currentMatch.textContent = "SEMIFINAL 1";
+        break;
+      case 1:
+        currentMatch.textContent = "SEMIFINAL 2";
+        break;
+      default:
+        currentMatch.textContent = "FINAL";
+        break;
+    }
   }
 }
 
