@@ -494,6 +494,7 @@ class   gameStateC:
                     "powerup.positionY": self.powerUpPositionY,
                     "powerup.active": self.activePowerUp,
                     "powerup.shouldHandle": self.shouldHandlePowerUp,
+                    "game_nbr": self.gameNbr,
                     "status": self.status
                 }
             }
