@@ -138,6 +138,8 @@ class   gameStateC:
         self.group_name = 0
         self.players_nb = 0    
         self.players_ready = 0
+        self.player_1_has_validate = 0
+        self.player_2_has_validate = 0
         self.player1Score = iv.PADDLE1_SCORE
         self.player2Score = iv.PADDLE2_SCORE
         self.limitScore = 7

@@ -252,7 +252,12 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
                         self.gameState.paddle2.move = text_data_json["paddleMov"]
             if (key == "validate"):
                 with self.gameState._lock:
-                    self.gameState.players_ready += 1
+                    if (self.player_id == 1 and self.gameState.player_1_has_validate == 0):
+                        self.gameState.players_ready += 1
+                        self.gameState.player_1_has_validate = 1
+                    if (self.player_id == 2 and self.gameState.player_2_has_validate == 0):
+                        self.gameState.players_ready += 1
+                        self.gameState.player_2_has_validate = 1
 
     async def findRemoteParty(self):
         global remote_parties
@@ -416,7 +421,13 @@ class PongChatConsumer(AsyncWebsocketConsumer):
                         self.gameState.paddle2.move = text_data_json["paddleMov"]
             if (key == "validate"):
                 with self.gameState._lock:
-                    self.gameState.players_ready += 1
+                    if (self.player_id == 1 and self.gameState.player_1_has_validate == 0):
+                        self.gameState.players_ready += 1
+                        self.gameState.player_1_has_validate = 1
+                    if (self.player_id == 2 and self.gameState.player_2_has_validate == 0):
+                        self.gameState.players_ready += 1
+                        self.gameState.player_2_has_validate = 1
+                    
 
     async def findRemoteParty(self):
         global chat_parties
