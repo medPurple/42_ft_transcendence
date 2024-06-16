@@ -1,5 +1,4 @@
-// The getCookie function you provided is used to retrieve the CSRF token from the "csrftoken" cookie.
-// This CSRF token is necessary to protect POST requests against Cross-Site Request Forgery (CSRF) attacks.
+
 export default class Cookies{
 
 	getCookie(name) {
@@ -29,10 +28,8 @@ export default class Cookies{
 	}
 
 	clearAllCookies() {
-		// Récupérer tous les cookies
 		var cookies = document.cookie.split(";");
 
-		// Parcourir tous les cookies et les supprimer
 		for (var i = 0; i < cookies.length; i++) {
 			var cookie = cookies[i];
 			var eqPos = cookie.indexOf("=");
@@ -40,6 +37,4 @@ export default class Cookies{
 			document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=None;Secure";
 		}
 	}
-
 }
-

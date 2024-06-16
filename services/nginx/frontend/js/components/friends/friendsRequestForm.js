@@ -3,6 +3,7 @@ import Iuser from "../user/userInfo.js";
 import Ifriends from "./friendsInfo.js";
 
 class FriendsButton {
+
 	sendRequestButton() {
 		const buttonSendRequest = document.createElement('button');
 		buttonSendRequest.setAttribute('id', 'send-request-button');
@@ -46,6 +47,7 @@ class FriendsButton {
 }
 
 export class Friends {
+
 	constructor() {
 		this.friendsButton = new FriendsButton();
 		this.socket = this.connect();
@@ -67,7 +69,6 @@ export class Friends {
 		this.should_close = 0;
 	}
 
-
 	connect() {
 		let token = Icookies.getCookie('token');
 		const socket = new WebSocket(`wss://${window.location.host}/ws/friends/?token=${token}`);
@@ -88,16 +89,12 @@ export class Friends {
 
 		socket.onclose = function(event) {
 			this.should_close = 1;
-
-
 		};
 
 		socket.onerror = function(error) {
-
 		};
 		return socket;
 	}
-
 
 	async sendRequest(friend_username) {
 		try {
@@ -178,7 +175,6 @@ export class Friends {
 		}
 	}
 
-
 	async updateView() {
 		if (this.should_close === 1)
 			return;
@@ -195,7 +191,7 @@ export class Friends {
 			return;
 
 		if (dataUsers.users.length != this.lastusernumber) {
-			this.ulElement.innerHTML = ''; // Clear the list before populating it
+			this.ulElement.innerHTML = '';
 			await this.viewUsers();
 		} else if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(async (user) => {
@@ -224,7 +220,7 @@ export class Friends {
 
 						if (isFriends != otherUser.isFriends) {
 							if (isFriends) {
-								cardElement.innerHTML = ''; // Clear card content
+								cardElement.innerHTML = '';
 								const cardBody = this.createCardBody(user, isFriends);
 								this.manageFriend(cardBody.querySelector('.card-footer'), user.username);
 								cardElement.appendChild(cardBody);
@@ -233,7 +229,7 @@ export class Friends {
 							otherUser.addFriend = false;
 						} else if (hasFriendRequest != otherUser.hasFriendRequest) {
 							if (hasFriendRequest) {
-								cardElement.innerHTML = ''; // Clear card content
+								cardElement.innerHTML = '';
 								const cardBody = this.createCardBody(user, isFriends);
 								this.manageFriendRequest(cardBody.querySelector('.card-footer'), user.username);
 								cardElement.appendChild(cardBody);
@@ -242,7 +238,7 @@ export class Friends {
 							otherUser.addFriend = false;
 						} else if (hasSendRequest != otherUser.hasSendRequest) {
 							if (hasSendRequest) {
-								cardElement.innerHTML = ''; // Clear card content
+								cardElement.innerHTML = '';
 								const cardBody = this.createCardBody(user, isFriends);
 								cardBody.querySelector('.card-footer').appendChild(this.friendsButton.requestSentButton());
 								cardElement.appendChild(cardBody);
@@ -251,7 +247,7 @@ export class Friends {
 							otherUser.addFriend = false;
 						} else {
 							if (!otherUser.addFriend && !hasSendRequest && !hasFriendRequest && !isFriends) {
-								cardElement.innerHTML = ''; // Clear card content
+								cardElement.innerHTML = '';
 								const cardBody = this.createCardBody(user, isFriends);
 								this.sendFriendRequest(cardBody.querySelector('.card-footer'), user.username);
 								cardElement.appendChild(cardBody);
@@ -265,7 +261,6 @@ export class Friends {
 		this.lastusernumber = dataUsers.users.length;
 	}
 
-
 	async viewUsers() {
 		const dataUsers = await Iuser.getAllUsers();
 		this.lastusernumber = dataUsers.users.length;
@@ -273,7 +268,7 @@ export class Friends {
 		const requestFriend = await this.getRequests();
 		const friendsList = await Ifriends.getFriendsList();
 
-		this.ulElement.innerHTML = ''; // Clear the list before populating it
+		this.ulElement.innerHTML = '';
 
 		if (dataUsers.users.length > 1) {
 			dataUsers.users.forEach(users => {
@@ -322,14 +317,14 @@ export class Friends {
 		} else {
 			const Nonediv = document.createElement('div');
 			Nonediv.classList.add('d-flex', 'flex-column', 'Nonediv');
-			Nonediv.style.width = '100%'; // Set the width to 100%
-			Nonediv.style.height = '100%'; // Set the height to 100%
-			Nonediv.style.display = 'flex'; // Set display to flex
-			Nonediv.style.justifyContent = 'center'; // Center along the main axis
-			Nonediv.style.alignItems = 'center'; // Center along the cross axis
+			Nonediv.style.width = '100%';
+			Nonediv.style.height = '100%';
+			Nonediv.style.display = 'flex';
+			Nonediv.style.justifyContent = 'center';
+			Nonediv.style.alignItems = 'center';
 
 			const img = new Image();
-			img.classList.add('w-50', 'h-50'); // Set width and height to 100%
+			img.classList.add('w-50', 'h-50');
 			img.src = "../../../images/Site/AloneAgain.gif";
 
 			Nonediv.appendChild(img);
@@ -363,7 +358,6 @@ export class Friends {
 		cardBody.appendChild(userName);
 
 		cardElement.appendChild(cardBody);
-
 
 		const cardFooter = document.createElement('div');
 		cardFooter.className = 'card-footer';
@@ -404,7 +398,7 @@ export class Friends {
 			try {
 				const deleteFriend = await this.deleteFriendSoc(username);
 				if (deleteFriend.success === true) {
-					cardFooter.innerHTML = ''; // Clear footer content
+					cardFooter.innerHTML = '';
 					this.sendFriendRequest(cardFooter, username);
 				}
 			} catch (error) {
@@ -422,7 +416,6 @@ export class Friends {
 		linkToFriendsProfile.setAttribute('data-link', '');
 		return linkToFriendsProfile;
 	}
-
 
 	getRandomSquidGamePhrase() {
 		const phrases = [
@@ -447,7 +440,6 @@ export class Friends {
 		return phrases[randomIndex];
 	}
 
-
 	createMessage() {
 		const messageLink = document.createElement('a');
 		messageLink.textContent = this.getRandomSquidGamePhrase();
@@ -460,14 +452,13 @@ export class Friends {
 		return messageLink;
 	}
 
-
 	async manageFriendRequest(cardFooter, username) {
 		const buttonAcceptRequest = this.friendsButton.acceptRequestButton();
 		buttonAcceptRequest.onclick = async () => {
 			try {
 				const acceptRequest = await this.acceptRequest(username);
 				if (acceptRequest.success === true) {
-					cardFooter.innerHTML = ''; // Clear footer content
+					cardFooter.innerHTML = '';
 					this.manageFriend(cardFooter, username);
 				}
 			} catch (error) {
@@ -480,7 +471,7 @@ export class Friends {
 			try {
 				const deleteRequest = await this.deleteRequest(username);
 				if (deleteRequest.success === true) {
-					cardFooter.innerHTML = ''; // Clear footer content
+					cardFooter.innerHTML = '';
 					this.sendFriendRequest(cardFooter, username);
 				}
 			} catch (error) {
