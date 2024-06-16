@@ -40,6 +40,7 @@ export default class editProfileForm extends HTMLElement {
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
 
 		<div id="app-general-container">
+		<div id="alert-container"></div>
 		<form id="edit-profile-form" method="post" action="" class="container">
 			<div class="row mb-4">
 				<label class="col-sm-3 col-form-label text-start" for="profile_picture">Profile Picture</label>
@@ -90,36 +91,73 @@ export default class editProfileForm extends HTMLElement {
 		`;
 	}
 
+
+	showAlert(message, type = 'danger') {
+		const alertContainer = this.shadowRoot.getElementById('alert-container');
+		alertContainer.innerHTML = `
+			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+				${message}
+			</div>`;
+
+	}
+
+	validateForm(formData) {
+		// Get the form data
+		const username = formData.get('username');
+		const img = formData.get('profile_picture');
+
+
+		// Check if password is not similar to username
+		if (!/^[a-zA-Z]+$/.test(username)) {
+			this.showAlert('Username should contain only alphanumeric characters');
+			return false;
+		}
+
+		if (img && img.size > 1048576) {
+			this.showAlert('Image too large');
+			return false;
+		}
+
+		return true;
+	}
+
 	initFormSubmit() {
 		const editForm = this.shadowRoot.getElementById('edit-profile-form'); // Use getElementById to find the form within the component
-		editForm.addEventListener('submit', function(event) {
+		const showAlert = this.showAlert.bind(this);
+		const validateForm = this.validateForm.bind(this);
+		editForm.addEventListener('submit', async function(event) {
 			event.preventDefault();
-			let jwtToken = Icookies.getCookie('token');
-			let csrfToken = Icookies.getCookie('csrftoken');
-			const formData = new FormData(editForm);
-			fetch('/api/profiles/edit-profile/', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					'Authorization': jwtToken,
-					'X-CSRFToken': csrfToken
+
+			try {
+				const formData = new FormData(editForm);
+				if (!validateForm(formData)) {
+					return;
 				}
-			})
-			.then(response => response.json())
-			.then(data => {
+
+				let jwtToken = Icookies.getCookie('token');
+				let csrfToken = Icookies.getCookie('csrftoken');
+				const response = await fetch('/api/profiles/edit-profile/', {
+					method: 'POST',
+					body: formData,
+					headers: {
+						'Authorization': jwtToken,
+						'X-CSRFToken': csrfToken
+					}
+				});
+				const data = await response.json();
 				if (data.success) {
-					// Redirect to the home page
-						window.location.href = '/home'; // Change the URL to your home page URL
+					window.location.href = '/home'; // Change the URL to your home page URL
 
 				} else {
 					// Display validation errors or any other error message
-					alert('An error occurred. Please try again.');
+					showAlert('Update profile failed. Please check the form and try again.');
+					return;
 				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
+
+			} catch(error) {
+				showAlert('Error:', error);
 				// Handle API errors
-			});
+			}
 		});
 	}
 }

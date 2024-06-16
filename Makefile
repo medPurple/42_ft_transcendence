@@ -15,6 +15,8 @@ US_NAME = user
 VA_NAME = vault
 MA_NAME = matchmaking
 PM_NAME = pokemap
+PR_NAME = prom_data
+GR_NAME = graf_data
 VA_VOL_NAME = secret_volume
 
 NG_IMG = $(shell docker images | grep nginx | wc -l)
@@ -33,6 +35,8 @@ VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
 MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
 CH_VOL = $(shell docker volume ls | grep chat | wc -l)
 PM_VOL = $(shell docker volume ls | grep pokemap | wc -l)
+PR_VOL = $(shell docker volume ls | grep prom | wc -l)
+GR_VOL = $(shell docker volume ls | grep graf | wc -l)
 
 #######	COLORS #######
 
@@ -60,6 +64,8 @@ all: run_script up
 up:
 	@ echo -e "\n$(YELLOW)★ Launching Docker ★$(CEND)"
 	@ docker --version
+	@ docker pull prom/prometheus
+	@ docker pull grafana/grafana
 	@ echo -e "$(WHITE) A self-sufficient runtime for containers$(CEND)"
 	@ docker compose -f docker-compose.yml up -d --pull never
 	@ source ./scripts/starting_script.sh && key_remove
@@ -148,6 +154,10 @@ clean : down
 	else echo "	CHAT Volume already deleted"; fi;
 	@ if [ $(PM_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(PM_NAME); \
 	else echo "	POKEMAP Volume already deleted"; fi;
+	@ if [ $(PR_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(PR_NAME); \
+	else echo "	PROMETHEUS Volume already deleted"; fi;
+	@ if [ $(GR_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(GR_NAME); \
+	else echo "	GRAPHANA Volume already deleted"; fi;
 
 	@ docker system prune -af
 	@ docker volume prune -f

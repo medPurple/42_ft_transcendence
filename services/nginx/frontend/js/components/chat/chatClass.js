@@ -95,6 +95,100 @@ export class chat {
 		input.rows = 3;
 		input.style.resize = 'none';
 
+  constructor() {
+    this.targetid = null;
+    this.websocket = null;
+    this.player1 = null;
+    this.player2 = null;
+  }
+
+  async getusername(id) {
+
+    console.log('id', id);  
+    const users = await Iuser.getAllUsers();
+    let username = users.users.find(user => user.user_id === parseInt(id)).username;
+    console.log('username', username);
+    return username;
+
+  }
+
+  createChatDiv() {
+    const chatDiv = document.createElement('div');
+    chatDiv.classList.add('m-3', 'rounded', 'd-flex');;
+    chatDiv.style.height = 'calc(100vh - 2rem)';
+    chatDiv.id = 'chatDiv';
+    return chatDiv;
+  }
+
+  async createUsersDiv() {
+    const usersDiv = document.createElement('div');
+    usersDiv.classList.add('d-flex', 'flex-column', 'rounded');
+    usersDiv.style.flex = '1'; // Ajoute la propriété flex
+    usersDiv.id = 'usersDiv';
+
+    const title = document.createElement('h2'); // Crée un nouvel élément de titre
+    title.textContent = 'User List'; // Ajoute du texte au titre
+    title.classList.add('text-underline', 'mt-3'); // Ajoute une marge en haut et souligne le texte
+    usersDiv.appendChild(title); // Ajoute le titre à usersDiv
+
+
+    const response = await Iuser.getAllUsers();
+    const id = await Iuser.getID()
+
+    response.users.forEach(user => {
+      if (user.user_id != id) {
+        const userButton = document.createElement('button');
+        userButton.classList.add('btn', 'btn-lg', 'w-100', 'rounded', 'bg-light');
+        userButton.textContent = user.username;
+        usersDiv.appendChild(userButton);
+        userButton.onclick = async (e) => {
+          console.log("user id ", user.user_id);
+          this.targetid = user.user_id;
+          const interactiondiv = document.querySelector('.interactionDiv');
+          const Nonediv = document.querySelector('.Nonediv');
+          if (Nonediv)
+            Nonediv.remove();
+          else {
+            this.websocket.send(JSON.stringify({
+              'message': '@refuse@',
+              'user_id': await Iuser.getID()
+            }));
+            this.player1 = null;
+            this.player2 = null;
+            this.websocket.close();
+            interactiondiv.remove();
+          }
+          const newinteractiondiv = await this.createInteractionDiv();
+          document.querySelector('#chatDiv').appendChild(newinteractiondiv);
+          this.createChat();
+        }
+      }
+    });
+
+    return usersDiv;
+  }
+
+  async createMessagesDiv() {
+  
+    const messagesDiv = document.createElement('div');
+    messagesDiv.classList.add('p-3', 'mt-auto', 'flex-grow-1', 'bg-white', 'rounded');
+    messagesDiv.id = 'messagesDiv';
+    messagesDiv.textContent = '';
+    messagesDiv.style.overflowY = 'scroll'; // Ajoute la propriété overflow-y: scroll
+    return messagesDiv;
+  }
+
+  createInputDiv() {
+    const inputDiv = document.createElement('div');
+    inputDiv.id = 'inputDiv';
+    inputDiv.classList.add('p-3', 'mt-auto');
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'messageInput';
+    input.classList.add('form-control', 'mr-2');
+
+
 		const sendButton = document.createElement('button');
 		sendButton.id = 'sendButton';
 		sendButton.textContent = 'Send';
@@ -468,6 +562,121 @@ export class chat {
 		this.websocket.onopen = function(e) {
 			console.log('Chat socket open');
 		}
+
+		acceptButton.classList.add('btn', 'btn-dark', 'mr-2');
+
+    acceptButton.onclick = async (e) => {
+      console.log('accept');
+      this.websocket.send(JSON.stringify({
+        'message': '@accept@',
+        'user_id': await Iuser.getID()
+      }));
+      const inputdiv = document.querySelector('#inputDiv');
+      const acceptButton = inputdiv.querySelector('#acceptButton');
+      const refuseButton = inputdiv.querySelector('#refuseButton');
+
+      acceptButton.remove();
+      refuseButton.remove();
+    }
+
+    return acceptButton;
+  }
+
+  createRefuseButton() {
+    const refuseButton = document.createElement('button');
+    refuseButton.id = 'refuseButton';
+    refuseButton.textContent = 'Refuse';
+    refuseButton.classList.add('btn', 'btn-secondary');
+
+    refuseButton.onclick = async (e) => {
+      console.log('refuse');
+      this.websocket.send(JSON.stringify({
+        'message': '@refuse@',
+        'user_id': await Iuser.getID()
+      }));
+      const inputdiv = document.querySelector('#inputDiv');
+      const acceptButton = inputdiv.querySelector('#acceptButton');
+      const refuseButton = inputdiv.querySelector('#refuseButton');
+
+      acceptButton.remove();
+      refuseButton.remove();
+    }
+
+    return refuseButton;
+
+  }
+
+  async checkInviteStatus(data) {
+    if (data === '@accept@') {
+      console.warn('ACCEPTED BY' + id);
+      if (this.player1 === null)
+        this.player1 = id;
+      else if (this.player2 === null)
+        this.player2 = id;
+      return true;
+    }
+    else if (data === '@refuse@') {
+      console.warn('REFUSED BY' + id);
+      this.player1 = null;
+      this.player2 = null;
+      const inviteButton = document.querySelector('#inviteButton');
+      const acceptButton = document.querySelector('#acceptButton');
+      const refuseButton = document.querySelector('#refuseButton');
+      inviteButton.disabled = false;
+
+      if (acceptButton)
+        acceptButton.remove();
+      if (refuseButton)
+        refuseButton.remove();
+      return true;
+    }
+    return false;
+
+  }
+
+  async createChat() {
+    let myid = await Iuser.getID()
+    let roomName = ''
+    const interactiondiv = document.querySelector('.interactionDiv');
+    const inputDiv = interactiondiv.querySelector('#inputDiv');
+    const input = inputDiv.querySelector('#messageInput');
+    const sendButton = inputDiv.querySelector('#sendButton');
+    const inviteButton = document.querySelector('#inviteButton');
+
+    if (myid > this.targetid)
+      roomName = myid + '_' + this.targetid;
+    else
+      roomName = this.targetid + '_' + myid;
+
+    const response = await fetch(`https://${window.location.host}/api/chat/history/${roomName}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': Icookies.getCookie('token'),
+        'X-CSRFToken': Icookies.getCookie('csrftoken')
+        },
+      credentials: 'include',
+    });
+    const data = await response.json();
+    if (data.success){
+      if (data.data){
+      console.log(data.data);
+      data.data.forEach(message => {
+        if (message.message[0] !== '@')
+          this.addMessage(message.user_id, message.message, message.timestamp);
+        });
+      }
+    } else
+      alert('Failed to get chat history');
+
+    this.websocket = new WebSocket(
+      `wss://${window.location.host}/ws/chat/${roomName}/`
+    );
+
+    this.websocket.onopen = function(e) {
+      console.log('Chat socket open');
+    }
+
 
     this.websocket.onmessage = async (e) => {
       const data = JSON.parse(e.data);
