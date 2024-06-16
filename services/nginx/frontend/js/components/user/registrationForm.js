@@ -1,10 +1,11 @@
 import Icookies from "../cookie/cookie.js"
 
 export default class RegistrationForm extends HTMLElement {
+
 	constructor() {
-		super(); // Always call super first in constructor
-		this.attachShadow({ mode: 'open' }); // Create a new attached DOM tree for the component
-        this.shadowRoot.innerHTML = `
+		super(); 
+		this.attachShadow({ mode: 'open' });
+		this.shadowRoot.innerHTML = `
 		<link rel="stylesheet" href="css/style.css" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
@@ -55,42 +56,35 @@ export default class RegistrationForm extends HTMLElement {
 			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
 				${message}
 			</div>`;
-
 	}
 
 	validateForm(formData) {
-		// Get the form data
 		const username = formData.get('username');
 		const email = formData.get('email');
 		const password1 = formData.get('password1');
 		const password2 = formData.get('password2');
 		const img = formData.get('profile_picture');
 
-		// Check if all fields are filled
 		if (!username || !email || !password1 || !password2) {
 			this.showAlert('All fields must be filled');
 			return false;
 		}
 
-		// Check if passwords match
 		if (password1 !== password2) {
 			this.showAlert('Passwords do not match');
 			return false;
 		}
 
-		// Check if password is not similar to username
 		if (!/^[a-zA-Z]+$/.test(username)) {
 			this.showAlert('Username should contain only alphanumeric characters');
 			return false;
 		}
 
-		// Check if password should not be similar to the username
 		if (password1.includes(username)) {
 			this.showAlert('Password should not be similar to the username');
 			return false;
 		}
 
-		// Check if password has at least 8 characters
 		if (password1.length < 8) {
 			this.showAlert('Password should be at least 8 characters long');
 			return false;
@@ -105,37 +99,31 @@ export default class RegistrationForm extends HTMLElement {
 	}
 	
 	connectedCallback() {
-		const signupForm = this.shadowRoot.getElementById('signup-form'); // Use getElementById to find the form within the component
+		const signupForm = this.shadowRoot.getElementById('signup-form');
 		const showAlert = this.showAlert.bind(this);
 		const validateForm = this.validateForm.bind(this);
 		signupForm.addEventListener('submit', async function(event) {
 			event.preventDefault();
 
-
-
-            // Get the form data
 			try {
 				const formData = new FormData(signupForm);
 				if (!validateForm(formData)) {
 					return;
 				}
 
-            // Send an AJAX request to submit the form
 				const response = await 	fetch('/api/profiles/register/', {
 					method: 'POST',
 					body: formData,
 					headers: {
-						'X-CSRFToken': formData.get('csrfmiddlewaretoken') // Get the CSRF token from the form data
+						'X-CSRFToken': formData.get('csrfmiddlewaretoken')
 					}
 				});
+
 				const data = await response.json();
 				if (data.success) {
 					Icookies.setCookie('token', data.token, 90);
-					// Redirect to the home page
-					window.location.href = `/home`; // Change the URL to your home page URL
-
+					window.location.href = `/home`;
 				} else {
-					// console.log(data);
 					if (data.password2){
 						showAlert(data.password2[0]);
 						return;
@@ -148,10 +136,8 @@ export default class RegistrationForm extends HTMLElement {
 						showAlert(data.email);
 						return;
 					}
-                    // Display validation errors or any other error message
 					showAlert('Registration failed. Please check the form and try again.');
 				}
-
 			} catch(error) {
 				showAlert('Error:', error);
 			}

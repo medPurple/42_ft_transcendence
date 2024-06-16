@@ -1,7 +1,7 @@
 
 export default () => `
 
-<div class="container">
+	<div class="container">
 	<div class="row mb-4 g-4">
 		<div class="col-sm-4">
 			<a href="/play_pl" data-link data-bs-toggle="tooltip" data-bs-placement="top" title="Local">

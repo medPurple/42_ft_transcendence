@@ -12,10 +12,8 @@ export class chat {
 	}
 
 	async getusername(id) {
-		console.log('id', id);
 		const users = await Iuser.getAllUsers();
 		let username = users.users.find(user => user.user_id === parseInt(id)).username;
-		console.log('username', username);
 		return username;
 	}
 
@@ -49,7 +47,6 @@ export class chat {
 				userButton.textContent = user.username;
 				usersDiv.appendChild(userButton);
 				userButton.onclick = async (e) => {
-					console.log("user id ", user.user_id);
 					this.targetid = user.user_id;
 					const interactiondiv = document.querySelector('.interactionDiv');
 					const Nonediv = document.querySelector('.Nonediv');
@@ -161,7 +158,6 @@ export class chat {
 		blockButton.onclick = async () => {
 			try {
 				const blockIsValid = await Ifriends.blockUser(username);
-				console.log(blockIsValid);
 				if (blockIsValid.success) {
 					blockButton.textContent = 'User is blocked';
 					blockButton.disabled = true;
@@ -176,7 +172,6 @@ export class chat {
 		unblockButton.onclick = async () => {
 			try {
 				const unblockIsValid = await Ifriends.unblockUser(username);
-				console.log(unblockIsValid)
 				if (unblockIsValid.success) {
 					unblockButton.textContent = 'User is unblocked';
 					unblockButton.disabled = true;
@@ -191,7 +186,6 @@ export class chat {
 		const username = await this.getusername(id)
 		try {
 			const blockStatus = await Ifriends.getUserBlock(username);
-			console.log(blockStatus);
 			if (blockStatus.success) {
 				return true;
 			}
@@ -358,7 +352,6 @@ export class chat {
 		acceptButton.classList.add('btn', 'btn-light', 'mt-3', 'm-2', 'border-dark');
 
 		acceptButton.onclick = async (e) => {
-			console.log('accept');
 			this.websocket.send(JSON.stringify({
 				'message': '@accept@',
 				'user_id': await Iuser.getID()
@@ -380,7 +373,6 @@ export class chat {
 		refuseButton.classList.add('btn', 'btn-secondary', 'mt-3', 'm-2', 'border-dark');
 
 		refuseButton.onclick = async (e) => {
-			console.log('refuse');
 			this.websocket.send(JSON.stringify({
 				'message': '@refuse@',
 				'user_id': await Iuser.getID()
@@ -449,7 +441,6 @@ export class chat {
 		const data = await response.json();
 		if (data.success) {
 			if (data.data) {
-				console.log(data.data);
 				data.data.forEach(message => {
 					if (message.message[0] !== '@')
 						this.addMessage(message.user_id, message.message, message.timestamp);
@@ -464,13 +455,8 @@ export class chat {
 			+ '/'
 		);
 
-		this.websocket.onopen = function(e) {
-			console.log('Chat socket open');
-		}
-
 		this.websocket.onmessage = async (e) => {
 			const data = JSON.parse(e.data);
-			console.log('data', data);
 			const id = data['user_id'];
 			const message = data['message'];
 			const timestamp = data['time'];
@@ -554,11 +540,9 @@ export class chat {
 	// 		credentials: 'include',
 	// 		body: JSON.stringify(party)
 	// 	});
-	// 	console.log(response);
 	// }
 
 	// async changeStatus() {
-	// 	console.log("Changing status to game.");
 	// 	const id = await Iuser.getID();
 	// 	const body = {
 	// 		"userID": id,
@@ -574,6 +558,5 @@ export class chat {
 	// 		credentials: 'include',
 	// 		body: JSON.stringify(body)
 	// 	});
-	// 	console.log(response);
 	// }
 }

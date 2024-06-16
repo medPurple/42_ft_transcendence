@@ -5,11 +5,9 @@ export class FriendsStatistics {
 
 	constructor(username){
 		this.username = username;
-
 	}
 
 	createUserCardStats(containerStats, userInfo, stats){
-
 		let rowUser = document.createElement('div');
 		rowUser.classList.add('row');
 		rowUser.id = 'row-profile-user';
@@ -40,7 +38,6 @@ export class FriendsStatistics {
 		cardImage.alt = 'Profile Picture';
 
 		for (let i = 0; i < 4; i++) {
-
 			let divCol = document.createElement('div');
 			divCol.classList.add('col-md-3');
 			rowCard.appendChild(divCol);
@@ -55,14 +52,11 @@ export class FriendsStatistics {
 
 			this.generateCardTitle(userInfo, divCardBody, i);
 			this.generateCardText(divCardBody, cardImage, i, stats);
-
-
 		}
 		return rowUser;
 	}
 
 	generateCardTitle(userInfo, divCardBody, i){
-
 		let divCardTitle = document.createElement('div');
 		divCardTitle.classList.add('card-title', 'text-nowrap');
 		divCardBody.appendChild(divCardTitle);
@@ -112,14 +106,10 @@ export class FriendsStatistics {
 			default:
 				break;
 		}
-
-		return divCardText
-
+		return divCardText;
 	}
 
-
 	createPartyStats(containerStats, userInfo, stats, users){
-
 		let rowOther = document.createElement('div');
 		rowOther.classList.add('row');
 		containerStats.appendChild(rowOther);
@@ -223,7 +213,6 @@ export class FriendsStatistics {
 
 
 	async initFriendsStatistics(){
-
 		const logoImg = document.querySelector('img[src="./images/Logos/LogoSG-mod.png"]');
 		if (logoImg)
 			logoImg.src = '../../images/Logos/LogoSG-mod.png';
@@ -236,13 +225,11 @@ export class FriendsStatistics {
 		const userInfo = users.users.find(user => user.username === this.username);
 		const stats = await this.getStats(userInfo.user_id);
 
-
 		this.createUserCardStats(containerStats, userInfo, stats);
 		this.createPartyStats(containerStats, userInfo, stats, users);
 
 		return containerStats;
 	}
-
 
 	async getStats(userID){
 		try {

@@ -1,6 +1,5 @@
 
 export default () => `
-
 	<div id="app-general-container">
 		<div class="image-container">
 			<img src="../images/Site/InvitationCard_Front.png" alt="Original Image" class="original-image">
@@ -24,13 +23,10 @@ function validateCodeAndRedirect() {
 	const codeInput = document.querySelector('.form-control');
 
 	if (codeInput) {
-
 		const code = codeInput.value;
 		if (code === '8650 4006') {
-			console.log('Code is correct!');
 			window.location.href = '/home';
 		} else {
-			console.log('Incorrect code!');
 			alert("Incorrect code! Please try again");
 		}
 	}

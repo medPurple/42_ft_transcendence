@@ -1,12 +1,13 @@
 import Icookies from "../cookie/cookie.js"
 
 class friendsInfo {
+
 	constructor(){
 		this.jwtToken = Icookies.getCookie('token');
 		this.csrfToken = Icookies.getCookie('csrftoken');
 	}
 
-    async getFriendsList() {
+	async getFriendsList() {
 		try {
 			const response = await fetch('/api/friends/friends-list/', {
 				method: 'GET',
@@ -27,8 +28,8 @@ class friendsInfo {
 		}
 	}
 
-    async getFriend(username) {
-        try {
+	async getFriend(username) {
+		try {
 			const response = await fetch(`/api/friends/friends-list/${username}/`, {
 				method: 'GET',
 				headers: {
@@ -46,7 +47,7 @@ class friendsInfo {
 		} catch (error) {
 			console.error('Error', error);
 		}
-    }
+	}
 
 	async getUserBlock(username){
 		try {
@@ -59,12 +60,10 @@ class friendsInfo {
 				},
 			});
 			const data = await response.json();
-			if (data.success) {
-				console.log(data);
+			if (data.success)
 				return data;
-			} else {
+			else
 				return false;
-			}
 		} catch (error) {
 			console.error('Error', error);
 		}
