@@ -163,7 +163,7 @@ export class chat {
 					blockButton.disabled = true;
 				}
 			} catch (error) {
-				console.error('Error:', error);
+				console.log('Error:', error);
 			}
 		}
 	}
@@ -177,7 +177,7 @@ export class chat {
 					unblockButton.disabled = true;
 				}
 			} catch (error) {
-				console.error('Error:', error);
+				console.log('Error:', error);
 			}
 		}
 	}
@@ -193,7 +193,7 @@ export class chat {
 				return false;
 			}
 		} catch (error) {
-			console.error('Error:', error);
+			console.log('Error:', error);
 		}
 	}
 
@@ -329,7 +329,6 @@ export class chat {
 
 	async checkInvite(data, id) {
 		if (data === '@invite@') {
-			console.warn('INVITATION BY' + id);
 			return true;
 		}
 		return false;
@@ -389,7 +388,6 @@ export class chat {
 
 	async checkInviteStatus(data, id) {
 		if (data === '@accept@') {
-			console.warn('ACCEPTED BY' + id);
 			if (this.player1 === null)
 				this.player1 = id;
 			else if (this.player2 === null)
@@ -397,7 +395,6 @@ export class chat {
 			return true;
 		}
 		else if (data === '@refuse@') {
-			console.warn('REFUSED BY' + id);
 			this.player1 = null;
 			this.player2 = null;
 			const inviteButton = document.querySelector('#inviteButton');
@@ -422,32 +419,35 @@ export class chat {
 		const input = inputDiv.querySelector('#messageInput');
 		const sendButton = inputDiv.querySelector('#sendButton');
 		const inviteButton = document.querySelector('#inviteButton');
-
+		const blockstatus = await this.checkBlockStatus(this.targetid);
 		if (myid > this.targetid)
 			roomName = myid + '_' + this.targetid;
 		else
 			roomName = this.targetid + '_' + myid;
 
-		const response = await fetch(`https://${window.location.host}/api/chat/history/${roomName}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'Authorization': Icookies.getCookie('token'),
-				'X-CSRFToken': Icookies.getCookie('csrftoken')
-			},
-			credentials: 'include',
-		});
+		if (!blockstatus){
+	
+			const response = await fetch(`https://${window.location.host}/api/chat/history/${roomName}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': Icookies.getCookie('token'),
+					'X-CSRFToken': Icookies.getCookie('csrftoken')
+				},
+				credentials: 'include',
+			});
+			const data = await response.json();
+			if (data.success) {
+				if (data.data) {
+					data.data.forEach(message => {
+						if (message.message[0] !== '@')
+							this.addMessage(message.user_id, message.message, message.timestamp);
+					});
+				}
+			} else
+				alert('Failed to get chat history');
+		}
 
-		const data = await response.json();
-		if (data.success) {
-			if (data.data) {
-				data.data.forEach(message => {
-					if (message.message[0] !== '@')
-						this.addMessage(message.user_id, message.message, message.timestamp);
-				});
-			}
-		} else
-			alert('Failed to get chat history');
 
 		this.websocket = new WebSocket(
 			'wss://' + window.location.host + '/ws/chat/'
@@ -468,7 +468,6 @@ export class chat {
 				this.createInviteButton();
 			}
 			else if (invitestatus) {
-				console.warn('INVITATION STATUS');
 				if (!this.player1 && !this.player2)
 					inviteButton.disabled = false;
 			}
@@ -479,13 +478,9 @@ export class chat {
 				if (id == this.player1)
 					window.location.href = "/play_pc"
 				else
-					setTimeout(() => { window.location.href = "/play_pc"; }, 50);
+					setTimeout(() => { window.location.href = "/play_pc"; }, 500);
 			}
 		
-		};
-
-		this.websocket.onclose = function(e) {
-			console.error('Chat socket closed unexpectedly');
 		};
 
 		input.focus();
@@ -515,48 +510,4 @@ export class chat {
 		}
 
 	}
-
-	// async createParty(id1, id2) {
-	// 	const users = await Iuser.getAllUsers();
-	// 	let username1 = users.users.find(user => user.user_id === parseInt(id1)).username;
-	// 	let username2 = users.users.find(user => user.user_id === parseInt(id2)).username;
-	// 	const party = {
-	// 		"player1": {
-	// 			id: id1,
-	// 			username: username1
-	// 		},
-	// 		"player2": {
-	// 			id: id2,
-	// 			username: username2
-	// 		},
-	// 	}
-	// 	const response = await fetch('https://localhost:4430/api/pong/match/', {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 			'Authorization': Icookies.getCookie('token'),
-	// 			'X-CSRFToken': Icookies.getCookie('csrftoken')
-	// 		},
-	// 		credentials: 'include',
-	// 		body: JSON.stringify(party)
-	// 	});
-	// }
-
-	// async changeStatus() {
-	// 	const id = await Iuser.getID();
-	// 	const body = {
-	// 		"userID": id,
-	// 		"status": "game"
-	// 	}
-	// 	const response = await fetch('https://localhost:4430/api/matchmaking/', {
-	// 		method: 'PUT',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 			'Authorization': Icookies.getCookie('token'),
-	// 			'X-CSRFToken': Icookies.getCookie('csrftoken')
-	// 		},
-	// 		credentials: 'include',
-	// 		body: JSON.stringify(body)
-	// 	});
-	// }
 }

@@ -20,8 +20,8 @@ data=$(curl -H "X-Vault-Token: $(cat /tmp/.key)" http://vault:8200/v1/kv/nginx |
 ssl_certificate=$(echo $data | jq -r '.ssl_certificate')
 ssl_certificate_key=$(echo $data | jq -r '.ssl_certificate_key')
 
-# echo "$ssl_certificate" > /tmp/server.crt
-# echo "$ssl_certificate_key" > /tmp/server.key
+echo "$ssl_certificate" > /tmp/server.crt
+echo "$ssl_certificate_key" > /tmp/server.key
 
 cp /tmp/server.crt /usr/local/share/ca-certificates/
 update-ca-certificates
