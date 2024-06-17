@@ -149,8 +149,8 @@ class CustomUserLogin(APIView):
 class CustomUserVerify(APIView):
 	permission_classes = (permissions.AllowAny,)
 	def post(self, request):
-		otp = request.data.get('otp')
 		try:
+			otp = request.data.get('otp')
 			user = CustomUser.objects.get(otp=otp)
 			if (
 				user.otp == otp and
@@ -175,8 +175,8 @@ class CustomUserLogout(APIView):
 	authentication_classes = [JWTAuthentication]
 	def post(self, request):
 		# logger.debug(request)
-		user = request.user
 		try:
+			user = request.user
 			user.is_online = 0
 			user.save()
 		except CustomUser.DoesNotExist:
@@ -187,8 +187,11 @@ class CustomUserLogout(APIView):
 class CustomUsernameView(APIView):
 	authentication_classes = [JWTAuthentication]
 	def get(self, request):
-		serializer = CustomUsernameSerializer(request.user)
-		return Response({'user': serializer.data, 'success': True}, status=status.HTTP_200_OK)
+		try:
+			serializer = CustomUsernameSerializer(request.user)
+			return Response({'user': serializer.data, 'success': True}, status=status.HTTP_200_OK)
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_200_OK)
 
 class CustomUserView(APIView):
 	authentication_classes = [JWTAuthentication]
@@ -196,8 +199,11 @@ class CustomUserView(APIView):
 		# logger.info('User info')
 		# logger.info(request)
 		# logger.info(request.user)
-		serializer = CustomUserSerializer(request.user)
-		return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
+		try:
+			serializer = CustomUserSerializer(request.user)
+			return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_200_OK)
 
 class CustomUserEditView(APIView):
 	authentication_classes = [JWTAuthentication]

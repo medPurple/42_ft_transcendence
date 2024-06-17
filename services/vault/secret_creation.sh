@@ -64,21 +64,6 @@ fi
 #------------------------------------------------#
 
 #------------------------------------------------#
-echo "[VAULT SECRET] matchmaking container secret"
-ENV_FILE="/vault/matchmaking/.env"
-SECRET_PATH="mm_db"
-
-if [ -f "$ENV_FILE" ]; then
-	set -a
-	. "$ENV_FILE"
-	set +a
-    vault kv put kv/mm_db username_db=$mm_username_db password_db=$mm_password_db basename_db=$mm_basename_db 
-else
-	echo "$ENV_FILE unknow file."
-fi
-#------------------------------------------------#
-
-#------------------------------------------------#
 echo "[VAULT SECRET] JWToken container secret"
 ENV_FILE="/vault/JWToken/.env"
 SECRET_PATH="key"
@@ -119,20 +104,6 @@ if [ -f "$ENV_FILE" ]; then
 	. "$ENV_FILE"
 	set +a
     vault kv put kv/chat_db db_name=$chat_db_name db_password=$chat_db_password db_username=$chat_db_username 
-else
-	echo "$ENV_FILE unknow file."
-fi
-#------------------------------------------------#
-#------------------------------------------------#
-echo "[VAULT SECRET] arena container secret"
-ENV_FILE="/vault/arena/.env"
-SECRET_PATH="arena"
-
-if [ -f "$ENV_FILE" ]; then
-	set -a
-	. "$ENV_FILE"
-	set +a
-    vault kv put kv/arena userdb=$arena_userdb passworddb=$arena_passworddb namedb=$arena_namedb 
 else
 	echo "$ENV_FILE unknow file."
 fi

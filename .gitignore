@@ -9,6 +9,14 @@ __pycache__
 # Environment
 env
 .env
+.env_chat
+.env_game3d
+.env_JWToken
+.env_nginx
+.env_pokemap
+.env_token
+.env_user
+
 
 # Secrets
 .key

@@ -22,10 +22,10 @@ export default class editProfileForm extends HTMLElement {
       if (data && data.user) {
         this.displayEditProfileForm(data);
       } else {
-        console.error('Données utilisateur manquantes ou incorrectes');
+        console.info('Missing user data. Please login.');
       }
     } catch (error) {
-      console.error('Error:', error)
+      console.info('Error:', error)
     }
   }
 

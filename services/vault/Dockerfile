@@ -13,11 +13,9 @@ COPY secret_creation.sh /vault/secret_creation.sh
 
 
 COPY env_file/.env_nginx  /vault/nginx/.env
-COPY env_file/.env_arena  /vault/arena/.env
 COPY env_file/.env_user  /vault/user/.env
 COPY env_file/.env_JWToken  /vault/JWToken/.env
 COPY env_file/.env_game3d  /vault/game3d/.env
-COPY env_file/.env_matchmaking  /vault/matchmaking/.env
 COPY env_file/.env_pokemap  /vault/pokemap/.env
 COPY env_file/.env_chat  /vault/chat/.env
 

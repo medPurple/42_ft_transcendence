@@ -64,7 +64,6 @@ async function setup(gameMode, players) {
     if (gameState.game_mode == "tournament" || gameState.game_mode == "local")
       removeForm();
     await createScene();
-    console.log('Connected');
   };
 
   core.gameSocket.onerror = function(e) {
@@ -83,7 +82,7 @@ async function setup(gameMode, players) {
 
 const actions = new Map([
   ["party", (value) => { if (value === 'active') { core.party = true; } }],
-  ["player", (value) => { core.player_id = value; console.log("Player_id :", core.player_id) }],
+  ["player", (value) => { core.player_id = value }],
   ["player1_user_id", (value) => { core.player1_userid = value }],
   ["player2_user_id", (value) => { core.player2_userid = value }],
   ["player1_user_name", (value) => { core.player1_user_name = value }],

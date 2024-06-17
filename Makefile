@@ -32,7 +32,7 @@ PM_IMG = $(shell docker images | grep pokemap | wc -l)
 US_VOL = $(shell docker volume ls | grep user | wc -l)
 G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
-MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
+# MA_VOL = $(shell docker volume ls | grep matchmaking | wc -l)
 CH_VOL = $(shell docker volume ls | grep chat | wc -l)
 PM_VOL = $(shell docker volume ls | grep pokemap | wc -l)
 PR_VOL = $(shell docker volume ls | grep prom | wc -l)
@@ -148,8 +148,6 @@ clean : down
 	else echo "	GAME3D Volume already deleted"; fi;
 	@ if [ $(US_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(US_NAME); \
 	else echo "	USER Volume already deleted"; fi;
-	@ if [ $(MA_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(MA_NAME); \
-	else echo "	MATCHMAKING Volume already deleted"; fi;
 	@ if [ $(CH_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(CH_NAME); \
 	else echo "	CHAT Volume already deleted"; fi;
 	@ if [ $(PM_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(PM_NAME); \

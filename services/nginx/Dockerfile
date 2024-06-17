@@ -49,8 +49,7 @@ COPY /conf/modsecurity.conf /etc/nginx/modsecurity.conf
 
 RUN git clone https://github.com/coreruleset/coreruleset.git /etc/nginx/owasp-crs
 
-RUN echo "Include etc/nginx/owasp-crs/crs-setup.conf"  >> /etc/nginx/modsecurity.conf
-RUN echo "Include etc/nginx/owasp-crs/rules/*.conf" >> /etc/nginx/modsecurity.conf
-COPY ./frontend/ /usr/share/nginx/html/
+COPY /conf/modsecurity-crs.conf /etc/nginx/owasp-crs/crs-setup.conf
 
+COPY ./frontend/ /usr/share/nginx/html/
 CMD /tmp/get_ssl.sh && nginx -g "daemon off;"
