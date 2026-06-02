@@ -162,11 +162,15 @@ export class Statistics {
       rowPlayers.appendChild(playerTwoCol);
 
       let playerOneText = document.createElement('div');
-      playerOneText.innerHTML = `<strong>${player1.username} </strong>`;
+      const p1strong = document.createElement('strong');
+      p1strong.textContent = player1.username;
+      playerOneText.appendChild(p1strong);
       playerOneCol.appendChild(playerOneText);
 
       let playerTwoText = document.createElement('div');
-      playerTwoText.innerHTML = `<strong>${player2.username} </strong>`;
+      const p2strong = document.createElement('strong');
+      p2strong.textContent = player2.username;
+      playerTwoText.appendChild(p2strong);
       playerTwoCol.appendChild(playerTwoText);
 
       let playerOneImage = document.createElement('img');

@@ -182,27 +182,23 @@ function checkConnected() {
 
 async function checkValidToken() {
   const token = Icookies.getCookie('token');
-  if (token) {
-    try {
-      const response = await fetch('/api/token/', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Icookies.getCookie('csrftoken'),
-          'Authorization': token
-        }
-      });
-      const data = await response.json();
-      if (data.success == true) {
-        return true
-      } else {
-        throw new Error('Failed to get user info');
-      }
-    } catch (error) {
-      return false;
-    }
+  // Pas de token → utilisateur non connecté, considéré valide (pages publiques)
+  if (!token) {
+    return true;
   }
-  return true;
+  try {
+    const response = await fetch('/api/token/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+    });
+    const data = await response.json();
+    return data.success === true;
+  } catch (error) {
+    return false;
+  }
 }
 
 async function router() {
@@ -263,16 +259,18 @@ async function router() {
       history.replaceState("", "", "/404");
       router();
     }
-
-    window.addEventListener("click", (e) => {
-      if (e.target.matches("[data-link]")) {
-        e.preventDefault();
-        history.pushState("", "", e.target.href);
-        router();
-      }
-    });
   }
 }
+
+// Listener de navigation SPA — initialisé une seule fois au chargement
+// (était dans router() → recréé à chaque navigation → memory leak)
+window.addEventListener("click", (e) => {
+  if (e.target.matches("[data-link]")) {
+    e.preventDefault();
+    history.pushState("", "", e.target.href);
+    router();
+  }
+});
 
 window.addEventListener("popstate", router);
 window.addEventListener("DOMContentLoaded", router);

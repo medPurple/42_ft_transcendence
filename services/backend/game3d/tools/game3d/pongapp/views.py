@@ -1,3 +1,4 @@
+import requests
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,9 +10,28 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+def validate_token(request):
+    """Valide le token JWT. Retourne user_id si valide, None sinon."""
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return None
+    try:
+        response = requests.get(
+            'https://JWToken:4430/api/token/',
+            headers={'Authorization': auth_header}
+        )
+        data = response.json()
+        if data.get('success') is True:
+            return data.get('data', {}).get('user_id')
+    except Exception as e:
+        logger.warning(f"Token validation failed: {e}")
+    return None
+
 class GameSettingsAPI(APIView):
 	def post(self, request):
-		# logger.info(f'User ID: {user_id}')
+		if not validate_token(request):
+			return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
 		user_id = request.data.get('userID')
 		user_name = request.data.get('userName')
 		if not user_id:
@@ -38,7 +58,8 @@ class GameSettingsAPI(APIView):
 		return Response(settings_serializer.data, status=status.HTTP_201_CREATED)
 
 	def get(self, request, user_id=None):
-		# logger.info(f'User ID: {user_id}')
+		if not validate_token(request):
+			return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -56,7 +77,8 @@ class GameSettingsAPI(APIView):
 		return Response(settings_serializer.data, status=status.HTTP_200_OK)
 
 	def put(self, request, user_id=None):
-		# logger.info(f'User ID: {user_id}')
+		if not validate_token(request):
+			return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 		
@@ -77,7 +99,8 @@ class GameSettingsAPI(APIView):
 		return Response(settings_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	
 	def delete(self, request):
-		# logger.info(f'User ID: {user_id}')
+		if not validate_token(request):
+			return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
 		user_id = request.data.get('userID')
 		if not user_id:
 			return Response({"error": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -194,7 +217,8 @@ class GameMatchAPI(APIView):
 	# 		return Response(match_serializer.data, status=status.HTTP_200_OK)
 
 	def get(self, request, user_id=None):
-		# logger.info(f'Match ID: {match_id}')
+		if not validate_token(request):
+			return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
 		if user_id:
 			try:
 				user = get_object_or_404(GameUser, userID=user_id)

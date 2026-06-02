@@ -1,9 +1,11 @@
 import Icookies from "../cookie/cookie.js"
 
 export default class userInfo {
-  constructor() {
-    this.jwtToken = Icookies.getCookie('token');
-    this.csrfToken = Icookies.getCookie('csrftoken');
+
+  // Les tokens sont lus à chaque requête (pas dans le constructeur)
+  // pour garantir que login/logout mettent bien à jour les appels suivants.
+  get token() {
+    return Icookies.getCookie('token');
   }
 
   async getUsername() {
@@ -12,8 +14,7 @@ export default class userInfo {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'Authorization': this.jwtToken
+          'Authorization': this.token
         }
       });
       const data = await response.json();
@@ -31,14 +32,13 @@ export default class userInfo {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'Authorization': this.jwtToken,
+          'Authorization': this.token,
         },
         credentials: 'include',
       });
       const data = await response.json();
       if (data.success) {
-        return data
+        return data;
       } else {
         throw new Error('Failed to get user info');
       }
@@ -48,14 +48,12 @@ export default class userInfo {
   }
 
   async getID() {
-
     try {
       const response = await fetch('/api/token/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'Authorization': this.jwtToken
+          'Authorization': this.token
         },
         credentials: 'include',
       });
@@ -66,7 +64,7 @@ export default class userInfo {
         throw new Error('Failed to get user info');
       }
     } catch (error) {
-      throw error; // share the error
+      throw error;
     }
   }
 
@@ -76,17 +74,15 @@ export default class userInfo {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': this.csrfToken,
-          'Authorization': this.jwtToken,
+          'Authorization': this.token,
         }
       });
       const data = await response.json();
       if (data.success) {
-        return data
+        return data;
       } else {
         throw new Error('Failed to get user info');
       }
     } catch (error) { }
-
   }
 }

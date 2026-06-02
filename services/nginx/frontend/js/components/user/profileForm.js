@@ -1,5 +1,10 @@
 import Iuser from "./userInfo.js"
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
 
 export default class profileForm extends HTMLElement {
   constructor() {
@@ -52,13 +57,13 @@ export default class profileForm extends HTMLElement {
 			<div class="card text-center" style="width: 21rem;">
 				<img src="data:image/jpeg;base64,${profilePictureData}" class="card-img-top profile-pic" alt="Profile Picture">
 				<div class="card-body">
-					<h5 class="card-title"><strong>${data.user.username}</strong></h5>
+					<h5 class="card-title"><strong>${escapeHtml(data.user.username)}</strong></h5>
 					<h6 class="card-text">... thinks this is an outstanding project</h6>
 				</div>
 				<ul id="profile-content" class="list-group list-group-flush">
-					<li class="list-group-item"><strong>First name</strong><br>${data.user.first_name}</li>
-					<li class="list-group-item"><strong>Last Name</strong><br>${data.user.last_name}</li>
-					<li class="list-group-item"><strong>Email</strong><br>${data.user.email}</li>
+					<li class="list-group-item"><strong>First name</strong><br>${escapeHtml(data.user.first_name)}</li>
+					<li class="list-group-item"><strong>Last Name</strong><br>${escapeHtml(data.user.last_name)}</li>
+					<li class="list-group-item"><strong>Email</strong><br>${escapeHtml(data.user.email)}</li>
 					<li class="list-group-item">42 School</li>
 				</ul>
 				<div class="card-body">

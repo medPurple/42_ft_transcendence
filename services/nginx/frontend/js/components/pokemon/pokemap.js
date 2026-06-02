@@ -1,4 +1,5 @@
 import Iuser from "../user/userInfo.js";
+import Icookies from "../cookie/cookie.js";
 
 export class pokeMap {
 
@@ -201,7 +202,8 @@ export class pokeMap {
 	async connection() {
 		let id = await Iuser.getID();
 
-		const socket = new WebSocket("wss://" + window.location.host + "/ws/pokemap/");
+		const token = Icookies.getCookie('token').replace('Bearer ', '');
+		const socket = new WebSocket("wss://" + window.location.host + "/ws/pokemap/?token=" + token);
 		this.userID = id;
 
 		socket.onopen = async (e) => {

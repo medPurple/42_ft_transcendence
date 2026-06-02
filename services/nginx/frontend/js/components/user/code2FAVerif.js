@@ -47,7 +47,7 @@ export default class code2FA extends HTMLElement {
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            Icookies.setCookie('token', data.token, 90);
+            Icookies.setCookie('token', data.token, 7);
             window.location.href = '/home';
           } else {
             showAlert('Wrong code. Please check the code and try again.');

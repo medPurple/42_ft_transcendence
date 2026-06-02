@@ -1,13 +1,15 @@
 import Iuser from "../user/userInfo.js";
+import Icookies from "../cookie/cookie.js";
 
 export class pokechat {
 
 	constructor(){
 		const roomName = 'pokeroom';
+		const token = Icookies.getCookie('token').replace('Bearer ', '');
 		this.chatSocket = new WebSocket(
 			'wss://' + window.location.host + '/ws/chat/'
 			+ roomName
-			+ '/'
+			+ '/?token=' + token
 		);
 	}
 

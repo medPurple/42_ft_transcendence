@@ -1,7 +1,8 @@
 import json
 import logging
 import asyncio
-from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
+import requests
+from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.shortcuts import get_object_or_404
 from urllib.parse import parse_qs
@@ -12,20 +13,54 @@ import random
 
 logger = logging.getLogger(__name__)
 
+
+async def authenticate_ws(scope):
+    """Valide le JWT depuis la query string. Retourne le user_id si valide, None sinon."""
+    query_string = scope['query_string'].decode()
+    params = parse_qs(query_string)
+    token = params.get('token', [None])[0]
+
+    if not token:
+        return None
+
+    try:
+        response = await sync_to_async(requests.get)(
+            'https://JWToken:4430/api/token/',
+            headers={'Authorization': f'Bearer {token}'}
+        )
+        response.raise_for_status()
+        data = response.json()
+        if data.get('success') is True:
+            return data.get('data', {}).get('user_id')
+    except Exception as e:
+        logger.warning(f"Pokemap WS auth failed: {e}")
+    return None
+
+
 class PlayerConsumer(AsyncWebsocketConsumer):
-    gID = 0
 
     async def connect(self):
-        await self.accept()
-        # logger.info("connected")
+        # ── Authentification JWT ──────────────────────────────────────────────
+        user_id = await authenticate_ws(self.scope)
+        if not user_id:
+            await self.close(code=4001)
+            return
+
+        self.gID = int(user_id)  # user_id depuis le token, pas depuis le client
+        # ─────────────────────────────────────────────────────────────────────
+
         self.map_changed = False
+        await self.accept()
         self.send_message_task = asyncio.create_task(self.send_message())
 
 
         
 
     async def disconnect(self, close_code):
-        self.send_message_task.cancel()
+        if hasattr(self, 'send_message_task'):
+            self.send_message_task.cancel()
+        if not self.gID:
+            return
         user = await sync_to_async(get_object_or_404)(player, userID=self.gID)
         basejson = {
             "userID": user.userID,
@@ -48,9 +83,14 @@ class PlayerConsumer(AsyncWebsocketConsumer):
         try:
             text_data_json = json.loads(text_data)
             json_data = {}
+            # user_id vient du token authentifié (self.gID), pas du payload client
+            # On vérifie que le userID du message correspond au joueur authentifié
             id = text_data_json.get("userID")
+            if id and int(id) != self.gID:
+                logger.warning(f"userID mismatch: token={self.gID}, message={id}")
+                return
+            id = self.gID
             if (id and text_data_json.get("action") == "connect"):
-                gID = id
                 playerobj = await sync_to_async(get_object_or_404)(player, userID=id)
                 basejson = {
                     "userID": playerobj.userID,

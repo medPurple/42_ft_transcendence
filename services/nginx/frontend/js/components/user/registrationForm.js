@@ -122,7 +122,7 @@ export default class RegistrationForm extends HTMLElement {
 			});
 			const data = await response.json();
 			if (data.success) {
-			Icookies.setCookie('token', data.token, 90);
+			Icookies.setCookie('token', data.token, 7);
 			window.location.href = `/home`;
 
 			} else {

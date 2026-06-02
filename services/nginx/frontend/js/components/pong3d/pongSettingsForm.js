@@ -2,6 +2,11 @@ import gamer from "./gamerInfo.js"
 import Icookies from "../cookie/cookie.js";
 import Iuser from "../user/userInfo.js";
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
 export default class pongSettingsForm extends HTMLElement {
   constructor() {
     super();
@@ -38,7 +43,7 @@ export default class pongSettingsForm extends HTMLElement {
 
 		<div id="app-general-container" style="padding-top: 2em;">
 			<form id="settings-form" method="put" action="" class="container">
-			<h4 class="text-center">Welcome <strong>${data.user.userName}</strong>,<br> Do you want to change anything today ?</h4>
+			<h4 class="text-center">Welcome <strong>${escapeHtml(data.user.userName)}</strong>,<br> Do you want to change anything today ?</h4>
 			
 			<div class="row mt-3">
 				<div id="scene" name="scene">
@@ -143,7 +148,6 @@ export default class pongSettingsForm extends HTMLElement {
   async initFormSubmit() {
     const editSettings = this.shadowRoot.getElementById('settings-form');
     const userId = await Iuser.getID();
-    console.log(userId);
 
     if (!editSettings) {
       console.error('Could not find the settings form');

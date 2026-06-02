@@ -39,21 +39,19 @@ def user_token(request, user_id):
 		print(f"Error token : {e}")
 		return None
 
-def create_userID_microservices(request, user_id, user_name):
-	headers = {'Content-Type': 'application/json'}
+def create_userID_microservices(request, user_id, user_name, token):
+	headers = {
+		'Content-Type': 'application/json',
+		'Authorization': token,  # token JWT passé pour authentifier l'appel inter-service
+	}
 	data = {"userID": user_id, "userName": user_name}
-
-	# logger.info('Creating user ID in microservices:')
-	# logger.info(data)
-	# logger.info(user_id)
 
 	try:
 		response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data))
 		response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data))
-		#response = ADD OTHER MICROSERVICES LINKS HERE IF NEEDED
 		return response
 	except requests.exceptions.RequestException as e:
-		print(f"Error creating user ID in microservices: {e}")
+		logger.error(f"Error creating user ID in microservices: {e}")
 		return None
 
 class JWTAuthentication(BaseAuthentication):
@@ -114,9 +112,7 @@ class CustomUserRegister(APIView):
 			user.save()
 			token = user_token(request, user.user_id)
 			if token is not None:
-				# logger.info('Token created')
-
-				user_creation = create_userID_microservices(request, user.user_id, user.username)
+				user_creation = create_userID_microservices(request, user.user_id, user.username, token)
 
 				if user_creation is not None:
 					login(request, user)

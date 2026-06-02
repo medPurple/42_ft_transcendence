@@ -4,6 +4,7 @@ import { handlePowerUp } from "./handlePowerUps.js"
 import { displayScore } from './scoreDisplay.js'
 import { cameraPlayer1, cameraLocalPlayer1, cameraPlayer2, cameraLocalPlayer2, cameraMalusRemote } from './cameraLogic.js'
 import Iuser from "../user/userInfo.js";
+import Icookies from "../cookie/cookie.js";
 
 function draw() {
   if (core.scene == 0 || core.camera == 0 || core.renderer == 0)
@@ -43,19 +44,22 @@ async function setup(gameMode, players) {
   gameState.game_mode = gameMode;
   const user_id = await Iuser.getID();
   const user_name = await Iuser.getUsername();
+  // Le token JWT est passé en query string — requis par l'auth backend
+  const token = Icookies.getCookie('token').replace('Bearer ', '');
+  const base = 'wss://' + window.location.host;
 
   switch (gameState.game_mode) {
     case "remote":
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/remote/' + user_id + '/' + user_name + '/');
+      core.gameSocket = new WebSocket(base + '/ws/pong/remote/' + user_id + '/' + user_name + '/?token=' + token);
       break;
     case "local":
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/local/' + user_id + '/' + user_name + '/' + players.player2 + '/');
+      core.gameSocket = new WebSocket(base + '/ws/pong/local/' + user_id + '/' + user_name + '/' + players.player2 + '/?token=' + token);
       break;
     case "chat":
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/chat/' + user_id + '/' + user_name + '/');
+      core.gameSocket = new WebSocket(base + '/ws/pong/chat/' + user_id + '/' + user_name + '/?token=' + token);
       break;
     default:
-      core.gameSocket = new WebSocket('wss://' + window.location.host + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/');
+      core.gameSocket = new WebSocket(base + '/ws/pong/tournament/' + user_id + '/' + players.player1 + '/' + players.player2 + '/' + players.player3 + '/' + players.player4 + '/?token=' + token);
       break;
   }
 

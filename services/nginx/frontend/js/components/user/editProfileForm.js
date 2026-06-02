@@ -1,6 +1,17 @@
 import Iuser from "./userInfo.js";
 import Icookies from "../cookie/cookie.js";
 
+// Échappe les caractères HTML pour éviter les XSS via innerHTML
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export default class editProfileForm extends HTMLElement {
   constructor() {
     super();
@@ -51,25 +62,25 @@ export default class editProfileForm extends HTMLElement {
 			<div class="row mb-4">
 				<label class="col-sm-3 col-form-label text-start" for="username">Username</label>
 				<div class="col-sm-9">
-					<input type="text" class="form-control" id="username" name="username" value="${data.user.username}">
+					<input type="text" class="form-control" id="username" name="username" value="${escapeHtml(data.user.username)}">
 				</div>
 			</div>
 			<div class="row mb-4">
 				<label class="col-sm-3 col-form-label text-start" for="first_name">First Name</label>
 				<div class="col-sm-9">
-					<input type="text" class="form-control" id="first_name" name="first_name" value="${data.user.first_name}">
+					<input type="text" class="form-control" id="first_name" name="first_name" value="${escapeHtml(data.user.first_name)}">
 				</div>
 			</div>
 			<div class="row mb-4">
 				<label class="col-sm-3 col-form-label text-start" for="last_name">Last Name</label>
 				<div class="col-sm-9">
-					<input type="text" class="form-control" id="last_name" name="last_name" value="${data.user.last_name}">
+					<input type="text" class="form-control" id="last_name" name="last_name" value="${escapeHtml(data.user.last_name)}">
 				</div>
 			</div>
 			<div class="row mb-4">
 				<label class="col-sm-3 col-form-label text-start" for="email">Email</label>
 				<div class="col-sm-9">
-					<input type="email" class="form-control" id="email" name="email" value="${data.user.email}">
+					<input type="email" class="form-control" id="email" name="email" value="${escapeHtml(data.user.email)}">
 				</div>
 			</div>
 			<div class="row mb-4">

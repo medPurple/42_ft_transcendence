@@ -449,10 +449,11 @@ export class chat {
 		}
 
 
+		const token = Icookies.getCookie('token').replace('Bearer ', '');
 		this.websocket = new WebSocket(
 			'wss://' + window.location.host + '/ws/chat/'
 			+ roomName
-			+ '/'
+			+ '/?token=' + token
 		);
 
 		this.websocket.onmessage = async (e) => {

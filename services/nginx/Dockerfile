@@ -1,6 +1,6 @@
 FROM debian:bookworm
 
-RUN apt-get update && apt upgrade
+RUN apt-get update -y && apt-get upgrade -y
 
 RUN apt-get install \
     git jq gcc make build-essential autoconf \

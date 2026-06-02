@@ -1,6 +1,11 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js"
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
 export default class pkmSettingsForm extends HTMLElement {
 	constructor(){
 		super();
@@ -47,7 +52,7 @@ export default class pkmSettingsForm extends HTMLElement {
 
 		<div id="app-general-container" class="container d-flex flex-column justify-content-center align-items-center">
 		<form id="settings-form" method="put" action="" class="container">
-		<h4 class="text-center">Welcome <strong>${username}</strong>,<br> who are you playing today ?</h3>
+		<h4 class="text-center">Welcome <strong>${escapeHtml(username)}</strong>,<br> who are you playing today ?</h4>
 		<div class="row mt-5">
 			<div class="col mb-4">
 				<input type="radio" id="radio_jessie" name="image-radio" class="image-radio">

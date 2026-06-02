@@ -1,5 +1,10 @@
 import Iuser from "../user/userInfo.js";
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
 export class FriendsProfile {
 
 	constructor(username) {
@@ -31,7 +36,7 @@ export class FriendsProfile {
 
 	displayFriendsProfile(data, profilePictureData, statut) {
 		const logoImg = document.querySelector('img[src="./images/Logos/LogoSG-mod.png"]');
-		logoImg.src = '../../images/Logos/LogoSG-mod.png'
+		if (logoImg) logoImg.src = '../../images/Logos/LogoSG-mod.png';
 		let profileContainer = document.createElement('div');
 		profileContainer.className = 'd-flex justify-content-center';
 		profileContainer.id = 'profile-friends-container';
@@ -68,16 +73,35 @@ export class FriendsProfile {
 		cardList.id = 'profile-content';
 		cardList.className = 'list-group list-group-flush';
 
-		let listItems = `
-			<li class="list-group-item"> <strong> Username  </strong> <br> ${data.username}</li>
-			<li class="list-group-item"> <strong> First name  </strong> <br> ${data.first_name}</li>
-			<li class="list-group-item"> <strong> Last name  </strong> <br> ${data.last_name}</li>
-			<li class="list-group-item"><a href="/statistics/${data.username}" class="card-link" data-link><strong>Friend's stats</strong></a></li>
-			<li class="list-group-item"> 42 School</li>
-
-		`;
-
-		cardList.innerHTML = listItems;
+		// Construction DOM sécurisée — pas d'injection de données utilisateur dans innerHTML
+		const items = [
+			{ label: 'Username', value: data.username },
+			{ label: 'First name', value: data.first_name },
+			{ label: 'Last name', value: data.last_name },
+		];
+		items.forEach(({ label, value }) => {
+			const li = document.createElement('li');
+			li.className = 'list-group-item';
+			const strong = document.createElement('strong');
+			strong.textContent = label;
+			li.appendChild(strong);
+			li.appendChild(document.createElement('br'));
+			li.appendChild(document.createTextNode(value || ''));
+			cardList.appendChild(li);
+		});
+		const liStats = document.createElement('li');
+		liStats.className = 'list-group-item';
+		const aStats = document.createElement('a');
+		aStats.href = `/statistics/${encodeURIComponent(data.username)}`;
+		aStats.className = 'card-link';
+		aStats.setAttribute('data-link', '');
+		aStats.innerHTML = '<strong>Friend\'s stats</strong>';
+		liStats.appendChild(aStats);
+		cardList.appendChild(liStats);
+		const li42 = document.createElement('li');
+		li42.className = 'list-group-item';
+		li42.textContent = '42 School';
+		cardList.appendChild(li42);
 
 		let cardFooter = document.createElement('div');
 		cardFooter.className = 'card-footer text-body-secondary';

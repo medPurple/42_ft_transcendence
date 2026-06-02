@@ -57,7 +57,7 @@ class MatchmakingButtons {
 		const body = {
 			"userID": id
 		}
-		const response = await fetch('https://localhost:4430/api/matchmaking/', {
+		const response = await fetch(window.location.origin + '/api/matchmaking/', {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ class MatchmakingButtons {
 				username : username2
 			},
 		}
-		const response = await fetch('https://localhost:4430/api/pong/match/', {
+		const response = await fetch(window.location.origin + '/api/pong/match/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ class MatchmakingButtons {
 			"userID": id,
 			"status": "game"
 		}
-		const response = await fetch('https://localhost:4430/api/matchmaking/', {
+		const response = await fetch(window.location.origin + '/api/matchmaking/', {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -188,17 +188,17 @@ class MatchmakingButtons {
 		if (this.status === 'found') {
 			this.removeWaitingPage();
 			await this.changeStatus();
-			if (this.game === 'pong_multiplayer')
+			if (this.game === 'pong_multiplayer') {
 				await this.createParty_pong(data);
-				window.location.href = "/gameService"
-			if (this.game === 'pong_multiplayer')
-				await this.createParty_pong(data);
-				window.location.href = "/pokecombat"
+				window.location.href = "/gameService";
+			} else if (this.game === 'pkm_multiplayer') {
+				window.location.href = "/pokecombat";
+			}
 		}
 	}
 
 	async mainMatchmakingDiv() {
-		this.matchsocket = new WebSocket("wss://localhost:4430/api/wsqueue/")
+		this.matchsocket = new WebSocket("wss://" + window.location.host + "/api/wsqueue/")
 		this.matchmakingsocketaction();
 
 		const msg = {

@@ -5,7 +5,8 @@ import logging
 import time
 import asyncio
 import threading
-from . import initvalues
+import requests
+from urllib.parse import parse_qs
 
 from django.db.models import Q
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -13,11 +14,43 @@ from pongapp.game_classes import paddleC, ballC, gameStateC, remote_parties, loc
 from . import initvalues as iv
 from .models import GameMatch, GameSettings, GameUser
 from .serializers import GameMatchSerializer
-from asgiref.sync import async_to_sync, sync_to_async
+from asgiref.sync import sync_to_async
 
 logger = logging.getLogger(__name__)
-# remote_parties = []
-# local_parties = []
+
+
+async def authenticate_ws(scope, expected_user_id):
+    """
+    Valide le token JWT depuis la query string du WebSocket.
+    Vérifie que l'user_id du token correspond à expected_user_id (celui de l'URL).
+    Retourne l'user_id si valide, None sinon.
+    """
+    query_string = scope['query_string'].decode()
+    params = parse_qs(query_string)
+    token = params.get('token', [None])[0]
+
+    if not token:
+        return None
+
+    try:
+        response = await sync_to_async(requests.get)(
+            'https://JWToken:4430/api/token/',
+            headers={'Authorization': f'Bearer {token}'}
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get('success') is not True:
+            return None
+
+        token_user_id = str(data.get('data', {}).get('user_id', ''))
+        if token_user_id != str(expected_user_id):
+            return None
+
+        return token_user_id
+    except Exception as e:
+        logger.warning(f"WS auth failed: {e}")
+        return None
 group_names = []
 group_members = 0
 
@@ -37,6 +70,11 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
         self.user2 = self.scope["url_route"]["kwargs"]["user2"]
         self.user3 = self.scope["url_route"]["kwargs"]["user3"]
         self.user4 = self.scope["url_route"]["kwargs"]["user4"]
+
+        if not await authenticate_ws(self.scope, self.user_id):
+            await self.close(code=4001)
+            return
+
         self.gameUser = await sync_to_async(lambda: GameUser.objects.get(userID=self.user_id))()
         self.players = [self.user1, self.user2, self.user3, self.user4]
         await self.accept()
@@ -51,18 +89,18 @@ class PongTournamentConsumer(AsyncWebsocketConsumer):
             self.actual_match.players_ready -= 1
             self.actual_match.pauseTimer = time.time()
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-        tournaments.remove(self.tournament)
+        if self.tournament in tournaments:
+            tournaments.remove(self.tournament)
 
 
     async def generate_tournament_name(self, length=8):
         global group_names
         characters = string.ascii_letters + string.digits
         group_name = ''.join(random.choice(characters) for _ in range(length))
-        if (group_name in group_names):
-            await self.generate_tournament_name()
-        else:
-            group_names.append(group_name)
-            return group_name
+        if group_name in group_names:
+            return await self.generate_tournament_name()
+        group_names.append(group_name)
+        return group_name
 
     async def game_state(self,event):
         await self.send(text_data=json.dumps(event["game_state"]))
@@ -137,6 +175,11 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
         self.user_name = self.scope["url_route"]["kwargs"]["user1"]
         self.player2_name = self.scope["url_route"]["kwargs"]["user2"]
+
+        if not await authenticate_ws(self.scope, self.user_id):
+            await self.close(code=4001)
+            return
+
         await self.accept()
         self.gameState = await self.findLocalParty()
 
@@ -195,11 +238,10 @@ class PongLocalConsumer(AsyncWebsocketConsumer):
         global group_names
         characters = string.ascii_letters + string.digits
         group_name = ''.join(random.choice(characters) for _ in range(length))
-        if (group_name in group_names):
-            generate_local_name()
-        else:
-            group_names.append(group_name)
-            return group_name
+        if group_name in group_names:
+            return await self.generate_local_name()
+        group_names.append(group_name)
+        return group_name
 
 
 class PongRemoteConsumer(AsyncWebsocketConsumer):
@@ -217,16 +259,19 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
         self.user_name = self.scope["url_route"]["kwargs"]["user_name"]
+
+        if not await authenticate_ws(self.scope, self.user_id):
+            await self.close(code=4001)
+            return
+
         if await self.checkForReconnexion():
             await self.accept()
-            # logger.info("%s Je cherche a me reconnecter", self.user_name)
             self.gameState = await self.rejoinRemoteParty()
             self.gameState.players_ready += 1
             if (self.gameState.players_ready == 2):
                 self.gameState.status = iv.RUNNING
-        else :
+        else:
             await self.accept()
-            # logger.info("%s Je cherche a creer/joindre une partie", self.user_name)
             await self.findRemoteParty()
 
 
@@ -357,11 +402,10 @@ class PongRemoteConsumer(AsyncWebsocketConsumer):
         global group_names
         characters = string.ascii_letters + string.digits
         group_name = ''.join(random.choice(characters) for _ in range(length))
-        if (group_name in group_names):
-            generate_group_name()
-        else:
-            group_names.append(group_name)
-            return group_name
+        if group_name in group_names:
+            return await self.generate_group_name()
+        group_names.append(group_name)
+        return group_name
 
 class PongChatConsumer(AsyncWebsocketConsumer):
 
@@ -378,13 +422,18 @@ class PongChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope["url_route"]["kwargs"]["user_id"]
         self.user_name = self.scope["url_route"]["kwargs"]["user_name"]
+
+        if not await authenticate_ws(self.scope, self.user_id):
+            await self.close(code=4001)
+            return
+
         if await self.checkForReconnexion():
             await self.accept()
             self.gameState = await self.rejoinRemoteParty()
             self.gameState.players_ready += 1
             if (self.gameState.players_ready == 2):
                 self.gameState.status = iv.RUNNING
-        else :
+        else:
             await self.accept()
             await self.findRemoteParty()
 
@@ -513,8 +562,7 @@ class PongChatConsumer(AsyncWebsocketConsumer):
         global group_names
         characters = string.ascii_letters + string.digits
         group_name = ''.join(random.choice(characters) for _ in range(length))
-        if (group_name in group_names):
-            generate_group_name()
-        else:
-            group_names.append(group_name)
-            return group_name
+        if group_name in group_names:
+            return await self.generate_group_name()
+        group_names.append(group_name)
+        return group_name
