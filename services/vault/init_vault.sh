@@ -1,51 +1,65 @@
 #!/bin/bash
 
+set -e  # Arrêt immédiat si une commande échoue
+
+wait_for_vault() {
+    echo "[VAULT] Attente disponibilité du serveur..."
+    for i in $(seq 1 20); do
+        vault status > /dev/null 2>&1 && echo "[VAULT] Serveur prêt." && return 0
+        sleep 1
+    done
+    echo "[VAULT ERROR] Serveur non disponible après 20s."
+    exit 1
+}
+
 if [ ! -f /vault/file/vault_init.txt ]; then
 
-	echo "[VAULT] Starting server"
-	vault server -config=/vault/vault.json &
-	sleep 2
-	echo "[VAULT] Initialisation"
-	vault operator init -n 1 -t 1 > /vault/file/vault_init.txt
-	
-	sleep 1
+    # ── Première initialisation ──────────────────────────────────────────────
+    echo "[VAULT] Démarrage du serveur (première init)"
+    vault server -config=/vault/vault.json &
+    wait_for_vault
 
-	echo "[VAULT] Key recuperation"
-	UNSEAL_KEY=$(awk '/^Unseal Key 1:/{print $NF}' /vault/file/vault_init.txt)
-	ROOT_TOKEN=$(awk '/^Initial Root Token:/{print $NF}' /vault/file/vault_init.txt)
-	# echo "Unseal Key 1: $UNSEAL_KEY"
-	# echo "Initial Root Token: $ROOT_TOKEN"
-	
-	vault operator unseal "$UNSEAL_KEY"
-	vault login "$ROOT_TOKEN"
+    echo "[VAULT] Initialisation"
+    vault operator init -n 1 -t 1 > /vault/file/vault_init.txt
 
-	echo "[VAULT] Token creation"
-	vault token create -display-name="pokemap" > "/vault/file/pokemap_token.txt"
-	vault token create -display-name="chat" > "/vault/file/chat_token.txt"
-	vault token create -display-name="JWToken" > "/vault/file/JWToken_token.txt"
-	vault token create -display-name="user" > "/vault/file/user_token.txt"
-	vault token create -display-name="game3d" > "/vault/file/game3d_token.txt"
-	vault token create -display-name="nginx" > "/vault/file/nginx_token.txt"
+    echo "[VAULT] Récupération des clés"
+    UNSEAL_KEY=$(awk '/^Unseal Key 1:/{print $NF}' /vault/file/vault_init.txt)
+    ROOT_TOKEN=$(awk '/^Initial Root Token:/{print $NF}' /vault/file/vault_init.txt)
 
+    vault operator unseal "$UNSEAL_KEY"
+    vault login "$ROOT_TOKEN"
 
-	echo "[VAULT] Secret creation"
-	vault secrets enable -version=1 kv
-	sh /vault/secret_creation.sh
+    echo "[VAULT] Création des tokens de service"
+    vault token create -display-name="pokemap" > "/vault/file/pokemap_token.txt"
+    vault token create -display-name="chat"    > "/vault/file/chat_token.txt"
+    vault token create -display-name="JWToken" > "/vault/file/JWToken_token.txt"
+    vault token create -display-name="user"    > "/vault/file/user_token.txt"
+    vault token create -display-name="game3d"  > "/vault/file/game3d_token.txt"
+    vault token create -display-name="nginx"   > "/vault/file/nginx_token.txt"
 
-	sleep infinity
+    echo "[VAULT] Activation du moteur KV et écriture des secrets"
+    vault secrets enable -version=1 kv
+    sh /vault/secret_creation.sh
+
+    echo "[VAULT] Initialisation terminée — Vault opérationnel"
+
 else
-	echo "[VAULT] Starting server"
-	vault server -config=/vault/vault.json &
-	sleep 3
-	echo "[VAULT] Key recuperation"
 
-	UNSEAL_KEY=$(awk '/^Unseal Key 1:/{print $NF}' /vault/file/vault_init.txt)
-	ROOT_TOKEN=$(awk '/^Initial Root Token:/{print $NF}' /vault/file/vault_init.txt)
-	# echo "Unseal Key 1: $UNSEAL_KEY"
-	# echo "Initial Root Token: $ROOT_TOKEN"
-	
-	vault operator unseal "$UNSEAL_KEY"
-	vault login "$ROOT_TOKEN"
-	sleep infinity
+    # ── Redémarrage (Vault déjà initialisé) ─────────────────────────────────
+    echo "[VAULT] Démarrage du serveur (redémarrage)"
+    vault server -config=/vault/vault.json &
+    wait_for_vault
+
+    echo "[VAULT] Récupération des clés"
+    UNSEAL_KEY=$(awk '/^Unseal Key 1:/{print $NF}' /vault/file/vault_init.txt)
+    ROOT_TOKEN=$(awk '/^Initial Root Token:/{print $NF}' /vault/file/vault_init.txt)
+
+    vault operator unseal "$UNSEAL_KEY"
+    vault login "$ROOT_TOKEN"
+
+    echo "[VAULT] Vault déscellé — opérationnel"
 
 fi
+
+# Maintenir le container vivant en attendant le process vault en arrière-plan
+wait

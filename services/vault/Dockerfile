@@ -12,8 +12,8 @@ COPY init_vault.sh /vault/init_vault.sh
 COPY secret_creation.sh /vault/secret_creation.sh
 COPY vault.json /vault/vault.json
 
-# Les fichiers .env par service sont montés en volume au runtime via docker-compose
-# (services/vault/env_file/ -> /vault/env_file/ en read-only)
+# Les fichiers .env par service sont montés en volume au runtime via docker run :
+#   secrets/services/<service>/.env -> /vault/services/<service>/.env (read-only)
 # Aucun secret n'est baked dans l'image.
 
 RUN chmod +x /vault/secret_creation.sh

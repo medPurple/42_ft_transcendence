@@ -20,9 +20,9 @@ env
 
 # Secrets — ne jamais versionner
 .key
-secrets/*.token
-services/vault/env_file/.env_*
-!services/vault/env_file/.env_*.example
+secrets/tokens/*.token
+secrets/services/**/.env
+!secrets/services/**/.env.example
 
 # Systeme
 **/.vscode

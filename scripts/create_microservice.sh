@@ -79,7 +79,8 @@ secret_starting_script(){
 }
 
 creating_secret(){
-	touch "services/vault/env_file/.env_${microservice_name}"
+	mkdir -p "secrets/services/${microservice_name}"
+	touch "secrets/services/${microservice_name}/.env"
 	secret_init_file
 	secret_creation_file
 	secret_starting_script

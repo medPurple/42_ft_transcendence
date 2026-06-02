@@ -8,17 +8,17 @@ networks:
 # Ils ne sont jamais baked dans les images.
 secrets:
   vault_token_nginx:
-    file: ./secrets/nginx.token
+    file: ./secrets/tokens/nginx.token
   vault_token_user:
-    file: ./secrets/user.token
+    file: ./secrets/tokens/user.token
   vault_token_jwtoken:
-    file: ./secrets/jwtoken.token
+    file: ./secrets/tokens/jwtoken.token
   vault_token_game3d:
-    file: ./secrets/game3d.token
+    file: ./secrets/tokens/game3d.token
   vault_token_chat:
-    file: ./secrets/chat.token
+    file: ./secrets/tokens/chat.token
   vault_token_pokemap:
-    file: ./secrets/pokemap.token
+    file: ./secrets/tokens/pokemap.token
 
 volumes:
   secret_volume:

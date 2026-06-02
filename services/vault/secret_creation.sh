@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Les .env sont montés depuis le host via docker-compose :
-#   services/vault/env_file/ -> /vault/env_file/ (read-only)
+# Les .env sont montés depuis le host via docker run :
+#   secrets/services/<service>/.env -> /vault/services/<service>/.env (read-only)
 # Aucun fichier .env n'est baked dans l'image vault.
 
 #------------------------------------------------#
@@ -14,7 +14,7 @@ vault kv put kv/nginx ssl_certificate="$cert_value" ssl_certificate_key="$key_va
 
 #------------------------------------------------#
 echo "[VAULT SECRET] game3d container secret"
-ENV_FILE="/vault/env_file/.env_game3d"
+ENV_FILE="/vault/services/game3d/.env"
 
 if [ -f "$ENV_FILE" ]; then
 	set -a
@@ -25,14 +25,14 @@ if [ -f "$ENV_FILE" ]; then
 		db_name="$game_db_name" \
 		db_password="$game_db_password"
 else
-	echo "[VAULT ERROR] $ENV_FILE not found. Mount services/vault/env_file/ as a volume."
+	echo "[VAULT ERROR] $ENV_FILE not found. Créer secrets/services/game3d/.env (voir .env.example)."
 	exit 1
 fi
 #------------------------------------------------#
 
 #------------------------------------------------#
 echo "[VAULT SECRET] user container secret"
-ENV_FILE="/vault/env_file/.env_user"
+ENV_FILE="/vault/services/user/.env"
 
 if [ -f "$ENV_FILE" ]; then
 	set -a
@@ -43,7 +43,7 @@ if [ -f "$ENV_FILE" ]; then
 		db_name="$env_db_name" \
 		db_password="$env_db_password"
 else
-	echo "[VAULT ERROR] $ENV_FILE not found. Mount services/vault/env_file/ as a volume."
+	echo "[VAULT ERROR] $ENV_FILE not found. Créer secrets/services/user/.env (voir .env.example)."
 	exit 1
 fi
 #------------------------------------------------#
@@ -51,14 +51,14 @@ fi
 #------------------------------------------------#
 echo "[VAULT SECRET] JWToken container secret"
 # La clé JWT est générée aléatoirement à chaque initialisation de vault.
-# Pas besoin de .env_JWToken : le secret n'est jamais stocké sur le host.
+# Pas besoin de .env : le secret n'est jamais stocké sur le host.
 JWT_SECRET=$(dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | sed 's/ .*//')
 vault kv put kv/key SECRET_KEY="$JWT_SECRET"
 #------------------------------------------------#
 
 #------------------------------------------------#
 echo "[VAULT SECRET] pokemap container secret"
-ENV_FILE="/vault/env_file/.env_pokemap"
+ENV_FILE="/vault/services/pokemap/.env"
 
 if [ -f "$ENV_FILE" ]; then
 	set -a
@@ -69,14 +69,14 @@ if [ -f "$ENV_FILE" ]; then
 		db_username="$pokemap_db_username" \
 		db_password="$pokemap_db_password"
 else
-	echo "[VAULT ERROR] $ENV_FILE not found. Mount services/vault/env_file/ as a volume."
+	echo "[VAULT ERROR] $ENV_FILE not found. Créer secrets/services/pokemap/.env (voir .env.example)."
 	exit 1
 fi
 #------------------------------------------------#
 
 #------------------------------------------------#
 echo "[VAULT SECRET] chat container secret"
-ENV_FILE="/vault/env_file/.env_chat"
+ENV_FILE="/vault/services/chat/.env"
 
 if [ -f "$ENV_FILE" ]; then
 	set -a
@@ -87,7 +87,7 @@ if [ -f "$ENV_FILE" ]; then
 		db_password="$chat_db_password" \
 		db_username="$chat_db_username"
 else
-	echo "[VAULT ERROR] $ENV_FILE not found. Mount services/vault/env_file/ as a volume."
+	echo "[VAULT ERROR] $ENV_FILE not found. Créer secrets/services/chat/.env (voir .env.example)."
 	exit 1
 fi
 #------------------------------------------------#
