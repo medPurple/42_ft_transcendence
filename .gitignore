@@ -18,6 +18,9 @@ env
 .env_user
 
 
+# Fichier d'environnement racine (grafana, etc.)
+.env
+
 # Secrets — ne jamais versionner
 .key
 secrets/tokens/*.token

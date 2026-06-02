@@ -1,16 +1,13 @@
-import time 
+import time
 import threading
 import asyncio
 import random
 import logging
-import time
 import requests
 from channels.layers import get_channel_layer
 from . import initvalues as iv
 from .models import GameSettings, GameMatch, GameUser
 from asgiref.sync import sync_to_async
-from rest_framework import status
-from rest_framework.response import Response
 
 
 logger = logging.getLogger(__name__)
@@ -164,7 +161,8 @@ class   gameStateC:
                 self.game_user1 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player1_user_id))
                 self.game_user2 = await sync_to_async(GameUser.objects.get, thread_sensitive=True)(userID=int(self.player2_user_id))
             except GameUser.DoesNotExist:
-                return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+                logger.error("GameUser not found in run_game_loop — stopping game")
+                return
             self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
                 player1=self.game_user1,
                 player2=self.game_user2,
@@ -173,8 +171,8 @@ class   gameStateC:
                 status=0,
             )
             try:
-                responsep1 = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 2}, verify=False)
-                responsep2 = requests.put(user_service_url, json={'user_id' : int(self.player2_user_id), 'status': 2}, verify=False)
+                responsep1 = await sync_to_async(requests.put)(user_service_url, json={'user_id': int(self.player1_user_id), 'status': 2})
+                responsep2 = await sync_to_async(requests.put)(user_service_url, json={'user_id': int(self.player2_user_id), 'status': 2})
                 responsep1.raise_for_status()
                 responsep2.raise_for_status()
             except Exception as e:
@@ -192,7 +190,8 @@ class   gameStateC:
                     }
                 )
             except GameUser.DoesNotExist:
-                return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+                logger.error("GameUser not found in run_game_loop — stopping game")
+                return
             self.match_object = await sync_to_async(GameMatch.objects.create, thread_sensitive=True)(
                 player1=self.game_user1,
                 player2=self.game_user2,
@@ -201,7 +200,7 @@ class   gameStateC:
                 status=0,
             )
             try:
-                response = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 2}, verify=False)
+                response = await sync_to_async(requests.put)(user_service_url, json={'user_id': int(self.player1_user_id), 'status': 2})
                 response.raise_for_status()
             except Exception as e:
                 logger.info(f"Error changing user status in microservices: {e}")
@@ -253,8 +252,8 @@ class   gameStateC:
 
         if (self.game_mode == 'remote' or self.game_mode == "chat"):
             try:
-                responsep1 = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 1}, verify=False)
-                responsep2 = requests.put(user_service_url, json={'user_id' : int(self.player2_user_id), 'status': 1}, verify=False)
+                responsep1 = await sync_to_async(requests.put)(user_service_url, json={'user_id': int(self.player1_user_id), 'status': 1})
+                responsep2 = await sync_to_async(requests.put)(user_service_url, json={'user_id': int(self.player2_user_id), 'status': 1})
                 responsep1.raise_for_status()
                 responsep2.raise_for_status()
             except Exception as e:
@@ -267,7 +266,7 @@ class   gameStateC:
                 chat_parties.remove(self)
         elif (self.game_mode == 'local'):
             try:
-                response = requests.put(user_service_url, json={'user_id' : int(self.player1_user_id), 'status': 1}, verify=False)
+                response = await sync_to_async(requests.put)(user_service_url, json={'user_id': int(self.player1_user_id), 'status': 1})
                 response.raise_for_status()
             except Exception as e:
                 logger.info(f"Error changing user status in microservices: {e}")
@@ -356,9 +355,9 @@ class   gameStateC:
             paddle.height = iv.PADDLE1_AUGMENTED_HEIGHT
         if (self.activePowerUp == iv.OTHER_SMALL_PADDLE):
             if (paddle == self.paddle1):
-                self.paddle2.height == iv.PADDLE2_DIMINISHED_HEIGHT
+                self.paddle2.height = iv.PADDLE2_DIMINISHED_HEIGHT  # fix: = pas ==
             else:
-                self.paddle1.height == iv.PADDLE1_DIMINISHED_HEIGHT
+                self.paddle1.height = iv.PADDLE1_DIMINISHED_HEIGHT  # fix: = pas ==
 
     def pickupPowerUp(self, paddle):
         paddle.powerup = self.activePowerUp

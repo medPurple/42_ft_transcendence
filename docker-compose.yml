@@ -66,6 +66,8 @@ services:
     image: user
     expose:
     - "4430"
+    environment:
+      - DJANGO_DEBUG=False
     secrets:
       - vault_token_user
     restart: on-failure
@@ -78,6 +80,8 @@ services:
     image: jwtoken
     expose:
       - "4430"
+    environment:
+      - DJANGO_DEBUG=False
     secrets:
       - vault_token_jwtoken
     restart: on-failure
@@ -93,6 +97,8 @@ services:
     image: game3d
     expose:
       - "4430"
+    environment:
+      - DJANGO_DEBUG=False
     secrets:
       - vault_token_game3d
     restart: on-failure
@@ -105,6 +111,8 @@ services:
     image: pokemap
     expose:
       - "4430"
+    environment:
+      - DJANGO_DEBUG=False
     secrets:
       - vault_token_pokemap
     restart: on-failure
@@ -120,6 +128,8 @@ services:
     image: chat
     expose:
     - "4430"
+    environment:
+      - DJANGO_DEBUG=False
     secrets:
       - vault_token_chat
     restart: on-failure
@@ -145,8 +155,10 @@ services:
       - 3000:3000
     restart: unless-stopped
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=grafana
+      # Changer ces valeurs avant tout déploiement public
+      # (ou les passer via un fichier .env gitignored)
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD must be set}
     volumes:
       - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./grafana/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json

@@ -1,73 +1,102 @@
 import json
-
-# from channels.db import sync_to_async
+import requests
+from urllib.parse import parse_qs
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-import logging
 from .models import Message
-
 from .serializers import MessageSerializer
+import logging
 
 logger = logging.getLogger(__name__)
 
+
 class ChatConsumer(AsyncWebsocketConsumer):
-	serializer_class = MessageSerializer
+    serializer_class = MessageSerializer
 
-	async def connect(self):
-		self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-		self.room_group_name = f"chat_{self.room_name}"
+    async def connect(self):
+        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        self.room_group_name = f"chat_{self.room_name}"
 
-		# Join room group
-		await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        # ── Authentification JWT ──────────────────────────────────────────────
+        query_string = self.scope['query_string'].decode()
+        params = parse_qs(query_string)
+        token = params.get('token', [None])[0]
 
-		await self.accept()
+        if not token:
+            await self.close(code=4001)
+            return
 
-	async def disconnect(self, close_code):
-		# Leave room group
-		await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        try:
+            response = requests.get(
+                'https://JWToken:4430/api/token/',
+                headers={'Authorization': f'Bearer {token}'}
+            )
+            response.raise_for_status()
+            data = response.json()
 
-	# Receive message from WebSocket
-	async def receive(self, text_data):
-		text_data_json = json.loads(text_data)
-		text_data_json["room_name"] = self.room_name  # Add room_name to the data
-		serializer = self.serializer_class(data=text_data_json)
-		# logger.debug(text_data_json)
-		if serializer.is_valid():
-			await self.save_message(serializer)
-			user_id = serializer.data.get('user_id')
-			message = serializer.data.get('message')
-			time = serializer.data.get('timestamp')
-			await self.channel_layer.group_send(
-				self.room_group_name, {
-					"type": "chat.message",
-					"message": message,
-					"user_id": user_id,
-					"time":	time,
-				}
-			)
+            if data.get('success') is not True:
+                await self.close(code=4001)
+                return
 
-	@sync_to_async
-	def save_message(self, serializer):
-		# logger.info("Saving message")
-		# logger.info(self.room_name)
-		# logger.debug(serializer)
-		serializer.save()  # No need to assign room_name here
-		# logger.debug(serializer.data)
+            self.user_id = data.get('data', {}).get('user_id')
+            if not self.user_id:
+                await self.close(code=4001)
+                return
 
-	# 	Message.objects.create(user_id=user_id, room_name=room_name, message=message)
+        except Exception as e:
+            logger.warning(f"ChatConsumer auth failed: {e}")
+            await self.close(code=4001)
+            return
+        # ─────────────────────────────────────────────────────────────────────
 
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
 
-	# Receive message from room group
-	async def chat_message(self, event):
-		message = event["message"]
-		user_id = event["user_id"]
-		time = event["time"]
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
-		# Send message to WebSocket
-		await self.send(text_data=json.dumps({"message": message, "user_id": user_id, "time": time}))
+    async def receive(self, text_data):
+        # Parsing sécurisé — ne pas crasher sur un message mal formé
+        try:
+            text_data_json = json.loads(text_data)
+        except json.JSONDecodeError:
+            await self.send(text_data=json.dumps({'error': 'Invalid JSON'}))
+            return
 
+        message = text_data_json.get('message', '').strip()
+        if not message:
+            return
 
+        # user_id vient du token authentifié — jamais du payload client
+        data = {
+            'user_id': self.user_id,
+            'message': message,
+            'room_name': self.room_name,
+        }
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            await self.save_message(serializer)
+            await self.channel_layer.group_send(
+                self.room_group_name, {
+                    "type": "chat.message",
+                    "message": message,
+                    "user_id": self.user_id,
+                    "time": serializer.data.get('timestamp'),
+                }
+            )
+        else:
+            await self.send(text_data=json.dumps({
+                'error': 'Invalid message',
+                'details': serializer.errors
+            }))
 
+    @sync_to_async
+    def save_message(self, serializer):
+        serializer.save()
 
-
-
+    async def chat_message(self, event):
+        await self.send(text_data=json.dumps({
+            "message": event["message"],
+            "user_id": event["user_id"],
+            "time": event["time"],
+        }))

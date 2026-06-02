@@ -20,6 +20,7 @@ from .serializers import CustomUserRegisterSerializer, CustomUsernameSerializer,
 from datetime import timedelta
 from django.utils import timezone
 from django.core.mail import send_mail
+from django.conf import settings
 import random
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ def generate_random_digits(n=6):
 def user_token(request, user_id):
 	token_service_url = 'https://JWToken:4430/api/token/'
 	try:
-		token_response = requests.post(token_service_url, json={'user_id' : user_id}, verify=False)
+		token_response = requests.post(token_service_url, json={'user_id' : user_id})
 		token_response.raise_for_status()
 		user_token = token_response.json().get('token')
 		return user_token
@@ -47,8 +48,8 @@ def create_userID_microservices(request, user_id, user_name):
 	# logger.info(user_id)
 
 	try:
-		response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data), verify=False)
-		response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data), verify=False)
+		response = requests.post("https://game3d:4430/api/pong/", headers=headers, data=json.dumps(data))
+		response = requests.post("https://pokemap:4430/api/pokemap/", headers=headers, data=json.dumps(data))
 		#response = ADD OTHER MICROSERVICES LINKS HERE IF NEEDED
 		return response
 	except requests.exceptions.RequestException as e:
@@ -61,19 +62,32 @@ class JWTAuthentication(BaseAuthentication):
 		if not auth_header:
 			return None
 
-		token = auth_header.split(' ')[1]
+		parts = auth_header.split(' ')
+		if len(parts) != 2:
+			raise exceptions.AuthenticationFailed('Invalid token format')
+		token = parts[1]
+
 		token_service_url = 'https://JWToken:4430/api/token/'
 		try:
-			token_response = requests.get(token_service_url, headers={'Authorization': auth_header}, verify=False)
+			token_response = requests.get(token_service_url, headers={'Authorization': auth_header})
 			token_response.raise_for_status()
-			valid = token_response.json().get('success')
-			if valid is True:
-				data = token_response.json().get('data')
-				user_id = data.get('user_id')
-				user = CustomUser.objects.get(user_id=user_id)
+			response_data = token_response.json()
+
+			if response_data.get('success') is not True:
+				raise exceptions.AuthenticationFailed('Invalid token')
+
+			user_id = response_data.get('data', {}).get('user_id')
+			if not user_id:
+				raise exceptions.AuthenticationFailed('Invalid token payload')
+
+			user = CustomUser.objects.get(user_id=user_id)
 			return (user, token)
-		except (requests.exceptions.RequestException, CustomUser.DoesNotExist, Exception):
-			raise exceptions.AuthenticationFailed('Invalid token')
+		except CustomUser.DoesNotExist:
+			raise exceptions.AuthenticationFailed('User not found')
+		except exceptions.AuthenticationFailed:
+			raise
+		except Exception:
+			raise exceptions.AuthenticationFailed('Authentication error')
 
 
 class AllCustomUserView(APIView):
@@ -129,7 +143,7 @@ class CustomUserLogin(APIView):
 					send_mail(
 						'Verification Code',
 						f'Your verification code is: {user.otp}',
-						'wilbanablo@gmail.com',
+						settings.EMAIL_HOST_USER,
 						[user.email],
 						fail_silently=False,
 					)
@@ -151,6 +165,10 @@ class CustomUserVerify(APIView):
 	def post(self, request):
 		try:
 			otp = request.data.get('otp')
+			# Rejeter explicitement un OTP vide — évite un match sur otp='' si plusieurs
+			# utilisateurs ont un OTP vide (état par défaut)
+			if not otp:
+				return Response({'success': False, 'detail': 'Invalid code.'}, status=status.HTTP_400_BAD_REQUEST)
 			user = CustomUser.objects.get(otp=otp)
 			if (
 				user.otp == otp and
@@ -229,6 +247,9 @@ class CustomUserPasswordView(APIView):
 
 
 class CustomUserStatusView(APIView):
+	# Endpoint appelé par game3d pour mettre à jour le statut des joueurs.
+	# Protégé par JWT — seuls les services avec un token valide peuvent modifier les statuts.
+	authentication_classes = [JWTAuthentication]
 	def put(self, request):
 		try:
 			# logger.info(request.data)

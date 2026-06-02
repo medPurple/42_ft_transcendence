@@ -33,7 +33,7 @@ class FriendsConsumer(AsyncJsonWebsocketConsumer):
 		if token is not None:
 			token_service_url = 'https://JWToken:4430/api/token/'
 			try:
-				token_response = requests.get(token_service_url, headers={'Authorization': f'Bearer {token}'}, verify=False)
+				token_response = requests.get(token_service_url, headers={'Authorization': f'Bearer {token}'})
 				token_response.raise_for_status()
 				valid = token_response.json().get('success')
 				if valid is True:

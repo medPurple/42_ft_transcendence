@@ -16,7 +16,7 @@ class	CustomUser(AbstractUser):
 	user_id = models.AutoField(primary_key=True)
 	profile_picture = models.ImageField(blank=True, upload_to='images')
 	username = models.CharField(max_length=200, unique=True)
-	password = models.CharField(max_length=200)
+	# password est géré par AbstractUser (hashing bcrypt) — ne pas redéfinir
 	email = models.EmailField(null=True, unique=True)
 	first_name = models.CharField(max_length=200, null=True)
 	last_name = models.CharField(max_length=200, null=True)
