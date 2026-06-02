@@ -2,7 +2,7 @@
 
 VAULT_ADDR="http://vault:8200"
 SECRET_PATH="pokemap"
-VAULT_TOKEN=$(cat /tmp/.key)
+VAULT_TOKEN=$(cat /run/secrets/vault_token_pokemap)
 
 response=$(curl -s --header "X-Vault-Token: $VAULT_TOKEN" "$VAULT_ADDR/v1/kv/$SECRET_PATH")
 

@@ -14,8 +14,8 @@ RUN apt-get install \
 
 COPY /conf/get_ssl.sh /tmp/get_ssl.sh
 RUN chmod +x /tmp/get_ssl.sh
-COPY /conf/.key /tmp/.key
-RUN ./tmp/get_ssl.sh
+# Token Vault injecté au runtime via docker secret -> /run/secrets/vault_token_nginx
+# get_ssl.sh est appelé au runtime dans CMD (pas au build : vault n'est pas accessible)
 
 RUN cd /opt && git clone https://github.com/owasp-modsecurity/ModSecurity.git \
     && cd ModSecurity \

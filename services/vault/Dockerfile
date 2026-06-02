@@ -10,16 +10,11 @@ RUN openssl req -x509 -nodes -out /tmp/.transcendance_crt.crt \
 
 COPY init_vault.sh /vault/init_vault.sh
 COPY secret_creation.sh /vault/secret_creation.sh
-
-
-COPY env_file/.env_nginx  /vault/nginx/.env
-COPY env_file/.env_user  /vault/user/.env
-COPY env_file/.env_JWToken  /vault/JWToken/.env
-COPY env_file/.env_game3d  /vault/game3d/.env
-COPY env_file/.env_pokemap  /vault/pokemap/.env
-COPY env_file/.env_chat  /vault/chat/.env
-
 COPY vault.json /vault/vault.json
+
+# Les fichiers .env par service sont montés en volume au runtime via docker-compose
+# (services/vault/env_file/ -> /vault/env_file/ en read-only)
+# Aucun secret n'est baked dans l'image.
 
 RUN chmod +x /vault/secret_creation.sh
 RUN chmod +x /vault/init_vault.sh

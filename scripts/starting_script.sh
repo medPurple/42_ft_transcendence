@@ -1,56 +1,72 @@
 #!/bin/bash
 
 network_name="microservices"
+container_name="vault"
 image_name="vault"
 
-# Crée le réseau s'il n'existe pas déjà
+# Crée le réseau Docker s'il n'existe pas
 create_network() {
 	if [[ -z "$(docker network ls | grep $network_name)" ]]; then
 		docker network create -d bridge $network_name
 	fi
 }
 
-# Construit l'image si elle n'existe pas déjà
+# Construit l'image vault si elle n'existe pas
 build_image() {
 	if [[ -z "$(docker images | grep -w $image_name)" ]]; then
 		docker build -t $image_name ./services/vault/
 	fi
 }
 
-# Distribue les clés
-key_distrib() {
-	docker exec -i vault sh -c "cat /vault/file/chat_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/chat/conf/.key
-	docker exec -i vault sh -c "cat /vault/file/nginx_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/nginx/conf/.key
-	docker exec -i vault sh -c "cat /vault/file/pokemap_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/pokemap/conf/.key
-	docker exec -i vault sh -c "cat /vault/file/JWToken_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/JWToken/conf/.key
-	docker exec -i vault sh -c "cat /vault/file/user_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/user/conf/.key
-	docker exec -i vault sh -c "cat /vault/file/game3d_token.txt | grep '^token' | awk '{print \$2; exit}'" > services/backend/game3d/conf/.key
-}
-
 # Lance le conteneur Vault
+# - secret_volume persiste les clés vault entre redémarrages
+# - env_file est monté en lecture seule : les .env ne sont JAMAIS dans l'image
 start_vault_container() {
-    if [[ -z "$(docker ps -aqf name=$container_name)" ]]; then
-		docker run --name vault --network microservices -p 8200:8200 -v secret_volume:/vault/file --cap-add IPC_LOCK -e VAULT_ADDR=http://127.0.0.1:8200 -d vault
-        sleep 5
-    else
-        echo "Container $container_name already exists."
-    fi
+	if [[ -z "$(docker ps -aqf name=$container_name)" ]]; then
+		docker run \
+			--name $container_name \
+			--network $network_name \
+			-p 8200:8200 \
+			-v secret_volume:/vault/file \
+			-v "$(pwd)/services/vault/env_file:/vault/env_file:ro" \
+			--cap-add IPC_LOCK \
+			-e VAULT_ADDR=http://127.0.0.1:8200 \
+			-d $image_name
+		sleep 5
+	else
+		echo "Container $container_name already exists."
+	fi
 }
 
-# Supprime les clés
-key_remove() {
-    files_to_delete=(
-		"services/backend/chat/conf/.key"
-		"services/backend/pokemap/conf/.key"
-		"services/nginx/conf/.key"
-		"services/backend/JWToken/conf/.key"
-        "services/backend/user/conf/.key"
-        "services/backend/game3d/conf/.key"
-    )
+# Distribue les tokens Vault dans secrets/
+# Les tokens sont montés au runtime via docker-compose secrets.
+# Ils ne sont JAMAIS copiés dans les images Docker.
+key_distrib() {
+	mkdir -p secrets
 
-    for file in "${files_to_delete[@]}"; do
-        if [ -f "$file" ]; then
-            rm "$file"
-        fi
-    done
+	docker exec -i $container_name sh -c \
+		"grep '^token ' /vault/file/nginx_token.txt | awk '{print \$2; exit}'" \
+		> secrets/nginx.token
+
+	docker exec -i $container_name sh -c \
+		"grep '^token ' /vault/file/user_token.txt | awk '{print \$2; exit}'" \
+		> secrets/user.token
+
+	docker exec -i $container_name sh -c \
+		"grep '^token ' /vault/file/JWToken_token.txt | awk '{print \$2; exit}'" \
+		> secrets/jwtoken.token
+
+	docker exec -i $container_name sh -c \
+		"grep '^token ' /vault/file/game3d_token.txt | awk '{print \$2; exit}'" \
+		> secrets/game3d.token
+
+	docker exec -i $container_name sh -c \
+		"grep '^token ' /vault/file/chat_token.txt | awk '{print \$2; exit}'" \
+		> secrets/chat.token
+
+	docker exec -i $container_name sh -c \
+		"grep '^token ' /vault/file/pokemap_token.txt | awk '{print \$2; exit}'" \
+		> secrets/pokemap.token
+
+	echo "[KEY_DISTRIB] Tokens écrits dans secrets/ (non versionnés)"
 }

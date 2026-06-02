@@ -7,8 +7,7 @@ RUN apt install curl -y
 RUN apt-get install jq -y
 
 
-COPY /conf/.key /tmp/.key
-
+# Token Vault injecté au runtime via docker secret -> /run/secrets/vault_token_jwtoken
 
 ### Django and other python packages installation
 COPY /conf/requirements.txt .

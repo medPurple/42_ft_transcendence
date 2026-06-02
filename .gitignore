@@ -18,8 +18,11 @@ env
 .env_user
 
 
-# Secrets
+# Secrets — ne jamais versionner
 .key
+secrets/*.token
+services/vault/env_file/.env_*
+!services/vault/env_file/.env_*.example
 
 # Systeme
 **/.vscode

@@ -17,7 +17,7 @@ ENV WATCHFILES_FORCE_POLLING=true
 
 ### Postgres configuration
 COPY /conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
-COPY /conf/.key /tmp/.key
+# Token Vault injecté au runtime via docker secret -> /run/secrets/vault_token_game3d
 RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
 
 ### Database basic initialisation

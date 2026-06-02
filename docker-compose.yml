@@ -3,6 +3,23 @@ networks:
   microservices:
     external: true
 
+# Tokens Vault injectés au runtime via docker secrets.
+# Ces fichiers sont générés par `make all` (key_distrib) et gitignorés.
+# Ils ne sont jamais baked dans les images.
+secrets:
+  vault_token_nginx:
+    file: ./secrets/nginx.token
+  vault_token_user:
+    file: ./secrets/user.token
+  vault_token_jwtoken:
+    file: ./secrets/jwtoken.token
+  vault_token_game3d:
+    file: ./secrets/game3d.token
+  vault_token_chat:
+    file: ./secrets/chat.token
+  vault_token_pokemap:
+    file: ./secrets/pokemap.token
+
 volumes:
   secret_volume:
   user:
@@ -34,6 +51,8 @@ services:
     image: nginx
     ports:
       - "4430:4430"
+    secrets:
+      - vault_token_nginx
     restart: on-failure
 
   user:
@@ -45,8 +64,10 @@ services:
     - microservices
     build: services/backend/user
     image: user
-    expose :
+    expose:
     - "4430"
+    secrets:
+      - vault_token_user
     restart: on-failure
 
   token:
@@ -55,8 +76,10 @@ services:
       - microservices
     build: services/backend/JWToken
     image: jwtoken
-    expose :
+    expose:
       - "4430"
+    secrets:
+      - vault_token_jwtoken
     restart: on-failure
 
   game3d:
@@ -68,8 +91,10 @@ services:
       - microservices
     build: services/backend/game3d
     image: game3d
-    expose :
+    expose:
       - "4430"
+    secrets:
+      - vault_token_game3d
     restart: on-failure
 
   pokemap:
@@ -78,8 +103,10 @@ services:
       - microservices
     build: services/backend/pokemap
     image: pokemap
-    expose :
+    expose:
       - "4430"
+    secrets:
+      - vault_token_pokemap
     restart: on-failure
 
   chat:
@@ -91,8 +118,10 @@ services:
     - microservices
     build: services/backend/chat
     image: chat
-    expose :
+    expose:
     - "4430"
+    secrets:
+      - vault_token_chat
     restart: on-failure
 
   prometheus:

@@ -3,7 +3,7 @@ import requests
 class VaultClient:
     def __init__(self):
         self.vault_url = "http://vault:8200"
-        f = open('/tmp/.key', 'r')
+        f = open('/run/secrets/vault_token_pokemap', 'r')
         self.token = f.read().strip()
         f.close()
         
