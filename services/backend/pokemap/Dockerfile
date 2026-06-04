@@ -8,6 +8,7 @@ RUN apt-get update -y && apt-get install -y \
     jq \
     openssl \
     ca-certificates \
+    redis-server \
     && rm -rf /var/lib/apt/lists/*
 
 COPY /conf/requirements.txt .

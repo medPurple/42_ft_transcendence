@@ -20,15 +20,16 @@ RUN chmod +x /tmp/get_ssl.sh
 RUN cd /opt && git clone https://github.com/owasp-modsecurity/ModSecurity.git \
     && cd ModSecurity \
     && git submodule init \
-    && git submodule update \
+    && git submodule update --init --recursive \
     && ./build.sh \
     && ./configure \
     && make \
     && make install
 
 RUN cd /opt && git clone https://github.com/owasp-modsecurity/ModSecurity-nginx.git
-RUN add-apt-repository ppa:ondrej/nginx -y
-RUN apt update && apt install nginx -y
+#RUN add-apt-repository ppa:ondrej/nginx -y
+#RUN apt update && apt install nginx -y
+RUN apt-get update && apt-get install -y nginx
 
 RUN cd /opt && wget https://nginx.org/download/nginx-1.22.1.tar.gz \
     && tar -xvzf nginx-1.22.1.tar.gz

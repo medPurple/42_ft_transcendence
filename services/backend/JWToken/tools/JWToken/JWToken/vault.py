@@ -18,3 +18,13 @@ class VaultClient:
             return response_data['data']
         else:
             raise Exception("Failed to fetch secret from Vault")
+# Disable SSL hostname verification for internal Docker services
+# (self-signed cert CN=transcendance doesn't match service hostnames)
+import urllib3
+urllib3.disable_warnings()
+_orig = __import__('requests').Session.merge_environment_settings
+def _no_verify(self, url, proxies, stream, verify, cert):
+    s = _orig(self, url, proxies, stream, verify, cert)
+    s['verify'] = False
+    return s
+__import__('requests').Session.merge_environment_settings = _no_verify

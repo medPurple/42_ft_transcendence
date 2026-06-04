@@ -4,11 +4,19 @@ set -e  # Arrêt immédiat si une commande échoue
 
 wait_for_vault() {
     echo "[VAULT] Attente disponibilité du serveur..."
-    for i in $(seq 1 20); do
-        vault status > /dev/null 2>&1 && echo "[VAULT] Serveur prêt." && return 0
+    for i in $(seq 1 30); do
+        if vault status > /dev/null 2>&1; then
+            code=0
+        else
+            code=$?
+        fi
+        if [ $code -eq 0 ] || [ $code -eq 2 ]; then
+            echo "[VAULT] Serveur prêt."
+            return 0
+        fi
         sleep 1
     done
-    echo "[VAULT ERROR] Serveur non disponible après 20s."
+    echo "[VAULT ERROR] Serveur non disponible après 30s."
     exit 1
 }
 

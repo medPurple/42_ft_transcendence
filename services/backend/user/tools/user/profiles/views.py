@@ -29,7 +29,7 @@ def generate_random_digits(n=6):
 	return "".join(map(str, random.sample(range(0, 10), n)))
 
 def user_token(request, user_id):
-	token_service_url = 'https://JWToken:4430/api/token/'
+	token_service_url = 'https://jwtoken:4430/api/token/'
 	try:
 		token_response = requests.post(token_service_url, json={'user_id' : user_id})
 		token_response.raise_for_status()
@@ -65,7 +65,7 @@ class JWTAuthentication(BaseAuthentication):
 			raise exceptions.AuthenticationFailed('Invalid token format')
 		token = parts[1]
 
-		token_service_url = 'https://JWToken:4430/api/token/'
+		token_service_url = 'https://jwtoken:4430/api/token/'
 		try:
 			token_response = requests.get(token_service_url, headers={'Authorization': auth_header})
 			token_response.raise_for_status()
