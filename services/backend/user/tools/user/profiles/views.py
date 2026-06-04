@@ -122,7 +122,11 @@ class CustomUserRegister(APIView):
 			else:
 				return Response({'error': 'Error creating token'}, status=status.HTTP_200_OK)
 		else:
-			return Response({'error': 'Error profile creation'}, status=status.HTTP_200_OK)
+			logger.error(f"Registration form errors: {form.errors.as_json()}")
+			# Renvoie la première erreur lisible au frontend
+			first_field, first_msgs = next(iter(form.errors.as_data().items()), (None, []))
+			first_error = first_msgs[0].message if first_msgs else 'Registration failed — please check your details.'
+			return Response({'error': str(first_error)}, status=status.HTTP_200_OK)
 
 class CustomUserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)
