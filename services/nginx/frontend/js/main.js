@@ -25,6 +25,13 @@ import statistics from "./views/user/statistics.js";
 import "./components/user/logoutForm.js";
 import Iuser from "./components/user/userInfo.js";
 
+// Routes qui nécessitent d'être connecté
+const protectedRoutes = new Set([
+  '/home', '/profile', '/edit-profile', '/update-password', '/statistics',
+  '/friends', '/chat', '/pongService', '/pongSettings', '/play_pl', '/play_pr',
+  '/play_pc', '/play_pt', '/metaService', '/pokemap', '/pkmSettings',
+]);
+
 const routes = {
   '/': {
     title: "Intro",
@@ -220,6 +227,15 @@ async function router() {
     alert('Invalid token, please reload');
     Icookies.clearAllCookies();
   } else {
+    // Redirection vers /login si route protégée et non connecté
+    const isProtected = protectedRoutes.has(path)
+      || path.startsWith('/friends/')
+      || path.startsWith('/statistics/');
+    if (isProtected && !checkConnected()) {
+      history.replaceState('', '', '/login');
+      path = '/login';
+    }
+
     for (let route in routes) {
       let params = {}
       if (route.includes(':')) {
