@@ -1,5 +1,6 @@
 import Iuser from "../../components/user/userInfo.js";
 import Icookies from "../../components/cookie/cookie.js";
+import { API_BASE } from "../../config.js"
 
 export class Statistics {
 
@@ -238,7 +239,7 @@ export class Statistics {
 
   async getStats(userID) {
     try {
-      const response = await fetch(`/api/pong/match/${userID}/`, {
+      const response = await fetch(API_BASE + `/api/pong/match/${userID}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

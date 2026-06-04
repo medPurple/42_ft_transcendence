@@ -10,6 +10,15 @@ DB_USER=$(echo "$response" | jq -r ".data.db_username")
 DB_BASENAME=$(echo "$response" | jq -r ".data.db_name")
 DB_PASSWORD=$(echo "$response" | jq -r ".data.db_password")
 
+# Tune PostgreSQL for low-memory VPS (8 GB shared across all services)
+cat >> /etc/postgresql/15/main/postgresql.conf <<'PGCONF'
+shared_buffers = 32MB
+work_mem = 2MB
+maintenance_work_mem = 16MB
+max_connections = 15
+effective_cache_size = 96MB
+PGCONF
+
 service postgresql start
 
 sleep 5

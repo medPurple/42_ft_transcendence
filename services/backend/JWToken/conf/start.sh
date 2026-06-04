@@ -18,4 +18,4 @@ update-ca-certificates
 
 export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-gunicorn --certfile=/tmp/server.crt --keyfile=/tmp/server.key JWToken.wsgi:application --bind 0.0.0.0:4430
+gunicorn --certfile=/tmp/server.crt --keyfile=/tmp/server.key JWToken.wsgi:application --bind 0.0.0.0:4430 --workers 1 --threads 2

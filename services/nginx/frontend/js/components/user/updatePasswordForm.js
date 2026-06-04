@@ -1,6 +1,7 @@
 
 import Icookies from "../cookie/cookie.js";
 import Iuser from "../user/userInfo.js";
+import { API_BASE } from "../../config.js"
 
 export default class updatePasswordForm extends HTMLElement {
   constructor() {
@@ -74,7 +75,7 @@ export default class updatePasswordForm extends HTMLElement {
         if (!validateForm(formData)) {
           return;
         }
-        const response = await fetch('api/profiles/update-password/', {
+        const response = await fetch(API_BASE + '/api/profiles/update-password/', {
           method: 'POST',
           body: formData,
           headers: {

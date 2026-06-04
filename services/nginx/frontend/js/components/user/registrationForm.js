@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import { API_BASE } from "../../config.js"
 
 export default class RegistrationForm extends HTMLElement {
 	constructor() {
@@ -13,12 +14,16 @@ export default class RegistrationForm extends HTMLElement {
 
 			<div id="app-general-container">
 			<div id="alert-container"></div>
-			<form id="signup-form" method="post" action="" class="container">
-			<div class="mb-4 row">
+			<div style="background:rgba(255,255,255,0.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.4);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.12);padding:2rem 2rem;max-width:520px;margin:0 auto;">
+			<h5 style="font-family:'Courier New',monospace;letter-spacing:0.1em;margin-bottom:1.5rem;">Create Account</h5>
+			<form id="signup-form" method="post" action="" class="container" style="padding:0;">
+			<div class="mb-4 row align-items-end">
 				<div class="col">
+					<label style="font-size:0.8rem;color:#555;margin-bottom:4px;display:block;">Profile picture</label>
 					<input type="file" class="form-control" name="profile_picture" accept="images/*" />
 				</div>
 				<div class="col">
+					<label style="font-size:0.8rem;color:#555;margin-bottom:4px;display:block;">Username</label>
 					<input type="text" class="form-control" name="username" placeholder="Username">
 				</div>
 			</div>
@@ -46,6 +51,7 @@ export default class RegistrationForm extends HTMLElement {
 			<input type="hidden" class="form-control" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 			<button type="submit" class="btn btn-dark">Register</button>
 			</form>
+			</div>
 			</div>`;
 	}
 
@@ -113,7 +119,7 @@ export default class RegistrationForm extends HTMLElement {
 			return;
 			}
 
-			const response = await fetch('/api/profiles/register/', {
+			const response = await fetch(API_BASE + '/api/profiles/register/', {
 			method: 'POST',
 			body: formData,
 			headers: {

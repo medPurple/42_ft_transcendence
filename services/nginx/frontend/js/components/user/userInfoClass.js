@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import { API_BASE } from "../../config.js"
 
 export default class userInfo {
 
@@ -10,7 +11,7 @@ export default class userInfo {
 
   async getUsername() {
     try {
-      const response = await fetch('/api/profiles/username/', {
+      const response = await fetch(API_BASE + '/api/profiles/username/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -28,7 +29,7 @@ export default class userInfo {
 
   async getAllUserInfo() {
     try {
-      const response = await fetch('/api/profiles/user-info/', {
+      const response = await fetch(API_BASE + '/api/profiles/user-info/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +50,7 @@ export default class userInfo {
 
   async getID() {
     try {
-      const response = await fetch('/api/token/', {
+      const response = await fetch(API_BASE + '/api/token/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ export default class userInfo {
 
   async getAllUsers() {
     try {
-      const response = await fetch('/api/profiles/all-users/', {
+      const response = await fetch(API_BASE + '/api/profiles/all-users/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import { gameState, gameCustom, core, playMesh } from "./config.js"
+import { WS_BASE } from "../../config.js"
 import { createScene } from "./createScene.js"
 import { handlePowerUp } from "./handlePowerUps.js"
 import { displayScore } from './scoreDisplay.js'
@@ -46,7 +47,7 @@ async function setup(gameMode, players) {
   const user_name = await Iuser.getUsername();
   // Le token JWT est passé en query string — requis par l'auth backend
   const token = Icookies.getCookie('token').replace('Bearer ', '');
-  const base = 'wss://' + window.location.host;
+  const base = WS_BASE;
 
   switch (gameState.game_mode) {
     case "remote":

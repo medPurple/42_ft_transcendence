@@ -1,6 +1,7 @@
 import gamer from "./gamerInfo.js"
 import Icookies from "../cookie/cookie.js";
 import Iuser from "../user/userInfo.js";
+import { API_BASE } from "../../config.js"
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -159,7 +160,7 @@ export default class pongSettingsForm extends HTMLElement {
       let csrfToken = Icookies.getCookie('csrftoken');
 
       const formData = new FormData(editSettings);
-      fetch(`api/pong/${userId}/`, {
+      fetch(API_BASE + `/api/pong/${userId}/`, {
         method: 'PUT',
         body: formData,
         headers: {

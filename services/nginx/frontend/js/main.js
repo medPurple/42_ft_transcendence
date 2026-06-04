@@ -1,4 +1,5 @@
 
+import { API_BASE } from "./config.js";
 import intro from "./views/intro.js";
 import home from "./views/home.js";
 import about from "./views/about.js";
@@ -187,7 +188,7 @@ async function checkValidToken() {
     return true;
   }
   try {
-    const response = await fetch('/api/token/', {
+    const response = await fetch(API_BASE + '/api/token/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

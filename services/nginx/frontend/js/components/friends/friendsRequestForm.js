@@ -1,6 +1,7 @@
 import Icookies from "../cookie/cookie.js";
 import Iuser from "../user/userInfo.js";
 import Ifriends from "./friendsInfo.js";
+import { API_BASE, WS_BASE } from "../../config.js"
 
 class FriendsButton {
 
@@ -71,7 +72,7 @@ export class Friends {
 
 	connect() {
 		let token = Icookies.getCookie('token');
-		const socket = new WebSocket(`wss://${window.location.host}/ws/friends/?token=${token}`);
+		const socket = new WebSocket(`${WS_BASE}/ws/friends/?token=${token}`);
 		socket.onopen = function(e) {};
 
 		socket.onmessage = async (event) => {

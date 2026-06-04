@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import { API_BASE } from "../../config.js"
 
 export default class code2FA extends HTMLElement {
   constructor() {
@@ -36,7 +37,7 @@ export default class code2FA extends HTMLElement {
 
       const otp = otpInput.value;
 
-      fetch('/api/profiles/login_2FA/', {
+      fetch(API_BASE + '/api/profiles/login_2FA/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import { API_BASE } from "../../config.js"
 
 export default class LogoutForm extends HTMLElement {
   constructor() {
@@ -24,7 +25,7 @@ export default class LogoutForm extends HTMLElement {
         return;
       }
       
-      fetch('/api/profiles/logout/', {
+      fetch(API_BASE + '/api/profiles/logout/', {
         method: 'POST',
         headers: {
           'Authorization': jwtToken,

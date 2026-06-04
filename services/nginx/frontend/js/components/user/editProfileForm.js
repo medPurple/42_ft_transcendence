@@ -1,5 +1,6 @@
 import Iuser from "./userInfo.js";
 import Icookies from "../cookie/cookie.js";
+import { API_BASE } from "../../config.js"
 
 // Échappe les caractères HTML pour éviter les XSS via innerHTML
 function escapeHtml(str) {
@@ -145,7 +146,7 @@ export default class editProfileForm extends HTMLElement {
 
         let jwtToken = Icookies.getCookie('token');
         let csrfToken = Icookies.getCookie('csrftoken');
-        const response = await fetch('/api/profiles/edit-profile/', {
+        const response = await fetch(API_BASE + '/api/profiles/edit-profile/', {
           method: 'POST',
           body: formData,
           headers: {

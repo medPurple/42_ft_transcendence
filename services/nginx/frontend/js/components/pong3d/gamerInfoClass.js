@@ -1,5 +1,6 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js"
+import { API_BASE } from "../../config.js"
 
 export default class gamerInfo {
 
@@ -10,7 +11,7 @@ export default class gamerInfo {
       let csrfToken = Icookies.getCookie('csrftoken');
       let userId = await Iuser.getID();
 
-      const response = await fetch(`api/pong/${userId}/`, {
+      const response = await fetch(API_BASE + `/api/pong/${userId}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ export default class gamerInfo {
       let csrfToken = Icookies.getCookie('csrftoken');
       let userId = await Iuser.getID();
 
-      const response = await fetch(`api/pong/gamer/${userId}/`, {
+      const response = await fetch(API_BASE + `/api/pong/gamer/${userId}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ export default class gamerInfo {
       let csrfToken = Icookies.getCookie('csrftoken');
       let userId = await Iuser.getID();
 
-      const response = await fetch(`api/pong/match/${userId}/`, {
+      const response = await fetch(API_BASE + `/api/pong/match/${userId}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

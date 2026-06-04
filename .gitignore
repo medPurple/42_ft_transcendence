@@ -27,6 +27,9 @@ secrets/tokens/*.token
 secrets/services/**/.env
 !secrets/services/**/.env.example
 
+# VPS env (contains secrets)
+.env.vps
+
 # Systeme
 **/.vscode
 **/.DS_Store
