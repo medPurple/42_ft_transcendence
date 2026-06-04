@@ -205,6 +205,7 @@ export class pokeMap {
 
 		const token = Icookies.getCookie('token').replace('Bearer ', '');
 		const socket = new WebSocket(WS_BASE + "/ws/pokemap/?token=" + token);
+		window.__pushCleanup?.(() => { socket.close(); });
 		this.userID = id;
 
 		socket.onopen = async (e) => {

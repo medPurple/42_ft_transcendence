@@ -73,6 +73,7 @@ export class Friends {
 	connect() {
 		let token = Icookies.getCookie('token');
 		const socket = new WebSocket(`${WS_BASE}/ws/friends/?token=${token}`);
+		window.__pushCleanup?.(() => { socket.close(); });
 		socket.onopen = function(e) {};
 
 		socket.onmessage = async (event) => {

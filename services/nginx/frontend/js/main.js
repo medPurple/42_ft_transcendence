@@ -220,6 +220,17 @@ async function checkValidToken() {
   }
 }
 
+// Registre global de fonctions de cleanup (WebSockets, timers, etc.)
+// Chaque composant qui ouvre une ressource persistante appelle :
+//   window.__pushCleanup(() => mySocket.close())
+window.__cleanup = [];
+window.__pushCleanup = (fn) => window.__cleanup.push(fn);
+
+function runCleanup() {
+  window.__cleanup.forEach(fn => { try { fn(); } catch(e) {} });
+  window.__cleanup = [];
+}
+
 async function router() {
   let path = location.pathname;
   let view = null;
@@ -269,6 +280,7 @@ async function router() {
 
     if (view) {
       document.title = pageTitle + " | " + view.title;
+      runCleanup();  // Ferme WS et autres ressources de la page précédente
       let result = await view.render(view.params);
       app.innerHTML = '';
 

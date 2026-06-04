@@ -80,6 +80,12 @@ a:hover {
 	-webkit-backdrop-filter: blur(8px);
 	background-color: rgba(255,255,255,0.80) !important;
 	border-bottom: 1px solid rgba(0,0,0,0.06);
+	position: relative;
+	z-index: 1040 !important;
+}
+
+.dropdown-menu {
+	z-index: 1050 !important;
 }
 
 #navbar .nav-link {

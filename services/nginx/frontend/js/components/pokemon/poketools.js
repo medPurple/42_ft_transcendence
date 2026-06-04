@@ -12,6 +12,7 @@ export class pokechat {
 			+ roomName
 			+ '/?token=' + token
 		);
+		window.__pushCleanup?.(() => { this.chatSocket?.close(); this.chatSocket = null; });
 	}
 
 	createTitleAndModal(){

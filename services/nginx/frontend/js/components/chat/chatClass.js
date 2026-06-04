@@ -493,6 +493,7 @@ export class chat {
 
 		const token = Icookies.getCookie('token').replace('Bearer ', '');
 		this.websocket = new WebSocket(`${WS_BASE}/ws/chat/${roomName}/?token=${token}`);
+		window.__pushCleanup?.(() => { this.websocket?.close(); this.websocket = null; });
 
 		const interactiondiv = document.querySelector('.interactionDiv');
 		const inputDiv   = interactiondiv.querySelector('#inputDiv');
