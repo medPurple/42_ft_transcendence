@@ -69,6 +69,8 @@ services:
       - "4430:4430"
     secrets:
       - vault_token_nginx
+    healthcheck:
+      disable: true
     restart: on-failure
 
   user:

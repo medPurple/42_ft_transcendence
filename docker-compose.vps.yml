@@ -94,6 +94,8 @@ services:
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-}
     secrets:
       - vault_token_nginx
+    healthcheck:
+      disable: true
     mem_limit: 256m
     restart: unless-stopped
 
