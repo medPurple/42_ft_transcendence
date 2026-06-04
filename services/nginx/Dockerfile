@@ -14,6 +14,7 @@ RUN chmod +x /tmp/get_ssl.sh
 
 # Config nginx (remplace le default de l'image)
 COPY /conf/nginx.conf /etc/nginx/conf.d/default.conf
+COPY /conf/cors.conf  /etc/nginx/conf.d/cors.conf
 
 # Frontend statique
 COPY ./frontend/ /usr/share/nginx/html/

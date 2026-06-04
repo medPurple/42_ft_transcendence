@@ -9,6 +9,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 
 # nginx virtual host config (avec envsubst pour DOMAIN / FRONTEND_ORIGIN)
 COPY /conf/nginx.vps.conf /etc/nginx/templates/default.conf.template
+COPY /conf/cors.conf      /etc/nginx/conf.d/cors.conf
 
 # Frontend static files
 COPY ./frontend/ /usr/share/nginx/html/
