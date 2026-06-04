@@ -156,6 +156,9 @@ async function updateNavbarDropdown() {
   if (condition) {
     let username = await Iuser.getUsername();
     dropbutton.innerHTML = `<strong>${username}</strong>`;
+    dropbutton.style.display = '';
+    // Retire le lien "Sign in" s'il était affiché
+    document.getElementById('navbar-signin-link')?.parentElement.remove();
 
     dropdownMenu.innerHTML = `
 			<li><a class="dropdown-item" href="/profile" data-link>profile</a></li>
@@ -165,10 +168,18 @@ async function updateNavbarDropdown() {
 			<li><logout-form></logout-form></li>
 			`;
   } else {
-    dropdownMenu.innerHTML = `
-			<li><a class="dropdown-item" href="/login" data-link>log in</a></li>
-			<li><a class="dropdown-item" href="/register" data-link>register</a></li>
-			`;
+    // Non connecté : on masque le dropdown et on affiche un simple lien "Sign in"
+    dropbutton.style.display = 'none';
+    dropdownMenu.innerHTML = '';
+
+    // Ajoute le lien une seule fois
+    if (!document.getElementById('navbar-signin-link')) {
+      const li = document.createElement('li');
+      li.className = 'nav-item';
+      li.innerHTML = `<a id="navbar-signin-link" class="nav-link" href="/login" data-link
+        style="font-size:0.875rem;letter-spacing:0.03em;">Sign in</a>`;
+      dropbutton.parentElement.parentElement.appendChild(li);
+    }
   }
 }
 

@@ -1,9 +1,5 @@
-import "../../components/user/registrationForm.js";
+import { authPage } from "./login.js";
 
-export default function register(){
-	return `
-
-	<registration-form></registration-form>
-
-	`;
+export default function register() {
+  return authPage('register');
 }

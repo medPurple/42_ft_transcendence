@@ -37,7 +37,7 @@ export default class LoginForm extends HTMLElement {
 					<button type="submit" class="btn btn-dark">Sign in →</button>
 
 					<div class="text-center mt-3">
-						<small style="color:#888">No account? <a href="/register" data-link style="color:#1b1b1c;font-weight:600;">Create one</a></small>
+						<small style="color:#888">No account? <button type="button" id="switch-to-register" style="background:none;border:none;padding:0;color:#1b1b1c;font-weight:600;font-size:inherit;cursor:pointer;text-decoration:underline;">Create one</button></small>
 					</div>
 				</form>
 			</div>
@@ -57,6 +57,11 @@ export default class LoginForm extends HTMLElement {
   connectedCallback() {
     const signupForm = this.shadowRoot.getElementById('login-form');
     const showAlert = this.showAlert.bind(this);
+
+    // Switch to register tab
+    this.shadowRoot.getElementById('switch-to-register')?.addEventListener('click', () => {
+      document.querySelector('.auth-tab[data-tab="register"]')?.click();
+    });
 
     signupForm.addEventListener('submit', async (event) => {
       event.preventDefault();

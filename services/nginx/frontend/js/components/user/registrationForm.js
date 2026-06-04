@@ -75,7 +75,7 @@ export default class RegistrationForm extends HTMLElement {
 
 				<input type="hidden" class="form-control" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 				<div class="d-flex justify-content-between align-items-center mt-1">
-					<small style="color:#888">Already have an account? <a href="/login" data-link style="color:#1b1b1c;font-weight:600;">Sign in</a></small>
+					<small style="color:#888">Already have an account? <button type="button" id="switch-to-login" style="background:none;border:none;padding:0;color:#1b1b1c;font-weight:600;font-size:inherit;cursor:pointer;text-decoration:underline;">Sign in</button></small>
 					<button type="submit" class="btn btn-dark">Register →</button>
 				</div>
 
@@ -110,6 +110,11 @@ export default class RegistrationForm extends HTMLElement {
 		pwd1.addEventListener('input', updateReqs);
 		pwd2.addEventListener('input', updateReqs);
 		usernameInput.addEventListener('input', updateReqs);
+
+		// Switch to login tab
+		this.shadowRoot.getElementById('switch-to-login')?.addEventListener('click', () => {
+			document.querySelector('.auth-tab[data-tab="login"]')?.click();
+		});
 
 		// Form submit
 		const signupForm = this.shadowRoot.getElementById('signup-form');
