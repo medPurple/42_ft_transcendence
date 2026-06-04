@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # views.py lit JWT_SIGNING_KEY depuis settings — aucun appel Vault à chaque requête.
 vault = VaultClient()
 jwt_secrets = vault.secret('key')
+jwtoken_db_secrets = vault.secret('jwtoken_db')
 
 # ── Sécurité ──────────────────────────────────────────────────────────────────
 SECRET_KEY = jwt_secrets['django_secret_key']
@@ -101,8 +102,12 @@ WSGI_APPLICATION = 'JWToken.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': jwtoken_db_secrets['db_name'],
+        'USER': jwtoken_db_secrets['db_username'],
+        'PASSWORD': jwtoken_db_secrets['db_password'],
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 

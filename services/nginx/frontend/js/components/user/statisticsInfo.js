@@ -2,241 +2,236 @@ import Iuser from "../../components/user/userInfo.js";
 import Icookies from "../../components/cookie/cookie.js";
 import { API_BASE } from "../../config.js"
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
 export class Statistics {
 
-  createUserCardStats(containerStats, userInfo, stats) {
-
-    let rowUser = document.createElement('div');
-    rowUser.classList.add('row');
-    rowUser.id = 'row-profile-user';
-    containerStats.appendChild(rowUser);
-
-    let profileUser = document.createElement('div');
-    profileUser.classList.add('d-flex')
-    profileUser.classList.add('justify-content-center');
-    profileUser.id = 'profile-user-flex';
-    rowUser.appendChild(profileUser);
-
-    const cardDivUser = document.createElement('div');
-    cardDivUser.classList.add('card', 'mb-3', 'mx-3');
-    cardDivUser.id = 'user_';
-    profileUser.appendChild(cardDivUser);
-
-    const rowCard = document.createElement('div');
-    rowCard.classList.add('row', 'g-0');
-    cardDivUser.appendChild(rowCard);
-
-    let cardImage = document.createElement('img');
-    cardImage.src = `data:image/jpeg;base64,${userInfo.user.profile_picture_data}`;
-    cardImage.classList.add('rounded-circle');
-    cardImage.classList.add('mb-3');
-    cardImage.width = 80;
-    cardImage.width = 80;
-    cardImage.alt = 'Profile Picture';
-
-    for (let i = 0; i < 4; i++) {
-
-      let divCol = document.createElement('div');
-      divCol.classList.add('col-md-3', 'col-sm-6', 'col-12');
-      rowCard.appendChild(divCol);
-
-      let divCardBody = document.createElement('div');
-      divCardBody.classList.add('card-body');
-      divCol.appendChild(divCardBody);
-
-      let divCardText = document.createElement('div');
-      divCardText.classList.add('card-text');
-      divCardBody.appendChild(divCardText);
-
-      this.generateCardTitle(userInfo, divCardBody, i);
-      this.generateCardText(divCardBody, cardImage, i, stats);
-
-
-    }
-    return rowUser;
-  }
-
-  generateCardTitle(userInfo, divCardBody, i) {
-
-    let divCardTitle = document.createElement('div');
-    divCardTitle.classList.add('card-title', 'text-nowrap');
-    divCardBody.appendChild(divCardTitle);
-
-    let strong = document.createElement('strong');
-    divCardTitle.appendChild(strong);
-
-    switch (i) {
-      case 0:
-        strong.textContent = userInfo.user.username;
-        break;
-      case 1:
-        strong.textContent = 'Games played';
-        break;
-      case 2:
-        strong.textContent = 'Games won';
-        break;
-      case 3:
-        strong.textContent = 'Games lost';
-        break;
-      default:
-        break;
-    }
-    return divCardTitle;
-  }
-
-  generateCardText(divCardBody, cardImage, i, stats) {
-
-
-    let divCardText = document.createElement('div');
-    divCardText.classList.add('card-text', 'text-center');
-    divCardBody.appendChild(divCardText);
-
-    switch (i) {
-      case 0:
-        divCardText.appendChild(cardImage);
-        break;
-      case 1:
-        divCardText.textContent = `${stats.game_played}`;
-        break;
-      case 2:
-        divCardText.textContent = `${stats.game_won}`;
-        break;
-      case 3:
-        divCardText.textContent = `${stats.game_lost}`;
-        break;
-      default:
-        break;
-    }
-
-    return divCardText
-
-  }
-
-  createPartyStats(containerStats, stats, users) {
-
-    let rowOther = document.createElement('div');
-    rowOther.classList.add('row');
-    containerStats.appendChild(rowOther);
-
-    let profileContainer = document.createElement('div');
-    profileContainer.classList.add('d-flex', 'flex-wrap', 'justify-content-center');
-    profileContainer.id = 'profile-friends-container';
-    rowOther.appendChild(profileContainer);
-
-
-    let party = 0;
-    for (let matchId in stats.history) {
-      let game = stats.history[matchId];
-      let player1 = users.users.find(user => user.user_id === game.player1.id);
-      let player2 = users.users.find(user => user.user_id === game.player2.id);
-
-      if (!player1)
-        player1 = { username: 'Guest' };
-      if (!player2)
-        player2 = { username: 'Guest' };
-      party++;
-
-      const cardDiv = document.createElement('div');
-      cardDiv.classList.add('card', 'mb-3', 'mx-3');
-      cardDiv.id = `user_${party}`;
-      profileContainer.appendChild(cardDiv);
-
-      const cardBody = document.createElement('div');
-      cardBody.classList.add('card-body');
-      cardDiv.appendChild(cardBody);
-
-      const cardTitle = document.createElement('h5');
-      cardTitle.classList.add('card-title', 'text-center');
-      cardTitle.textContent = `Squid Game ${party}`;
-      cardBody.appendChild(cardTitle);
-
-      let rowPlayers = document.createElement('div');
-      rowPlayers.classList.add('row', 'text-center', 'my-3');
-      cardBody.appendChild(rowPlayers);
-
-      let playerOneCol = document.createElement('div');
-      playerOneCol.classList.add('col');
-      rowPlayers.appendChild(playerOneCol);
-
-      let playerTwoCol = document.createElement('div');
-      playerTwoCol.classList.add('col');
-      rowPlayers.appendChild(playerTwoCol);
-
-      let playerOneText = document.createElement('div');
-      const p1strong = document.createElement('strong');
-      p1strong.textContent = player1.username;
-      playerOneText.appendChild(p1strong);
-      playerOneCol.appendChild(playerOneText);
-
-      let playerTwoText = document.createElement('div');
-      const p2strong = document.createElement('strong');
-      p2strong.textContent = player2.username;
-      playerTwoText.appendChild(p2strong);
-      playerTwoCol.appendChild(playerTwoText);
-
-      let playerOneImage = document.createElement('img');
-      if (player1.profile_picture_data)
-        playerOneImage.src = `data:image/jpeg;base64,${player1.profile_picture_data}`;
-      else
-        playerOneImage.src = './images/Favicons/PH-01extra.png';
-      playerOneImage.classList.add('rounded-circle', 'mt-2');
-      playerOneImage.width = 80;
-      playerOneImage.alt = 'Player one picture';
-      playerOneCol.appendChild(playerOneImage);
-
-      let playerTwoImage = document.createElement('img');
-      if (player2.profile_picture_data)
-        playerTwoImage.src = `data:image/jpeg;base64,${player2.profile_picture_data}`;
-      else
-        playerTwoImage.src = './images/Favicons/PH-01extra.png';
-      playerTwoImage.classList.add('rounded-circle', 'mt-2');
-      playerTwoImage.width = 80;
-      playerTwoImage.alt = 'Player two picture';
-      playerTwoCol.appendChild(playerTwoImage);
-
-      let resultRow = document.createElement('div');
-      resultRow.classList.add('row', 'text-center', 'mt-3');
-      cardBody.appendChild(resultRow);
-
-      let resultCol = document.createElement('div');
-      resultCol.classList.add('col');
-      resultRow.appendChild(resultCol);
-
-      let resultText = document.createElement('div');
-      resultText.innerHTML = `<strong>Result: </strong> ${game.player1.score} - ${game.player2.score}`;
-      resultCol.appendChild(resultText);
-
-      const cardFooter = document.createElement('div');
-      cardFooter.className = 'card-footer';
-      const date = this.timerCalculation(game.date);
-      if (date > 60)
-        cardFooter.textContent = `${Math.floor(date / 60)} min ago`;
-      else
-        cardFooter.textContent = `${date} sec ago`;
-      cardDiv.appendChild(cardFooter);
-    };
-
-    return rowOther;
-  }
-
+  /* ── Main entry ────────────────────────────────────────────── */
   async displayStat() {
+    const main = document.querySelector('main');
+
+    // Style block (injected once into the light DOM)
+    if (!document.getElementById('stats-style')) {
+      const style = document.createElement('style');
+      style.id = 'stats-style';
+      style.textContent = `
+        #stats { padding: 1.5rem 1rem 3rem; }
+
+        /* Hero card */
+        .stat-hero {
+          background: rgba(255,255,255,0.78);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.4);
+          border-radius: 16px;
+          box-shadow: 0 4px 32px rgba(0,0,0,0.09);
+          padding: 2rem 2rem 1.5rem;
+          max-width: 640px;
+          margin: 0 auto 2rem;
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+        }
+        .stat-hero img {
+          width: 80px; height: 80px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid rgba(0,0,0,0.07);
+          flex-shrink: 0;
+        }
+        .stat-hero-name {
+          font-family: 'Courier New', monospace;
+          font-size: 1.1rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.75rem;
+        }
+        .stat-pills {
+          display: flex;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+        }
+        .stat-pill {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0.4rem 0.9rem;
+          border-radius: 99px;
+          font-size: 0.75rem;
+          font-family: 'Courier New', monospace;
+          letter-spacing: 0.03em;
+        }
+        .stat-pill strong { font-size: 1.15rem; line-height: 1.2; }
+        .pill-played  { background: rgba(27,27,28,0.07);  color: #1b1b1c; }
+        .pill-won     { background: rgba(46,125,50,0.10); color: #2e7d32; }
+        .pill-lost    { background: rgba(198,40,40,0.09); color: #c62828; }
+
+        /* Match history */
+        .history-title {
+          font-family: 'Courier New', monospace;
+          font-size: 0.78rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #888;
+          max-width: 640px;
+          margin: 0 auto 0.75rem;
+          padding-left: 0.25rem;
+        }
+        .match-list {
+          max-width: 640px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+        .match-card {
+          background: rgba(255,255,255,0.72);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255,255,255,0.4);
+          border-radius: 12px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+          padding: 0.85rem 1.25rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        .match-players {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex: 1;
+        }
+        .match-avatar {
+          width: 38px; height: 38px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid rgba(0,0,0,0.07);
+        }
+        .match-player-name {
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: #1b1b1c;
+        }
+        .match-vs {
+          font-family: 'Courier New', monospace;
+          font-size: 0.7rem;
+          color: #aaa;
+          padding: 0 0.25rem;
+        }
+        .match-score {
+          font-family: 'Courier New', monospace;
+          font-size: 1.05rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          color: #1b1b1c;
+          white-space: nowrap;
+        }
+        .match-time {
+          font-size: 0.72rem;
+          color: #aaa;
+          white-space: nowrap;
+        }
+        .no-history {
+          text-align: center;
+          color: #aaa;
+          font-size: 0.85rem;
+          padding: 2rem;
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
     const containerStats = document.createElement('div');
-    containerStats.classList.add('container');
     containerStats.id = 'stats';
-    document.querySelector('main').appendChild(containerStats);
+    main.appendChild(containerStats);
+
     const userInfo = await Iuser.getAllUserInfo();
-    const stats = await this.getStats(userInfo.user.user_id);
-    const users = await Iuser.getAllUsers();
+    const stats    = await this.getStats(userInfo.user.user_id);
+    const users    = await Iuser.getAllUsers();
 
-
-
-    this.createUserCardStats(containerStats, userInfo, stats);
-    this.createPartyStats(containerStats, stats, users);
+    containerStats.innerHTML = this._renderHero(userInfo.user, stats)
+      + this._renderHistory(stats, users.users);
 
     return containerStats;
   }
 
+  /* ── Hero card ─────────────────────────────────────────────── */
+  _renderHero(user, stats) {
+    const avatar = user.profile_picture_data
+      ? `data:image/jpeg;base64,${user.profile_picture_data}`
+      : '/images/Favicons/PH-01extra.png';
+
+    return `
+      <div class="stat-hero">
+        <img src="${avatar}" alt="avatar">
+        <div>
+          <div class="stat-hero-name">${escapeHtml(user.username)}</div>
+          <div class="stat-pills">
+            <div class="stat-pill pill-played">
+              <strong>${stats.game_played ?? 0}</strong>played
+            </div>
+            <div class="stat-pill pill-won">
+              <strong>${stats.game_won ?? 0}</strong>won
+            </div>
+            <div class="stat-pill pill-lost">
+              <strong>${stats.game_lost ?? 0}</strong>lost
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ── Match history ─────────────────────────────────────────── */
+  _renderHistory(stats, allUsers) {
+    const history = stats?.history;
+    if (!history || Object.keys(history).length === 0) {
+      return `<div class="history-title">Match history</div>
+              <div class="match-list"><div class="no-history">No games played yet.</div></div>`;
+    }
+
+    const cards = Object.values(history).map((game, idx) => {
+      const p1data = allUsers?.find(u => u.user_id === game.player1.id) || { username: 'Guest' };
+      const p2data = allUsers?.find(u => u.user_id === game.player2.id) || { username: 'Guest' };
+
+      const av1 = p1data.profile_picture_data
+        ? `data:image/jpeg;base64,${p1data.profile_picture_data}`
+        : '/images/Favicons/PH-01extra.png';
+      const av2 = p2data.profile_picture_data
+        ? `data:image/jpeg;base64,${p2data.profile_picture_data}`
+        : '/images/Favicons/PH-01extra.png';
+
+      const elapsed = this.timerCalculation(game.date);
+      const timeAgo = elapsed > 3600
+        ? `${Math.floor(elapsed / 3600)}h ago`
+        : elapsed > 60
+          ? `${Math.floor(elapsed / 60)} min ago`
+          : `${elapsed}s ago`;
+
+      return `
+        <div class="match-card">
+          <div class="match-players">
+            <img class="match-avatar" src="${av1}" alt="${escapeHtml(p1data.username)}">
+            <div class="match-player-name">${escapeHtml(p1data.username)}</div>
+            <span class="match-vs">vs</span>
+            <img class="match-avatar" src="${av2}" alt="${escapeHtml(p2data.username)}">
+            <div class="match-player-name">${escapeHtml(p2data.username)}</div>
+          </div>
+          <div class="match-score">${game.player1.score} – ${game.player2.score}</div>
+          <div class="match-time">${timeAgo}</div>
+        </div>
+      `;
+    }).reverse().join('');  // most recent first
+
+    return `<div class="history-title">Match history</div>
+            <div class="match-list">${cards}</div>`;
+  }
+
+  /* ── API ───────────────────────────────────────────────────── */
   async getStats(userID) {
     try {
       const response = await fetch(API_BASE + `/api/pong/match/${userID}/`, {
@@ -248,28 +243,22 @@ export class Statistics {
         },
       });
       const data = await response.json();
-      if (data.success) {
-        return data.data;
-      } else {
-        alert('Failed to get stats');
-      }
+      if (data.success) return data.data;
+      console.error('Failed to get stats');
+      return {};
     } catch (error) {
       console.error('Error', error);
+      return {};
     }
   }
 
   timerCalculation(date) {
-
     try {
-      let time = new Date(date);
-      if (isNaN(time.getTime())) {
-        return 0;
-      }
-      let now = new Date();
-      let elapsedTimeMillis = now - time;
-      return (Math.floor(elapsedTimeMillis / 1000));
-    } catch (error) {
-      return (0);
+      const time = new Date(date);
+      if (isNaN(time.getTime())) return 0;
+      return Math.floor((Date.now() - time) / 1000);
+    } catch {
+      return 0;
     }
   }
 }

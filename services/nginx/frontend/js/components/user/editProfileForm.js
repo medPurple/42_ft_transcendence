@@ -2,15 +2,9 @@ import Iuser from "./userInfo.js";
 import Icookies from "../cookie/cookie.js";
 import { API_BASE } from "../../config.js"
 
-// Échappe les caractères HTML pour éviter les XSS via innerHTML
 function escapeHtml(str) {
   if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
 export default class editProfileForm extends HTMLElement {
@@ -20,151 +14,155 @@ export default class editProfileForm extends HTMLElement {
   }
 
   async connectedCallback() {
-    const editProfile = document.createElement('div');
-    editProfile.id = 'edit-profile';
-    this.shadowRoot.appendChild(editProfile);
+    const div = document.createElement('div');
+    div.id = 'edit-profile';
+    this.shadowRoot.appendChild(div);
     await this.initUserInfo();
     this.initFormSubmit();
-
   }
 
   async initUserInfo() {
     try {
       const data = await Iuser.getAllUserInfo();
-      if (data && data.user) {
-        this.displayEditProfileForm(data);
-      } else {
-        console.info('Missing user data. Please login.');
-      }
+      if (data && data.user) this.displayEditProfileForm(data);
+      else console.info('Missing user data. Please login.');
     } catch (error) {
-      console.info('Error:', error)
+      console.info('Error:', error);
     }
   }
 
   displayEditProfileForm(data) {
-    let editProfileContainer = this.shadowRoot.querySelector('#edit-profile');
-    editProfileContainer.innerHTML = `
+    const u = data.user;
+    this.shadowRoot.querySelector('#edit-profile').innerHTML = `
+      <link rel="stylesheet" href="/css/style.css" />
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
-		<link rel="stylesheet" href="css/style.css" />
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"defer></script>
-		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous" defer></script>
+      <style>
+        .form-control { border-radius: 8px !important; border: 1px solid #ddd !important; transition: border-color 0.2s, box-shadow 0.2s !important; }
+        .form-control:focus { border-color: #1b1b1c !important; box-shadow: 0 0 0 3px rgba(27,27,28,0.1) !important; }
+        .form-label { font-size: 0.8rem; color: #555; margin-bottom: 3px; }
+        .btn-dark { border-radius: 8px !important; padding: 0.5rem 1.5rem !important; font-family: 'Courier New', monospace !important; letter-spacing: 0.05em !important; }
+        .alert { border-radius: 8px; font-size: 0.875rem; }
+        .toggle-2fa { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; }
+        .form-check-input { width: 2.5em !important; height: 1.25em !important; cursor: pointer; }
+      </style>
 
-		<div id="app-general-container">
-		<div id="alert-container"></div>
-		<form id="edit-profile-form" method="post" action="" class="container">
-			<div class="row mb-4">
-				<label class="col-sm-3 col-form-label text-start" for="profile_picture">Profile Picture</label>
-				<div class="col-sm-9">
-					<input type="file" class="form-control" name="profile_picture" accept="images/*" />
-				</div>
-			</div>
-			<div class="row mb-4">
-				<label class="col-sm-3 col-form-label text-start" for="username">Username</label>
-				<div class="col-sm-9">
-					<input type="text" class="form-control" id="username" name="username" value="${escapeHtml(data.user.username)}">
-				</div>
-			</div>
-			<div class="row mb-4">
-				<label class="col-sm-3 col-form-label text-start" for="first_name">First Name</label>
-				<div class="col-sm-9">
-					<input type="text" class="form-control" id="first_name" name="first_name" value="${escapeHtml(data.user.first_name)}">
-				</div>
-			</div>
-			<div class="row mb-4">
-				<label class="col-sm-3 col-form-label text-start" for="last_name">Last Name</label>
-				<div class="col-sm-9">
-					<input type="text" class="form-control" id="last_name" name="last_name" value="${escapeHtml(data.user.last_name)}">
-				</div>
-			</div>
-			<div class="row mb-4">
-				<label class="col-sm-3 col-form-label text-start" for="email">Email</label>
-				<div class="col-sm-9">
-					<input type="email" class="form-control" id="email" name="email" value="${escapeHtml(data.user.email)}">
-				</div>
-			</div>
-			<div class="row mb-4">
-				<label class="col-sm-3 col-form-label text-start" for="is_2fa">Enable 2FA</label>
-				<div class="col-sm-9">
-					<input type="checkbox" class="form-check-input" id="is_2fa" name="is_2fa" ${data.user.is_2fa ? 'checked' : ''}>
-				</div>
-			</div>
+      <div id="app-general-container">
+        <div style="background:rgba(255,255,255,0.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.4);border-radius:14px;box-shadow:0 4px 32px rgba(0,0,0,0.10);padding:2rem;max-width:480px;margin:0 auto;">
+          <h5 style="font-family:'Courier New',monospace;letter-spacing:0.08em;margin-bottom:1.5rem;font-size:1rem;">Edit Profile</h5>
+          <div id="alert-container"></div>
+          <form id="edit-profile-form" method="post">
 
-			<div class="row">
-				<div class="col-sm-3"></div>
-				<div class="col-sm-9">
-					<button type="submit" class="btn btn-dark">Save changes</button>
-				</div>
-			</div>
-		</form>
-		</div>
+            <div class="mb-3">
+              <label class="form-label">Profile picture <span style="color:#aaa">(optional, max 1 MB)</span></label>
+              <input type="file" class="form-control form-control-sm" name="profile_picture" accept="image/*" />
+            </div>
 
-		`;
+            <div class="mb-3">
+              <label class="form-label">Username <span style="color:#c62828">*</span></label>
+              <input type="text" class="form-control" name="username" value="${escapeHtml(u.username)}" autocomplete="username">
+            </div>
+
+            <div class="row mb-3">
+              <div class="col">
+                <label class="form-label">First name</label>
+                <input type="text" class="form-control" name="first_name" value="${escapeHtml(u.first_name)}">
+              </div>
+              <div class="col">
+                <label class="form-label">Last name</label>
+                <input type="text" class="form-control" name="last_name" value="${escapeHtml(u.last_name)}">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email <span style="color:#c62828">*</span></label>
+              <input type="email" class="form-control" name="email" value="${escapeHtml(u.email)}" autocomplete="email">
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Two-factor authentication</label>
+              <div class="toggle-2fa">
+                <input type="checkbox" class="form-check-input" role="switch" id="is_2fa" name="is_2fa" ${u.is_2fa ? 'checked' : ''}>
+                <label for="is_2fa" style="font-size:0.85rem;color:#555;">Enable 2FA via email</label>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="/profile" data-link style="font-size:0.82rem;color:#888;">← Cancel</a>
+              <button type="submit" class="btn btn-dark">Save changes</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    `;
   }
 
-
   showAlert(message, type = 'danger') {
-    const alertContainer = this.shadowRoot.getElementById('alert-container');
-    alertContainer.innerHTML = `
-			<div class="alert alert-${type} alert-dismissible fade show" role="alert">
-				${message}
-			</div>`;
-
+    const c = this.shadowRoot.getElementById('alert-container');
+    if (!c) return;
+    c.innerHTML = `
+      <div class="alert alert-${type} d-flex align-items-center gap-2" role="alert" style="margin-bottom:1rem;">
+        <i class="bi bi-${type === 'danger' ? 'exclamation-circle-fill' : 'check-circle-fill'}"></i>
+        <span>${message}</span>
+      </div>`;
   }
 
   validateForm(formData) {
     const username = formData.get('username');
-    const img = formData.get('profile_picture');
+    const img      = formData.get('profile_picture');
 
-
-    if (!/^[a-zA-Z]+$/.test(username)) {
-      this.showAlert('Username should contain only alphanumeric characters');
+    if (!username || !username.trim()) {
+      this.showAlert('Username is required.');
       return false;
     }
-
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      this.showAlert('Username can only contain letters, numbers and underscores.');
+      return false;
+    }
     if (img && img.size > 1048576) {
-      this.showAlert('Image too large');
+      this.showAlert('Profile picture must be under 1 MB.');
       return false;
     }
-
     return true;
   }
 
   initFormSubmit() {
-    const editForm = this.shadowRoot.getElementById('edit-profile-form');
-    const showAlert = this.showAlert.bind(this);
-    const validateForm = this.validateForm.bind(this);
-    editForm.addEventListener('submit', async function(event) {
+    const form = this.shadowRoot.getElementById('edit-profile-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      const formData = new FormData(form);
+      if (!this.validateForm(formData)) return;
+
+      const btn = form.querySelector('button[type=submit]');
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
 
       try {
-        const formData = new FormData(editForm);
-        if (!validateForm(formData)) {
-          return;
-        }
-
-        let jwtToken = Icookies.getCookie('token');
-        let csrfToken = Icookies.getCookie('csrftoken');
         const response = await fetch(API_BASE + '/api/profiles/edit-profile/', {
           method: 'POST',
           body: formData,
           headers: {
-            'Authorization': jwtToken,
-            'X-CSRFToken': csrfToken
+            'Authorization': Icookies.getCookie('token'),
+            'X-CSRFToken': Icookies.getCookie('csrftoken')
           }
         });
         const data = await response.json();
         if (data.success) {
-          window.location.href = '/home';
-
+          window.location.href = '/profile';
         } else {
-          showAlert('Update profile failed. Please check the form and try again.');
-          return;
+          const msg = data.username?.[0] || data.email?.[0] || data.error || data.detail
+            || 'Update failed — please check your details.';
+          this.showAlert(msg);
         }
-
       } catch (error) {
-        showAlert('Error:', error);
+        this.showAlert('Network error — please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save changes';
       }
     });
   }
