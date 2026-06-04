@@ -73,7 +73,6 @@ services:
       - vault_token_chat
       - vault_token_game3d
       - vault_token_pokemap
-      - vault_token_jwtoken
     mem_limit: 192m
     restart: unless-stopped
 
@@ -129,11 +128,8 @@ services:
       - "4430"
     environment:
       - DJANGO_DEBUG=False
-      - DB_HOST=postgres
     secrets:
       - vault_token_jwtoken
-    depends_on:
-      - postgres
     mem_limit: 128m
     restart: unless-stopped
 

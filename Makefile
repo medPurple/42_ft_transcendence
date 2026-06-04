@@ -66,21 +66,22 @@ up:
 run_script:
 	@ chmod +x ./scripts/starting_script.sh
 	@ va_img=$$(docker images | grep -w vault | wc -l); \
-	va_ps=$$(docker ps | grep -w vault | wc -l); \
+	va_ps=$$(docker ps --filter name=vault --filter status=running -q | wc -l); \
+	echo "  [run_script] vault image=$$va_img running=$$va_ps"; \
 	if [ "$$va_img" = "0" ]; then \
-		echo "	Building Vault from scratch..."; \
-		(source ./scripts/starting_script.sh && create_network) && \
-		(source ./scripts/starting_script.sh && build_image) && \
-		(source ./scripts/starting_script.sh && start_vault_container) && \
-		(source ./scripts/starting_script.sh && key_distrib); \
+		echo "  Building Vault from scratch..."; \
+		bash -c '. ./scripts/starting_script.sh && create_network' || exit 1; \
+		bash -c '. ./scripts/starting_script.sh && build_image'    || exit 1; \
+		bash -c '. ./scripts/starting_script.sh && start_vault_container' || exit 1; \
+		bash -c '. ./scripts/starting_script.sh && key_distrib'    || exit 1; \
 	elif [ "$$va_ps" = "0" ]; then \
-		echo "	Vault image exists but container is stopped — restarting..."; \
-		docker start $(VA_NAME); \
+		echo "  Vault image exists but container stopped — restarting..."; \
+		docker start $(VA_NAME) || exit 1; \
 		sleep 5; \
-		(source ./scripts/starting_script.sh && key_distrib); \
+		bash -c '. ./scripts/starting_script.sh && key_distrib' || exit 1; \
 	else \
-		echo "	Vault already running — redistributing tokens..."; \
-		(source ./scripts/starting_script.sh && key_distrib); \
+		echo "  Vault already running — redistributing tokens..."; \
+		bash -c '. ./scripts/starting_script.sh && key_distrib' || exit 1; \
 	fi;
 
 down:

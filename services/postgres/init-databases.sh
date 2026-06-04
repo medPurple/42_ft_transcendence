@@ -75,6 +75,5 @@ create_db "/run/secrets/vault_token_user"    "user_db"
 create_db "/run/secrets/vault_token_chat"    "chat_db"
 create_db "/run/secrets/vault_token_game3d"  "game_db"
 create_db "/run/secrets/vault_token_pokemap" "pokemap"
-create_db "/run/secrets/vault_token_jwtoken" "jwtoken_db"
 
 echo "[postgres-init] All databases initialized."

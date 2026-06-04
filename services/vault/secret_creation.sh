@@ -43,19 +43,6 @@ vault kv put kv/key \
 	SECRET_KEY="$JWT_SECRET" \
 	django_secret_key="$DJANGO_SECRET_JWTOKEN"
 
-ENV_FILE="/vault/services/jwtoken/.env"
-if [ -f "$ENV_FILE" ]; then
-	set -a
-	. "$ENV_FILE"
-	set +a
-	vault kv put kv/jwtoken_db \
-		db_username="$jwtoken_db_username" \
-		db_name="$jwtoken_db_name" \
-		db_password="$jwtoken_db_password"
-else
-	echo "[VAULT ERROR] $ENV_FILE not found. Créer secrets/services/jwtoken/.env (voir .env.example)."
-	exit 1
-fi
 #------------------------------------------------#
 
 #------------------------------------------------#
