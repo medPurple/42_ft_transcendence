@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-python3 manage.py makemigrations tokenAPI
-python3 manage.py migrate
-
 VAULT_TOKEN=$(cat /run/secrets/vault_token_jwtoken)
 data=$(curl -sf -H "X-Vault-Token: $VAULT_TOKEN" http://vault:8200/v1/kv/nginx | jq -r '.data' | sed 's/\\n/\\\\n/g')
 
