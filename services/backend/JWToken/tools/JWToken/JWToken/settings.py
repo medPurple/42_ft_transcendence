@@ -94,6 +94,12 @@ WSGI_APPLICATION = 'JWToken.wsgi.application'
 # JWToken est stateless — pas de base de données nécessaire
 DATABASES = {}
 
+# DRF — désactiver AnonymousUser (nécessite django.contrib.auth qu'on n'a pas)
+REST_FRAMEWORK = {
+    'UNAUTHENTICATED_USER': None,
+    'UNAUTHENTICATED_TOKEN': None,
+}
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
