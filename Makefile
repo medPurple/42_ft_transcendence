@@ -64,12 +64,20 @@ up:
 	@ echo -e "$(GREEN)★ Images Ready ★$(CEND)\n"
 
 run_script:
-	@ if [ $(VA_IMG) = "1" ]; then echo "	SCRIPT already runned"; \
-	else \
-		(chmod +x ./scripts/starting_script.sh) && \
+	@ chmod +x ./scripts/starting_script.sh
+	@ if [ $(VA_IMG) = "0" ]; then \
+		echo "	Building Vault from scratch..."; \
 		(source ./scripts/starting_script.sh && create_network) && \
 		(source ./scripts/starting_script.sh && build_image) && \
 		(source ./scripts/starting_script.sh && start_vault_container) && \
+		(source ./scripts/starting_script.sh && key_distrib); \
+	elif [ $(VA_PS) = "0" ]; then \
+		echo "	Vault image exists but container is stopped — restarting..."; \
+		docker start $(VA_NAME); \
+		sleep 5; \
+		(source ./scripts/starting_script.sh && key_distrib); \
+	else \
+		echo "	Vault already running — redistributing tokens..."; \
 		(source ./scripts/starting_script.sh && key_distrib); \
 	fi;
 

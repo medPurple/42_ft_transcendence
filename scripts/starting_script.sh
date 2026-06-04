@@ -23,6 +23,7 @@ build_image() {
 # - secrets/services : configs par service montées en read-only (jamais dans l'image)
 start_vault_container() {
 	if [[ -z "$(docker ps -aqf name=$container_name)" ]]; then
+		# Conteneur inexistant → créer
 		docker run \
 			--name $container_name \
 			--network $network_name \
@@ -33,8 +34,13 @@ start_vault_container() {
 			-e VAULT_ADDR=http://127.0.0.1:8200 \
 			-d $image_name
 		sleep 5
+	elif [[ -z "$(docker ps -f name=$container_name -f status=running -q)" ]]; then
+		# Conteneur existe mais arrêté → redémarrer
+		echo "Container $container_name stopped — restarting..."
+		docker start $container_name
+		sleep 5
 	else
-		echo "Container $container_name already exists."
+		echo "Container $container_name already running."
 	fi
 }
 
