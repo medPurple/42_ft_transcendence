@@ -1,56 +1,27 @@
-FROM debian:bookworm
+# Image officielle OWASP ModSecurity + nginx pré-compilés
+# Remplace ~23 min de compilation from-source par un pull de quelques secondes
+FROM owasp/modsecurity-crs:nginx
 
-RUN apt-get update -y && apt-get upgrade -y
+USER root
 
-RUN apt-get install \
-    git jq gcc make build-essential autoconf \
-    automake libtool libcurl4-openssl-dev \
-    liblua5.3-dev libfuzzy-dev ssdeep gettext \
-    pkg-config libgeoip-dev libyajl-dev \
-    doxygen  libpcre3-dev libpcre2-16-0 \
-    libpcre2-dev libpcre2-posix3 zlib1g \
-    python3-launchpadlib wget curl\
-    zlib1g-dev software-properties-common -y
+# jq : nécessaire pour get_ssl.sh (lecture des secrets Vault)
+RUN apt-get update -y && apt-get install -y --no-install-recommends jq curl \
+    && rm -rf /var/lib/apt/lists/*
 
+# Script SSL runtime (appelé au démarrage, pas au build — vault n'est pas dispo au build)
 COPY /conf/get_ssl.sh /tmp/get_ssl.sh
 RUN chmod +x /tmp/get_ssl.sh
-# Token Vault injecté au runtime via docker secret -> /run/secrets/vault_token_nginx
-# get_ssl.sh est appelé au runtime dans CMD (pas au build : vault n'est pas accessible)
 
-RUN cd /opt && git clone https://github.com/owasp-modsecurity/ModSecurity.git \
-    && cd ModSecurity \
-    && git submodule init \
-    && git submodule update --init --recursive \
-    && ./build.sh \
-    && ./configure \
-    && make \
-    && make install
-
-RUN cd /opt && git clone https://github.com/owasp-modsecurity/ModSecurity-nginx.git
-#RUN add-apt-repository ppa:ondrej/nginx -y
-#RUN apt update && apt install nginx -y
-RUN apt-get update && apt-get install -y nginx
-
-RUN cd /opt && wget https://nginx.org/download/nginx-1.22.1.tar.gz \
-    && tar -xvzf nginx-1.22.1.tar.gz
-
-RUN cd /opt/nginx-1.22.1/ && ./configure --with-compat --add-dynamic-module=/opt/ModSecurity-nginx \
-    && make \
-    && make modules \
-    && cp objs/ngx_http_modsecurity_module.so /etc/nginx/modules-enabled/ \
-    && cp /opt/ModSecurity/modsecurity.conf-recommended /etc/nginx/modsecurity.conf \
-    && cp /opt/ModSecurity/unicode.mapping /etc/nginx/unicode.mapping
-
-RUN echo "load_module /etc/nginx/modules-enabled/ngx_http_modsecurity_module.so;" > /tmp/tempfile && \
-    cat /etc/nginx/nginx.conf >> /tmp/tempfile && \
-    mv /tmp/tempfile /etc/nginx/nginx.conf
-
+# Config nginx (remplace le default de l'image)
 COPY /conf/nginx.conf /etc/nginx/conf.d/default.conf
-COPY /conf/modsecurity.conf /etc/nginx/modsecurity.conf
 
-RUN git clone https://github.com/coreruleset/coreruleset.git /etc/nginx/owasp-crs
-
-COPY /conf/modsecurity-crs.conf /etc/nginx/owasp-crs/crs-setup.conf
-
+# Frontend statique
 COPY ./frontend/ /usr/share/nginx/html/
-CMD /tmp/get_ssl.sh && nginx -g "daemon off;"
+
+# L'image owasp/modsecurity-crs:nginx a déjà :
+#   - ModSecurity compilé et chargé
+#   - OWASP CRS installé dans /etc/modsecurity.d/
+#   - modsecurity_rules_file → /etc/modsecurity.d/include.conf
+# Pas besoin de copier modsecurity.conf / modsecurity-crs.conf
+
+CMD ["/bin/sh", "-c", "/tmp/get_ssl.sh && nginx -g 'daemon off;'"]

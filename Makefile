@@ -65,13 +65,15 @@ up:
 
 run_script:
 	@ chmod +x ./scripts/starting_script.sh
-	@ if [ $(VA_IMG) = "0" ]; then \
+	@ va_img=$$(docker images | grep -w vault | wc -l); \
+	va_ps=$$(docker ps | grep -w vault | wc -l); \
+	if [ "$$va_img" = "0" ]; then \
 		echo "	Building Vault from scratch..."; \
 		(source ./scripts/starting_script.sh && create_network) && \
 		(source ./scripts/starting_script.sh && build_image) && \
 		(source ./scripts/starting_script.sh && start_vault_container) && \
 		(source ./scripts/starting_script.sh && key_distrib); \
-	elif [ $(VA_PS) = "0" ]; then \
+	elif [ "$$va_ps" = "0" ]; then \
 		echo "	Vault image exists but container is stopped — restarting..."; \
 		docker start $(VA_NAME); \
 		sleep 5; \

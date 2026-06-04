@@ -26,8 +26,9 @@ import "./components/user/logoutForm.js";
 import Iuser from "./components/user/userInfo.js";
 
 // Routes qui nécessitent d'être connecté
+// Routes qui nécessitent d'être connecté (/home est public)
 const protectedRoutes = new Set([
-  '/home', '/profile', '/edit-profile', '/update-password', '/statistics',
+  '/profile', '/edit-profile', '/update-password', '/statistics',
   '/friends', '/chat', '/pongService', '/pongSettings', '/play_pl', '/play_pr',
   '/play_pc', '/play_pt', '/metaService', '/pokemap', '/pkmSettings',
 ]);
@@ -175,11 +176,10 @@ async function updateNavbarDropdown() {
 			<li><logout-form></logout-form></li>
 			`;
   } else {
-    // Non connecté : on masque le dropdown et on affiche un simple lien "Sign in"
+    // Non connecté : masquer le dropdown, afficher "Sign in"
     dropbutton.style.display = 'none';
     dropdownMenu.innerHTML = '';
 
-    // Ajoute le lien une seule fois
     if (!document.getElementById('navbar-signin-link')) {
       const li = document.createElement('li');
       li.className = 'nav-item';
@@ -228,9 +228,7 @@ async function router() {
     Icookies.clearAllCookies();
   } else {
     // Redirection vers /login si route protégée et non connecté
-    const isProtected = protectedRoutes.has(path)
-      || path.startsWith('/friends/')
-      || path.startsWith('/statistics/');
+    const isProtected = (protectedRoutes.has(path) || path.startsWith('/friends/') || path.startsWith('/statistics/'));
     if (isProtected && !checkConnected()) {
       history.replaceState('', '', '/login');
       path = '/login';
