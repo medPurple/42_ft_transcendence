@@ -63,7 +63,6 @@ a:hover {
 }
 #navbar-dropdown-button {
 	font-size: 0.875rem !important;
-	display: flex !important;
 	align-items: center !important;
 	gap: 0.4rem !important;
 }

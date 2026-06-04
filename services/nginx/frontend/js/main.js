@@ -164,7 +164,7 @@ async function updateNavbarDropdown() {
   if (condition) {
     let username = await Iuser.getUsername();
     dropbutton.innerHTML = `<span style="font-family:'Courier New',monospace;font-size:0.82rem;letter-spacing:0.04em;">${username}</span> <i class="bi bi-person-circle" style="font-size:1rem;vertical-align:middle;"></i>`;
-    dropbutton.style.display = '';
+    dropbutton.style.display = 'flex';
     // Retire le lien "Sign in" s'il était affiché
     document.getElementById('navbar-signin-link')?.parentElement.remove();
 
