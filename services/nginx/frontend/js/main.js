@@ -158,16 +158,16 @@ async function updateNavbarDropdown() {
     dropbutton.innerHTML = `<strong>${username}</strong>`;
 
     dropdownMenu.innerHTML = `
-			<li><a class="dropdown-item" href="/profile">profile</a></li>
-			<li><a class="dropdown-item" href="/friends">friends</a></li>
-			<li><a class="dropdown-item" href="/chat">chat</a></li>
+			<li><a class="dropdown-item" href="/profile" data-link>profile</a></li>
+			<li><a class="dropdown-item" href="/friends" data-link>friends</a></li>
+			<li><a class="dropdown-item" href="/chat" data-link>chat</a></li>
 			<li><hr class="dropdown-divider"></li>
 			<li><logout-form></logout-form></li>
 			`;
   } else {
     dropdownMenu.innerHTML = `
-			<li><a class="dropdown-item" href="/login">log in</a></li>
-			<li><a class="dropdown-item" href="/register">register</a></li>
+			<li><a class="dropdown-item" href="/login" data-link>log in</a></li>
+			<li><a class="dropdown-item" href="/register" data-link>register</a></li>
 			`;
   }
 }
