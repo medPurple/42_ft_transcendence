@@ -1,13 +1,25 @@
 #!/bin/bash
 set -e
 
-# init_db.sh démarre PostgreSQL et crée la base si elle n'existe pas
-sh /tmp/init_db.sh
-
 # Redis en arrière-plan
-redis-server --daemonize yes
+redis-server --daemonize yes --maxmemory 64mb --maxmemory-policy allkeys-lru
 
 # Migrations
+# Wait for the shared postgres container to be ready
+python3 -c "
+import socket, time, os
+host = os.getenv('DB_HOST', '127.0.0.1')
+port = int(os.getenv('DB_PORT', '5432'))
+for i in range(30):
+    try:
+        with socket.create_connection((host, port), timeout=2):
+            print(f'[{host}:{port}] postgres ready')
+            break
+    except OSError:
+        print(f'[{host}:{port}] waiting... ({i+1}/30)')
+        time.sleep(2)
+"
+
 python3 manage.py makemigrations friends
 python3 manage.py makemigrations profiles
 python3 manage.py migrate
@@ -28,7 +40,7 @@ update-ca-certificates
 
 export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-uvicorn user.asgi:application \
+uvicorn user.asgi:application --workers 1 \
     --host 0.0.0.0 \
     --port 4430 \
     --ssl-keyfile=/tmp/server.key \

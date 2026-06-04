@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import { API_BASE } from "../../config.js"
 
 export default class LoginForm extends HTMLElement {
   constructor() {
@@ -14,7 +15,9 @@ export default class LoginForm extends HTMLElement {
 
 		<div id="app-general-container">
 			<div id="alert-container"></div>
-				<form id="login-form" method="post" action="" class="container" style="width: 21rem; padding: 18px;">
+			<div style="background:rgba(255,255,255,0.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.4);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.12);padding:2rem 2rem;max-width:360px;margin:0 auto;">
+			<h5 style="font-family:'Courier New',monospace;letter-spacing:0.1em;margin-bottom:1.5rem;">Sign In</h5>
+				<form id="login-form" method="post" action="" class="container" style="padding: 0;">
 					<div class="mb-4">
 						<input type="text" class="form-control" name="username" placeholder="Username" autocomplete="username" required>
 					</div>
@@ -26,6 +29,7 @@ export default class LoginForm extends HTMLElement {
 						<button type="submit" class="btn btn-dark">Log in</button>
 					</div>
 				</form>
+			</div>
 		</div>
 		`;
   }
@@ -47,7 +51,7 @@ export default class LoginForm extends HTMLElement {
 
       const formData = new FormData(signupForm);
 
-      fetch('/api/profiles/login/', {
+      fetch(API_BASE + '/api/profiles/login/', {
         method: 'POST',
         body: formData,
         headers: {

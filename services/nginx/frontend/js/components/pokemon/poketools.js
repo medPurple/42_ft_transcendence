@@ -1,5 +1,6 @@
 import Iuser from "../user/userInfo.js";
 import Icookies from "../cookie/cookie.js";
+import { WS_BASE } from "../../config.js"
 
 export class pokechat {
 
@@ -7,7 +8,7 @@ export class pokechat {
 		const roomName = 'pokeroom';
 		const token = Icookies.getCookie('token').replace('Bearer ', '');
 		this.chatSocket = new WebSocket(
-			'wss://' + window.location.host + '/ws/chat/'
+			WS_BASE + '/ws/chat/'
 			+ roomName
 			+ '/?token=' + token
 		);

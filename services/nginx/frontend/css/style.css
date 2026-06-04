@@ -55,6 +55,103 @@ a:hover {
 	display: none;
 }
 
+/********** GLASS CARD — formulaires / contenus sur fond béton ***********/
+.glass-card {
+	background: rgba(255, 255, 255, 0.72);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: 12px;
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+	padding: 2.5rem 2rem;
+	max-width: 520px;
+	margin: 0 auto;
+}
+
+/********** HOME — labels boutons ***********/
+.home-btn-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.home-btn-label {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 0.85rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: #1b1b1c;
+	background: rgba(255,255,255,0.7);
+	border-radius: 4px;
+	padding: 2px 8px;
+}
+
+/********** CONTACT PAGE ***********/
+.contact-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 2rem 1.5rem;
+	text-align: center;
+}
+
+.contact-avatar {
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid rgba(0,0,0,0.08);
+	margin-bottom: 1rem;
+}
+
+.contact-name {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 1rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	margin-bottom: 0.75rem;
+	color: #1b1b1c;
+}
+
+.contact-quote {
+	font-size: 0.85rem;
+	color: #444;
+	font-style: italic;
+	line-height: 1.6;
+	flex: 1;
+	margin-bottom: 1.25rem;
+	border: none;
+	padding: 0;
+}
+
+.contact-gh-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 0.78rem;
+	color: #1b1b1c !important;
+	background: rgba(0,0,0,0.07);
+	border: 1px solid rgba(0,0,0,0.12);
+	border-radius: 6px;
+	padding: 0.35rem 0.75rem;
+	transition: background 0.2s, color 0.2s;
+	text-decoration: none !important;
+	margin-top: auto;
+}
+
+.contact-gh-btn:hover {
+	background: #1b1b1c;
+	color: #fff !important;
+}
+
+.contact-gh-icon {
+	width: 15px;
+	height: 15px;
+	flex-shrink: 0;
+}
+
 /********** HOME CARD PAGE ***********/
 .image-container {
 	position: relative;

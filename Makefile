@@ -28,11 +28,8 @@ PM_IMG = $(shell docker images | grep pokemap | wc -l)
 
 VA_PS = $(shell docker ps | grep vault | wc -l)
 
-US_VOL = $(shell docker volume ls | grep user | wc -l)
-G3_VOL = $(shell docker volume ls | grep game3d | wc -l)
+PG_VOL = $(shell docker volume ls | grep postgres_data | wc -l)
 VA_VOL = $(shell docker volume ls | grep secret_volume | wc -l)
-CH_VOL = $(shell docker volume ls | grep chat | wc -l)
-PM_VOL = $(shell docker volume ls | grep pokemap | wc -l)
 PR_VOL = $(shell docker volume ls | grep prom | wc -l)
 GR_VOL = $(shell docker volume ls | grep graf | wc -l)
 
@@ -127,14 +124,8 @@ clean: down
 	@ if [ $(VA_IMG) = "1" ]; then docker rmi -f $(VA_NAME); \
 	else echo "	VAULT Image already deleted"; fi;
 
-	@ if [ $(G3_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(G3_NAME); \
-	else echo "	GAME3D Volume already deleted"; fi;
-	@ if [ $(US_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(US_NAME); \
-	else echo "	USER Volume already deleted"; fi;
-	@ if [ $(CH_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(CH_NAME); \
-	else echo "	CHAT Volume already deleted"; fi;
-	@ if [ $(PM_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(PM_NAME); \
-	else echo "	POKEMAP Volume already deleted"; fi;
+	@ if [ $(PG_VOL) = "1" ]; then docker volume rm $(PREFIX)_postgres_data; \
+	else echo "	POSTGRES Volume already deleted"; fi;
 	@ if [ $(PR_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(PR_NAME); \
 	else echo "	PROMETHEUS Volume already deleted"; fi;
 	@ if [ $(GR_VOL) = "1" ]; then docker volume rm $(PREFIX)_$(GR_NAME); \
@@ -159,4 +150,31 @@ piv:
 	@ docker images
 	@ docker volume ls
 
-.PHONY: all up down clean fclean re piv run_script microservices re_ng re_g3 re_ch re_tk re_us re_pm
+####### VPS DEPLOYMENT #######
+# Usage:
+#   cp .env.vps.example .env.vps   # then fill values
+#   make vps                       # first run: builds + starts everything
+#   make vps_cert                  # obtain Let's Encrypt certificate (once)
+#   make vps_down                  # stop VPS containers
+
+vps: run_script
+	@ echo -e "\n$(YELLOW)★ Launching VPS stack (port 443, Let's Encrypt) ★$(CEND)"
+	@ docker pull prom/prometheus
+	@ docker pull grafana/grafana
+	@ docker compose --env-file .env.vps -f docker-compose.vps.yml up -d --pull never
+	@ echo -e "$(GREEN)★ VPS stack running — check https://$$DOMAIN ★$(CEND)\n"
+
+vps_down:
+	@ docker compose -f docker-compose.vps.yml down
+
+vps_cert:
+	@ echo -e "\n$(YELLOW)★ Requesting Let's Encrypt certificate ★$(CEND)"
+	@ docker compose --env-file .env.vps -f docker-compose.vps.yml run --rm certbot
+	@ docker compose --env-file .env.vps -f docker-compose.vps.yml restart nginx
+	@ echo -e "$(GREEN)★ Certificate obtained and nginx restarted ★$(CEND)\n"
+
+vps_renew:
+	@ docker compose --env-file .env.vps -f docker-compose.vps.yml run --rm certbot renew
+	@ docker compose --env-file .env.vps -f docker-compose.vps.yml restart nginx
+
+.PHONY: all up down clean fclean re piv run_script microservices re_ng re_g3 re_ch re_tk re_us re_pm vps vps_down vps_cert vps_renew

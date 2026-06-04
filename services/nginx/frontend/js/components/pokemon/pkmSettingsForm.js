@@ -1,5 +1,6 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js"
+import { API_BASE } from "../../config.js"
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -101,7 +102,7 @@ export default class pkmSettingsForm extends HTMLElement {
                     "userID": parseInt(await Iuser.getID(), 10),
                     "player_skin": skin,
                 }
-				const response = await fetch(`api/pokemap/player/`, {
+				const response = await fetch(API_BASE + `/api/pokemap/player/`, {
 					method: 'PUT',
 					body: JSON.stringify(json),
 					headers: {

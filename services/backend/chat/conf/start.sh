@@ -1,8 +1,22 @@
 #!/bin/bash
 set -e
 
-sh /tmp/init_db.sh
-redis-server --daemonize yes
+redis-server --daemonize yes --maxmemory 64mb --maxmemory-policy allkeys-lru
+
+# Wait for the shared postgres container to be ready
+python3 -c "
+import socket, time, os
+host = os.getenv('DB_HOST', '127.0.0.1')
+port = int(os.getenv('DB_PORT', '5432'))
+for i in range(30):
+    try:
+        with socket.create_connection((host, port), timeout=2):
+            print(f'[{host}:{port}] postgres ready')
+            break
+    except OSError:
+        print(f'[{host}:{port}] waiting... ({i+1}/30)')
+        time.sleep(2)
+"
 
 python3 manage.py makemigrations chatapp
 python3 manage.py migrate
@@ -21,4 +35,4 @@ update-ca-certificates
 
 export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-uvicorn chat.asgi:application --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt
+uvicorn chat.asgi:application --workers 1 --host 0.0.0.0 --port 4430 --ssl-keyfile=/tmp/server.key --ssl-certfile=/tmp/server.crt

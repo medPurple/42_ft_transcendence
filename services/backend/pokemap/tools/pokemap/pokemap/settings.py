@@ -16,12 +16,15 @@ pokemap_secrets = vault.secret('pokemap')
 SECRET_KEY = pokemap_secrets['django_secret_key']
 DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
+_domain          = os.getenv('DOMAIN', '')
+_frontend_origin = os.getenv('FRONTEND_ORIGIN', '')
+
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'pokemap',
     'pokemapservice',
-]
+] + ([_domain] if _domain else [])
 
 # ── CSRF / CORS ───────────────────────────────────────────────────────────────
 CSRF_COOKIE_SECURE = True
@@ -34,7 +37,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:4430',
     'https://127.0.0.1:4430',
-]
+] + ([f'https://{_domain}'] if _domain else []) \
+  + ([_frontend_origin] if _frontend_origin else [])
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 LOGGING = {
@@ -109,6 +113,8 @@ DATABASES = {
         'NAME': pokemap_secrets['db_name'],
         'USER': pokemap_secrets['db_username'],
         'PASSWORD': pokemap_secrets['db_password'],
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 

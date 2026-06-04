@@ -1,5 +1,6 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js";
+import { API_BASE, WS_BASE } from "../../config.js"
 
 class MatchmakingButtons {
 
@@ -57,7 +58,7 @@ class MatchmakingButtons {
 		const body = {
 			"userID": id
 		}
-		const response = await fetch(window.location.origin + '/api/matchmaking/', {
+		const response = await fetch(API_BASE + '/api/matchmaking/', {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -154,7 +155,7 @@ class MatchmakingButtons {
 				username : username2
 			},
 		}
-		const response = await fetch(window.location.origin + '/api/pong/match/', {
+		const response = await fetch(API_BASE + '/api/pong/match/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -172,7 +173,7 @@ class MatchmakingButtons {
 			"userID": id,
 			"status": "game"
 		}
-		const response = await fetch(window.location.origin + '/api/matchmaking/', {
+		const response = await fetch(API_BASE + '/api/matchmaking/', {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -198,7 +199,7 @@ class MatchmakingButtons {
 	}
 
 	async mainMatchmakingDiv() {
-		this.matchsocket = new WebSocket("wss://" + window.location.host + "/api/wsqueue/")
+		this.matchsocket = new WebSocket(WS_BASE + "/api/wsqueue/")
 		this.matchmakingsocketaction();
 
 		const msg = {

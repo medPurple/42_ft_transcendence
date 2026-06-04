@@ -18,12 +18,15 @@ SECRET_KEY = user_secrets['django_secret_key']
 # DEBUG contrôlé par variable d'environnement — False par défaut (prod safe)
 DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
+_domain          = os.getenv('DOMAIN', '')
+_frontend_origin = os.getenv('FRONTEND_ORIGIN', '')
+
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'user',
     'userservice',
-]
+] + ([_domain] if _domain else [])
 
 # ── CSRF / CORS ───────────────────────────────────────────────────────────────
 CSRF_COOKIE_SAMESITE = 'None'
@@ -32,7 +35,8 @@ CSRF_ALLOW_ALL_ORIGINS = False
 CSRF_TRUSTED_ORIGINS = [
     'https://localhost:4430',
     'https://127.0.0.1:4430',
-]
+] + ([f'https://{_domain}'] if _domain else []) \
+  + ([_frontend_origin] if _frontend_origin else [])
 
 SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
@@ -42,7 +46,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:4430',
     'https://127.0.0.1:4430',
-]
+] + ([f'https://{_domain}'] if _domain else []) \
+  + ([_frontend_origin] if _frontend_origin else [])
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 LOGGING = {
@@ -124,6 +129,8 @@ DATABASES = {
         'NAME': user_secrets['db_name'],
         'USER': user_secrets['db_username'],
         'PASSWORD': user_secrets['db_password'],
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 

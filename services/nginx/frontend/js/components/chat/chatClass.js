@@ -1,6 +1,7 @@
 import Icookies from "../cookie/cookie.js"
 import Iuser from "../user/userInfo.js"
 import Ifriends from "../friends/friendsInfo.js";
+import { API_BASE, WS_BASE } from "../../config.js"
 
 export class chat {
 
@@ -427,7 +428,7 @@ export class chat {
 
 		if (!blockstatus){
 	
-			const response = await fetch(`https://${window.location.host}/api/chat/history/${roomName}`, {
+			const response = await fetch(`${API_BASE}/api/chat/history/${roomName}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -451,7 +452,7 @@ export class chat {
 
 		const token = Icookies.getCookie('token').replace('Bearer ', '');
 		this.websocket = new WebSocket(
-			'wss://' + window.location.host + '/ws/chat/'
+			WS_BASE + '/ws/chat/'
 			+ roomName
 			+ '/?token=' + token
 		);

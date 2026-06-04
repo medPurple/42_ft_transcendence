@@ -21,12 +21,15 @@ SECRET_KEY = jwt_secrets['django_secret_key']
 JWT_SIGNING_KEY = jwt_secrets['SECRET_KEY']
 DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
+_domain          = os.getenv('DOMAIN', '')
+_frontend_origin = os.getenv('FRONTEND_ORIGIN', '')
+
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'jwtoken',
     'tokenservice',
-]
+] + ([_domain] if _domain else [])
 
 # ── CSRF / CORS ───────────────────────────────────────────────────────────────
 CSRF_COOKIE_SECURE = True
@@ -39,7 +42,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:4430',
     'https://127.0.0.1:4430',
-]
+] + ([f'https://{_domain}'] if _domain else []) \
+  + ([_frontend_origin] if _frontend_origin else [])
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 LOGGING = {

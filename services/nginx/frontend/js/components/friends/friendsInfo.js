@@ -1,4 +1,5 @@
 import Icookies from "../cookie/cookie.js"
+import { API_BASE } from "../../config.js"
 
 class friendsInfo {
 
@@ -9,7 +10,7 @@ class friendsInfo {
 
 	async getFriendsList() {
 		try {
-			const response = await fetch('/api/friends/friends-list/', {
+			const response = await fetch(API_BASE + '/api/friends/friends-list/', {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -30,7 +31,7 @@ class friendsInfo {
 
 	async getFriend(username) {
 		try {
-			const response = await fetch(`/api/friends/friends-list/${username}/`, {
+			const response = await fetch(API_BASE + `/api/friends/friends-list/${username}/`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ class friendsInfo {
 
 	async getUserBlock(username){
 		try {
-			const response = await fetch(`/api/friends/block-list/${username}/`, {
+			const response = await fetch(API_BASE + `/api/friends/block-list/${username}/`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ class friendsInfo {
 
 	async blockUser(username){
 		try {
-			const response = await fetch(`/api/friends/block-list/${username}/`, {
+			const response = await fetch(API_BASE + `/api/friends/block-list/${username}/`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ class friendsInfo {
 
 	async unblockUser(username){
 		try {
-			const response = await fetch(`/api/friends/block-list/${username}/`, {
+			const response = await fetch(API_BASE + `/api/friends/block-list/${username}/`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
