@@ -27,7 +27,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         try:
-            response = requests.get(
+            response = await sync_to_async(requests.get)(
                 'https://JWToken:4430/api/token/',
                 headers={'Authorization': f'Bearer {token}'}
             )
